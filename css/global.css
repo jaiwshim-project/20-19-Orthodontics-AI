@@ -805,6 +805,38 @@ tbody tr:hover { background: rgba(255,255,255,0.03); }
   text-transform: uppercase;
 }
 
+.footer-sitemap {
+  border-top: 1px solid var(--border-subtle);
+  padding: 28px 24px 24px;
+  background: rgba(255,255,255,0.01);
+}
+.footer-sitemap-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.footer-sitemap-head { margin-bottom: 14px; text-align: center; }
+.footer-sitemap-head h5 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.footer-sitemap-head p {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.footer-sitemap-svg {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.footer-sitemap-svg svg { min-width: 800px; }
+.footer-sitemap-svg a:hover .sm-item { fill: rgba(14,165,233,0.18); stroke-opacity: 0.7; }
+.footer-sitemap-svg a:hover text { fill: #fff; }
+.footer-sitemap-svg a { cursor: pointer; }
+
 .footer-disclaimer {
   border-top: 1px solid var(--border-subtle);
   padding: 20px 24px;

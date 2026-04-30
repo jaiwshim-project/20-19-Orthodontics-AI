@@ -431,6 +431,79 @@
     window.toast(`언어가 ${lang === 'ko' ? '한국어' : 'English'}로 변경되었습니다.`, 'info');
   };
 
+  // -------- Sitemap SVG (footer용) --------
+  function buildSitemapSVG() {
+    const groups = NAV_ITEMS;
+    const W = 1200;
+    const padding = 30;
+    const rootY = 30;
+    const groupY = 130;
+    const itemStartY = 195;
+    const itemH = 26;
+    const itemGap = 6;
+    const groupCount = groups.length;
+    const groupW = (W - padding * 2 - (groupCount - 1) * 12) / groupCount;
+    const maxItems = Math.max(...groups.map(g => g.items.length));
+    const itemsBlockH = maxItems * (itemH + itemGap);
+    const H = itemStartY + itemsBlockH + padding + 10;
+    const rootX = W / 2;
+    const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4'];
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%; height:auto; display:block;">
+      <defs>
+        <linearGradient id="rootGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0EA5E9"/>
+          <stop offset="100%" stop-color="#8B5CF6"/>
+        </linearGradient>
+      </defs>`;
+
+    // Root node
+    const rootW = 280, rootH = 44;
+    svg += `<rect x="${rootX - rootW/2}" y="${rootY - rootH/2}" width="${rootW}" height="${rootH}" rx="22" fill="url(#rootGrad)" filter="drop-shadow(0 6px 16px rgba(14,165,233,0.4))"/>
+            <text x="${rootX}" y="${rootY + 5}" text-anchor="middle" fill="#fff" font-size="15" font-weight="800" font-family="Inter, sans-serif">Orthodontics AI</text>`;
+
+    groups.forEach((g, i) => {
+      const gx = padding + groupW * (i + 0.5) + i * 12;
+      const color = colors[i % colors.length];
+
+      // Curve from root bottom to group top
+      const rootBottomY = rootY + rootH/2;
+      const groupTopY = groupY - 18;
+      const cp1y = (rootBottomY + groupTopY) / 2;
+      svg += `<path d="M ${rootX} ${rootBottomY} C ${rootX} ${cp1y}, ${gx} ${cp1y}, ${gx} ${groupTopY}" stroke="${color}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
+
+      // Group header
+      svg += `<rect x="${gx - groupW/2}" y="${groupY - 18}" width="${groupW}" height="36" rx="10" fill="${color}" fill-opacity="0.18" stroke="${color}" stroke-width="1.2"/>
+              <text x="${gx}" y="${groupY + 5}" text-anchor="middle" fill="${color}" font-size="12" font-weight="700" font-family="Inter, sans-serif" letter-spacing="0.5">${g.group}</text>`;
+
+      // Vertical connector line from group to items
+      const linkX = gx - groupW/2 + 18;
+      const lastItemY = itemStartY + (g.items.length - 1) * (itemH + itemGap) + itemH/2;
+      svg += `<line x1="${linkX}" y1="${groupY + 18}" x2="${linkX}" y2="${lastItemY}" stroke="${color}" stroke-width="1.2" opacity="0.35"/>`;
+
+      // Items
+      g.items.forEach((item, j) => {
+        const iy = itemStartY + j * (itemH + itemGap);
+        const ix = gx - groupW/2 + 12;
+        const iw = groupW - 18;
+        const midY = iy + itemH/2;
+        // Horizontal connector
+        svg += `<line x1="${linkX}" y1="${midY}" x2="${ix + 8}" y2="${midY}" stroke="${color}" stroke-width="1" opacity="0.35"/>`;
+        // Item box (clickable via <a>)
+        svg += `<a href="${item.path}" target="_self">
+                  <rect x="${ix + 6}" y="${iy}" width="${iw - 6}" height="${itemH}" rx="6" fill="rgba(255,255,255,0.04)" stroke="${color}" stroke-width="0.8" stroke-opacity="0.3" class="sm-item">
+                    <title>${item.label}</title>
+                  </rect>
+                  <text x="${ix + 14}" y="${iy + itemH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="11" font-family="Inter, sans-serif">${item.icon}</text>
+                  <text x="${ix + 32}" y="${iy + itemH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="11" font-weight="500" font-family="Pretendard, sans-serif">${item.label}</text>
+                </a>`;
+      });
+    });
+
+    svg += `</svg>`;
+    return svg;
+  }
+
   // -------- Premium Footer --------
   function renderFooter() {
     if (document.querySelector('.site-footer')) return; // 중복 방지
@@ -492,6 +565,16 @@
             <li><a href="#" onclick="window.toast('개인정보 처리방침', 'info'); return false;">개인정보 처리방침</a></li>
             <li><a href="#" onclick="window.toast('보안 정책', 'info'); return false;">보안 정책</a></li>
           </ul>
+        </div>
+      </div>
+
+      <div class="footer-sitemap">
+        <div class="footer-sitemap-inner">
+          <div class="footer-sitemap-head">
+            <h5>📍 사이트 맵</h5>
+            <p>전체 페이지를 한 화면에서 — 노드 클릭 시 해당 페이지로 이동.</p>
+          </div>
+          <div class="footer-sitemap-svg">${buildSitemapSVG()}</div>
         </div>
       </div>
 
