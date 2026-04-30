@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아키텍처 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .arch-svg { width: 100%; height: auto; background: #0a0f1c; border-radius: 16px; border: 1px solid var(--border-subtle); }
+  .layer-card { padding: 16px; }
+  .layer-card .layer-name { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+  .layer-card h4 { margin: 6px 0 8px; }
+  .layer-card .items { display:flex; flex-wrap:wrap; gap:6px; }
+  .layer-card .item { padding:4px 10px; border-radius:6px; background: rgba(255,255,255,0.04); border:1px solid var(--border-subtle); font-size:12px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:24px;">
+  <span class="badge badge-accent">Architecture</span>
+  <h2 style="margin-top:8px;">시스템 아키텍처 <span style="font-size:14px; color:var(--text-muted);">Palantir-grade Multi-Agent AI Stack</span></h2>
+  <p>4계층 분리 + 20개 AI 에이전트 협업 + Neo4j 지식그래프 + Gemini RAG.</p>
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:16px;">전체 구조도 (4-Layer)</h3>
+  <svg class="arch-svg" viewBox="0 0 1200 720">
+    <defs>
+      <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient>
+      <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1f2937"/><stop offset="100%" stop-color="#0a0f1c"/></linearGradient>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#0EA5E9"/>
+      </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="600" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#E5E7EB">Orthodontics AI · 4-Layer Architecture</text>
+
+    <!-- Layer 1: Presentation -->
+    <g transform="translate(60, 70)">
+      <rect width="1080" height="120" rx="14" fill="url(#lg2)" stroke="#0EA5E9" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="12" fill="#0EA5E9" font-weight="700">PRESENTATION LAYER · Static HTML + CDN</text>
+      <g font-size="11" fill="#E5E7EB">
+        <g transform="translate(20,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">index.html</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">허브</text></g>
+        <g transform="translate(150,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">3d-viewer</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">Three.js · STL</text></g>
+        <g transform="translate(280,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">extraction-ai</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">발치 판단</text></g>
+        <g transform="translate(410,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">growth</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">성장 예측</text></g>
+        <g transform="translate(540,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">facial-sim</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">안모 시뮬</text></g>
+        <g transform="translate(670,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">recurrence</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">재발 예측</text></g>
+        <g transform="translate(800,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">chatbot</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">RAG · Gemini</text></g>
+        <g transform="translate(930,52)"><rect width="120" height="50" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="22" text-anchor="middle">dashboard</text><text x="60" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">분석</text></g>
+      </g>
+    </g>
+
+    <!-- Arrows L1 → L2 -->
+    <line x1="600" y1="195" x2="600" y2="225" stroke="#0EA5E9" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Layer 2: API -->
+    <g transform="translate(60, 230)">
+      <rect width="1080" height="120" rx="14" fill="url(#lg2)" stroke="#8B5CF6" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="12" fill="#8B5CF6" font-weight="700">API LAYER · Vercel Serverless Functions (Node 20)</text>
+      <g font-size="11" fill="#E5E7EB">
+        <g transform="translate(60,52)"><rect width="160" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="80" y="22" text-anchor="middle">/api/chat</text><text x="80" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">RAG + Gemini</text></g>
+        <g transform="translate(240,52)"><rect width="160" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="80" y="22" text-anchor="middle">/api/diagnose</text><text x="80" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">4종 AI 진단</text></g>
+        <g transform="translate(420,52)"><rect width="160" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="80" y="22" text-anchor="middle">/api/upload</text><text x="80" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">파일 + Vision</text></g>
+        <g transform="translate(600,52)"><rect width="160" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="80" y="22" text-anchor="middle">/api/clinics</text><text x="80" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">병원 등록 (1h 캐시)</text></g>
+        <g transform="translate(780,52)"><rect width="240" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="120" y="22" text-anchor="middle">/api/cron/reindex</text><text x="120" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">주 1회 임베딩 재생성</text></g>
+      </g>
+    </g>
+
+    <line x1="600" y1="355" x2="600" y2="385" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Layer 3: AI -->
+    <g transform="translate(60, 390)">
+      <rect width="1080" height="130" rx="14" fill="url(#lg2)" stroke="#10B981" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="12" fill="#10B981" font-weight="700">AI LAYER · Gemini Family + EZL-STL Engine</text>
+      <g font-size="11" fill="#E5E7EB">
+        <g transform="translate(40,52)"><rect width="160" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="80" y="24" text-anchor="middle" font-weight="600">Gemini 1.5/2.0 Flash</text><text x="80" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">대화·진단·구조화 출력</text></g>
+        <g transform="translate(220,52)"><rect width="160" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="80" y="24" text-anchor="middle" font-weight="600">Gemini 1.5 Pro</text><text x="80" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">정밀 분석 (long-context)</text></g>
+        <g transform="translate(400,52)"><rect width="160" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="80" y="24" text-anchor="middle" font-weight="600">text-embedding-004</text><text x="80" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">768차원 RAG</text></g>
+        <g transform="translate(580,52)"><rect width="160" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="80" y="24" text-anchor="middle" font-weight="600">Gemini Vision</text><text x="80" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">사진·X-ray 분석</text></g>
+        <g transform="translate(760,52)"><rect width="160" height="60" rx="8" fill="rgba(245,158,11,0.12)" stroke="#F59E0B"/><text x="80" y="24" text-anchor="middle" font-weight="600">EZL-STL Engine</text><text x="80" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">치열궁·Bolton·Spee</text></g>
+        <g transform="translate(940,52)"><rect width="100" height="60" rx="8" fill="rgba(239,68,68,0.12)" stroke="#EF4444"/><text x="50" y="24" text-anchor="middle" font-weight="600">Rule-base</text><text x="50" y="42" text-anchor="middle" font-size="9" fill="#9CA3AF">Tweed/Steiner</text></g>
+      </g>
+    </g>
+
+    <line x1="600" y1="525" x2="600" y2="555" stroke="#10B981" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Layer 4: Data -->
+    <g transform="translate(60, 560)">
+      <rect width="1080" height="120" rx="14" fill="url(#lg2)" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="20" y="28" font-size="12" fill="#F59E0B" font-weight="700">DATA LAYER · Supabase + Neo4j + Storage</text>
+      <g font-size="11" fill="#E5E7EB">
+        <g transform="translate(40,52)"><rect width="180" height="50" rx="8" fill="rgba(245,158,11,0.12)" stroke="#F59E0B"/><text x="90" y="22" text-anchor="middle" font-weight="600">Postgres</text><text x="90" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">clinics·patients·diagnoses</text></g>
+        <g transform="translate(240,52)"><rect width="180" height="50" rx="8" fill="rgba(245,158,11,0.12)" stroke="#F59E0B"/><text x="90" y="22" text-anchor="middle" font-weight="600">pgvector</text><text x="90" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">knowledge_chunks RAG</text></g>
+        <g transform="translate(440,52)"><rect width="180" height="50" rx="8" fill="rgba(245,158,11,0.12)" stroke="#F59E0B"/><text x="90" y="22" text-anchor="middle" font-weight="600">Storage</text><text x="90" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">STL · 사진 · PDF</text></g>
+        <g transform="translate(640,52)"><rect width="180" height="50" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="90" y="22" text-anchor="middle" font-weight="600">Neo4j Aura</text><text x="90" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">지식그래프 (similar-case)</text></g>
+        <g transform="translate(840,52)"><rect width="200" height="50" rx="8" fill="rgba(229,231,235,0.06)" stroke="#9CA3AF"/><text x="100" y="22" text-anchor="middle" font-weight="600">RLS · Audit Logs</text><text x="100" y="38" text-anchor="middle" font-size="9" fill="#9CA3AF">멀티테넌시 + HIPAA</text></g>
+      </g>
+    </g>
+
+    <!-- Side legend -->
+    <text x="1180" y="100" font-size="10" fill="#9CA3AF" text-anchor="end">Static Edge</text>
+    <text x="1180" y="270" font-size="10" fill="#9CA3AF" text-anchor="end">Vercel Functions</text>
+    <text x="1180" y="430" font-size="10" fill="#9CA3AF" text-anchor="end">AI Providers</text>
+    <text x="1180" y="600" font-size="10" fill="#9CA3AF" text-anchor="end">Persistent</text>
+  </svg>
+</div>
+
+<div class="grid grid-2 mt-4">
+  <div class="card">
+    <h3>20개 AI 에이전트 오케스트레이션</h3>
+    <p style="font-size:13px; color:var(--text-secondary);">진단(4) · 계획(3) · 실행(4) · 모니터링(3) · 운영(6) — 마스터 <strong>TreatmentPlanner</strong>가 분석가 4종을 호출하고 실행 에이전트에 위임.</p>
+    <a href="docs/AI_AGENTS_20.md" class="btn btn-ghost mt-4">전체 명세 보기</a>
+  </div>
+  <div class="card">
+    <h3>Neo4j 지식그래프</h3>
+    <p style="font-size:13px; color:var(--text-secondary);">8개 노드 라벨 + 7개 관계 타입. <strong>SIMILAR_TO</strong> 관계로 유사 환자 검색, <strong>RECOMMENDS</strong>로 치료계획 추천 자동화.</p>
+    <a href="docs/NEO4J_SCHEMA.cypher" class="btn btn-ghost mt-4">스키마 보기</a>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:16px;">데이터 흐름 (요청 → 응답)</h3>
+  <svg viewBox="0 0 1100 220" style="width:100%; height:auto;">
+    <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0EA5E9"/></marker></defs>
+    <g font-size="12" fill="#E5E7EB">
+      <g transform="translate(20,80)"><rect width="120" height="60" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="36" text-anchor="middle">사용자 입력</text></g>
+      <line x1="140" y1="110" x2="190" y2="110" stroke="#0EA5E9" stroke-width="2" marker-end="url(#arr2)"/>
+      <g transform="translate(190,80)"><rect width="120" height="60" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8B5CF6"/><text x="60" y="36" text-anchor="middle">/api/diagnose</text></g>
+      <line x1="310" y1="110" x2="360" y2="110" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arr2)"/>
+      <g transform="translate(360,80)"><rect width="140" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="70" y="22" text-anchor="middle">RAG 검색</text><text x="70" y="42" text-anchor="middle" font-size="10" fill="#9CA3AF">pgvector 768d</text></g>
+      <line x1="500" y1="110" x2="550" y2="110" stroke="#10B981" stroke-width="2" marker-end="url(#arr2)"/>
+      <g transform="translate(550,80)"><rect width="140" height="60" rx="8" fill="rgba(16,185,129,0.12)" stroke="#10B981"/><text x="70" y="22" text-anchor="middle">Gemini 추론</text><text x="70" y="42" text-anchor="middle" font-size="10" fill="#9CA3AF">structured JSON</text></g>
+      <line x1="690" y1="110" x2="740" y2="110" stroke="#10B981" stroke-width="2" marker-end="url(#arr2)"/>
+      <g transform="translate(740,80)"><rect width="140" height="60" rx="8" fill="rgba(245,158,11,0.12)" stroke="#F59E0B"/><text x="70" y="22" text-anchor="middle">DB 저장</text><text x="70" y="42" text-anchor="middle" font-size="10" fill="#9CA3AF">Postgres + RLS</text></g>
+      <line x1="880" y1="110" x2="930" y2="110" stroke="#F59E0B" stroke-width="2" marker-end="url(#arr2)"/>
+      <g transform="translate(930,80)"><rect width="120" height="60" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9"/><text x="60" y="36" text-anchor="middle">UI 렌더링</text></g>
+    </g>
+  </svg>
+</div>
+
+</div>
+</main>
+<script src="js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성장 예측 AI · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  .stage-tracker { display:flex; gap:6px; margin-top:8px; }
+  .stage-tracker .stage {
+    flex:1; padding: 8px 4px; text-align:center;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .stage-tracker .stage.active { background: rgba(14,165,233,0.15); border-color: var(--color-primary); color: var(--color-primary); }
+  .stage-tracker .stage.passed { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--color-success); }
+  .chart-wrap { position: relative; height: 320px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:24px;">
+  <span class="badge badge-success">Pediatric AI</span>
+  <h2 style="margin-top:8px;">성장 예측 AI <span style="font-size:14px; color:var(--text-muted);">Growth Prediction</span></h2>
+  <p>CVMS 단계와 부모 키, 골연령을 기반으로 잔여 성장량과 peak velocity 시점을 추정합니다.</p>
+</div>
+
+<div id="adultWarning" class="card" style="display:none; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.06); margin-bottom: 16px;">
+  ⚠️ 현재 환자는 성인입니다. 성장 예측은 어린이/청소년에게 적용됩니다. 환자를 변경하거나 입력값을 직접 검증해 주세요.
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3 style="margin-bottom:16px;">📋 입력</h3>
+    <div class="grid grid-2" style="gap:12px;">
+      <div class="field">
+        <label>현재 신장 (cm)</label>
+        <input class="input" type="number" id="height" step="0.1" value="145">
+      </div>
+      <div class="field">
+        <label>현재 체중 (kg)</label>
+        <input class="input" type="number" id="weight" step="0.1" value="38">
+      </div>
+      <div class="field">
+        <label>아버지 키 (cm)</label>
+        <input class="input" type="number" id="father" step="0.1" value="174">
+      </div>
+      <div class="field">
+        <label>어머니 키 (cm)</label>
+        <input class="input" type="number" id="mother" step="0.1" value="161">
+      </div>
+      <div class="field">
+        <label>골연령 (세, 손목 X-ray)</label>
+        <input class="input" type="number" id="boneAge" step="0.5" value="11.5">
+      </div>
+      <div class="field">
+        <label>역연령 (세)</label>
+        <input class="input" type="number" id="chronAge" step="0.5" value="11">
+      </div>
+    </div>
+    <div class="field">
+      <label>CVMS 단계 (Cervical Vertebral Maturation Stage)</label>
+      <select class="select" id="cvms">
+        <option value="1">CS1 — 사춘기 전 가속 전</option>
+        <option value="2" selected>CS2 — 가속 시작</option>
+        <option value="3">CS3 — Peak velocity ★</option>
+        <option value="4">CS4 — Peak 직후</option>
+        <option value="5">CS5 — 감속</option>
+        <option value="6">CS6 — 성장 완료</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-ghost" onclick="computeRule()">룰베이스 추정</button>
+      <button class="btn btn-primary" onclick="callGemini()">🧠 AI 정밀 분석</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:8px;">📊 결과 요약</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin: 16px 0;">
+      <div style="padding:14px; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:12px;">
+        <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">예상 최종 신장</div>
+        <div style="font-size:24px; font-weight:700; color:var(--color-primary); margin-top:4px;" id="finalHeight">— cm</div>
+      </div>
+      <div style="padding:14px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:12px;">
+        <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">잔여 성장</div>
+        <div style="font-size:24px; font-weight:700; color:var(--color-accent); margin-top:4px;" id="remaining">— cm</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px; color:var(--text-secondary); margin-top:12px;">CVMS 진행 단계</div>
+    <div class="stage-tracker" id="stageTracker">
+      <div class="stage" data-s="1">CS1</div><div class="stage" data-s="2">CS2</div>
+      <div class="stage" data-s="3">CS3</div><div class="stage" data-s="4">CS4</div>
+      <div class="stage" data-s="5">CS5</div><div class="stage" data-s="6">CS6</div>
+    </div>
+
+    <div style="margin-top:16px; padding:12px; background: rgba(255,255,255,0.03); border-radius:10px; font-size:13px;">
+      <strong style="color:var(--color-primary);">권장 치료 시기:</strong>
+      <span id="treatTiming">분석 후 표시</span>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:16px;">📈 성장 곡선 (신장 + 하악골)</h3>
+  <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
+  <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">파선: 하악골 길이 (mm). Peak velocity 시점은 주황 점선으로 표시됩니다.</p>
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:12px;">💡 임상 가이드라인</h3>
+  <ul style="list-style:none; padding:0; font-size:14px; color:var(--text-secondary);">
+    <li style="padding:8px 0; border-bottom:1px dashed var(--border-subtle);">• <strong>CS1-CS2:</strong> 골격성 부정교합은 기능 장치(Twin Block, Headgear) 시기. 발치 보류.</li>
+    <li style="padding:8px 0; border-bottom:1px dashed var(--border-subtle);">• <strong>CS3-CS4 (Peak):</strong> Class III chin cup, Face mask가 가장 효과적. 하악 성장 모니터링 필수.</li>
+    <li style="padding:8px 0; border-bottom:1px dashed var(--border-subtle);">• <strong>CS5-CS6:</strong> 잔여 성장이 적어 수술/캐모플라쥬 결정. 성인 룰셋 전환.</li>
+  </ul>
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script>
+let chartRef = null;
+
+function vals() {
+  return {
+    height: parseFloat(document.getElementById('height').value),
+    weight: parseFloat(document.getElementById('weight').value),
+    father: parseFloat(document.getElementById('father').value),
+    mother: parseFloat(document.getElementById('mother').value),
+    boneAge: parseFloat(document.getElementById('boneAge').value),
+    chronAge: parseFloat(document.getElementById('chronAge').value),
+    cvms: parseInt(document.getElementById('cvms').value)
+  };
+}
+
+function midParental(father, mother, gender) {
+  if (gender === 'female') return (father + mother - 13) / 2;
+  return (father + mother + 13) / 2;
+}
+
+function computeRule() {
+  const v = vals();
+  const patient = window.PatientStore.get() || {};
+  const gender = patient.gender || 'male';
+  const target = midParental(v.father, v.mother, gender);
+  // 성장 잠재력은 CVMS에 따라 감소
+  const growthFactors = { 1: 0.95, 2: 0.85, 3: 0.55, 4: 0.30, 5: 0.10, 6: 0.02 };
+  const factor = growthFactors[v.cvms] || 0.5;
+  const remainingFromTarget = Math.max(0, (target - v.height) * factor + (1 - factor) * 0);
+  // 보수 추정: 골연령-역연령 차이 반영
+  const ageDelta = v.boneAge - v.chronAge;
+  const ageAdjust = -ageDelta * 0.8;
+  const remaining = Math.max(0, remainingFromTarget + ageAdjust);
+  const finalH = v.height + remaining;
+
+  document.getElementById('finalHeight').textContent = `${finalH.toFixed(1)} cm`;
+  document.getElementById('remaining').textContent = `${remaining.toFixed(1)} cm`;
+
+  const tt = {
+    1: '아직 이른 단계 — 6-12개월 후 재평가',
+    2: '치료 시작 적기 — 기능 장치 효과 큼',
+    3: '★ Peak velocity — 골격성 치료 골든타임 (즉시 시작 권장)',
+    4: 'Peak 직후 — 신속한 치료 진행',
+    5: '감속 단계 — 캐모플라쥬 또는 수술 검토',
+    6: '성장 완료 — 성인 프로토콜 적용'
+  };
+  document.getElementById('treatTiming').textContent = tt[v.cvms];
+
+  document.querySelectorAll('#stageTracker .stage').forEach(el => {
+    const s = parseInt(el.dataset.s);
+    el.classList.remove('active', 'passed');
+    if (s < v.cvms) el.classList.add('passed');
+    else if (s === v.cvms) el.classList.add('active');
+  });
+
+  drawGrowthChart(v, finalH);
+  return { finalH, remaining };
+}
+
+function drawGrowthChart(v, finalH) {
+  const ages = [];
+  const heights = [];
+  const mandibles = [];
+  for (let a = 8; a <= 18; a++) {
+    ages.push(a);
+    // Sigmoid-ish growth curve
+    const t = (a - v.chronAge) / 7;
+    const grown = Math.min(1, Math.max(0, 0.5 + 0.5 * Math.tanh(t)));
+    heights.push(+(v.height + grown * (finalH - v.height)).toFixed(1));
+    // Mandibular length grows with similar but later peak
+    const mTar = 105;
+    const mNow = mTar - 16;
+    const mGrown = Math.min(1, Math.max(0, 0.5 + 0.5 * Math.tanh(t - 0.3)));
+    mandibles.push(+(mNow + mGrown * (mTar - mNow)).toFixed(1));
+  }
+  const peakAgeMap = { 1: 13, 2: 12, 3: v.chronAge, 4: v.chronAge - 0.5, 5: v.chronAge - 1.5, 6: v.chronAge - 2.5 };
+  const peakAge = peakAgeMap[v.cvms];
+
+  if (chartRef) chartRef.destroy();
+  chartRef = window.Charts.growthCurve('growthChart', { ages, height: heights, mandible: mandibles, peakAge });
+}
+
+async function callGemini() {
+  const patient = window.PatientStore.get() || {};
+  const inputs = vals();
+  window.toast('Gemini AI 분석 중...', 'info');
+  try {
+    const res = await fetch('/api/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'growth', patient, inputs })
+    });
+    const data = await res.json();
+    if (data.fallback) window.toast('AI 호출 실패 — 룰베이스로 폴백', 'warning');
+    if (typeof data.remainingGrowthCm === 'number') {
+      document.getElementById('remaining').textContent = `${data.remainingGrowthCm.toFixed(1)} cm`;
+    }
+    if (data.recommendation) document.getElementById('treatTiming').textContent = data.recommendation;
+    computeRule();
+  } catch (e) {
+    window.toast('AI 호출 실패: ' + e.message, 'error');
+    computeRule();
+  }
+}
+
+// Init
+const patient = window.PatientStore.get();
+if (patient && patient.ageGroup === 'adult') {
+  document.getElementById('adultWarning').style.display = 'block';
+}
+setTimeout(computeRule, 100);
+</script>
+</body>
+</html>

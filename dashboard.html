@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대시보드 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  .kpi-card { padding: 18px; }
+  .kpi-card .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .kpi-card .num { font-size: 32px; font-weight: 800; margin-top: 6px; line-height: 1; }
+  .kpi-card .delta { font-size: 12px; margin-top: 6px; }
+  .kpi-card .delta.up { color: var(--color-success); }
+  .kpi-card .delta.down { color: var(--color-danger); }
+  .chart-wrap { position: relative; height: 260px; }
+  .search-row { display:flex; gap:8px; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+  <div>
+    <span class="badge badge-primary">Analytics</span>
+    <h2 style="margin-top:8px;">환자 대시보드 <span style="font-size:14px; color:var(--text-muted);">Patient Dashboard</span></h2>
+    <p>병원 전체 환자/진단 현황을 한눈에 파악합니다.</p>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ghost" onclick="refreshAll()">↻ 새로고침</button>
+    <button class="btn btn-primary" onclick="exportCSV()">📥 CSV 내보내기</button>
+  </div>
+</div>
+
+<div class="grid grid-4">
+  <div class="card kpi-card">
+    <div class="lbl">총 환자</div>
+    <div class="num" id="kpiTotal">—</div>
+    <div class="delta up" id="kpiTotalDelta">—</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="lbl">진단 완료</div>
+    <div class="num" id="kpiDone" style="color:var(--color-success);">—</div>
+    <div class="delta up" id="kpiDoneDelta">—</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="lbl">진행 중</div>
+    <div class="num" id="kpiOngoing" style="color:var(--color-primary);">—</div>
+    <div class="delta" id="kpiOngoingDelta">—</div>
+  </div>
+  <div class="card kpi-card">
+    <div class="lbl">재발 알림</div>
+    <div class="num" id="kpiAlert" style="color:var(--color-danger);">—</div>
+    <div class="delta down" id="kpiAlertDelta">—</div>
+  </div>
+</div>
+
+<div class="grid grid-3 mt-4" style="grid-template-columns: 1fr 1fr 1.4fr;">
+  <div class="card">
+    <h3 style="margin-bottom:12px;">연령 분포</h3>
+    <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">진단 유형</h3>
+    <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">월별 트렌드</h3>
+    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h3>환자 목록</h3>
+    <div class="search-row">
+      <input class="input" id="searchInput" placeholder="이름/ID 검색" style="width:240px;">
+      <select class="select" id="filterAge" style="width:140px;">
+        <option value="">전체 연령</option>
+        <option value="child">어린이</option>
+        <option value="adult">성인</option>
+      </select>
+    </div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>이름</th><th>연령</th><th>성별</th><th>최근 진단</th><th>상태</th><th>재발 위험</th><th>업데이트</th>
+        </tr>
+      </thead>
+      <tbody id="patientTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script>
+// Mock data — 실제 환경에선 /api/patients에서 fetch
+const MOCK = (() => {
+  const types = ['extraction','growth','facial','recurrence'];
+  const names = ['김민준','이서연','박지호','최유나','정도윤','강하은','조시우','윤예린','임선우','한지유','오태양','신서아','류건우','배수아','홍시현','전주원','문서윤','노이안','구하린','석재민','이도윤','김지안','박지원','최서아','정민서','강선재','조하윤','윤도현','임예원','한태민','오시원','신지호','류주아','배준영','홍서윤','전현우','문지호','노하준','구나현','석재희'];
+  const arr = [];
+  for (let i = 0; i < 40; i++) {
+    const isChild = Math.random() < 0.45;
+    const age = isChild ? Math.floor(Math.random() * 8) + 8 : Math.floor(Math.random() * 35) + 18;
+    arr.push({
+      id: 'P' + String(1001 + i),
+      name: names[i],
+      age,
+      ageGroup: isChild ? 'child' : 'adult',
+      gender: Math.random() < 0.5 ? 'male' : 'female',
+      lastType: types[Math.floor(Math.random() * 4)],
+      status: ['진단 완료','치료 중','보정 중','재평가'][Math.floor(Math.random() * 4)],
+      recurrence: Math.floor(Math.random() * 80),
+      updated: new Date(Date.now() - Math.random() * 90 * 86400 * 1000).toISOString().slice(0, 10)
+    });
+  }
+  return arr;
+})();
+
+let charts = {};
+
+function refreshAll() {
+  // KPIs
+  const total = MOCK.length;
+  const done = MOCK.filter(p => p.status === '진단 완료').length;
+  const ongoing = MOCK.filter(p => p.status === '치료 중' || p.status === '보정 중').length;
+  const alert = MOCK.filter(p => p.recurrence > 50).length;
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiDone').textContent = done;
+  document.getElementById('kpiOngoing').textContent = ongoing;
+  document.getElementById('kpiAlert').textContent = alert;
+  document.getElementById('kpiTotalDelta').textContent = `▲ ${Math.round(total * 0.08)} (이번 달)`;
+  document.getElementById('kpiDoneDelta').textContent = `▲ ${Math.round(done * 0.12)}`;
+  document.getElementById('kpiOngoingDelta').textContent = `${ongoing > 10 ? '▲' : '▼'} ${Math.abs(Math.round(ongoing * 0.05))}`;
+  document.getElementById('kpiAlertDelta').textContent = `▲ ${Math.max(1, Math.round(alert * 0.2))}`;
+
+  // Age donut
+  const child = MOCK.filter(p => p.ageGroup === 'child').length;
+  if (charts.age) charts.age.destroy();
+  charts.age = window.Charts.donut('ageChart', {
+    labels: ['어린이', '성인'],
+    values: [child, total - child],
+    colors: ['#F59E0B', '#0EA5E9']
+  });
+
+  // Type bar
+  const typeMap = { extraction:'발치', growth:'성장', facial:'안모', recurrence:'재발' };
+  const typeCount = ['extraction','growth','facial','recurrence'].map(t => MOCK.filter(p => p.lastType === t).length);
+  if (charts.type) charts.type.destroy();
+  charts.type = window.Charts.bar('typeChart', {
+    labels: Object.values(typeMap),
+    values: typeCount,
+    label: '진단 수'
+  });
+
+  // Trend line — 최근 6개월
+  const months = [];
+  const counts = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const ym = d.toISOString().slice(0, 7);
+    months.push(ym.slice(5) + '월');
+    counts.push(MOCK.filter(p => p.updated.startsWith(ym)).length + Math.floor(Math.random() * 4));
+  }
+  if (charts.trend) charts.trend.destroy();
+  charts.trend = window.Charts.line('trendChart', {
+    labels: months,
+    datasets: [{ label: '신규 진단', values: counts }]
+  });
+
+  renderTable();
+}
+
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const fAge = document.getElementById('filterAge').value;
+  const filtered = MOCK.filter(p => {
+    if (q && !p.name.includes(q) && !p.id.toLowerCase().includes(q)) return false;
+    if (fAge && p.ageGroup !== fAge) return false;
+    return true;
+  });
+  const typeMap = { extraction:'발치', growth:'성장', facial:'안모', recurrence:'재발' };
+  const tbody = document.getElementById('patientTbody');
+  tbody.innerHTML = filtered.slice(0, 30).map(p => {
+    const riskCls = p.recurrence > 50 ? 'badge-danger' : p.recurrence > 30 ? 'badge-warning' : 'badge-success';
+    return `
+      <tr>
+        <td><code style="color:var(--text-muted);">${p.id}</code></td>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.age}세 <span class="badge ${p.ageGroup === 'child' ? 'badge-warning' : 'badge-primary'}" style="margin-left:4px;">${p.ageGroup === 'child' ? '어린이' : '성인'}</span></td>
+        <td>${p.gender === 'male' ? '남' : '여'}</td>
+        <td>${typeMap[p.lastType]}</td>
+        <td><span class="badge badge-primary">${p.status}</span></td>
+        <td><span class="badge ${riskCls}">${p.recurrence}%</span></td>
+        <td style="color:var(--text-muted);">${p.updated}</td>
+      </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:40px;">검색 결과 없음</td></tr>';
+}
+
+function exportCSV() {
+  const header = ['id','name','age','ageGroup','gender','lastType','status','recurrence','updated'];
+  const rows = [header.join(',')].concat(MOCK.map(p => header.map(h => p[h]).join(',')));
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `patients-${Date.now()}.csv`;
+  a.click();
+  window.toast('CSV 내보내기 완료', 'success');
+}
+
+document.getElementById('searchInput').oninput = renderTable;
+document.getElementById('filterAge').onchange = renderTable;
+refreshAll();
+</script>
+</body>
+</html>

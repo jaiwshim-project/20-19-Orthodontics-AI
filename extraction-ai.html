@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>발치 판단 AI · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .score-ring {
+    width: 180px; height: 180px; position: relative;
+    margin: 0 auto;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .num {
+    position: absolute; inset: 0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    font-size: 38px; font-weight: 800;
+  }
+  .score-ring .num small { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top:2px; }
+  .reason-list li { padding: 10px 0; border-bottom: 1px dashed var(--border-subtle); font-size: 14px; color: var(--text-secondary); }
+  .reason-list li:last-child { border-bottom: none; }
+  .age-banner {
+    padding: 12px 16px; border-radius: 12px;
+    background: rgba(14,165,233,0.08);
+    border: 1px solid rgba(14,165,233,0.2);
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .age-banner.child { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: var(--color-warning); }
+  .tooth-recommendation {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 8px;
+  }
+  .tooth-pill {
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: var(--color-danger);
+    font-weight: 600; font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+  <div>
+    <span class="badge badge-primary">AI 진단</span>
+    <h2 style="margin-top:8px;">발치 판단 AI <span style="font-size:14px; color:var(--text-muted);">Extraction Decision</span></h2>
+    <p style="max-width:680px;">Tweed/Steiner/Down 분석 룰을 종합해 사전 점수를 계산하고, Gemini로 정밀 권장안을 생성합니다.</p>
+  </div>
+</div>
+
+<div id="ageBanner" class="age-banner">환자 정보를 먼저 입력해 주세요.</div>
+
+<div class="grid grid-2">
+
+  <div class="card">
+    <h3 style="margin-bottom:16px;">📋 입력 데이터</h3>
+    <div class="grid grid-2" style="gap:12px;">
+      <div class="field">
+        <label>ANB 각 (도)</label>
+        <input class="input" type="number" id="anb" step="0.1" value="3.5">
+      </div>
+      <div class="field">
+        <label>Crowding (mm)</label>
+        <input class="input" type="number" id="crowding" step="0.1" value="6.0">
+      </div>
+      <div class="field">
+        <label>Overjet (mm)</label>
+        <input class="input" type="number" id="overjet" step="0.1" value="4.0">
+      </div>
+      <div class="field">
+        <label>Overbite (mm)</label>
+        <input class="input" type="number" id="overbite" step="0.1" value="3.0">
+      </div>
+      <div class="field">
+        <label>Profile</label>
+        <select class="select" id="profile">
+          <option value="straight">직선형 Straight</option>
+          <option value="convex" selected>볼록형 Convex</option>
+          <option value="concave">오목형 Concave</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Lip Strain</label>
+        <select class="select" id="lipStrain">
+          <option value="none">없음</option>
+          <option value="mild" selected>경미</option>
+          <option value="severe">현저</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>FMA (도)</label>
+        <input class="input" type="number" id="fma" step="0.1" value="25">
+      </div>
+      <div class="field">
+        <label>IMPA (도)</label>
+        <input class="input" type="number" id="impa" step="0.1" value="92">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="computeRuleScore()">룰베이스 계산</button>
+      <button class="btn btn-primary" onclick="callGemini()">🧠 Gemini AI 분석</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:16px;">🎯 권장도</h3>
+    <div class="score-ring">
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14"/>
+        <circle id="scoreArc" cx="90" cy="90" r="78" fill="none" stroke="url(#grad)" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="0 490" />
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0EA5E9"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="num"><span id="scoreNum">—</span><small id="scoreLabel">권장도</small></div>
+    </div>
+    <div style="text-align:center; margin-top:16px;">
+      <span id="recBadge" class="badge badge-primary">대기</span>
+    </div>
+    <div id="teethRec" class="tooth-recommendation" style="justify-content:center; margin-top:12px;"></div>
+  </div>
+
+</div>
+
+<div class="grid grid-2 mt-4">
+  <div class="card">
+    <h3 style="margin-bottom:12px;">📌 근거</h3>
+    <ul id="reasons" class="reason-list" style="list-style:none; padding:0;">
+      <li style="color:var(--text-muted);">분석을 실행하면 5가지 핵심 근거가 표시됩니다.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">⚠️ 위험 요소 / 대안</h3>
+    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">위험</div>
+    <ul id="risks" class="reason-list" style="list-style:none; padding:0;">
+      <li style="color:var(--text-muted);">—</li>
+    </ul>
+    <div style="font-size:13px; color:var(--text-secondary); margin: 12px 0 8px;">대안</div>
+    <ul id="alternatives" class="reason-list" style="list-style:none; padding:0;">
+      <li style="color:var(--text-muted);">—</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:12px;">📚 룰베이스 사전 점수 산출 로직</h3>
+  <p style="font-size:13px; color:var(--text-secondary);">
+    Crowding × 6 + ANB편차(>4.5) × 5 + Profile(볼록 +12, 오목 -8) + Lip strain(현저 +10, 경미 +4) + Overjet(>5mm 시 +8) + IMPA 편차(±90 기준) × 0.6.
+    어린이(만 17세 이하)일 경우 위 점수에 -25 가중을 적용해 비발치/성장 우선을 권고합니다.
+    최종 점수는 0-100으로 클램프되며, 60↑ extract / 40-60 borderline / 40↓ non-extract.
+  </p>
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+function getInputs() {
+  return {
+    anb: parseFloat(document.getElementById('anb').value),
+    crowding: parseFloat(document.getElementById('crowding').value),
+    overjet: parseFloat(document.getElementById('overjet').value),
+    overbite: parseFloat(document.getElementById('overbite').value),
+    profile: document.getElementById('profile').value,
+    lipStrain: document.getElementById('lipStrain').value,
+    fma: parseFloat(document.getElementById('fma').value),
+    impa: parseFloat(document.getElementById('impa').value)
+  };
+}
+
+function computeRuleScore() {
+  const i = getInputs();
+  const patient = window.PatientStore.get();
+  let score = 0;
+  const reasons = [];
+
+  score += i.crowding * 6;
+  if (i.crowding > 0) reasons.push(`Crowding ${i.crowding}mm × 6 = +${(i.crowding*6).toFixed(1)}점 (Proffit 기준 4mm 이상부터 발치 고려)`);
+
+  const anbDelta = Math.abs(i.anb - 2);
+  if (anbDelta > 2.5) {
+    score += anbDelta * 5;
+    reasons.push(`ANB ${i.anb}° (정상편차 ${anbDelta.toFixed(1)}°) × 5 = +${(anbDelta*5).toFixed(1)}점 (Steiner 분석)`);
+  }
+
+  if (i.profile === 'convex') { score += 12; reasons.push('볼록 프로파일 +12점 (전치 후방이동 필요)'); }
+  if (i.profile === 'concave') { score -= 8; reasons.push('오목 프로파일 -8점 (발치 시 안모 악화 우려)'); }
+
+  if (i.lipStrain === 'severe') { score += 10; reasons.push('현저한 입술 긴장 +10점'); }
+  else if (i.lipStrain === 'mild') { score += 4; reasons.push('경미한 입술 긴장 +4점'); }
+
+  if (i.overjet > 5) { score += 8; reasons.push(`Overjet ${i.overjet}mm > 5mm +8점`); }
+
+  const impaDelta = Math.abs(i.impa - 90);
+  if (impaDelta > 5) {
+    score += impaDelta * 0.6;
+    reasons.push(`IMPA ${i.impa}° 편차 ${impaDelta}° × 0.6 (Tweed 분석)`);
+  }
+
+  let teeth = [];
+  if (score >= 50) {
+    teeth = ['14', '24', '34', '44']; // 표준 4개 소구치 발치
+    if (i.profile === 'concave') teeth = ['14', '24']; // 상악만
+  }
+
+  // 어린이 가중치
+  if (patient && patient.ageGroup === 'child') {
+    score = Math.max(0, score - 25);
+    reasons.push('🧒 어린이 환자 가중치 -25점 (성장 잠재력 + 비발치 우선)');
+  }
+
+  score = Math.max(0, Math.min(100, score));
+  let recommendation = 'borderline';
+  if (score >= 60) recommendation = 'extract';
+  else if (score < 40) recommendation = 'non_extract';
+
+  renderResult({
+    score: Math.round(score),
+    recommendation,
+    teeth: recommendation === 'extract' ? teeth : [],
+    reasoning: reasons.slice(0, 5),
+    risks: ['치근 흡수 가능성', '발치 후 잔여 공간 폐쇄 시간 (12-18개월)'],
+    alternatives: i.crowding < 6 ? ['IPR (Stripping)', '확장 (Arch expansion)', 'TADs 활용 distalization'] : ['수술적 접근 (severe skeletal)']
+  });
+  window.toast('룰베이스 분석 완료', 'success');
+}
+
+async function callGemini() {
+  const patient = window.PatientStore.get() || { ageGroup: 'adult' };
+  const inputs = getInputs();
+  window.toast('Gemini 호출 중... (응답까지 몇 초 소요)', 'info');
+  try {
+    const res = await fetch('/api/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'extraction', patient, inputs })
+    });
+    const data = await res.json();
+    if (data.fallback) window.toast('AI 호출 실패 — 룰베이스로 폴백되었습니다.', 'warning');
+    renderResult(data);
+  } catch (e) {
+    window.toast('AI 호출 실패: ' + e.message, 'error');
+    computeRuleScore();
+  }
+}
+
+function renderResult(data) {
+  const score = Math.round(data.score || 0);
+  document.getElementById('scoreNum').textContent = score;
+  const arc = document.getElementById('scoreArc');
+  const circ = 2 * Math.PI * 78;
+  arc.setAttribute('stroke-dasharray', `${(score/100) * circ} ${circ}`);
+
+  const rec = data.recommendation || 'borderline';
+  const recMap = {
+    extract:    { label: '발치 권장 (Extract)', cls: 'badge-danger' },
+    non_extract:{ label: '비발치 (Non-extract)', cls: 'badge-success' },
+    borderline: { label: '경계 (Borderline)',    cls: 'badge-warning' }
+  };
+  const recBadge = document.getElementById('recBadge');
+  recBadge.className = 'badge ' + (recMap[rec]?.cls || 'badge-primary');
+  recBadge.textContent = recMap[rec]?.label || rec;
+
+  const teethBox = document.getElementById('teethRec');
+  teethBox.innerHTML = (data.teeth || []).map(t => `<span class="tooth-pill">#${t}</span>`).join('');
+
+  const reasonsEl = document.getElementById('reasons');
+  reasonsEl.innerHTML = (data.reasoning || []).slice(0, 5).map(r => `<li>${escapeHtml(r)}</li>`).join('') || '<li style="color:var(--text-muted);">근거 없음</li>';
+
+  document.getElementById('risks').innerHTML = (data.risks || []).map(r => `<li>${escapeHtml(r)}</li>`).join('') || '<li style="color:var(--text-muted);">—</li>';
+  document.getElementById('alternatives').innerHTML = (data.alternatives || []).map(r => `<li>${escapeHtml(r)}</li>`).join('') || '<li style="color:var(--text-muted);">—</li>';
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+// Age banner
+function updateBanner() {
+  const p = window.PatientStore.get();
+  const banner = document.getElementById('ageBanner');
+  if (!p) {
+    banner.textContent = '⚠️ 환자 정보를 먼저 입력해 주세요. (좌측 사이드 패널의 환자 정보 칩 클릭)';
+    return;
+  }
+  if (p.ageGroup === 'child') {
+    banner.className = 'age-banner child';
+    banner.innerHTML = `🧒 <strong>${p.name}</strong> (어린이 ${p.age}세) — 성장 잠재력을 고려해 비발치/2단계 치료를 우선 검토합니다.`;
+  } else {
+    banner.innerHTML = `👤 <strong>${p.name}</strong> (성인 ${p.age || '?'}세) — 표준 성인 룰셋이 적용됩니다.`;
+  }
+}
+setTimeout(updateBanner, 100);
+</script>
+</body>
+</html>

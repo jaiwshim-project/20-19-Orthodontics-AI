@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 챗봇 · 20-19 Orthodontics AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .chat-shell { display:grid; grid-template-columns: 260px 1fr 300px; gap:0; height: calc(100vh - 64px); }
+  @media (max-width: 1024px) { .chat-shell { grid-template-columns: 1fr; } .chat-sidebar, .chat-aside { display:none; } }
+  .chat-sidebar, .chat-aside { background: rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); padding:16px; overflow:auto; }
+  .chat-aside { border-right: none; border-left:1px solid rgba(255,255,255,0.06); }
+  .chat-main { display:flex; flex-direction:column; min-width:0; }
+  .chat-list { display:flex; flex-direction:column; gap:6px; }
+  .chat-item { padding:10px 12px; border-radius:10px; cursor:pointer; color:var(--text-secondary); font-size:13px; }
+  .chat-item:hover, .chat-item.active { background: rgba(14,165,233,0.12); color:var(--text-primary); }
+  .chat-stream { flex:1; overflow:auto; padding:24px; display:flex; flex-direction:column; gap:14px; }
+  .msg { max-width: 76%; padding:12px 16px; border-radius:14px; line-height:1.6; }
+  .msg.user { align-self:flex-end; background: linear-gradient(135deg,#0EA5E9,#8B5CF6); color:#fff; }
+  .msg.assistant { align-self:flex-start; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
+  .msg.assistant pre, .msg.assistant code { background: rgba(0,0,0,0.4); padding:2px 6px; border-radius:6px; font-size:13px; }
+  .quick-chips { display:flex; gap:8px; padding:0 24px 8px; flex-wrap:wrap; }
+  .chip { padding:6px 12px; border:1px solid rgba(255,255,255,0.12); border-radius:999px; font-size:12px; cursor:pointer; color:var(--text-secondary); background:transparent; }
+  .chip:hover { border-color: var(--color-primary); color:var(--text-primary); }
+  .chat-input-wrap { padding:16px 24px; border-top:1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2); }
+  .chat-input { display:flex; gap:8px; align-items:flex-end; }
+  .chat-input textarea { flex:1; min-height:44px; max-height:160px; resize:vertical; padding:12px 14px; background: rgba(255,255,255,0.04); color:var(--text-primary); border:1px solid rgba(255,255,255,0.1); border-radius:12px; font-family:inherit; }
+  .chat-input button { padding: 0 18px; height:44px; background: linear-gradient(135deg,#0EA5E9,#8B5CF6); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:600; }
+  .chat-input .icon-btn { background: rgba(255,255,255,0.06); }
+  .source-card { padding:10px 12px; background: rgba(14,165,233,0.06); border:1px solid rgba(14,165,233,0.18); border-radius:10px; margin-bottom:8px; font-size:12px; }
+  .source-card .src { color: var(--color-primary); font-weight:600; margin-bottom:4px; }
+  .typing { display:flex; gap:4px; padding: 8px 0; }
+  .typing span { width:8px; height:8px; background: var(--color-primary); border-radius:50%; animation: bounce 1.4s infinite ease-in-out; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; } .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity:0.6; } 40% { transform: scale(1); opacity:1; } }
+  .model-select { width:100%; padding:8px; background: rgba(255,255,255,0.04); color:var(--text-primary); border:1px solid rgba(255,255,255,0.1); border-radius:8px; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <div class="chat-shell">
+    <aside class="chat-sidebar">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">대화</h3>
+        <button class="icon-btn" onclick="newChat()" style="background:transparent; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:4px 10px; cursor:pointer; color:var(--text-primary);">+ 새 대화</button>
+      </div>
+      <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <section class="chat-main">
+      <div class="chat-stream" id="chatStream">
+        <div class="msg assistant">
+          안녕하세요. 교정치과 전문 AI 어시스턴트입니다. <br>
+          발치 판단, Bolton 비율 해석, 성장기 환자 치료 계획 등 무엇이든 물어보세요.
+        </div>
+      </div>
+      <div class="quick-chips">
+        <button class="chip" onclick="quickPrompt('성인 환자 Crowding 5mm, 발치 vs 비발치 판단 기준은?')">발치 케이스 분석</button>
+        <button class="chip" onclick="quickPrompt('Bolton 비율 91.3%가 의미하는 바와 임상적 활용을 설명해줘')">Bolton 비율 해석</button>
+        <button class="chip" onclick="quickPrompt('CVMS 3단계 어린이의 권장 치료 시기는?')">성장기 치료계획</button>
+        <button class="chip" onclick="quickPrompt('Class III 골격성 부정교합의 비수술 치료 옵션을 비교해줘')">Class III 치료 옵션</button>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input">
+          <button class="icon-btn" onclick="document.getElementById('fileInput').click()" title="파일 첨부">📎</button>
+          <input type="file" id="fileInput" style="display:none" accept="image/*,.stl,.pdf" onchange="onFile(event)">
+          <textarea id="chatInput" placeholder="메시지를 입력하세요... (Shift+Enter 줄바꿈)" onkeydown="onKey(event)"></textarea>
+          <button onclick="sendMessage()">전송</button>
+        </div>
+        <div id="fileChip" style="margin-top:8px; display:none; font-size:12px; color:var(--text-secondary);"></div>
+      </div>
+    </section>
+
+    <aside class="chat-aside">
+      <h3 style="margin:0 0 12px; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">설정</h3>
+      <select class="model-select" id="modelSelect">
+        <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠름)</option>
+        <option value="gemini-1.5-pro">Gemini 1.5 Pro (정밀)</option>
+        <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (실험)</option>
+      </select>
+      <h3 style="margin:16px 0 12px; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">참조한 지식</h3>
+      <div id="sources"><p style="color:var(--text-muted); font-size:12px;">대화 후 RAG로 참조된 출처가 여기 표시됩니다.</p></div>
+    </aside>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  const STORAGE_KEY = 'oc_chats';
+  let currentChat = null;
+
+  function loadChats() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveChats(chats) { localStorage.setItem(STORAGE_KEY, JSON.stringify(chats)); }
+
+  function renderChatList() {
+    const chats = loadChats();
+    const list = document.getElementById('chatList');
+    list.innerHTML = chats.length ? '' : '<p style="color:var(--text-muted); font-size:12px;">아직 대화가 없습니다.</p>';
+    chats.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'chat-item' + (currentChat?.id === c.id ? ' active' : '');
+      div.textContent = c.title || '새 대화';
+      div.onclick = () => loadChat(c.id);
+      list.appendChild(div);
+    });
+  }
+
+  function newChat() {
+    currentChat = { id: 'c_' + Date.now(), title: '새 대화', messages: [] };
+    document.getElementById('chatStream').innerHTML = '<div class="msg assistant">새 대화를 시작합니다. 무엇이든 물어보세요.</div>';
+    document.getElementById('sources').innerHTML = '<p style="color:var(--text-muted); font-size:12px;">대화 후 RAG 출처가 여기 표시됩니다.</p>';
+    renderChatList();
+  }
+
+  function loadChat(id) {
+    const chats = loadChats();
+    currentChat = chats.find(c => c.id === id);
+    if (!currentChat) return;
+    const stream = document.getElementById('chatStream');
+    stream.innerHTML = '';
+    currentChat.messages.forEach(m => addMessage(m.role, m.content, false));
+    renderChatList();
+  }
+
+  function addMessage(role, content, persist = true) {
+    const stream = document.getElementById('chatStream');
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    div.innerHTML = renderMarkdown(content);
+    stream.appendChild(div);
+    stream.scrollTop = stream.scrollHeight;
+    if (persist && currentChat) {
+      currentChat.messages.push({ role, content });
+      if (currentChat.messages.length === 1) currentChat.title = content.slice(0, 30);
+      const chats = loadChats();
+      const idx = chats.findIndex(c => c.id === currentChat.id);
+      if (idx >= 0) chats[idx] = currentChat; else chats.unshift(currentChat);
+      saveChats(chats);
+      renderChatList();
+    }
+  }
+
+  function renderMarkdown(text) {
+    return (text || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\n/g, '<br>');
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    if (!currentChat) newChat();
+    input.value = '';
+    addMessage('user', text);
+
+    const stream = document.getElementById('chatStream');
+    const typing = document.createElement('div');
+    typing.className = 'msg assistant typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    stream.appendChild(typing);
+    stream.scrollTop = stream.scrollHeight;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: currentChat.messages,
+          model: document.getElementById('modelSelect').value
+        })
+      });
+      typing.remove();
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        addMessage('assistant', `❗ 오류: ${err.error || res.statusText}`);
+        return;
+      }
+      const data = await res.json();
+      addMessage('assistant', data.reply);
+      renderSources(data.sources || []);
+    } catch (e) {
+      typing.remove();
+      addMessage('assistant', `❗ 네트워크 오류: ${e.message}`);
+    }
+  }
+
+  function renderSources(sources) {
+    const box = document.getElementById('sources');
+    if (!sources.length) {
+      box.innerHTML = '<p style="color:var(--text-muted); font-size:12px;">이 답변은 일반 모델 지식으로 생성되었습니다.</p>';
+      return;
+    }
+    box.innerHTML = sources.map(s => `
+      <div class="source-card">
+        <div class="src">${s.source || '내부 문서'}</div>
+        <div>${(s.snippet || '').replace(/</g,'&lt;')}…</div>
+      </div>`).join('');
+  }
+
+  function onKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function quickPrompt(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+  }
+
+  async function onFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    document.getElementById('fileChip').style.display = 'block';
+    document.getElementById('fileChip').textContent = `📎 ${file.name} 업로드 중...`;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, base64, contentType: file.type })
+        });
+        const data = await res.json();
+        document.getElementById('fileChip').textContent = `📎 ${file.name} 분석 완료`;
+        addMessage('assistant', `**파일 분석 결과:**\n\n${data.analysis || '분석 정보 없음'}`);
+      } catch (e) {
+        document.getElementById('fileChip').textContent = `❗ 업로드 실패: ${e.message}`;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  newChat();
+  renderChatList();
+</script>
+</body>
+</html>

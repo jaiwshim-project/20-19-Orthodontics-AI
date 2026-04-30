@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>재발 예측 AI · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  .risk-meter {
+    height: 14px; border-radius: 999px;
+    background: linear-gradient(90deg, #10B981 0%, #F59E0B 50%, #EF4444 100%);
+    position: relative; margin: 16px 0;
+  }
+  .risk-meter .pin {
+    position: absolute; top: -4px;
+    width: 22px; height: 22px;
+    background: #fff; border: 4px solid var(--bg-base);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 12px rgba(0,0,0,0.5);
+  }
+  .chart-wrap { position: relative; height: 280px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:24px;">
+  <span class="badge badge-warning">Long-term AI</span>
+  <h2 style="margin-top:8px;">재발 예측 AI <span style="font-size:14px; color:var(--text-muted);">Recurrence Prediction</span></h2>
+  <p>치료 종료 후 1·3·5·10년 시점의 재발 확률과 권장 보정(Retention) 프로토콜을 산출합니다.</p>
+</div>
+
+<div class="grid grid-2">
+
+  <div class="card">
+    <h3 style="margin-bottom:16px;">📋 입력</h3>
+    <div class="grid grid-2" style="gap:12px;">
+      <div class="field">
+        <label>치료 종료 시 IMPA (도)</label>
+        <input class="input" type="number" id="impa" step="0.5" value="92">
+      </div>
+      <div class="field">
+        <label>하악 절치 위치 변화 (mm)</label>
+        <input class="input" type="number" id="incisorShift" step="0.1" value="2">
+      </div>
+      <div class="field">
+        <label>보정장치 종류</label>
+        <select class="select" id="retainer">
+          <option value="hawley">Hawley (가철식)</option>
+          <option value="essix" selected>Essix (투명)</option>
+          <option value="bonded">Bonded (고정식)</option>
+          <option value="dual">Dual (고정+가철)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>보정 기간 (개월)</label>
+        <input class="input" type="number" id="retentionMonths" value="24">
+      </div>
+      <div class="field">
+        <label>환자 협조도</label>
+        <select class="select" id="compliance">
+          <option value="high">상</option>
+          <option value="medium" selected>중</option>
+          <option value="low">하</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>발치 여부</label>
+        <select class="select" id="extracted">
+          <option value="false" selected>비발치</option>
+          <option value="true">발치</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>치료 종료 시 Crowding 잔여 (mm)</label>
+        <input class="input" type="number" id="residual" step="0.1" value="0.5">
+      </div>
+      <div class="field">
+        <label>제3대구치 (사랑니)</label>
+        <select class="select" id="thirdMolar">
+          <option value="absent" selected>없음/발치 완료</option>
+          <option value="present">매복/잔존</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-ghost" onclick="computeRule()">룰베이스 계산</button>
+      <button class="btn btn-primary" onclick="callGemini()">🧠 AI 정밀 예측</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:8px;">⚠️ 종합 위험도</h3>
+    <div style="text-align:center; margin: 20px 0;">
+      <div style="font-size:48px; font-weight:800;" id="overallScore">—</div>
+      <div style="color:var(--text-muted); font-size:13px;">10년 누적 재발 확률</div>
+    </div>
+    <div class="risk-meter">
+      <div class="pin" id="riskPin" style="left:0%"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+      <span>안전</span><span>주의</span><span>위험</span>
+    </div>
+
+    <div style="margin-top:20px; padding:14px; background: rgba(255,255,255,0.03); border-radius:10px; font-size:13px;" id="protocolBox">
+      권장 보정 프로토콜이 분석 후 표시됩니다.
+    </div>
+  </div>
+
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:16px;">📊 시간 경과별 재발 확률</h3>
+  <div class="chart-wrap"><canvas id="timeChart"></canvas></div>
+</div>
+
+<div class="grid grid-2 mt-4">
+  <div class="card">
+    <h3 style="margin-bottom:12px;">🔥 위험 요인 우선순위</h3>
+    <div id="riskFactors"></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">🛡️ 권장 대책</h3>
+    <div id="alternatives"></div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/charts.js"></script>
+<script>
+let chart = null;
+
+function vals() {
+  return {
+    impa: parseFloat(document.getElementById('impa').value),
+    incisorShift: parseFloat(document.getElementById('incisorShift').value),
+    retainer: document.getElementById('retainer').value,
+    retentionMonths: parseInt(document.getElementById('retentionMonths').value),
+    compliance: document.getElementById('compliance').value,
+    extracted: document.getElementById('extracted').value === 'true',
+    residual: parseFloat(document.getElementById('residual').value),
+    thirdMolar: document.getElementById('thirdMolar').value
+  };
+}
+
+function computeRule() {
+  const v = vals();
+  let base = 25; // 10년 기준 baseline 25%
+  const factors = [];
+
+  const impaDelta = Math.abs(v.impa - 90);
+  if (impaDelta > 5) { base += impaDelta * 1.2; factors.push({ name: `IMPA ${v.impa}° 편차 ${impaDelta}°`, impact: impaDelta * 1.2 }); }
+
+  if (Math.abs(v.incisorShift) > 1.5) {
+    const add = Math.abs(v.incisorShift) * 3;
+    base += add;
+    factors.push({ name: `하악 절치 ${v.incisorShift}mm 이동`, impact: add });
+  }
+
+  const retMap = { hawley: 5, essix: 0, bonded: -10, dual: -15 };
+  const retImpact = retMap[v.retainer];
+  base += retImpact;
+  factors.push({ name: `${v.retainer} 보정`, impact: retImpact });
+
+  if (v.retentionMonths < 12) { base += 12; factors.push({ name: `보정 기간 부족 (${v.retentionMonths}개월)`, impact: 12 }); }
+  else if (v.retentionMonths >= 36) { base -= 8; factors.push({ name: `장기 보정 (${v.retentionMonths}개월)`, impact: -8 }); }
+
+  const compMap = { high: -10, medium: 0, low: 18 };
+  base += compMap[v.compliance];
+  factors.push({ name: `환자 협조도 ${{high:'상',medium:'중',low:'하'}[v.compliance]}`, impact: compMap[v.compliance] });
+
+  if (v.residual > 1) { base += v.residual * 4; factors.push({ name: `잔여 Crowding ${v.residual}mm`, impact: v.residual * 4 }); }
+  if (v.thirdMolar === 'present') { base += 8; factors.push({ name: '제3대구치 매복/잔존', impact: 8 }); }
+  if (v.extracted) { base -= 4; factors.push({ name: '발치 케이스 (안정성↑)', impact: -4 }); }
+
+  base = Math.max(2, Math.min(95, base));
+
+  // 시간 경과 분포 (Logistic-ish)
+  const probs = {
+    y1:  +(base * 0.18).toFixed(1),
+    y3:  +(base * 0.42).toFixed(1),
+    y5:  +(base * 0.68).toFixed(1),
+    y10: +(base).toFixed(1)
+  };
+
+  render(probs, factors, v);
+  return probs;
+}
+
+function render(probs, factors, v) {
+  document.getElementById('overallScore').textContent = `${probs.y10}%`;
+  document.getElementById('riskPin').style.left = `${Math.min(100, probs.y10)}%`;
+
+  // Time chart
+  if (chart) chart.destroy();
+  chart = window.Charts.bar('timeChart', {
+    labels: ['1년', '3년', '5년', '10년'],
+    values: [probs.y1, probs.y3, probs.y5, probs.y10],
+    label: '재발 확률 (%)',
+    color: probs.y10 > 50 ? '#EF4444' : probs.y10 > 30 ? '#F59E0B' : '#10B981'
+  });
+
+  // Risk factors
+  const sorted = factors.filter(f => f.impact > 0).sort((a, b) => b.impact - a.impact);
+  document.getElementById('riskFactors').innerHTML = sorted.length
+    ? sorted.map(f => `
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border-subtle); font-size:13px;">
+        <span>${f.name}</span>
+        <strong style="color:var(--color-danger);">+${f.impact.toFixed(1)}%</strong>
+      </div>`).join('')
+    : '<p style="color:var(--text-muted);">주요 위험 요인 없음</p>';
+
+  // Alternatives / protocol
+  const alts = [];
+  if (v.compliance === 'low') alts.push('Bonded 고정 보정으로 전환 검토');
+  if (v.retentionMonths < 24) alts.push('보정 기간 24개월 이상으로 연장');
+  if (v.thirdMolar === 'present') alts.push('제3대구치 발치 권장');
+  if (Math.abs(v.incisorShift) > 2) alts.push('하악 3-3 영구 retainer 권장');
+  if (probs.y10 > 50) alts.push('치료 종료 1년 시점 정기 재평가 + 즉각 개입');
+  if (alts.length === 0) alts.push('현재 프로토콜 유지');
+
+  document.getElementById('alternatives').innerHTML = alts.map(a => `
+    <div style="padding:8px 0; border-bottom:1px dashed var(--border-subtle); font-size:13px;">✓ ${a}</div>
+  `).join('');
+
+  // Protocol summary
+  const protocol = probs.y10 > 50
+    ? '🚨 고위험 — Bonded 3-3 + 야간 Essix + 6개월 정기 검진'
+    : probs.y10 > 30
+      ? '⚠️ 중위험 — Essix 야간 착용 + 1년 검진'
+      : '✅ 저위험 — Essix 24개월 야간 착용 후 점진적 중단';
+  document.getElementById('protocolBox').innerHTML = `<strong>권장 프로토콜:</strong> ${protocol}`;
+}
+
+async function callGemini() {
+  const inputs = vals();
+  window.toast('Gemini AI 분석 중...', 'info');
+  try {
+    const res = await fetch('/api/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'recurrence', patient: window.PatientStore.get() || {}, inputs })
+    });
+    const data = await res.json();
+    if (data.probabilities) {
+      const p = data.probabilities;
+      document.getElementById('overallScore').textContent = `${(p.y10 * 100).toFixed(0)}%`;
+    }
+    if (data.fallback) window.toast('AI 호출 실패 — 룰베이스 사용', 'warning');
+    computeRule();
+  } catch (e) {
+    window.toast('AI 호출 실패: ' + e.message, 'error');
+    computeRule();
+  }
+}
+
+setTimeout(computeRule, 100);
+</script>
+</body>
+</html>

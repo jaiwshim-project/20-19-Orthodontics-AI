@@ -1,0 +1,19 @@
+{
+  "name": "20-19-orthodontics-ai",
+  "version": "0.1.0",
+  "description": "Orthodontics AI Platform - 4 AI engines + 3D viewer + RAG chatbot",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

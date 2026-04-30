@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20-19 Orthodontics AI · 교정치과 AI 플랫폼</title>
+<meta name="description" content="발치 판단, 성장 예측, 안모 시뮬레이션, 재발 예측 AI를 통합한 차세대 교정치과 플랫폼.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 14px; border-radius: 999px;
+    background: rgba(14,165,233,0.12);
+    border: 1px solid rgba(14,165,233,0.3);
+    color: var(--color-primary);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .stats-row {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 32px; padding-top: 32px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .stat { text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 800; color: var(--color-primary); }
+  .stat .lbl { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .section-title {
+    display: flex; align-items: baseline; gap: 12px;
+    margin: 32px 0 20px;
+  }
+  .section-title h2 { font-size: 1.5rem; }
+  .section-title p { font-size: 13px; color: var(--text-muted); }
+  footer {
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 48px;
+  }
+  .architecture-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: var(--color-accent);
+    font-size: 11px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+
+<section class="hero">
+  <span class="hero-mark">AI for Orthodontic Excellence</span>
+  <h1>교정치과의 모든 의사결정을<br>
+    <span class="gradient-text">하나의 AI 플랫폼</span>으로</h1>
+  <p>발치 판단, 성장 예측, 안모 변화 시뮬레이션, 재발 확률 예측. 4대 AI 엔진과 EZL-STL 3D 뷰어, RAG 지식베이스를 결합한 차세대 교정치과 플랫폼.</p>
+  <div class="cta-row">
+    <button class="btn btn-primary btn-lg" onclick="window.openPatientModal()">환자 정보 시작하기</button>
+    <a class="btn btn-ghost btn-lg" href="3d-viewer.html">3D 뷰어 데모</a>
+    <a class="btn btn-ghost btn-lg" href="manual.html">매뉴얼 보기</a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="num">4</div><div class="lbl">AI 엔진</div></div>
+    <div class="stat"><div class="num">20</div><div class="lbl">에이전트 협업</div></div>
+    <div class="stat"><div class="num">2M</div><div class="lbl">Gemini 컨텍스트</div></div>
+    <div class="stat"><div class="num">99.9%</div><div class="lbl">목표 SLA</div></div>
+  </div>
+</section>
+
+<div class="container">
+
+<div class="section-title">
+  <h2>핵심 기능</h2>
+  <p>각 카드를 클릭해 진단/도구로 이동</p>
+</div>
+
+<div class="grid grid-4">
+  <a class="feature-card" href="3d-viewer.html">
+    <div class="icon">🧊</div>
+    <h3>3D 뷰어 + EZL-STL</h3>
+    <p>STL 업로드 → 치열궁 길이, Bolton 비율, Spee 만곡 자동 측정.</p>
+    <span class="badge badge-primary">Three.js</span>
+  </a>
+  <a class="feature-card" href="extraction-ai.html">
+    <div class="icon">🦷</div>
+    <h3>발치 판단 AI</h3>
+    <p>Tweed/Steiner/Down 룰 + Gemini. 성인/어린이 분기 권장.</p>
+    <span class="badge badge-accent">Adult / Child</span>
+  </a>
+  <a class="feature-card" href="growth-prediction.html">
+    <div class="icon">📈</div>
+    <h3>성장 예측 AI</h3>
+    <p>CVMS 1-6 + 성장곡선 + 하악 peak velocity 시점 도출.</p>
+    <span class="badge badge-success">Pediatric</span>
+  </a>
+  <a class="feature-card" href="facial-simulation.html">
+    <div class="icon">👤</div>
+    <h3>안모 시뮬레이션</h3>
+    <p>측면 안모 SVG + 슬라이더로 Before/After 실시간 변형.</p>
+    <span class="badge badge-primary">SVG Realtime</span>
+  </a>
+  <a class="feature-card" href="recurrence-prediction.html">
+    <div class="icon">🔁</div>
+    <h3>재발 예측 AI</h3>
+    <p>1/3/5/10년 재발 확률 + 권장 보정 프로토콜.</p>
+    <span class="badge badge-warning">Long-term</span>
+  </a>
+  <a class="feature-card" href="chatbot.html">
+    <div class="icon">💬</div>
+    <h3>RAG 챗봇</h3>
+    <p>Gemini + Supabase pgvector. 출처 근거와 함께 답변.</p>
+    <span class="badge badge-accent">Gemini</span>
+  </a>
+  <a class="feature-card" href="dashboard.html">
+    <div class="icon">📊</div>
+    <h3>대시보드</h3>
+    <p>환자 분포, 진단 트렌드, 재발 알림 한 눈에.</p>
+    <span class="badge badge-primary">Analytics</span>
+  </a>
+  <a class="feature-card" href="manual.html">
+    <div class="icon">📖</div>
+    <h3>매뉴얼</h3>
+    <p>모든 기능의 사용법 + FAQ + 임상 가이드라인.</p>
+    <span class="badge badge-success">Docs</span>
+  </a>
+</div>
+
+<div class="section-title">
+  <h2>아키텍처 한눈에</h2>
+  <p>4계층 분리 + 20개 AI 에이전트 오케스트레이션</p>
+</div>
+
+<div class="card card-elevated" style="text-align:center;">
+  <p style="margin-bottom:16px;">
+    <span class="architecture-pill">Presentation</span>
+    →
+    <span class="architecture-pill">API · Vercel Functions</span>
+    →
+    <span class="architecture-pill">AI · Gemini + Embedding</span>
+    →
+    <span class="architecture-pill">Data · Supabase + Neo4j</span>
+  </p>
+  <p style="font-size:14px;">정적 HTML 페이지 8종 → Serverless API 5종 → Gemini 1.5/2.0 → Postgres + pgvector + 지식그래프</p>
+  <a href="architecture.html" class="btn btn-ghost mt-4">전체 아키텍처 보기 →</a>
+</div>
+
+<div class="section-title">
+  <h2>지금 시작</h2>
+  <p>환자 정보를 입력하면 모든 AI 엔진이 그 환자에 맞춰 작동합니다.</p>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h4>1단계 — 환자 등록</h4>
+    <p>이름, 생년월일, 성별을 입력하면 시스템이 자동으로 성인/어린이를 분기하여 적절한 룰셋을 선택합니다.</p>
+    <button class="btn btn-primary mt-4" onclick="window.openPatientModal()">환자 입력하기</button>
+  </div>
+  <div class="card">
+    <h4>2단계 — 데이터 업로드</h4>
+    <p>STL 모형, 측면 두부방사선, 구강 사진을 업로드하면 EZL-STL 엔진과 Gemini Vision이 자동으로 분석합니다.</p>
+    <a href="3d-viewer.html" class="btn btn-ghost mt-4">3D 뷰어로 →</a>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  © 2026 Orthodontics AI · v0.1 MVP · Built with Gemini + Supabase + Vercel<br>
+  <small>본 시스템은 임상 의사결정 보조 도구입니다. 최종 진단은 반드시 전문의의 판단에 따르십시오.</small>
+</footer>
+
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  if (!window.PatientStore.get()) {
+    setTimeout(() => window.toast('환자 정보를 먼저 입력하세요.', 'info', 4000), 800);
+  }
+</script>
+</body>
+</html>

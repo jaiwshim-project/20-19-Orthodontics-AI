@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>안모 시뮬레이션 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .face-svg { width: 100%; height: auto; max-width: 480px; display:block; margin: 0 auto; }
+  .slider-row { display:grid; grid-template-columns: 130px 1fr 60px; align-items:center; gap:12px; padding:10px 0; border-bottom: 1px dashed var(--border-subtle); }
+  .slider-row label { margin:0; font-size:13px; }
+  .slider-row input[type=range] { width: 100%; accent-color: var(--color-primary); }
+  .slider-row .v { font-family: 'Inter', monospace; font-size: 13px; color: var(--color-primary); text-align: right; font-weight: 600; }
+  .toggle-row { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:12px; }
+  .metric-pill {
+    display: inline-flex; padding: 8px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle);
+    font-size: 13px; gap: 6px; align-items: center;
+  }
+  .metric-pill strong { color: var(--color-primary); }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:24px;">
+  <span class="badge badge-primary">Realtime SVG</span>
+  <h2 style="margin-top:8px;">안모 변화 시뮬레이션 <span style="font-size:14px; color:var(--text-muted);">Facial Profile Simulation</span></h2>
+  <p>슬라이더로 상악/하악/입술 위치를 조정하면 측면 안모와 E-line(Ricketts)이 실시간 변형됩니다.</p>
+</div>
+
+<div class="grid grid-2">
+
+  <div class="card">
+    <h3 style="margin-bottom:12px;">측면 안모 (Lateral Profile)</h3>
+    <svg class="face-svg" id="faceSvg" viewBox="0 0 400 540">
+      <defs>
+        <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fbcfa8"/>
+          <stop offset="100%" stop-color="#e0a577"/>
+        </linearGradient>
+      </defs>
+      <!-- Profile path -->
+      <path id="profileBefore" d="" fill="none" stroke="rgba(229,231,235,0.25)" stroke-width="2" stroke-dasharray="4 4"/>
+      <path id="profileAfter"  d="" fill="url(#skin)" fill-opacity="0.18" stroke="#0EA5E9" stroke-width="3" stroke-linejoin="round"/>
+      <!-- E-line -->
+      <line id="eline" x1="0" y1="0" x2="0" y2="0" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <!-- Landmarks (rendered by JS) -->
+      <g id="landmarks"></g>
+    </svg>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+      <span class="metric-pill">E-line ↔ 상순: <strong id="ellipUpper">— mm</strong></span>
+      <span class="metric-pill">E-line ↔ 하순: <strong id="ellipLower">— mm</strong></span>
+      <span class="metric-pill">코-턱 비율: <strong id="noseChin">—</strong></span>
+    </div>
+    <div class="toggle-row">
+      <button class="btn btn-ghost btn-sm" id="toggleBefore">Before/After 토글</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetSliders()">초기화</button>
+      <button class="btn btn-primary btn-sm" onclick="snapshot()">📷 스냅샷</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:12px;">조정 슬라이더</h3>
+    <div class="slider-row"><label>상악 후방 (mm)</label><input type="range" id="sMaxRetract" min="-2" max="6" step="0.1" value="0"><span class="v" id="vMaxRetract">0.0</span></div>
+    <div class="slider-row"><label>하악 전후방 (mm)</label><input type="range" id="sMandShift" min="-5" max="5" step="0.1" value="0"><span class="v" id="vMandShift">0.0</span></div>
+    <div class="slider-row"><label>상순 (mm)</label><input type="range" id="sLipUpper" min="-3" max="3" step="0.1" value="0"><span class="v" id="vLipUpper">0.0</span></div>
+    <div class="slider-row"><label>하순 (mm)</label><input type="range" id="sLipLower" min="-3" max="3" step="0.1" value="0"><span class="v" id="vLipLower">0.0</span></div>
+    <div class="slider-row"><label>턱 (mm)</label><input type="range" id="sChin" min="-3" max="3" step="0.1" value="0"><span class="v" id="vChin">0.0</span></div>
+
+    <h4 style="margin-top:20px;">📍 랜드마크</h4>
+    <p style="font-size:12px; color:var(--text-muted);">N(Nasion), Sn(Subnasale), A(A-point), B(B-point), Pog(Pogonion), Me(Menton). 슬라이더 조작에 따라 좌표가 실시간 보간됩니다.</p>
+
+    <h4 style="margin-top:16px;">🧠 AI 권장</h4>
+    <button class="btn btn-primary" onclick="callGemini()">Gemini로 변화 의미 해석</button>
+    <div id="aiOpinion" style="margin-top:12px; font-size:13px; color:var(--text-secondary); white-space:pre-wrap;"></div>
+  </div>
+
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+// Base landmark coordinates (Before)
+const BASE = {
+  N:   { x: 230, y: 80  },
+  Sn:  { x: 280, y: 230 },
+  A:   { x: 268, y: 260 },
+  Ls:  { x: 285, y: 280 }, // Upper lip
+  Li:  { x: 275, y: 320 }, // Lower lip
+  B:   { x: 250, y: 360 },
+  Pog: { x: 255, y: 400 },
+  Me:  { x: 245, y: 440 },
+  // Forehead/nose curve
+  Forehead: { x: 195, y: 100 },
+  NoseTip:  { x: 320, y: 220 }
+};
+
+let showBefore = true;
+
+function transform() {
+  const maxR = parseFloat(document.getElementById('sMaxRetract').value);
+  const mand = parseFloat(document.getElementById('sMandShift').value);
+  const lU   = parseFloat(document.getElementById('sLipUpper').value);
+  const lL   = parseFloat(document.getElementById('sLipLower').value);
+  const chin = parseFloat(document.getElementById('sChin').value);
+
+  document.getElementById('vMaxRetract').textContent = maxR.toFixed(1);
+  document.getElementById('vMandShift').textContent  = mand.toFixed(1);
+  document.getElementById('vLipUpper').textContent   = lU.toFixed(1);
+  document.getElementById('vLipLower').textContent   = lL.toFixed(1);
+  document.getElementById('vChin').textContent       = chin.toFixed(1);
+
+  const after = JSON.parse(JSON.stringify(BASE));
+  // 1mm ~ 2.2px scaling (rough)
+  const k = 2.2;
+  after.A.x   -= maxR * k;
+  after.Ls.x  -= maxR * k * 0.6 + (-lU) * k;
+  after.Li.x  += mand * k * 0.7 + (-lL) * k;
+  after.B.x   += mand * k;
+  after.Pog.x += mand * k + chin * k;
+  after.Me.x  += mand * k + chin * k * 0.7;
+
+  return after;
+}
+
+function pathFromPoints(p) {
+  // Smooth profile from forehead → nose → upper lip → lower lip → chin → menton
+  return `M ${p.Forehead.x} ${p.Forehead.y}
+          Q ${p.N.x - 10} ${p.N.y - 10}, ${p.N.x} ${p.N.y}
+          Q ${p.NoseTip.x + 10} ${p.NoseTip.y - 20}, ${p.NoseTip.x} ${p.NoseTip.y}
+          Q ${p.Sn.x + 6} ${p.Sn.y - 5}, ${p.Sn.x} ${p.Sn.y}
+          L ${p.Ls.x} ${p.Ls.y}
+          Q ${p.Li.x + 8} ${(p.Ls.y + p.Li.y)/2}, ${p.Li.x} ${p.Li.y}
+          Q ${p.B.x + 4} ${(p.Li.y + p.B.y)/2}, ${p.B.x} ${p.B.y}
+          L ${p.Pog.x} ${p.Pog.y}
+          L ${p.Me.x} ${p.Me.y}
+          Q ${p.Me.x - 30} ${p.Me.y + 12}, ${p.Me.x - 60} ${p.Me.y - 8}`;
+}
+
+function update() {
+  const after = transform();
+  document.getElementById('profileAfter').setAttribute('d', pathFromPoints(after));
+  document.getElementById('profileBefore').setAttribute('d', pathFromPoints(BASE));
+  document.getElementById('profileBefore').style.display = showBefore ? 'block' : 'none';
+
+  // E-line: nose tip to pogonion
+  const el = document.getElementById('eline');
+  el.setAttribute('x1', after.NoseTip.x);
+  el.setAttribute('y1', after.NoseTip.y);
+  el.setAttribute('x2', after.Pog.x);
+  el.setAttribute('y2', after.Pog.y);
+
+  // E-line distances (perpendicular distance from Ls/Li to nose-Pog line)
+  const dU = perpDistance(after.Ls, after.NoseTip, after.Pog);
+  const dL = perpDistance(after.Li, after.NoseTip, after.Pog);
+  // Convert px to mm (k=2.2)
+  document.getElementById('ellipUpper').textContent = (dU / 2.2).toFixed(1) + ' mm';
+  document.getElementById('ellipLower').textContent = (dL / 2.2).toFixed(1) + ' mm';
+
+  const noseLen = Math.hypot(after.N.x - after.NoseTip.x, after.N.y - after.NoseTip.y);
+  const lowerFace = Math.hypot(after.Sn.x - after.Me.x, after.Sn.y - after.Me.y);
+  document.getElementById('noseChin').textContent = (noseLen / lowerFace).toFixed(2);
+
+  // Landmarks
+  const g = document.getElementById('landmarks');
+  g.innerHTML = '';
+  ['N','Sn','A','Ls','Li','B','Pog','Me'].forEach(name => {
+    const p = after[name];
+    g.innerHTML += `
+      <circle cx="${p.x}" cy="${p.y}" r="3" fill="#0EA5E9" />
+      <text x="${p.x + 6}" y="${p.y + 4}" font-size="10" fill="rgba(229,231,235,0.7)">${name}</text>
+    `;
+  });
+}
+
+function perpDistance(p, a, b) {
+  const num = Math.abs((b.y - a.y)*p.x - (b.x - a.x)*p.y + b.x*a.y - b.y*a.x);
+  const den = Math.hypot(b.x - a.x, b.y - a.y);
+  return den === 0 ? 0 : num / den;
+}
+
+function resetSliders() {
+  ['sMaxRetract','sMandShift','sLipUpper','sLipLower','sChin'].forEach(id => {
+    document.getElementById(id).value = 0;
+  });
+  update();
+}
+
+function snapshot() {
+  const svg = document.getElementById('faceSvg');
+  const xml = new XMLSerializer().serializeToString(svg);
+  const svg64 = btoa(unescape(encodeURIComponent(xml)));
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 800; canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0B1220';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `facial-sim-${Date.now()}.png`;
+    a.click();
+    window.toast('스냅샷 저장 완료', 'success');
+  };
+  img.src = 'data:image/svg+xml;base64,' + svg64;
+}
+
+async function callGemini() {
+  const inputs = {
+    maxRetract: parseFloat(document.getElementById('sMaxRetract').value),
+    mandShift: parseFloat(document.getElementById('sMandShift').value),
+    lipUpper: parseFloat(document.getElementById('sLipUpper').value),
+    lipLower: parseFloat(document.getElementById('sLipLower').value),
+    chin: parseFloat(document.getElementById('sChin').value)
+  };
+  document.getElementById('aiOpinion').textContent = '분석 중...';
+  try {
+    const res = await fetch('/api/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'facial', patient: window.PatientStore.get() || {}, inputs })
+    });
+    const data = await res.json();
+    document.getElementById('aiOpinion').textContent =
+      `[권장도 ${data.score}/100] ${data.recommendation || ''}\n\n` +
+      (data.reasoning || []).slice(0, 4).map((r,i)=>`${i+1}. ${r}`).join('\n');
+  } catch (e) {
+    document.getElementById('aiOpinion').textContent = '분석 실패: ' + e.message;
+  }
+}
+
+document.querySelectorAll('input[type=range]').forEach(s => s.addEventListener('input', update));
+document.getElementById('toggleBefore').onclick = () => { showBefore = !showBefore; update(); };
+update();
+</script>
+</body>
+</html>
