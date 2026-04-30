@@ -23,6 +23,22 @@
   .stage-tracker .stage.active { background: rgba(14,165,233,0.15); border-color: var(--color-primary); color: var(--color-primary); }
   .stage-tracker .stage.passed { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--color-success); }
   .chart-wrap { position: relative; height: 320px; }
+  /* Visual Measurements (shared with extraction) */
+  .visual-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .visual-card { background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+  .visual-card .vc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .visual-card .vc-name { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
+  .visual-card .vc-val { font-size:16px; font-weight:700; font-family:'Inter',monospace; }
+  .visual-card .vc-val.ok { color:var(--color-success); }
+  .visual-card .vc-val.warn { color:var(--color-warning); }
+  .visual-card .vc-val.danger { color:var(--color-danger); }
+  .visual-card svg { width:100%; height:80px; display:block; }
+  .visual-card .vc-note { font-size:10px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+  .gauge-track { fill:rgba(255,255,255,0.06); }
+  .gauge-zone-ok { fill:rgba(16,185,129,0.18); }
+  .gauge-zone-warn { fill:rgba(245,158,11,0.18); }
+  .gauge-zone-danger { fill:rgba(239,68,68,0.18); }
+  .gauge-pin { fill:#fff; stroke:var(--color-primary); stroke-width:2; }
 </style>
 </head>
 <body>
@@ -132,6 +148,11 @@
 </div>
 
 <div class="card mt-4">
+  <h3 style="margin-bottom:12px;">📐 측정값 시각화 <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px;">입력값 변경 시 즉시 갱신</span></h3>
+  <div id="visualGrid" class="visual-grid"></div>
+</div>
+
+<div class="card mt-4">
   <h3 style="margin-bottom:16px;">📈 성장 곡선 (신장 + 하악골)</h3>
   <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
   <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">파선: 하악골 길이 (mm). Peak velocity 시점은 주황 점선으로 표시됩니다.</p>
@@ -154,6 +175,7 @@
 <script src="js/charts.js"></script>
 <script src="js/scanner-input.js"></script>
 <script src="js/diagnosis-store.js"></script>
+<script src="js/visual-helpers.js"></script>
 <script>
 let chartRef = null;
 
@@ -270,12 +292,74 @@ async function saveCurrentDiagnosis() {
   if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
 }
 
+// 측정값 시각화
+function renderVisuals() {
+  const v = vals();
+  const patient = window.PatientStore.get() || {};
+  const VH = window.VisualHelpers;
+  if (!VH) return;
+
+  const ageDelta = (v.boneAge || 0) - (v.chronAge || 0);
+  const bmi = v.height > 0 ? (v.weight / Math.pow(v.height/100, 2)) : 0;
+  const gender = patient.gender || 'male';
+  const target = ((v.father + v.mother) + (gender === 'female' ? -13 : 13)) / 2;
+  const factor = ({1:0.95,2:0.85,3:0.55,4:0.30,5:0.10,6:0.02}[v.cvms] || 0.5);
+  const remaining = Math.max(0, (target - v.height) * factor + (1-factor) * 0 + (-ageDelta * 0.8));
+  const predicted = v.height + remaining;
+
+  const cvmsLabels = ['CS1','CS2','CS3★','CS4','CS5','CS6'];
+  const cards = [
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">CVMS 단계</div><div class="vc-val ${v.cvms === 3 ? 'warn' : 'ok'}">CS${v.cvms}</div></div>
+      ${VH.svgStageBar(v.cvms, 6, cvmsLabels)}
+      <div class="vc-note">CS3가 peak velocity (★ 골격 치료 골든타임)</div>
+    </div>`,
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">골연령 vs 역연령</div><div class="vc-val ${Math.abs(ageDelta) <= 1 ? 'ok' : ageDelta > 0 ? 'warn' : 'danger'}">${ageDelta > 0 ? '+' : ''}${ageDelta.toFixed(1)} 세</div></div>
+      ${VH.svgBarCompare(v.boneAge, v.chronAge, '골연령', '역연령', '#0EA5E9', '#8B5CF6', 18)}
+      <div class="vc-note">골연령이 역연령보다 빠르면 잔여 성장 적음</div>
+    </div>`,
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">예상 신장 (mid-parental)</div><div class="vc-val ok">${predicted.toFixed(0)} cm</div></div>
+      ${VH.svgHeightBar(v.height, target, predicted, 130, 200)}
+      <div class="vc-note">현재 → 목표(부모 평균) → 예측 최종</div>
+    </div>`,
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">잔여 성장</div><div class="vc-val ${remaining > 5 ? 'ok' : remaining > 1 ? 'warn' : 'danger'}">+${remaining.toFixed(1)} cm</div></div>
+      <svg viewBox="0 0 240 50" preserveAspectRatio="none">
+        <rect x="0" y="20" width="240" height="14" rx="3" fill="rgba(255,255,255,0.06)"/>
+        <rect x="0" y="20" width="${Math.min(1, remaining/15) * 240}" height="14" rx="3" fill="url(#growthGrad)"/>
+        <defs><linearGradient id="growthGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#0EA5E9"/></linearGradient></defs>
+        <text x="0" y="48" font-size="9" fill="rgba(255,255,255,0.4)">0</text>
+        <text x="240" y="48" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.4)">15cm+</text>
+      </svg>
+      <div class="vc-note">CVMS×성장 가중치로 추정. 5cm↑ 양호</div>
+    </div>`,
+    VH.gaugeCard('BMI', '', bmi, 14, 28, [
+      {to: 17, cls: 'warn',   label: '저체중'},
+      {to: 23, cls: 'ok',     label: '정상'},
+      {to: 28, cls: 'warn',   label: '과체중'}
+    ], '청소년 BMI 표준 범위'),
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">부모 키 균형</div><div class="vc-val">${target.toFixed(0)} cm</div></div>
+      ${VH.svgBarCompare(v.father, v.mother, '아버지', '어머니', '#0EA5E9', '#EF4444', 195)}
+      <div class="vc-note">mid-parental: (부+모±13)/2</div>
+    </div>`
+  ];
+  document.getElementById('visualGrid').innerHTML = cards.join('');
+}
+
+['height','weight','father','mother','boneAge','chronAge','cvms'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', renderVisuals);
+});
+
 // Init
 const patient = window.PatientStore.get();
 if (patient && patient.ageGroup === 'adult') {
   document.getElementById('adultWarning').style.display = 'block';
 }
-setTimeout(computeRule, 100);
+setTimeout(() => { computeRule(); renderVisuals(); }, 100);
 
 const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
 window.ScannerInput.mount(document.getElementById('scannerMount'), {

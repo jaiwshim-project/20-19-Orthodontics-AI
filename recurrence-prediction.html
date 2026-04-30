@@ -25,6 +25,21 @@
     box-shadow: 0 0 12px rgba(0,0,0,0.5);
   }
   .chart-wrap { position: relative; height: 280px; }
+  .visual-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .visual-card { background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+  .visual-card .vc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .visual-card .vc-name { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
+  .visual-card .vc-val { font-size:16px; font-weight:700; font-family:'Inter',monospace; }
+  .visual-card .vc-val.ok { color:var(--color-success); }
+  .visual-card .vc-val.warn { color:var(--color-warning); }
+  .visual-card .vc-val.danger { color:var(--color-danger); }
+  .visual-card svg { width:100%; height:80px; display:block; }
+  .visual-card .vc-note { font-size:10px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+  .gauge-track { fill:rgba(255,255,255,0.06); }
+  .gauge-zone-ok { fill:rgba(16,185,129,0.18); }
+  .gauge-zone-warn { fill:rgba(245,158,11,0.18); }
+  .gauge-zone-danger { fill:rgba(239,68,68,0.18); }
+  .gauge-pin { fill:#fff; stroke:var(--color-primary); stroke-width:2; }
 </style>
 </head>
 <body>
@@ -137,6 +152,11 @@
 </div>
 
 <div class="card mt-4">
+  <h3 style="margin-bottom:12px;">📐 측정값 시각화 <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px;">입력값 변경 시 즉시 갱신</span></h3>
+  <div id="visualGrid" class="visual-grid"></div>
+</div>
+
+<div class="card mt-4">
   <h3 style="margin-bottom:16px;">📊 시간 경과별 재발 확률</h3>
   <div class="chart-wrap"><canvas id="timeChart"></canvas></div>
 </div>
@@ -160,6 +180,7 @@
 <script src="js/charts.js"></script>
 <script src="js/scanner-input.js"></script>
 <script src="js/diagnosis-store.js"></script>
+<script src="js/visual-helpers.js"></script>
 <script>
 let chart = null;
 
@@ -298,7 +319,95 @@ async function saveCurrentDiagnosis() {
   if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
 }
 
-setTimeout(computeRule, 100);
+// 측정값 시각화
+function renderVisuals() {
+  const v = vals();
+  const VH = window.VisualHelpers;
+  if (!VH) return;
+
+  const retainerOptions = [
+    { value: 'hawley', label: 'Hawley', icon: VH.svgRetainer('hawley',  v.retainer === 'hawley') },
+    { value: 'essix',  label: 'Essix',  icon: VH.svgRetainer('essix',   v.retainer === 'essix') },
+    { value: 'bonded', label: 'Bonded', icon: VH.svgRetainer('bonded',  v.retainer === 'bonded') },
+    { value: 'dual',   label: 'Dual',   icon: VH.svgRetainer('dual',    v.retainer === 'dual') }
+  ];
+  const complianceOptions = [
+    { value: 'high',   label: '상', icon: '<div style="font-size:18px;">😊</div>' },
+    { value: 'medium', label: '중', icon: '<div style="font-size:18px;">😐</div>' },
+    { value: 'low',    label: '하', icon: '<div style="font-size:18px;">😟</div>' }
+  ];
+
+  const cards = [
+    VH.angleCard('IMPA', '도', v.impa, [85, 95], [70, 110],
+      '치료 후 하악 절치 각도. 95° 초과 시 재발 위험↑',
+      VH.svgIncisorAngle(v.impa)),
+
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">하악 절치 변화량</div><div class="vc-val ${Math.abs(v.incisorShift) > 2 ? 'danger' : Math.abs(v.incisorShift) > 1 ? 'warn' : 'ok'}">${v.incisorShift > 0 ? '+' : ''}${v.incisorShift.toFixed(1)} mm</div></div>
+      ${VH.svgSliderBar(v.incisorShift, -5, 5, '')}
+      <div class="vc-note">+ 전방이동 / − 후방. 1.5mm 초과 시 재발 가속</div>
+    </div>`,
+
+    VH.choiceCard('보정장치', v.retainer, retainerOptions, 'Hawley < Essix < Dual < Bonded (안정성↑)'),
+
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">보정 기간</div><div class="vc-val ${v.retentionMonths >= 24 ? 'ok' : v.retentionMonths >= 12 ? 'warn' : 'danger'}">${v.retentionMonths} 개월</div></div>
+      ${VH.svgTimeline(v.retentionMonths, 36)}
+      <div class="vc-note">12개월 미만 위험, 24개월 이상 안정적</div>
+    </div>`,
+
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">환자 협조도</div><div class="vc-val ${v.compliance === 'high' ? 'ok' : v.compliance === 'medium' ? 'warn' : 'danger'}">${{high:'상',medium:'중',low:'하'}[v.compliance]}</div></div>
+      ${VH.svgComplianceMeter(v.compliance)}
+      <div class="vc-note">협조도 하 시 재발 위험 +18%</div>
+    </div>`,
+
+    VH.gaugeCard('잔여 Crowding', 'mm', v.residual, 0, 5, [
+      {to: 0.5, cls: 'ok',     label: '안정'},
+      {to: 1.5, cls: 'warn',   label: '주의'},
+      {to: 5,   cls: 'danger', label: '재발↑'}
+    ], '치료 종료 시 잔여 부조화. 1mm 초과 시 재발 가속'),
+
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">발치 여부</div><div class="vc-val">${v.extracted ? '발치' : '비발치'}</div></div>
+      <div style="display:flex; align-items:center; justify-content:center; padding:14px 0; gap:14px;">
+        <div style="text-align:center; ${v.extracted ? '' : 'opacity:0.4;'}">
+          <svg viewBox="0 0 40 40" style="width:36px; height:36px;"><circle cx="20" cy="20" r="14" fill="rgba(239,68,68,0.2)" stroke="${v.extracted ? '#EF4444' : 'rgba(255,255,255,0.3)'}" stroke-width="1.5"/><line x1="12" y1="12" x2="28" y2="28" stroke="${v.extracted ? '#EF4444' : 'rgba(255,255,255,0.3)'}" stroke-width="2"/><line x1="28" y1="12" x2="12" y2="28" stroke="${v.extracted ? '#EF4444' : 'rgba(255,255,255,0.3)'}" stroke-width="2"/></svg>
+          <div style="font-size:10px; margin-top:4px; color:${v.extracted ? 'var(--color-danger)' : 'var(--text-muted)'};">발치</div>
+        </div>
+        <div style="text-align:center; ${v.extracted ? 'opacity:0.4;' : ''}">
+          <svg viewBox="0 0 40 40" style="width:36px; height:36px;"><circle cx="20" cy="20" r="14" fill="rgba(16,185,129,0.2)" stroke="${v.extracted ? 'rgba(255,255,255,0.3)' : '#10B981'}" stroke-width="1.5"/><path d="M 13 20 L 18 25 L 28 14" fill="none" stroke="${v.extracted ? 'rgba(255,255,255,0.3)' : '#10B981'}" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <div style="font-size:10px; margin-top:4px; color:${v.extracted ? 'var(--text-muted)' : 'var(--color-success)'};">비발치</div>
+        </div>
+      </div>
+      <div class="vc-note">발치 케이스가 일반적으로 더 안정적 (-4%)</div>
+    </div>`,
+
+    `<div class="visual-card">
+      <div class="vc-head"><div class="vc-name">제3대구치</div><div class="vc-val ${v.thirdMolar === 'present' ? 'danger' : 'ok'}">${v.thirdMolar === 'present' ? '매복/잔존' : '없음'}</div></div>
+      <div style="display:flex; align-items:center; justify-content:center; padding:14px 0;">
+        <svg viewBox="0 0 80 50" style="width:80px; height:40px;">
+          ${[18, 28, 38, 48].map((fdi, i) => {
+            const x = 10 + i * 20;
+            const present = v.thirdMolar === 'present';
+            return `<ellipse cx="${x}" cy="25" rx="7" ry="9" fill="${present ? 'rgba(245,158,11,0.5)' : 'rgba(16,185,129,0.3)'}" stroke="${present ? '#F59E0B' : '#10B981'}" stroke-width="1"/>
+                    <text x="${x}" y="28" text-anchor="middle" font-size="7" fill="${present ? '#F59E0B' : '#10B981'}" font-weight="700">${fdi}</text>`;
+          }).join('')}
+        </svg>
+      </div>
+      <div class="vc-note">매복 사랑니 잔존 시 +8% 재발 위험</div>
+    </div>`
+  ];
+  document.getElementById('visualGrid').innerHTML = cards.join('');
+}
+
+['impa','incisorShift','retainer','retentionMonths','compliance','extracted','residual','thirdMolar'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', renderVisuals);
+  if (el) el.addEventListener('change', renderVisuals);
+});
+
+setTimeout(() => { computeRule(); renderVisuals(); }, 100);
 
 const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
 window.ScannerInput.mount(document.getElementById('scannerMount'), {
