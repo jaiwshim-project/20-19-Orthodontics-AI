@@ -37,6 +37,34 @@
 
   .visual-svg-wrap { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; }
 
+  /* 단계 진행 타임라인 */
+  .stage-timeline { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 12px; align-items: stretch; margin: 20px 0; }
+  @media (max-width: 768px) { .stage-timeline { grid-template-columns: 1fr; } .stage-arrow { display:none; } }
+  .stage-card { padding: 18px 16px; border-radius: 14px; border: 1px solid var(--border-subtle); position: relative; }
+  .stage-card.before { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.25); }
+  .stage-card.during { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); }
+  .stage-card.after  { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.3); }
+  .stage-card .num { position:absolute; top:10px; right:14px; font-size:10px; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.06); font-weight:700; }
+  .stage-card .label { font-size:11px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; margin-bottom:8px; }
+  .stage-card.before .label { color: var(--color-danger); }
+  .stage-card.during .label { color: var(--color-warning); }
+  .stage-card.after  .label { color: var(--color-success); }
+  .stage-card h4 { font-size: 16px; margin-bottom: 6px; }
+  .stage-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+  .stage-arrow { display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--text-muted); }
+
+  /* 측정값 비교 표 */
+  .meas-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  .meas-table th, .meas-table td { padding: 10px 14px; text-align: center; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+  .meas-table th { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .meas-table th:first-child, .meas-table td:first-child { text-align: left; font-weight: 600; }
+  .meas-table .before-val { color: var(--color-danger); font-family: monospace; font-weight: 700; }
+  .meas-table .after-val  { color: var(--color-success); font-family: monospace; font-weight: 700; }
+  .meas-table .delta { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .meas-table .delta.up { color: var(--color-success); }
+  .meas-table .delta.down { color: var(--color-warning); }
+  .meas-table tr.hi { background: rgba(14,165,233,0.04); }
+
   @media print {
     .no-print { display: none !important; }
     body { background: #fff; color: #000; }
@@ -98,7 +126,48 @@
     </div>
   </div>
 
-  <h3 style="margin: 24px 0 12px;">✨ 주요 변화</h3>
+  <h3 style="margin: 32px 0 12px;">⏱ 치료 단계 (Before → 발치 → 교정 → After)</h3>
+  <div class="stage-timeline">
+    <div class="stage-card before">
+      <span class="num" id="phase0Num">0</span>
+      <div class="label">현재 (Before)</div>
+      <h4>치료 시작 전</h4>
+      <p id="beforeStateText">—</p>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-card during">
+      <span class="num" id="phase1Num">1</span>
+      <div class="label" id="phase1Label">발치 + 정렬</div>
+      <h4 id="phase1Name">치료 진행</h4>
+      <p id="phase1Summary">—</p>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-card after">
+      <span class="num" id="phase2Num">완료</span>
+      <div class="label">완료 (After)</div>
+      <h4>예상 결과</h4>
+      <p id="afterStateText">—</p>
+    </div>
+  </div>
+
+  <h3 style="margin: 24px 0 12px;">📊 측정값 변화 (Before → After)</h3>
+  <div style="overflow-x:auto; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:6px 10px;">
+    <table class="meas-table">
+      <thead>
+        <tr>
+          <th>지표</th>
+          <th>Before</th>
+          <th></th>
+          <th>After</th>
+          <th>변화</th>
+          <th>의미</th>
+        </tr>
+      </thead>
+      <tbody id="measBody"></tbody>
+    </table>
+  </div>
+
+  <h3 style="margin: 32px 0 12px;">✨ 주요 변화</h3>
   <div class="changes-grid" id="changesGrid"></div>
 
   <h3 style="margin: 32px 0 12px;">📐 안모 변화 시각화</h3>
@@ -155,6 +224,19 @@ function showEmpty(msg) {
   document.getElementById('emptyMsg').textContent = msg;
 }
 
+const MEAS_LABELS = {
+  anb:      { name: 'ANB',         unit: '°',  meaning: '골격 관계 (정상 2°)', better: 'toward', target: 2 },
+  crowding: { name: 'Crowding',    unit: 'mm', meaning: '치열 부족량 (정상 0)', better: 'down',   target: 0 },
+  overjet:  { name: 'Overjet',     unit: 'mm', meaning: '수평 피개 (정상 2-4)',  better: 'toward', target: 2.5 },
+  overbite: { name: 'Overbite',    unit: 'mm', meaning: '수직 피개 (정상 2-4)',  better: 'toward', target: 2.5 },
+  fma:      { name: 'FMA',         unit: '°',  meaning: '하악 평면각 (정상 25°)', better: 'toward', target: 25 },
+  impa:     { name: 'IMPA',        unit: '°',  meaning: '하악 절치각 (정상 90°)', better: 'toward', target: 90 },
+  profile:  { name: 'Profile',     unit: '',   meaning: '측면 윤곽',              better: 'enum',   target: 'straight' },
+  lipStrain:{ name: 'Lip Strain',  unit: '',   meaning: '입술 긴장도',            better: 'enum',   target: 'none' }
+};
+const PROFILE_KO = { straight: '직선', convex: '볼록', concave: '오목' };
+const STRAIN_KO  = { none: '없음', mild: '경미', severe: '현저' };
+
 function render(d) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('content').style.display = 'block';
@@ -163,15 +245,75 @@ function render(d) {
   document.getElementById('summary').textContent = d.summary || '—';
   document.getElementById('beforeState').textContent = d.before_state || '치료 전 상태';
   document.getElementById('afterState').textContent = d.after_state || '치료 후 예상';
+  document.getElementById('beforeStateText').textContent = d.before_state || '치료 시작 전 상태';
+  document.getElementById('afterStateText').textContent = d.after_state || '치료 후 예상 결과';
   document.getElementById('duration').textContent = d.duration_estimate || '—';
   document.getElementById('diagCount').textContent = (d.diagnosis_count || 0) + ' 종';
   document.getElementById('genDate').textContent = new Date().toLocaleDateString('ko-KR');
   document.getElementById('changesGrid').innerHTML = (d.key_changes || [])
     .map(c => `<div class="change-pill">${escapeHtml(c)}</div>`).join('') || '<p style="color:var(--text-muted);">—</p>';
 
-  // 측면 안모 비교 SVG
+  // 단계 (phases) 표시
+  if (Array.isArray(d.phases) && d.phases.length > 0) {
+    const middlePhase = d.phases.length >= 2 ? d.phases[Math.floor(d.phases.length / 2)] : d.phases[0];
+    document.getElementById('phase1Name').textContent = middlePhase.name || '치료 진행';
+    document.getElementById('phase1Summary').textContent = `${middlePhase.duration_months || ''}개월 — ${middlePhase.summary || ''}`;
+    document.getElementById('phase1Label').textContent = d.phases.map(p => p.name?.split(' ')[0]).filter(Boolean).join(' → ').slice(0, 30);
+  }
+
+  // 측정값 비교 표
+  const before = d.measurements?.before || {};
+  const after = d.measurements?.after || {};
+  const tbody = document.getElementById('measBody');
+  tbody.innerHTML = Object.keys(MEAS_LABELS).map(key => {
+    const meta = MEAS_LABELS[key];
+    const b = before[key];
+    const a = after[key];
+    if (b == null && a == null) return '';
+    let bDisp = '—', aDisp = '—', deltaDisp = '—', deltaCls = '';
+    if (key === 'profile') {
+      bDisp = PROFILE_KO[b] || '—';
+      aDisp = PROFILE_KO[a] || '—';
+      deltaDisp = (b !== a && b && a) ? '✓ 개선' : '—';
+      deltaCls = (b !== a && b && a) ? 'up' : '';
+    } else if (key === 'lipStrain') {
+      bDisp = STRAIN_KO[b] || '—';
+      aDisp = STRAIN_KO[a] || '—';
+      const order = { none: 0, mild: 1, severe: 2 };
+      const diff = (order[b] ?? 0) - (order[a] ?? 0);
+      deltaDisp = diff > 0 ? '✓ 완화' : (diff < 0 ? '⚠ 악화' : '—');
+      deltaCls = diff > 0 ? 'up' : (diff < 0 ? 'down' : '');
+    } else if (typeof b === 'number' && typeof a === 'number') {
+      bDisp = b.toFixed(1) + meta.unit;
+      aDisp = a.toFixed(1) + meta.unit;
+      const delta = a - b;
+      deltaDisp = (delta >= 0 ? '+' : '') + delta.toFixed(1) + meta.unit;
+      // target에 가까워지는 방향 = 개선
+      const distBefore = Math.abs(b - meta.target);
+      const distAfter  = Math.abs(a - meta.target);
+      deltaCls = distAfter < distBefore ? 'up' : (distAfter > distBefore ? 'down' : '');
+    }
+    return `
+      <tr>
+        <td>${meta.name}</td>
+        <td><span class="before-val">${bDisp}</span></td>
+        <td>→</td>
+        <td><span class="after-val">${aDisp}</span></td>
+        <td><span class="delta ${deltaCls}">${deltaDisp}</span></td>
+        <td style="color:var(--text-muted); font-size:11px;">${meta.meaning}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // 측면 안모 비교 SVG (Before/After 변화량 반영)
+  // Crowding/Overjet 변화에 따라 path 보정
+  const reduceOJ = (before.overjet || 0) - (after.overjet || 0);
   const beforePath = 'M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q 286 230 280 230 L 285 280 Q 283 300 275 320 Q 246 360 250 360 L 255 400 L 245 440 Q 215 452 185 432';
-  const afterPath  = 'M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q 280 232 274 230 L 277 280 Q 275 300 273 320 Q 252 360 252 360 L 257 400 L 247 440 Q 217 452 187 432';
+  // After: A point과 Ls를 reduceOJ * 2.2px 후방으로
+  const k = 2.2;
+  const ax = 286 - reduceOJ * k;
+  const lsx = 285 - reduceOJ * k * 0.6;
+  const afterPath  = `M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q ${ax} 230 280 230 L ${lsx} 280 Q ${lsx-2} 300 ${lsx-10} 320 Q 246 360 250 360 L 255 400 L 245 440 Q 215 452 185 432`;
   document.getElementById('profileBeforeG').innerHTML = `<path d="${beforePath}" fill="rgba(239,68,68,0.1)" stroke="#EF4444" stroke-width="2"/>`;
   document.getElementById('profileAfterG').innerHTML  = `<path d="${afterPath}"  fill="rgba(16,185,129,0.1)" stroke="#10B981" stroke-width="2"/>`;
 }
