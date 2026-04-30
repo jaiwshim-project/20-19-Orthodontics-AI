@@ -90,6 +90,7 @@
   </div>
 </main>
 
+<script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script>
   const STORAGE_KEY = 'oc_chats';
@@ -173,7 +174,7 @@
     stream.scrollTop = stream.scrollHeight;
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await window.apiFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -227,7 +228,7 @@
     reader.onload = async () => {
       const base64 = reader.result.split(',')[1];
       try {
-        const res = await fetch('/api/upload', {
+        const res = await window.apiFetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ filename: file.name, base64, contentType: file.type })

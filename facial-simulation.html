@@ -104,6 +104,7 @@
 </div>
 </main>
 
+<script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script src="js/scanner-input.js"></script>
 <script src="js/diagnosis-store.js"></script>
@@ -249,7 +250,7 @@ async function callGemini() {
   const inputs = getFacialInputs();
   document.getElementById('aiOpinion').textContent = '분석 중...';
   try {
-    const res = await fetch('/api/diagnose', {
+    const res = await window.apiFetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'facial', patient: window.PatientStore.get() || {}, inputs })

@@ -21,7 +21,7 @@
      */
     async save(payload) {
       try {
-        const res = await fetch('/api/save-diagnosis', {
+        const res = await window.apiFetch('/api/save-diagnosis', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -64,7 +64,7 @@
       try {
         const params = new URLSearchParams({ limit: String(limit) });
         if (type) params.set('type', type);
-        const res = await fetch(`/api/get-diagnoses?${params}`);
+        const res = await window.apiFetch(`/api/get-diagnoses?${params}`);
         const data = await res.json();
         const remote = (data.records || []).map(normalizeRemote);
         if (data.fallback) return { source: 'local', records: localFiltered.slice(0, limit) };
@@ -91,7 +91,7 @@
         return found ? { source: 'local', record: found } : null;
       }
       try {
-        const res = await fetch(`/api/get-diagnoses?id=${encodeURIComponent(id)}`);
+        const res = await window.apiFetch(`/api/get-diagnoses?id=${encodeURIComponent(id)}`);
         const data = await res.json();
         if (data.record) return { source: 'supabase', record: normalizeRemote(data.record) };
         return null;
@@ -118,7 +118,7 @@
         return { success: true, source: 'local', record: list[idx] };
       }
       try {
-        const res = await fetch('/api/update-diagnosis', {
+        const res = await window.apiFetch('/api/update-diagnosis', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, status, doctor_note: doctorNote })

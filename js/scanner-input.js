@@ -224,7 +224,7 @@
         analyzeBtn.disabled = true;
         setStatus(`AI 분석 중 (${usedTags.join(' + ')})... Gemini Vision 5-15초 소요`, 'analyzing');
         try {
-          const res = await fetch('/api/analyze-image', {
+          const res = await window.apiFetch('/api/analyze-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: options.type, images })

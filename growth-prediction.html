@@ -148,6 +148,7 @@
 </div>
 </main>
 
+<script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/scanner-input.js"></script>
@@ -239,7 +240,7 @@ async function callGemini() {
   const inputs = vals();
   window.toast('Gemini AI 분석 중...', 'info');
   try {
-    const res = await fetch('/api/diagnose', {
+    const res = await window.apiFetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'growth', patient, inputs })
