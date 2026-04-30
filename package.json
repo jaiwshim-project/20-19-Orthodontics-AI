@@ -7,8 +7,10 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "dev": "node dev-server.js",
+    "dev:vercel": "vercel dev",
+    "deploy": "vercel --prod",
+    "start": "node dev-server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

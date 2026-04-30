@@ -185,7 +185,12 @@
           applyBtn.hidden = false;
         } catch (e) {
           console.error('[scanner] 분석 실패:', e);
-          setStatus(`분석 실패: ${e.message}. 데이터 탭에서 직접 입력하세요.`, 'error');
+          const isFetchFail = e.message === 'Failed to fetch' || e.name === 'TypeError';
+          const hint = isFetchFail
+            ? 'API 서버가 실행되지 않았습니다. 터미널에서 `npm run dev` 실행 후 http://localhost:3000 으로 접속하세요. (정적 http-server는 /api/* 라우팅을 지원하지 않습니다.)'
+            : '데이터 탭에서 직접 입력하세요.';
+          setStatus(`❌ 분석 실패: ${e.message}\n${hint}`, 'error');
+          statusEl.style.whiteSpace = 'pre-wrap';
         } finally {
           analyzeBtn.disabled = false;
         }
