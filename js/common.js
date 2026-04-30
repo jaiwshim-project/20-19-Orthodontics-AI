@@ -572,20 +572,20 @@
         <marker id="arr-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="${E.color}"/></marker>
       </defs>
       <rect x="10" y="10" width="${W-20}" height="40" rx="10" fill="url(#hdr-${key})" stroke="${E.color}" stroke-width="1"/>
-      <text x="22" y="32" fill="#fff" font-size="11" font-weight="800" font-family="Inter,sans-serif" letter-spacing="1.5">${E.code}</text>
-      <text x="80" y="32" fill="#fff" font-size="14" font-weight="700" font-family="Pretendard,sans-serif">${E.name}</text>
-      <text x="${W-20}" y="32" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="10" font-family="Inter,sans-serif" font-style="italic">${E.subtitle}</text>`;
+      <text x="22" y="32" fill="#fff" font-size="8" font-weight="800" font-family="Inter,sans-serif" letter-spacing="1.5">${E.code}</text>
+      <text x="80" y="32" fill="#fff" font-size="11" font-weight="700" font-family="Pretendard,sans-serif">${E.name}</text>
+      <text x="${W-20}" y="32" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="7" font-family="Inter,sans-serif" font-style="italic">${E.subtitle}</text>`;
 
     // Section labels
-    svg += `<text x="${inputX + inputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">INPUT</text>
-            <text x="${procX + procW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">PROCESS</text>
-            <text x="${outputX + outputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">OUTPUT</text>`;
+    svg += `<text x="${inputX + inputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">INPUT</text>
+            <text x="${procX + procW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">PROCESS</text>
+            <text x="${outputX + outputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">OUTPUT</text>`;
 
     // Input nodes
     E.inputs.forEach((label, i) => {
       const y = startY + i * (rowH + 6);
       svg += `<rect x="${inputX}" y="${y}" width="${inputW}" height="${rowH}" rx="5" fill="${E.color}" fill-opacity="0.08" stroke="${E.color}" stroke-width="0.8" stroke-opacity="0.4"/>
-              <text x="${inputX + 8}" y="${y + rowH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="10" font-family="Pretendard,sans-serif">${label}</text>
+              <text x="${inputX + 8}" y="${y + rowH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="7" font-family="Pretendard,sans-serif">${label}</text>
               <line x1="${inputX + inputW + 2}" y1="${y + rowH/2}" x2="${procX - 2}" y2="${y + rowH/2 + (E.inputs.length-1-i*1.5)*0}" stroke="${E.color}" stroke-width="0.8" opacity="0.4" marker-end="url(#arr-${key})"/>`;
     });
 
@@ -597,7 +597,7 @@
       const y = procY + 12 + i * (rowH + 6);
       const isAI = label.toLowerCase().includes('gemini');
       svg += `<rect x="${procX + 8}" y="${y}" width="${procW - 16}" height="${rowH}" rx="4" fill="${isAI ? '#fff' : 'rgba(0,0,0,0.3)'}" fill-opacity="${isAI ? 0.12 : 0.4}"/>
-              <text x="${procX + 14}" y="${y + rowH/2 + 4}" fill="${isAI ? E.color : 'rgba(229,231,235,0.85)'}" font-size="10" font-weight="${isAI ? '700' : '500'}" font-family="Pretendard,sans-serif">${isAI ? '🧠 ' : ''}${label}</text>`;
+              <text x="${procX + 14}" y="${y + rowH/2 + 4}" fill="${isAI ? E.color : 'rgba(229,231,235,0.85)'}" font-size="7" font-weight="${isAI ? '700' : '500'}" font-family="Pretendard,sans-serif">${isAI ? '🧠 ' : ''}${label}</text>`;
     });
 
     // Output nodes
@@ -605,13 +605,13 @@
       const y = startY + i * (rowH + 6);
       svg += `<line x1="${procX + procW + 2}" y1="${y + rowH/2}" x2="${outputX - 2}" y2="${y + rowH/2}" stroke="${E.color}" stroke-width="0.8" opacity="0.4" marker-end="url(#arr-${key})"/>
               <rect x="${outputX}" y="${y}" width="${outputW}" height="${rowH}" rx="5" fill="${E.color}" fill-opacity="0.18" stroke="${E.color}" stroke-width="1"/>
-              <text x="${outputX + outputW/2}" y="${y + rowH/2 + 4}" text-anchor="middle" fill="#fff" font-size="9" font-weight="600" font-family="Pretendard,sans-serif">${label}</text>`;
+              <text x="${outputX + outputW/2}" y="${y + rowH/2 + 4}" text-anchor="middle" fill="#fff" font-size="7" font-weight="600" font-family="Pretendard,sans-serif">${label}</text>`;
     });
 
     // Footer link
     svg += `<a href="${E.page}" target="_self">
               <rect x="${W/2 - 60}" y="${H - 32}" width="120" height="22" rx="11" fill="${E.color}" fill-opacity="0.2" stroke="${E.color}" stroke-width="1"/>
-              <text x="${W/2}" y="${H - 17}" text-anchor="middle" fill="#fff" font-size="10" font-weight="600" font-family="Pretendard,sans-serif">${E.name} 페이지 →</text>
+              <text x="${W/2}" y="${H - 17}" text-anchor="middle" fill="#fff" font-size="7" font-weight="600" font-family="Pretendard,sans-serif">${E.name} 페이지 →</text>
             </a>`;
     svg += `</svg>`;
     return svg;
