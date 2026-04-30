@@ -14,7 +14,35 @@
     localStorage.setItem(LS_KEY, JSON.stringify(list.slice(0, 500)));
   }
 
+  /**
+   * 이미지를 Supabase Storage에 업로드.
+   * @param {Object} images { slot: {base64, contentType, filename} }
+   * @param {string} patientId
+   * @param {string} type
+   * @returns Promise<imagesMeta[]>
+   */
+  async function uploadImages(images, patientId, type) {
+    if (!images || Object.keys(images).length === 0) return [];
+    try {
+      const res = await window.apiFetch('/api/upload-images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images, patientId, diagnosisType: type })
+      });
+      const data = await res.json();
+      if (data.fallback) {
+        console.warn('[DiagnosisStore] 이미지 업로드 폴백:', data.message);
+        return [];
+      }
+      return data.uploaded || [];
+    } catch (e) {
+      console.warn('[DiagnosisStore] 이미지 업로드 실패:', e.message);
+      return [];
+    }
+  }
+
   window.DiagnosisStore = {
+    uploadImages,
     /**
      * 진단 결과 저장 (Supabase 우선, 실패 시 localStorage).
      * @param {Object} payload { patient, type, inputs, result, imagesMeta, notes }

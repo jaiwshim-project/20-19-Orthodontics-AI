@@ -313,10 +313,20 @@ async function saveCurrentDiagnosis() {
   const patient = window.PatientStore.get();
   if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
   if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const scannerEl = document.getElementById('scannerMount');
+  const uploadedImages = scannerEl?._getUploadedImages?.() || {};
+  let imagesMeta = [];
+  if (Object.keys(uploadedImages).length > 0) {
+    window.toast('이미지 업로드 중...', 'info', 2000);
+    imagesMeta = await window.DiagnosisStore.uploadImages(uploadedImages, patient.supabaseId || patient.id, 'recurrence');
+  }
   const r = await window.DiagnosisStore.save({
-    patient, type: 'recurrence', inputs: vals(), result: window._lastResult
+    patient, type: 'recurrence', inputs: vals(), result: window._lastResult, imagesMeta
   });
-  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
+  if (r.success) {
+    const imgNote = imagesMeta.length > 0 ? ` · 이미지 ${imagesMeta.length}장` : '';
+    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'}${imgNote})`, 'success', 4500);
+  }
 }
 
 // 측정값 시각화
@@ -337,36 +347,44 @@ function renderVisuals() {
     { value: 'low',    label: '하', icon: '<div style="font-size:18px;">😟</div>' }
   ];
 
-  const cards = [
-    VH.angleCard('IMPA', '도', v.impa, [85, 95], [70, 110],
-      '치료 후 하악 절치 각도. 95° 초과 시 재발 위험↑',
-      VH.svgIncisorAngle(v.impa)),
+  function withLegend(html, key) {
+    const text = (window.FIELD_LEGENDS || {})[key];
+    if (!text) return html;
+    const legend = `<div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">${text}</div>`;
+    const idx = html.lastIndexOf('</div>');
+    return idx > 0 ? html.slice(0, idx) + legend + html.slice(idx) : html + legend;
+  }
 
-    `<div class="visual-card">
+  const cards = [
+    withLegend(VH.angleCard('IMPA', '도', v.impa, [85, 95], [70, 110],
+      '치료 후 하악 절치 각도. 95° 초과 시 재발 위험↑',
+      VH.svgIncisorAngle(v.impa)), 'impa'),
+
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">하악 절치 변화량</div><div class="vc-val ${Math.abs(v.incisorShift) > 2 ? 'danger' : Math.abs(v.incisorShift) > 1 ? 'warn' : 'ok'}">${v.incisorShift > 0 ? '+' : ''}${v.incisorShift.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(v.incisorShift, -5, 5, '')}
       <div class="vc-note">+ 전방이동 / − 후방. 1.5mm 초과 시 재발 가속</div>
-    </div>`,
+    </div>`, 'incisorShift'),
 
-    VH.choiceCard('보정장치', v.retainer, retainerOptions, 'Hawley < Essix < Dual < Bonded (안정성↑)'),
+    withLegend(VH.choiceCard('보정장치', v.retainer, retainerOptions, 'Hawley < Essix < Dual < Bonded (안정성↑)'), 'retainer'),
 
-    `<div class="visual-card">
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">보정 기간</div><div class="vc-val ${v.retentionMonths >= 24 ? 'ok' : v.retentionMonths >= 12 ? 'warn' : 'danger'}">${v.retentionMonths} 개월</div></div>
       ${VH.svgTimeline(v.retentionMonths, 36)}
       <div class="vc-note">12개월 미만 위험, 24개월 이상 안정적</div>
-    </div>`,
+    </div>`, 'retentionMonths'),
 
-    `<div class="visual-card">
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">환자 협조도</div><div class="vc-val ${v.compliance === 'high' ? 'ok' : v.compliance === 'medium' ? 'warn' : 'danger'}">${{high:'상',medium:'중',low:'하'}[v.compliance]}</div></div>
       ${VH.svgComplianceMeter(v.compliance)}
       <div class="vc-note">협조도 하 시 재발 위험 +18%</div>
-    </div>`,
+    </div>`, 'compliance'),
 
-    VH.gaugeCard('잔여 Crowding', 'mm', v.residual, 0, 5, [
+    withLegend(VH.gaugeCard('잔여 Crowding', 'mm', v.residual, 0, 5, [
       {to: 0.5, cls: 'ok',     label: '안정'},
       {to: 1.5, cls: 'warn',   label: '주의'},
       {to: 5,   cls: 'danger', label: '재발↑'}
-    ], '치료 종료 시 잔여 부조화. 1mm 초과 시 재발 가속'),
+    ], '치료 종료 시 잔여 부조화. 1mm 초과 시 재발 가속'), 'residual'),
 
     `<div class="visual-card">
       <div class="vc-head"><div class="vc-name">발치 여부</div><div class="vc-val">${v.extracted ? '발치' : '비발치'}</div></div>

@@ -211,6 +211,21 @@
 
       SLOT_KEYS.forEach(setupSlot);
 
+      // 외부에서 업로드된 이미지 가져갈 수 있도록 노출
+      container._getUploadedImages = () => {
+        const out = {};
+        SLOT_KEYS.forEach(k => {
+          if (slots[k].base64) {
+            out[k] = {
+              base64: slots[k].base64,
+              contentType: slots[k].contentType,
+              filename: slots[k].file?.name
+            };
+          }
+        });
+        return out;
+      };
+
       analyzeBtn.addEventListener('click', async () => {
         const images = {};
         const usedTags = [];

@@ -285,10 +285,20 @@ async function saveCurrentDiagnosis() {
   const patient = window.PatientStore.get();
   if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
   if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const scannerEl = document.getElementById('scannerMount');
+  const uploadedImages = scannerEl?._getUploadedImages?.() || {};
+  let imagesMeta = [];
+  if (Object.keys(uploadedImages).length > 0) {
+    window.toast('이미지 업로드 중...', 'info', 2000);
+    imagesMeta = await window.DiagnosisStore.uploadImages(uploadedImages, patient.supabaseId || patient.id, 'facial');
+  }
   const r = await window.DiagnosisStore.save({
-    patient, type: 'facial', inputs: getFacialInputs(), result: window._lastResult
+    patient, type: 'facial', inputs: getFacialInputs(), result: window._lastResult, imagesMeta
   });
-  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
+  if (r.success) {
+    const imgNote = imagesMeta.length > 0 ? ` · 이미지 ${imagesMeta.length}장` : '';
+    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'}${imgNote})`, 'success', 4500);
+  }
 }
 
 // 측정값 시각화
@@ -308,32 +318,40 @@ function renderVisuals() {
 
   const totalChange = Math.abs(sliders.sMaxRetract) + Math.abs(sliders.sMandShift) + Math.abs(sliders.sLipUpper) + Math.abs(sliders.sLipLower) + Math.abs(sliders.sChin);
 
+  function withLegend(html, key) {
+    const text = (window.FIELD_LEGENDS || {})[key];
+    if (!text) return html;
+    const legend = `<div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">${text}</div>`;
+    const idx = html.lastIndexOf('</div>');
+    return idx > 0 ? html.slice(0, idx) + legend + html.slice(idx) : html + legend;
+  }
+
   const cards = [
-    `<div class="visual-card">
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">상악 후방 이동</div><div class="vc-val ${sliders.sMaxRetract > 0 ? 'ok' : 'warn'}">${sliders.sMaxRetract.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(sliders.sMaxRetract, -2, 6, '')}
       <div class="vc-note">+ 후방이동 / − 전방이동. II급 시 후방 권장</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'maxRetract'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">하악 전후방</div><div class="vc-val ${Math.abs(sliders.sMandShift) > 0.5 ? 'warn' : 'ok'}">${sliders.sMandShift > 0 ? '+' : ''}${sliders.sMandShift.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(sliders.sMandShift, -5, 5, '')}
       <div class="vc-note">+ 전방 / − 후방. III급은 후방, II급은 전방</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'mandShift'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">상순 위치</div><div class="vc-val">${sliders.sLipUpper > 0 ? '+' : ''}${sliders.sLipUpper.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(sliders.sLipUpper, -3, 3, '')}
       <div class="vc-note">E-line 기준 -4mm 이상적</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'lipUpper'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">하순 위치</div><div class="vc-val">${sliders.sLipLower > 0 ? '+' : ''}${sliders.sLipLower.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(sliders.sLipLower, -3, 3, '')}
       <div class="vc-note">E-line 기준 -2mm 이상적</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'lipLower'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">턱 (Pogonion)</div><div class="vc-val">${sliders.sChin > 0 ? '+' : ''}${sliders.sChin.toFixed(1)} mm</div></div>
       ${VH.svgSliderBar(sliders.sChin, -3, 3, '')}
       <div class="vc-note">+ genioplasty 전방 / − chin cup 후방</div>
-    </div>`,
+    </div>`, 'chin'),
     `<div class="visual-card">
       <div class="vc-head"><div class="vc-name">E-line ↔ 상순</div><div class="vc-val ${dU < 1 ? 'ok' : 'warn'}">${dU.toFixed(1)} mm</div></div>
       <svg viewBox="0 0 240 50" preserveAspectRatio="none">

@@ -245,27 +245,34 @@ function renderVisuals() {
   const i = getInputs();
   const grid = document.getElementById('visualGrid');
   if (!grid) return;
+  function withLegend(html, key) {
+    const text = (window.FIELD_LEGENDS || {})[key];
+    if (!text) return html;
+    const legend = `<div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">${text}</div>`;
+    const idx = html.lastIndexOf('</div>');
+    return idx > 0 ? html.slice(0, idx) + legend + html.slice(idx) : html + legend;
+  }
   const cards = [
-    angleCard('ANB', '°', i.anb, [0, 4], [-2, 8], '상하악 골격 관계 · 정상 2°±2', svgAngleANB(i.anb)),
-    gaugeCard('Crowding', 'mm', i.crowding, 0, 12, [
+    withLegend(angleCard('ANB', '°', i.anb, [0, 4], [-2, 8], '상하악 골격 관계 · 정상 2°±2', svgAngleANB(i.anb)), 'anb'),
+    withLegend(gaugeCard('Crowding', 'mm', i.crowding, 0, 12, [
       {to: 4, cls: 'ok',     label: '경미'},
       {to: 8, cls: 'warn',   label: '중등도'},
       {to: 12, cls: 'danger', label: '심함'}
-    ], '치열궁 부족량 · Proffit 분류'),
-    gaugeCard('Overjet', 'mm', i.overjet, -2, 12, [
+    ], '치열궁 부족량 · Proffit 분류'), 'crowding'),
+    withLegend(gaugeCard('Overjet', 'mm', i.overjet, -2, 12, [
       {to: 0,  cls: 'warn',   label: '반대'},
       {to: 5,  cls: 'ok',     label: '정상'},
       {to: 12, cls: 'danger', label: 'II급'}
-    ], '상하악 전치 수평거리 · 정상 2-4mm', svgOverjet(i.overjet)),
-    gaugeCard('Overbite', 'mm', i.overbite, -2, 10, [
+    ], '상하악 전치 수평거리 · 정상 2-4mm', svgOverjet(i.overjet)), 'overjet'),
+    withLegend(gaugeCard('Overbite', 'mm', i.overbite, -2, 10, [
       {to: 0,  cls: 'warn',   label: '개방'},
       {to: 4,  cls: 'ok',     label: '정상'},
       {to: 10, cls: 'danger', label: '깊은'}
-    ], '상하악 전치 수직 겹침 · 정상 2-4mm', svgOverbite(i.overbite)),
-    profileCard(i.profile),
-    lipStrainCard(i.lipStrain),
-    angleCard('FMA', '°', i.fma, [20, 30], [10, 50], 'Frankfort-하악 평면 각도 · 정상 25°±5', svgFMA(i.fma)),
-    angleCard('IMPA', '°', i.impa, [85, 95], [70, 110], '하악 절치-하악 평면 각 · 정상 90°±5', svgIMPA(i.impa))
+    ], '상하악 전치 수직 겹침 · 정상 2-4mm', svgOverbite(i.overbite)), 'overbite'),
+    withLegend(profileCard(i.profile), 'profile'),
+    withLegend(lipStrainCard(i.lipStrain), 'lipStrain'),
+    withLegend(angleCard('FMA', '°', i.fma, [20, 30], [10, 50], 'Frankfort-하악 평면 각도 · 정상 25°±5', svgFMA(i.fma)), 'fma'),
+    withLegend(angleCard('IMPA', '°', i.impa, [85, 95], [70, 110], '하악 절치-하악 평면 각 · 정상 90°±5', svgIMPA(i.impa)), 'impa')
   ];
   grid.innerHTML = cards.join('');
 }
@@ -613,14 +620,23 @@ async function saveCurrentDiagnosis() {
   const patient = window.PatientStore.get();
   if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
   if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  // 스캐너 탭의 이미지 가져오기
+  const scannerEl = document.getElementById('scannerMount');
+  const uploadedImages = scannerEl?._getUploadedImages?.() || {};
+  let imagesMeta = [];
+  if (Object.keys(uploadedImages).length > 0) {
+    window.toast('이미지 업로드 중...', 'info', 2000);
+    imagesMeta = await window.DiagnosisStore.uploadImages(uploadedImages, patient.supabaseId || patient.id, 'extraction');
+  }
   const r = await window.DiagnosisStore.save({
     patient, type: 'extraction',
     inputs: getInputs(),
     result: window._lastResult,
-    imagesMeta: window._lastImagesMeta || []
+    imagesMeta
   });
   if (r.success) {
-    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? 'Supabase 클라우드' : '로컬'}). 대시보드에서 확인하세요.`, 'success', 4000);
+    const imgNote = imagesMeta.length > 0 ? ` · 이미지 ${imagesMeta.length}장 업로드됨` : '';
+    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? 'Supabase 클라우드' : '로컬'}${imgNote})`, 'success', 4500);
   } else {
     window.toast('저장 실패: ' + (r.error || ''), 'error');
   }

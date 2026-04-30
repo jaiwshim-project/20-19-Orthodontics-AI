@@ -286,10 +286,20 @@ async function saveCurrentDiagnosis() {
   const patient = window.PatientStore.get();
   if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
   if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const scannerEl = document.getElementById('scannerMount');
+  const uploadedImages = scannerEl?._getUploadedImages?.() || {};
+  let imagesMeta = [];
+  if (Object.keys(uploadedImages).length > 0) {
+    window.toast('이미지 업로드 중...', 'info', 2000);
+    imagesMeta = await window.DiagnosisStore.uploadImages(uploadedImages, patient.supabaseId || patient.id, 'growth');
+  }
   const r = await window.DiagnosisStore.save({
-    patient, type: 'growth', inputs: vals(), result: window._lastResult
+    patient, type: 'growth', inputs: vals(), result: window._lastResult, imagesMeta
   });
-  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
+  if (r.success) {
+    const imgNote = imagesMeta.length > 0 ? ` · 이미지 ${imagesMeta.length}장` : '';
+    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'}${imgNote})`, 'success', 4500);
+  }
 }
 
 // 측정값 시각화
@@ -307,23 +317,31 @@ function renderVisuals() {
   const remaining = Math.max(0, (target - v.height) * factor + (1-factor) * 0 + (-ageDelta * 0.8));
   const predicted = v.height + remaining;
 
+  function withLegend(html, key) {
+    const text = (window.FIELD_LEGENDS || {})[key];
+    if (!text) return html;
+    const legend = `<div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">${text}</div>`;
+    const idx = html.lastIndexOf('</div>');
+    return idx > 0 ? html.slice(0, idx) + legend + html.slice(idx) : html + legend;
+  }
+
   const cvmsLabels = ['CS1','CS2','CS3★','CS4','CS5','CS6'];
   const cards = [
-    `<div class="visual-card">
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">CVMS 단계</div><div class="vc-val ${v.cvms === 3 ? 'warn' : 'ok'}">CS${v.cvms}</div></div>
       ${VH.svgStageBar(v.cvms, 6, cvmsLabels)}
       <div class="vc-note">CS3가 peak velocity (★ 골격 치료 골든타임)</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'cvms'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">골연령 vs 역연령</div><div class="vc-val ${Math.abs(ageDelta) <= 1 ? 'ok' : ageDelta > 0 ? 'warn' : 'danger'}">${ageDelta > 0 ? '+' : ''}${ageDelta.toFixed(1)} 세</div></div>
       ${VH.svgBarCompare(v.boneAge, v.chronAge, '골연령', '역연령', '#0EA5E9', '#8B5CF6', 18)}
       <div class="vc-note">골연령이 역연령보다 빠르면 잔여 성장 적음</div>
-    </div>`,
-    `<div class="visual-card">
+    </div>`, 'boneAge'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">예상 신장 (mid-parental)</div><div class="vc-val ok">${predicted.toFixed(0)} cm</div></div>
       ${VH.svgHeightBar(v.height, target, predicted, 130, 200)}
       <div class="vc-note">현재 → 목표(부모 평균) → 예측 최종</div>
-    </div>`,
+    </div>`, 'height'),
     `<div class="visual-card">
       <div class="vc-head"><div class="vc-name">잔여 성장</div><div class="vc-val ${remaining > 5 ? 'ok' : remaining > 1 ? 'warn' : 'danger'}">+${remaining.toFixed(1)} cm</div></div>
       <svg viewBox="0 0 240 50" preserveAspectRatio="none">
@@ -334,17 +352,18 @@ function renderVisuals() {
         <text x="240" y="48" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.4)">15cm+</text>
       </svg>
       <div class="vc-note">CVMS×성장 가중치로 추정. 5cm↑ 양호</div>
+      <div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">CVMS 단계별 잔여 성장 가중치(CS1 95% → CS6 2%)와 부모 키 차이를 곱해 산출. 골연령-역연령 차이만큼 보정. 5cm 이상 잔여 시 기능 장치 효과 큼.</div>
     </div>`,
-    VH.gaugeCard('BMI', '', bmi, 14, 28, [
+    withLegend(VH.gaugeCard('BMI', '', bmi, 14, 28, [
       {to: 17, cls: 'warn',   label: '저체중'},
       {to: 23, cls: 'ok',     label: '정상'},
       {to: 28, cls: 'warn',   label: '과체중'}
-    ], '청소년 BMI 표준 범위'),
-    `<div class="visual-card">
+    ], '청소년 BMI 표준 범위'), 'bmi'),
+    withLegend(`<div class="visual-card">
       <div class="vc-head"><div class="vc-name">부모 키 균형</div><div class="vc-val">${target.toFixed(0)} cm</div></div>
       ${VH.svgBarCompare(v.father, v.mother, '아버지', '어머니', '#0EA5E9', '#EF4444', 195)}
       <div class="vc-note">mid-parental: (부+모±13)/2</div>
-    </div>`
+    </div>`, 'father')
   ];
   document.getElementById('visualGrid').innerHTML = cards.join('');
 }
