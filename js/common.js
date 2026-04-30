@@ -266,7 +266,7 @@
     // Buttons
     document.getElementById('pmCancel').onclick = () => backdrop.remove();
     document.getElementById('pmClear').onclick = () => { window.PatientStore.clear(); backdrop.remove(); window.toast('환자 정보를 초기화했습니다.', 'success'); };
-    document.getElementById('pmSave').onclick = () => {
+    document.getElementById('pmSave').onclick = async () => {
       const data = {
         name: document.getElementById('pmName').value.trim(),
         dob: document.getElementById('pmDob').value,
@@ -274,9 +274,47 @@
         gender: document.getElementById('pmGender').value
       };
       if (!data.name) { window.toast('이름을 입력하세요.', 'warning'); return; }
-      window.PatientStore.set(data);
-      backdrop.remove();
-      window.toast('신규 환자가 저장되었습니다.', 'success');
+      const btn = document.getElementById('pmSave');
+      btn.disabled = true; btn.textContent = '저장 중...';
+      // 자동 연령 계산
+      if (data.dob && !data.ageGroup) {
+        const age = Math.floor((Date.now() - new Date(data.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+        data.ageGroup = age <= 17 ? 'child' : 'adult';
+        data.age = age;
+      }
+      // 즉시 Supabase에 저장 시도
+      try {
+        const res = await window.apiFetch('/api/register-patient', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (json.success && json.patient) {
+          // Supabase 저장 성공 → supabaseId 포함해 PatientStore에 저장
+          window.PatientStore.set({
+            ...data,
+            id: json.patient.id,
+            supabaseId: json.patient.id
+          });
+          backdrop.remove();
+          if (json.duplicate) {
+            window.toast(`이미 등록된 환자입니다 (${data.name}). 기존 환자를 사용합니다.`, 'info');
+          } else if (json.source === 'supabase') {
+            window.toast(`✅ 환자 등록 완료 (Supabase 클라우드): ${data.name}`, 'success');
+          } else {
+            window.toast(`⚠️ 클라우드 미연결 — ${data.name} 정보를 로컬에만 저장했습니다.`, 'warning', 4000);
+          }
+        } else {
+          window.PatientStore.set(data);
+          backdrop.remove();
+          window.toast('환자 정보를 로컬에 저장했습니다.', 'info');
+        }
+      } catch (e) {
+        window.PatientStore.set(data);
+        backdrop.remove();
+        window.toast('네트워크 오류 — 로컬에만 저장됨: ' + e.message, 'warning');
+      }
     };
 
     // Load patient list

@@ -117,29 +117,73 @@ const STATUS_KO = {
   archived:       { label: '보관',     cls: 'badge-primary' }
 };
 
-let DATA = []; // 저장된 진단 레코드 통합 목록
+let DATA = []; // 진단 레코드
+let PATIENTS = []; // 환자 (Supabase에서)
 let DATA_SOURCE = 'local';
 
 async function loadData() {
-  const result = await window.DiagnosisStore.list({ limit: 200 });
-  DATA = result.records || [];
-  DATA_SOURCE = result.source;
-  return DATA;
+  // 진단 + 환자 병렬 fetch
+  const [diagResult, patResult] = await Promise.all([
+    window.DiagnosisStore.list({ limit: 200 }),
+    fetchPatients()
+  ]);
+  DATA = diagResult.records || [];
+  PATIENTS = patResult || [];
+  DATA_SOURCE = diagResult.source;
 }
 
-// 환자 단위로 그룹핑된 뷰 (마지막 진단 + 재발 risk)
-function groupByPatient(records) {
+async function fetchPatients() {
+  try {
+    const res = await window.apiFetch('/api/get-patients');
+    const data = await res.json();
+    return (data.records || []).map(p => ({
+      id: p.id,
+      name: p.name,
+      ageGroup: p.age_group,
+      gender: p.gender,
+      dob: p.dob,
+      age: p.age,
+      created_at: p.created_at,
+      diagnosis_count_remote: p.diagnosis_count
+    }));
+  } catch (e) {
+    console.warn('[dashboard] patients 조회 실패:', e.message);
+    return [];
+  }
+}
+
+function groupByPatient(diagRecords, patientList) {
   const map = new Map();
-  records.forEach(r => {
+  // 1) Supabase 환자 목록을 먼저 등록 (진단 없는 환자도 포함)
+  patientList.forEach(p => {
+    const key = p.id;
+    map.set(key, {
+      id: p.id,
+      name: p.name,
+      ageGroup: p.ageGroup || 'adult',
+      age: p.age || (p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 31557600000) : null),
+      gender: p.gender || '',
+      dob: p.dob,
+      diagnoses: [],
+      remoteOnly: true
+    });
+  });
+  // 2) 진단 추가 (해당 환자가 있으면 거기, 없으면 신규)
+  diagRecords.forEach(r => {
     const p = r.patient || {};
-    const key = (p.id || p.name || '익명') + '|' + (p.dob || '');
+    let key = p.id || r.patient_id;
+    if (!key && p.name) {
+      key = p.name + '|' + (p.dob || '');
+    }
+    if (!key) key = 'unknown_' + Math.random();
     if (!map.has(key)) {
       map.set(key, {
-        id: p.id || key,
+        id: key,
         name: p.name || '(익명)',
         ageGroup: p.ageGroup || 'adult',
-        age: r.patient?.age || (p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 31557600000) : null),
+        age: p.age || (p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 31557600000) : null),
         gender: p.gender || '',
+        dob: p.dob,
         diagnoses: []
       });
     }
@@ -147,10 +191,11 @@ function groupByPatient(records) {
   });
   return Array.from(map.values()).map(p => {
     p.diagnoses.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-    p.lastType = p.diagnoses[0]?.type;
-    p.status = p.diagnoses[0]?.result?.status || 'pending_review';
+    p.lastType = p.diagnoses[0]?.type || null;
+    p.status = p.diagnoses[0]?.result?.status || (p.diagnoses.length ? 'pending_review' : 'no_diagnosis');
     p.recurrence = p.diagnoses.find(d => d.type === 'recurrence')?.result?.probabilities?.y10 ?? null;
     p.updated = (p.diagnoses[0]?.created_at || '').slice(0, 10);
+    p.diagnosisCount = p.diagnoses.length;
     return p;
   });
 }
@@ -160,7 +205,7 @@ let GROUPED = [];
 
 async function refreshAll() {
   await loadData();
-  GROUPED = groupByPatient(DATA);
+  GROUPED = groupByPatient(DATA, PATIENTS);
 
   const total = GROUPED.length;
   const totalDiag = DATA.length;
@@ -230,19 +275,25 @@ function renderTable() {
     const recurr = p.recurrence;
     const riskCls = recurr == null ? 'badge-primary' : recurr > 50 ? 'badge-danger' : recurr > 30 ? 'badge-warning' : 'badge-success';
     const recLbl = recurr == null ? '—' : `${Math.round(recurr)}%`;
-    const stat = STATUS_KO[p.status] || STATUS_KO.pending_review;
+    const hasNoDiag = p.diagnosisCount === 0;
+    const stat = hasNoDiag
+      ? { label: '진단 없음', cls: 'badge-primary' }
+      : (STATUS_KO[p.status] || STATUS_KO.pending_review);
     const lastDiagId = p.diagnoses[0]?.id || '';
+    const onClickAction = hasNoDiag
+      ? `location.href='patient-history.html?id=${encodeURIComponent(p.id)}'`
+      : `location.href='patient-detail.html?id=${encodeURIComponent(lastDiagId)}'`;
     return `
-      <tr style="cursor:pointer;" onclick="location.href='patient-detail.html?id=${encodeURIComponent(lastDiagId)}'">
+      <tr style="cursor:pointer;" onclick="${onClickAction}">
         <td><code style="color:var(--text-muted); font-size:11px;">${(p.id || '').slice(-8)}</code></td>
         <td><strong>${escapeHtml(p.name)}</strong></td>
         <td>${p.age != null ? p.age + '세' : '—'} <span class="badge ${p.ageGroup === 'child' ? 'badge-warning' : 'badge-primary'}" style="margin-left:4px;">${p.ageGroup === 'child' ? '어린이' : '성인'}</span></td>
         <td>${p.gender === 'male' ? '남' : p.gender === 'female' ? '여' : '—'}</td>
-        <td>${TYPE_KO[p.lastType] || p.lastType}</td>
-        <td>${p.diagnoses.length}건</td>
+        <td>${hasNoDiag ? '<span style="color:var(--text-muted);">진단 시작 ↗</span>' : (TYPE_KO[p.lastType] || p.lastType)}</td>
+        <td>${p.diagnosisCount}건</td>
         <td><span class="badge ${stat.cls}">${stat.label}</span></td>
         <td><span class="badge ${riskCls}">${recLbl}</span></td>
-        <td style="color:var(--text-muted);">${p.updated}</td>
+        <td style="color:var(--text-muted);">${p.updated || '—'}</td>
       </tr>`;
   }).join('');
 }
