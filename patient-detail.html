@@ -30,8 +30,12 @@
 <main class="content">
 <div class="container">
 
-<div style="margin-bottom:24px;">
+<div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
   <a href="dashboard.html" class="btn btn-ghost btn-sm">← 대시보드로</a>
+  <div style="display:flex; gap:8px;">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 인쇄</button>
+    <button class="btn btn-primary btn-sm" id="pdfBtn" onclick="generatePDF()">📥 PDF 다운로드</button>
+  </div>
 </div>
 
 <div id="loading" style="text-align:center; padding:60px; color:var(--text-muted);">불러오는 중...</div>
@@ -119,6 +123,8 @@
 </div>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script src="js/diagnosis-store.js"></script>
@@ -258,6 +264,57 @@ async function saveNote() {
   const status = CURRENT.result?.status || 'pending_review';
   const r = await window.DiagnosisStore.updateStatus(CURRENT.id, status, note);
   if (r.success !== false) window.toast('의사 메모를 저장했습니다.', 'success');
+}
+
+async function generatePDF() {
+  if (!CURRENT) return;
+  const btn = document.getElementById('pdfBtn');
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
+  try {
+    const target = document.getElementById('detail');
+    // 액션 카드 + JSON 박스 PDF 출력 시 숨김
+    const hideEls = target.querySelectorAll('.action-bar, #rawJson, button');
+    hideEls.forEach(el => el.style.visibility = 'hidden');
+
+    const canvas = await html2canvas(target, {
+      backgroundColor: '#0B1220',
+      scale: 2,
+      logging: false,
+      useCORS: true
+    });
+    hideEls.forEach(el => el.style.visibility = '');
+
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageW = 210, pageH = 297, margin = 8;
+    const usableW = pageW - 2 * margin;
+    const imgH = canvas.height * usableW / canvas.width;
+
+    let heightLeft = imgH;
+    let position = margin;
+    pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+    heightLeft -= (pageH - 2 * margin);
+
+    while (heightLeft > 0) {
+      position = -(imgH - heightLeft) + margin;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+      heightLeft -= (pageH - 2 * margin);
+    }
+
+    const name = CURRENT.patient?.name || 'patient';
+    const date = new Date(CURRENT.created_at).toISOString().slice(0, 10);
+    const type = TYPE_KO[CURRENT.type] || CURRENT.type;
+    pdf.save(`${name}_${type}_${date}.pdf`);
+    window.toast('✅ PDF 다운로드 완료', 'success');
+  } catch (e) {
+    console.error('[pdf]', e);
+    window.toast('PDF 생성 실패: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = orig;
+  }
 }
 
 init();

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="4 AI 진단을 종합한 단일 통합 치료 계획.">
+<meta property="og:title" content="종합 치료계획 · Orthodontics AI">
+<title>종합 치료계획 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .plan-hero {
+    background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(139,92,246,0.04));
+    border: 1px solid rgba(14,165,233,0.2);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .ph-row { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; }
+  .approach-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--gradient-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .summary-text { font-size: 15px; line-height: 1.7; color: var(--text-primary); }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 24px; font-weight: 800; color: var(--color-primary); }
+  .stat-card .lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .timeline { position: relative; padding-left: 36px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 14px; top: 14px; bottom: 14px;
+    width: 2px; background: linear-gradient(to bottom, #0EA5E9, #8B5CF6);
+  }
+  .phase-item {
+    position: relative;
+    margin-bottom: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .phase-item::before {
+    content: attr(data-num);
+    position: absolute; left: -36px; top: 14px;
+    width: 30px; height: 30px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 13px;
+    box-shadow: 0 4px 14px rgba(14,165,233,0.4);
+  }
+  .phase-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom: 12px; }
+  .phase-name { font-size: 17px; font-weight: 700; }
+  .phase-duration {
+    padding: 4px 12px;
+    background: rgba(14,165,233,0.12);
+    color: var(--color-primary);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .phase-section { margin-top: 12px; }
+  .phase-section h4 {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .phase-section ul { list-style: none; padding: 0; }
+  .phase-section ul li {
+    padding: 6px 0; font-size: 13px; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .phase-section ul li::before { content: '•'; color: var(--color-primary); font-weight: 700; }
+  .phase-outcome {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(16,185,129,0.06);
+    border-left: 3px solid var(--color-success);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--color-success);
+  }
+
+  .info-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .info-card { padding: 18px; }
+  .info-card h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 15px; }
+  .info-card ul { list-style: none; padding: 0; margin: 0; }
+  .info-card ul li {
+    padding: 8px 0; font-size: 13px; color: var(--text-secondary);
+    border-bottom: 1px dashed var(--border-subtle); line-height: 1.6;
+  }
+  .info-card ul li:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:16px;">
+  <a href="patient-history.html" class="btn btn-ghost btn-sm">← 환자 이력으로</a>
+  <a href="dashboard.html" class="btn btn-ghost btn-sm">📊 대시보드</a>
+</div>
+
+<div id="loading" style="text-align:center; padding:60px; color:var(--text-muted);">
+  <div style="font-size:48px;">🩺</div>
+  <h3 style="margin: 16px 0;">종합 치료계획 생성 중...</h3>
+  <p>4개 AI 진단을 종합 분석합니다 (Gemini 2.5 Pro · 15-30초)</p>
+</div>
+
+<div id="empty" style="display:none; text-align:center; padding:60px;">
+  <h3>치료 계획을 생성할 수 없습니다</h3>
+  <p style="color:var(--text-muted);" id="emptyMsg">—</p>
+  <a href="patient-history.html" class="btn btn-primary mt-4">환자 이력으로</a>
+</div>
+
+<div id="content" style="display:none;">
+
+  <div class="plan-hero">
+    <div class="ph-row">
+      <div style="flex:1; min-width:220px;">
+        <span class="approach-badge" id="approachBadge">—</span>
+        <h1 style="font-size:28px; margin: 8px 0 12px;" id="planTitle">종합 치료 계획</h1>
+        <p class="summary-text" id="summaryText">—</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num" id="statTotalMonths">—</div>
+        <div class="lbl">총 기간 (개월)</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statPhases">—</div>
+        <div class="lbl">치료 단계</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statCost">—</div>
+        <div class="lbl">예상 비용</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statDiagCount">—</div>
+        <div class="lbl">근거 진단</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-bottom:16px;">📋 치료 단계 타임라인</h2>
+  <div class="timeline" id="timeline"></div>
+
+  <div class="info-grid mt-4">
+    <div class="card info-card">
+      <h3>🎯 핵심 임상 판단</h3>
+      <ul id="keyDecisions"></ul>
+    </div>
+    <div class="card info-card">
+      <h3>⚠️ 통합 위험 요인</h3>
+      <ul id="riskSummary"></ul>
+    </div>
+    <div class="card info-card">
+      <h3>🗣 환자 교육 포인트</h3>
+      <ul id="patientEducation"></ul>
+    </div>
+    <div class="card info-card">
+      <h3>🔀 대안 접근법</h3>
+      <ul id="altApproaches"></ul>
+    </div>
+  </div>
+
+  <div class="card mt-4" style="text-align:center;">
+    <h3 style="margin-bottom:12px;">📅 정기 관리</h3>
+    <div style="font-size:18px; font-weight:600; color:var(--color-primary);" id="followUp">—</div>
+    <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border-subtle);">
+      <button class="btn btn-primary" onclick="downloadPDF()">📥 치료계획 PDF 다운로드</button>
+      <button class="btn btn-ghost" onclick="window.print()" style="margin-left:8px;">🖨 인쇄</button>
+      <button class="btn btn-ghost" onclick="regenerate()" style="margin-left:8px;">↻ 재생성</button>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px; padding: 14px 18px; background: rgba(245,158,11,0.06); border-left: 3px solid var(--color-warning); border-radius: 0 8px 8px 0; font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
+    ⚠️ <strong>면책</strong>: 본 치료 계획은 AI 보조 도구가 4종 진단을 종합한 제안입니다. 최종 치료 결정은 반드시 자격을 갖춘 교정 전문의의 검토와 판단에 따라야 하며, 환자 동의 후 진행합니다.
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+const APPROACH_KO = {
+  extraction: { label: '발치 접근', icon: '🦷' },
+  non_extraction: { label: '비발치 접근', icon: '🌱' },
+  two_phase: { label: '2단계 치료', icon: '🔁' },
+  surgical: { label: '수술 접근', icon: '🏥' },
+  hybrid: { label: '복합 접근', icon: '🧬' }
+};
+
+let CURRENT_PLAN = null;
+let CURRENT_PATIENT_ID = null;
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function formatKRW(n) {
+  if (!n || !Number.isFinite(n)) return '—';
+  return n.toLocaleString('ko-KR') + '원';
+}
+
+async function init() {
+  const params = new URLSearchParams(location.search);
+  CURRENT_PATIENT_ID = params.get('id');
+  if (!CURRENT_PATIENT_ID) {
+    const active = window.PatientStore.get();
+    CURRENT_PATIENT_ID = active?.supabaseId || active?.id;
+  }
+  if (!CURRENT_PATIENT_ID) {
+    showEmpty('환자가 선택되지 않았습니다. 먼저 환자를 선택해 주세요.');
+    return;
+  }
+  await loadPlan();
+}
+
+async function loadPlan() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('content').style.display = 'none';
+  document.getElementById('empty').style.display = 'none';
+  try {
+    const res = await window.apiFetch('/api/treatment-plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patientId: CURRENT_PATIENT_ID })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showEmpty(err.error || `HTTP ${res.status}`);
+      return;
+    }
+    const data = await res.json();
+    CURRENT_PLAN = data;
+    if (data.fallback) {
+      window.toast('AI 호출 실패 — 폴백 계획을 표시합니다.', 'warning', 4000);
+    }
+    render(data);
+  } catch (e) {
+    showEmpty(e.message);
+  }
+}
+
+function showEmpty(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('empty').style.display = 'block';
+  document.getElementById('emptyMsg').textContent = msg;
+}
+
+function render(plan) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+
+  const approach = APPROACH_KO[plan.approach] || { label: plan.approach || '미정', icon: '🩺' };
+  document.getElementById('approachBadge').textContent = `${approach.icon} ${approach.label}`;
+  document.getElementById('planTitle').textContent = `${plan.patient_name || '환자'} 통합 치료 계획`;
+  document.getElementById('summaryText').textContent = plan.summary || '—';
+
+  document.getElementById('statTotalMonths').textContent = plan.total_duration_months ?? '—';
+  document.getElementById('statPhases').textContent = (plan.phases || []).length;
+  const cost = plan.estimated_cost_krw;
+  document.getElementById('statCost').textContent = cost ? `${(cost.min/10000).toFixed(0)}-${(cost.max/10000).toFixed(0)}만원` : '—';
+  document.getElementById('statDiagCount').textContent = plan.diagnosis_count ?? plan.diagnoses_used?.length ?? 0;
+
+  // Timeline
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = (plan.phases || []).map(p => `
+    <div class="phase-item" data-num="${p.phase}">
+      <div class="phase-head">
+        <div class="phase-name">${escapeHtml(p.name)}</div>
+        <span class="phase-duration">${p.duration_months}개월</span>
+      </div>
+      ${p.objectives?.length ? `
+      <div class="phase-section">
+        <h4>목표</h4>
+        <ul>${p.objectives.map(o => `<li>${escapeHtml(o)}</li>`).join('')}</ul>
+      </div>` : ''}
+      ${p.appliances?.length ? `
+      <div class="phase-section">
+        <h4>사용 장치</h4>
+        <ul>${p.appliances.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      </div>` : ''}
+      ${p.key_actions?.length ? `
+      <div class="phase-section">
+        <h4>주요 시술</h4>
+        <ul>${p.key_actions.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      </div>` : ''}
+      ${p.expected_outcome ? `<div class="phase-outcome">✓ ${escapeHtml(p.expected_outcome)}</div>` : ''}
+    </div>
+  `).join('') || '<p style="color:var(--text-muted);">단계가 정의되지 않았습니다.</p>';
+
+  // Info cards
+  const fillList = (id, arr) => {
+    const el = document.getElementById(id);
+    el.innerHTML = (arr || []).length ? arr.map(x => `<li>${escapeHtml(x)}</li>`).join('') : '<li style="color:var(--text-muted);">—</li>';
+  };
+  fillList('keyDecisions', plan.key_decisions);
+  fillList('riskSummary', plan.risk_summary);
+  fillList('patientEducation', plan.patient_education);
+  fillList('altApproaches', plan.alternative_approaches);
+
+  document.getElementById('followUp').textContent = plan.follow_up_schedule || '의사 결정에 따름';
+}
+
+async function downloadPDF() {
+  if (!CURRENT_PLAN) return;
+  const target = document.getElementById('content');
+  // 버튼 + 면책 PDF 출력 시 숨김
+  const hideEls = target.querySelectorAll('button');
+  hideEls.forEach(el => el.style.visibility = 'hidden');
+  try {
+    const canvas = await html2canvas(target, { backgroundColor: '#0B1220', scale: 2, useCORS: true });
+    hideEls.forEach(el => el.style.visibility = '');
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageW = 210, pageH = 297, margin = 8;
+    const usableW = pageW - 2 * margin;
+    const imgH = canvas.height * usableW / canvas.width;
+    let heightLeft = imgH;
+    let position = margin;
+    pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+    heightLeft -= (pageH - 2 * margin);
+    while (heightLeft > 0) {
+      position = -(imgH - heightLeft) + margin;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+      heightLeft -= (pageH - 2 * margin);
+    }
+    const name = CURRENT_PLAN.patient_name || 'patient';
+    const date = new Date().toISOString().slice(0, 10);
+    pdf.save(`${name}_치료계획_${date}.pdf`);
+    window.toast('✅ PDF 다운로드 완료', 'success');
+  } catch (e) {
+    hideEls.forEach(el => el.style.visibility = '');
+    window.toast('PDF 생성 실패: ' + e.message, 'error');
+  }
+}
+
+async function regenerate() {
+  if (!confirm('치료계획을 다시 생성하시겠습니까? Gemini Pro가 다시 호출됩니다.')) return;
+  await loadPlan();
+}
+
+init();
+</script>
+</body>
+</html>
