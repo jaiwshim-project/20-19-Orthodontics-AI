@@ -78,6 +78,34 @@
   .case-side .case-caption { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
   .case-arrow { display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--color-primary); }
 
+  /* 측정값 시각 오버레이 게이지 */
+  .overlay-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .overlay-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 18px; }
+  .overlay-card .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+  .overlay-card .name { font-size: 13px; font-weight: 700; }
+  .overlay-card .meta { font-size: 11px; color: var(--text-muted); }
+  .overlay-card .vals { display: flex; gap: 14px; font-family: monospace; font-size: 12px; }
+  .overlay-card .v-before { color: var(--color-danger); }
+  .overlay-card .v-after  { color: var(--color-success); }
+  .overlay-card svg { width: 100%; height: 70px; display: block; }
+  .gauge-track-bg { fill: rgba(255,255,255,0.06); }
+  .gauge-normal-zone { fill: rgba(16,185,129,0.18); }
+  .gauge-arrow-line { stroke: rgba(255,255,255,0.4); stroke-width: 1.5; stroke-dasharray: 3 2; fill: none; }
+  .gauge-marker-before { fill: #EF4444; stroke: #fff; stroke-width: 2; }
+  .gauge-marker-after  { fill: #10B981; stroke: #fff; stroke-width: 2; }
+  .gauge-tick { stroke: rgba(255,255,255,0.15); stroke-width: 1; }
+  .gauge-tick-label { fill: rgba(255,255,255,0.4); font-size: 9px; }
+
+  .enum-overlay { display:flex; gap:10px; padding: 8px 0; align-items:center; }
+  .enum-step { flex:1; text-align:center; padding: 10px 8px; border-radius: 8px; border: 1px solid var(--border-subtle); position: relative; }
+  .enum-step.before-on { background: rgba(239,68,68,0.18); border-color: #EF4444; }
+  .enum-step.after-on  { background: rgba(16,185,129,0.18); border-color: #10B981; }
+  .enum-step.both-on   { background: linear-gradient(90deg, rgba(239,68,68,0.18) 50%, rgba(16,185,129,0.18) 50%); border-color: var(--color-primary); }
+  .enum-step .pip { position: absolute; top: -8px; padding: 1px 6px; border-radius: 999px; font-size: 9px; font-weight: 700; }
+  .enum-step .pip.before { left: 4px; background: #EF4444; color: #fff; }
+  .enum-step .pip.after  { right: 4px; background: #10B981; color: #fff; }
+  .enum-step .label { font-size: 12px; font-weight: 600; }
+
   @media print {
     .no-print { display: none !important; }
     body { background: #fff; color: #000; }
@@ -179,6 +207,10 @@
       <tbody id="measBody"></tbody>
     </table>
   </div>
+
+  <h3 style="margin: 32px 0 12px;">📊 측정값 변화 시각 오버레이</h3>
+  <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">각 지표의 정상 범위(녹색 zone)에 Before(빨강)와 After(녹색) 마커가 어떻게 이동하는지 한눈에 확인.</p>
+  <div id="overlayGrid" class="overlay-grid"></div>
 
   <h3 style="margin: 32px 0 12px;">✨ 주요 변화</h3>
   <div class="changes-grid" id="changesGrid"></div>
@@ -349,6 +381,9 @@ function render(d) {
     `;
   }).join('');
 
+  // 측정값 시각 오버레이 게이지
+  renderOverlay(before, after);
+
   // 측면 안모 비교 SVG (Before/After 변화량 반영)
   // Crowding/Overjet 변화에 따라 path 보정
   const reduceOJ = (before.overjet || 0) - (after.overjet || 0);
@@ -360,6 +395,118 @@ function render(d) {
   const afterPath  = `M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q ${ax} 230 280 230 L ${lsx} 280 Q ${lsx-2} 300 ${lsx-10} 320 Q 246 360 250 360 L 255 400 L 245 440 Q 215 452 185 432`;
   document.getElementById('profileBeforeG').innerHTML = `<path d="${beforePath}" fill="rgba(239,68,68,0.1)" stroke="#EF4444" stroke-width="2"/>`;
   document.getElementById('profileAfterG').innerHTML  = `<path d="${afterPath}"  fill="rgba(16,185,129,0.1)" stroke="#10B981" stroke-width="2"/>`;
+}
+
+// 측정값 시각 오버레이 게이지 (numeric)
+const GAUGE_RANGES = {
+  anb:      { min: -3, max: 9,    normal: [0, 4],   unit: '°',  name: 'ANB 각' },
+  crowding: { min: 0,  max: 12,   normal: [0, 1.5], unit: 'mm', name: 'Crowding' },
+  overjet:  { min: -3, max: 12,   normal: [2, 4],   unit: 'mm', name: 'Overjet' },
+  overbite: { min: -3, max: 10,   normal: [2, 4],   unit: 'mm', name: 'Overbite' },
+  fma:      { min: 15, max: 40,   normal: [20, 30], unit: '°',  name: 'FMA' },
+  impa:     { min: 75, max: 110,  normal: [85, 95], unit: '°',  name: 'IMPA' }
+};
+const ENUM_RANGES = {
+  profile:   { name: 'Profile (측면 윤곽)',  options: ['concave', 'straight', 'convex'], labels: { concave:'오목', straight:'직선', convex:'볼록' }, ideal: 'straight' },
+  lipStrain: { name: 'Lip Strain (입술 긴장)', options: ['none', 'mild', 'severe'], labels: { none:'없음', mild:'경미', severe:'현저' }, ideal: 'none' }
+};
+
+function gaugeNum(key, before, after) {
+  const cfg = GAUGE_RANGES[key];
+  if (cfg == null || before == null || after == null) return null;
+  const W = 320, H = 70;
+  const padX = 16;
+  const innerW = W - padX * 2;
+  const x = (val) => padX + ((val - cfg.min) / (cfg.max - cfg.min)) * innerW;
+  const xB = x(before);
+  const xA = x(after);
+  const xN1 = x(cfg.normal[0]);
+  const xN2 = x(cfg.normal[1]);
+  const trackY = 40;
+
+  // 5 ticks
+  const tickStep = (cfg.max - cfg.min) / 4;
+  const ticks = [];
+  for (let i = 0; i <= 4; i++) {
+    const v = cfg.min + tickStep * i;
+    const tx = x(v);
+    ticks.push(`<line class="gauge-tick" x1="${tx}" y1="${trackY-4}" x2="${tx}" y2="${trackY+12}"/>
+                <text class="gauge-tick-label" x="${tx}" y="${trackY+22}" text-anchor="middle">${v.toFixed(0)}</text>`);
+  }
+
+  return `
+    <div class="overlay-card">
+      <div class="head">
+        <div>
+          <div class="name">${cfg.name}</div>
+          <div class="meta">정상 ${cfg.normal[0]}-${cfg.normal[1]}${cfg.unit}</div>
+        </div>
+        <div class="vals">
+          <span class="v-before">●${before.toFixed(1)}${cfg.unit}</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span class="v-after">●${after.toFixed(1)}${cfg.unit}</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <rect class="gauge-track-bg" x="${padX}" y="${trackY-2}" width="${innerW}" height="6" rx="3"/>
+        <rect class="gauge-normal-zone" x="${xN1}" y="${trackY-4}" width="${xN2-xN1}" height="10" rx="3"/>
+        ${ticks.join('')}
+        <path class="gauge-arrow-line" d="M ${xB} ${trackY+1} L ${xA} ${trackY+1}" marker-end="url(#arrG)"/>
+        <defs>
+          <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#10B981"/></marker>
+        </defs>
+        <circle class="gauge-marker-before" cx="${xB}" cy="${trackY+1}" r="6"/>
+        <text x="${xB}" y="${trackY-10}" text-anchor="middle" fill="#EF4444" font-size="9" font-weight="700">B</text>
+        <circle class="gauge-marker-after" cx="${xA}" cy="${trackY+1}" r="6"/>
+        <text x="${xA}" y="${trackY-10}" text-anchor="middle" fill="#10B981" font-size="9" font-weight="700">A</text>
+      </svg>
+    </div>
+  `;
+}
+
+function gaugeEnum(key, before, after) {
+  const cfg = ENUM_RANGES[key];
+  if (!cfg) return null;
+  const items = cfg.options.map(opt => {
+    const isB = before === opt;
+    const isA = after === opt;
+    const cls = isB && isA ? 'both-on' : isB ? 'before-on' : isA ? 'after-on' : '';
+    const ideal = opt === cfg.ideal ? '<span style="position:absolute; top:-8px; right:50%; transform:translateX(50%); padding:1px 6px; border-radius:999px; background:var(--color-primary); color:#fff; font-size:9px; font-weight:700;">목표</span>' : '';
+    return `
+      <div class="enum-step ${cls}">
+        ${isB ? '<span class="pip before">B</span>' : ''}
+        ${isA ? '<span class="pip after">A</span>' : ''}
+        ${ideal}
+        <div class="label">${cfg.labels[opt]}</div>
+      </div>
+    `;
+  }).join('');
+  return `
+    <div class="overlay-card">
+      <div class="head">
+        <div>
+          <div class="name">${cfg.name}</div>
+          <div class="meta">목표: ${cfg.labels[cfg.ideal]}</div>
+        </div>
+      </div>
+      <div class="enum-overlay">${items}</div>
+    </div>
+  `;
+}
+
+function renderOverlay(before, after) {
+  const grid = document.getElementById('overlayGrid');
+  if (!grid || !before || !after) { if (grid) grid.innerHTML = '<p style="color:var(--text-muted); padding:16px;">측정값 데이터 없음.</p>'; return; }
+  const cards = [];
+  for (const k of Object.keys(GAUGE_RANGES)) {
+    const c = gaugeNum(k, before[k], after[k]);
+    if (c) cards.push(c);
+  }
+  for (const k of Object.keys(ENUM_RANGES)) {
+    const c = gaugeEnum(k, before[k], after[k]);
+    if (c) cards.push(c);
+  }
+  grid.innerHTML = cards.join('') || '<p style="color:var(--text-muted); padding:16px;">표시할 측정값 없음</p>';
 }
 
 async function downloadPDF() {
