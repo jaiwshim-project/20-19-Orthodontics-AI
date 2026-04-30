@@ -44,3 +44,6 @@ logs/
 *.mov
 *.mp4
 *.zip
+
+# Claude Code 로컬 권한 캐시 (셸 명령 history 포함 → 비밀 누출 위험)
+.claude/
