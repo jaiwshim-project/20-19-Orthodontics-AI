@@ -43,6 +43,33 @@
     color: var(--color-danger);
     font-weight: 600; font-size: 13px;
   }
+  /* ===== Visual Measurements Panel ===== */
+  .visual-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .visual-card { background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+  .visual-card .vc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .visual-card .vc-name { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
+  .visual-card .vc-val { font-size:16px; font-weight:700; font-family:'Inter',monospace; }
+  .visual-card .vc-val.ok { color:var(--color-success); }
+  .visual-card .vc-val.warn { color:var(--color-warning); }
+  .visual-card .vc-val.danger { color:var(--color-danger); }
+  .visual-card svg { width:100%; height:80px; display:block; }
+  .visual-card .vc-note { font-size:10px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+
+  /* Linear gauge */
+  .gauge-track { fill:rgba(255,255,255,0.06); }
+  .gauge-zone-ok { fill:rgba(16,185,129,0.18); }
+  .gauge-zone-warn { fill:rgba(245,158,11,0.18); }
+  .gauge-zone-danger { fill:rgba(239,68,68,0.18); }
+  .gauge-pin { fill:#fff; stroke:var(--color-primary); stroke-width:2; }
+
+  /* Arch teeth chart */
+  .arch-chart svg { width:100%; height:auto; max-width:340px; display:block; margin: 8px auto; }
+  .tooth-mark { fill:rgba(255,255,255,0.08); stroke:rgba(255,255,255,0.18); stroke-width:0.5; cursor:pointer; transition: all .2s; }
+  .tooth-mark:hover { fill:rgba(14,165,233,0.2); }
+  .tooth-mark.extract { fill:rgba(239,68,68,0.4); stroke:#EF4444; stroke-width:1.2; animation: pulseExtract 1.6s infinite; }
+  @keyframes pulseExtract { 0%,100% { fill-opacity:0.4; } 50% { fill-opacity:0.85; } }
+  .tooth-num { fill:var(--text-muted); font-size:6px; font-family:'Inter',sans-serif; pointer-events:none; }
+  .tooth-num.extract-num { fill:#fff; font-weight:700; }
 </style>
 </head>
 <body>
@@ -143,12 +170,23 @@
       <span id="recBadge" class="badge badge-primary">대기</span>
     </div>
     <div id="teethRec" class="tooth-recommendation" style="justify-content:center; margin-top:12px;"></div>
+
+    <div class="arch-chart" style="margin-top:14px;">
+      <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; text-align:center; margin-bottom:4px;">치아 위치 (FDI · 빨강 = 발치 권장)</div>
+      <svg id="archSvg" viewBox="0 0 340 220"></svg>
+    </div>
+
     <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-subtle); text-align:center;">
       <button class="btn btn-primary" onclick="saveCurrentDiagnosis()">💾 환자 대시보드에 저장</button>
       <a class="btn btn-ghost" href="dashboard.html" style="margin-left:8px;">📊 대시보드</a>
     </div>
   </div>
 
+</div>
+
+<div class="card mt-4">
+  <h3 style="margin-bottom:12px;">📐 측정값 시각화 <span style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px;">입력값을 변경하면 즉시 갱신됩니다</span></h3>
+  <div id="visualGrid" class="visual-grid"></div>
 </div>
 
 <div class="grid grid-2 mt-4">
@@ -200,6 +238,293 @@ function getInputs() {
     impa: parseFloat(document.getElementById('impa').value)
   };
 }
+
+// ============== 측정값 시각화 ==============
+function renderVisuals() {
+  const i = getInputs();
+  const grid = document.getElementById('visualGrid');
+  if (!grid) return;
+  const cards = [
+    angleCard('ANB', '°', i.anb, [0, 4], [-2, 8], '상하악 골격 관계 · 정상 2°±2', svgAngleANB(i.anb)),
+    gaugeCard('Crowding', 'mm', i.crowding, 0, 12, [
+      {to: 4, cls: 'ok',     label: '경미'},
+      {to: 8, cls: 'warn',   label: '중등도'},
+      {to: 12, cls: 'danger', label: '심함'}
+    ], '치열궁 부족량 · Proffit 분류'),
+    gaugeCard('Overjet', 'mm', i.overjet, -2, 12, [
+      {to: 0,  cls: 'warn',   label: '반대'},
+      {to: 5,  cls: 'ok',     label: '정상'},
+      {to: 12, cls: 'danger', label: 'II급'}
+    ], '상하악 전치 수평거리 · 정상 2-4mm', svgOverjet(i.overjet)),
+    gaugeCard('Overbite', 'mm', i.overbite, -2, 10, [
+      {to: 0,  cls: 'warn',   label: '개방'},
+      {to: 4,  cls: 'ok',     label: '정상'},
+      {to: 10, cls: 'danger', label: '깊은'}
+    ], '상하악 전치 수직 겹침 · 정상 2-4mm', svgOverbite(i.overbite)),
+    profileCard(i.profile),
+    lipStrainCard(i.lipStrain),
+    angleCard('FMA', '°', i.fma, [20, 30], [10, 50], 'Frankfort-하악 평면 각도 · 정상 25°±5', svgFMA(i.fma)),
+    angleCard('IMPA', '°', i.impa, [85, 95], [70, 110], '하악 절치-하악 평면 각 · 정상 90°±5', svgIMPA(i.impa))
+  ];
+  grid.innerHTML = cards.join('');
+}
+
+function classify(val, normal, range) {
+  if (!Number.isFinite(val)) return 'warn';
+  if (val < range[0] || val > range[1]) return 'danger';
+  if (val >= normal[0] && val <= normal[1]) return 'ok';
+  return 'warn';
+}
+
+// Linear gauge
+function gaugeCard(name, unit, val, lo, hi, zones, note, extraSvg) {
+  const v = Number.isFinite(val) ? val : 0;
+  const pct = Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+  let cls = 'ok';
+  let lastTo = lo;
+  for (const z of zones) {
+    if (v <= z.to) { cls = z.cls; break; }
+    lastTo = z.to;
+  }
+  if (v > zones[zones.length - 1].to) cls = zones[zones.length - 1].cls;
+  const W = 240, H = 50;
+  const zoneSvg = zones.map((z, idx) => {
+    const x1 = ((idx === 0 ? lo : zones[idx-1].to) - lo) / (hi - lo) * W;
+    const x2 = (z.to - lo) / (hi - lo) * W;
+    return `<rect class="gauge-zone-${z.cls}" x="${x1}" y="20" width="${x2-x1}" height="14" rx="3"/>`;
+  }).join('');
+  const ticks = zones.map(z => {
+    const x = (z.to - lo) / (hi - lo) * W;
+    return `<text x="${x}" y="48" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.4)">${z.to}</text>`;
+  }).join('');
+  const pinX = pct * W;
+  return `
+    <div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">${name} (${unit})</div>
+        <div class="vc-val ${cls}">${Number.isFinite(val) ? val.toFixed(1) : '—'}</div>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <rect class="gauge-track" x="0" y="20" width="${W}" height="14" rx="3"/>
+        ${zoneSvg}
+        <line x1="${pinX}" y1="14" x2="${pinX}" y2="40" stroke="#fff" stroke-width="2"/>
+        <circle class="gauge-pin" cx="${pinX}" cy="27" r="6"/>
+        ${ticks}
+      </svg>
+      ${extraSvg ? `<div style="margin-top:6px;">${extraSvg}</div>` : ''}
+      <div class="vc-note">${note}</div>
+    </div>
+  `;
+}
+
+// Angle visualization
+function angleCard(name, unit, val, normal, range, note, svg) {
+  const cls = classify(val, normal, range);
+  return `
+    <div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">${name} (${unit})</div>
+        <div class="vc-val ${cls}">${Number.isFinite(val) ? val.toFixed(1) + '°' : '—'}</div>
+      </div>
+      ${svg}
+      <div class="vc-note">${note}</div>
+    </div>
+  `;
+}
+
+// SVG: ANB angle (N at top, A and B with angle between)
+function svgAngleANB(deg) {
+  if (!Number.isFinite(deg)) deg = 0;
+  const cx = 100, cy = 12;
+  const r = 60;
+  // A line: vertical down (reference)
+  // B line: rotated by ANB degrees
+  const aX = cx, aY = cy + r;
+  const bRad = (deg) * Math.PI / 180;
+  const bX = cx + Math.sin(bRad) * r;
+  const bY = cy + Math.cos(bRad) * r;
+  return `
+  <svg viewBox="0 0 200 80" style="height:80px;">
+    <text x="${cx}" y="10" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.5)">N</text>
+    <line x1="${cx}" y1="${cy}" x2="${aX}" y2="${aY}" stroke="#0EA5E9" stroke-width="1.5"/>
+    <line x1="${cx}" y1="${cy}" x2="${bX}" y2="${bY}" stroke="#8B5CF6" stroke-width="1.5"/>
+    <text x="${aX-4}" y="${aY+8}" font-size="9" fill="#0EA5E9">A</text>
+    <text x="${bX+2}" y="${bY+8}" font-size="9" fill="#8B5CF6">B</text>
+    <path d="M ${cx} ${cy+18} A 18 18 0 0 1 ${cx + Math.sin(bRad)*18} ${cy + Math.cos(bRad)*18}" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+    <text x="${cx+20}" y="${cy+18}" font-size="9" fill="rgba(255,255,255,0.7)">${deg.toFixed(1)}°</text>
+  </svg>`;
+}
+
+// SVG: Overjet (horizontal upper-lower incisor distance)
+function svgOverjet(mm) {
+  if (!Number.isFinite(mm)) mm = 0;
+  const px = 6 * Math.max(-2, Math.min(8, mm));
+  const cx = 100;
+  return `
+  <svg viewBox="0 0 200 60" style="height:60px;">
+    <rect x="${cx-30}" y="14" width="14" height="22" fill="rgba(229,231,235,0.7)" rx="2"/>
+    <rect x="${cx-30+px-10}" y="36" width="14" height="22" fill="rgba(229,231,235,0.4)" rx="2"/>
+    <line x1="${cx-30}" y1="48" x2="${cx-30+px}" y2="48" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arrR)"/>
+    <line x1="${cx-30}" y1="48" x2="${cx-30+px}" y2="48" stroke="#F59E0B" stroke-width="1.5" marker-start="url(#arrL)"/>
+    <text x="${cx-30+px/2}" y="56" text-anchor="middle" font-size="10" fill="#F59E0B" font-weight="600">${mm.toFixed(1)}mm</text>
+    <defs>
+      <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#F59E0B"/></marker>
+      <marker id="arrL" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" fill="#F59E0B"/></marker>
+    </defs>
+  </svg>`;
+}
+
+// SVG: Overbite (vertical overlap)
+function svgOverbite(mm) {
+  if (!Number.isFinite(mm)) mm = 0;
+  const px = 5 * Math.max(-2, Math.min(8, mm));
+  return `
+  <svg viewBox="0 0 200 70" style="height:70px;">
+    <rect x="80" y="10" width="14" height="${22 + Math.max(0,px)}" fill="rgba(229,231,235,0.7)" rx="2"/>
+    <rect x="100" y="${28-Math.max(0,px)}" width="14" height="${22 + Math.max(0,px)}" fill="rgba(229,231,235,0.4)" rx="2"/>
+    <line x1="120" y1="${32-px}" x2="120" y2="${32}" stroke="#10B981" stroke-width="1.5"/>
+    <text x="125" y="${32-px/2+3}" font-size="10" fill="#10B981" font-weight="600">${mm.toFixed(1)}mm</text>
+  </svg>`;
+}
+
+// SVG: FMA — Frankfort vs mandibular plane
+function svgFMA(deg) {
+  if (!Number.isFinite(deg)) deg = 0;
+  return `
+  <svg viewBox="0 0 200 60" style="height:60px;">
+    <line x1="20" y1="20" x2="180" y2="20" stroke="#0EA5E9" stroke-width="1.5"/>
+    <text x="22" y="14" font-size="8" fill="#0EA5E9">Frankfort</text>
+    <line x1="20" y1="20" x2="${20 + 160*Math.cos(deg*Math.PI/180)}" y2="${20 + 160*Math.sin(deg*Math.PI/180)}" stroke="#8B5CF6" stroke-width="1.5"/>
+    <text x="${20 + 80*Math.cos(deg*Math.PI/180) + 8}" y="${20 + 80*Math.sin(deg*Math.PI/180)}" font-size="8" fill="#8B5CF6">Mand.</text>
+    <path d="M 60 20 A 40 40 0 0 1 ${60 + 40*Math.cos(deg*Math.PI/180)} ${20 + 40*Math.sin(deg*Math.PI/180)}" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+    <text x="78" y="36" font-size="9" fill="rgba(255,255,255,0.7)" font-weight="600">${deg.toFixed(1)}°</text>
+  </svg>`;
+}
+
+// SVG: IMPA — incisor angle to mandibular plane
+function svgIMPA(deg) {
+  if (!Number.isFinite(deg)) deg = 0;
+  // Mandibular plane horizontal
+  // Incisor: vertical from plane, with deviation = 90 - deg
+  const dev = 90 - deg; // negative = lingual tip, positive = labial tip
+  return `
+  <svg viewBox="0 0 200 70" style="height:70px;">
+    <line x1="20" y1="50" x2="180" y2="50" stroke="#0EA5E9" stroke-width="1.5"/>
+    <text x="22" y="60" font-size="8" fill="#0EA5E9">Mand. plane</text>
+    <line x1="100" y1="50" x2="${100 + 30*Math.sin(dev*Math.PI/180)}" y2="${50 - 30*Math.cos(dev*Math.PI/180)}" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="115" y="20" font-size="9" fill="rgba(255,255,255,0.7)" font-weight="600">${deg.toFixed(1)}°</text>
+    <path d="M 100 50 A 12 12 0 0 0 ${100 + 12*Math.sin(dev*Math.PI/180)} ${50 - 12*Math.cos(dev*Math.PI/180)}" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+  </svg>`;
+}
+
+// Profile card (3 silhouettes)
+function profileCard(profile) {
+  const styles = ['straight', 'convex', 'concave'];
+  const labels = { straight: '직선', convex: '볼록', concave: '오목' };
+  const paths = {
+    // simple side profile silhouettes
+    straight: 'M 30 10 Q 38 25 38 40 L 38 70 Q 38 78 30 80',
+    convex:   'M 30 10 Q 50 25 50 40 L 38 70 Q 30 78 22 80',
+    concave:  'M 30 10 Q 22 25 22 40 L 38 70 Q 50 78 50 80'
+  };
+  const items = styles.map(s => `
+    <div style="text-align:center; flex:1;">
+      <svg viewBox="0 0 60 90" style="width:48px; height:72px; ${s === profile ? 'filter: drop-shadow(0 0 6px var(--color-primary));' : 'opacity:0.4;'}">
+        <path d="${paths[s]}" fill="none" stroke="${s === profile ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)'}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+      <div style="font-size:10px; color:${s === profile ? 'var(--color-primary)' : 'var(--text-muted)'}; font-weight:${s === profile ? '700' : '400'};">${labels[s]}</div>
+    </div>
+  `).join('');
+  return `
+    <div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">Profile (측면 안모)</div>
+        <div class="vc-val">${labels[profile] || '—'}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 0;">${items}</div>
+      <div class="vc-note">straight 균형 / convex II급 / concave III급</div>
+    </div>
+  `;
+}
+
+function lipStrainCard(strain) {
+  const levels = ['none', 'mild', 'severe'];
+  const labels = { none: '없음', mild: '경미', severe: '현저' };
+  const colors = { none: 'var(--color-success)', mild: 'var(--color-warning)', severe: 'var(--color-danger)' };
+  const items = levels.map(s => {
+    const active = s === strain;
+    const w = s === 'none' ? 1 : s === 'mild' ? 1.8 : 3;
+    return `
+      <div style="text-align:center; flex:1;">
+        <svg viewBox="0 0 60 30" style="width:48px; height:24px; ${active ? '' : 'opacity:0.35;'}">
+          <path d="M 6 15 Q 30 ${15 - 8*w} 54 15" fill="none" stroke="${active ? colors[s] : 'rgba(255,255,255,0.4)'}" stroke-width="${active ? 2 : 1.4}" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:10px; color:${active ? colors[s] : 'var(--text-muted)'}; font-weight:${active ? '700' : '400'};">${labels[s]}</div>
+      </div>
+    `;
+  }).join('');
+  return `
+    <div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">Lip Strain (입술 긴장)</div>
+        <div class="vc-val">${labels[strain] || '—'}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 0;">${items}</div>
+      <div class="vc-note">현저할수록 전치 돌출 시사</div>
+    </div>
+  `;
+}
+
+// ============== 치아 아치 다이어그램 ==============
+const FDI_LAYOUT = {
+  upper: [18,17,16,15,14,13,12,11, 21,22,23,24,25,26,27,28],
+  lower: [48,47,46,45,44,43,42,41, 31,32,33,34,35,36,37,38]
+};
+function renderArch(extractTeeth = []) {
+  const svg = document.getElementById('archSvg');
+  if (!svg) return;
+  const W = 340, H = 220;
+  const cx = W / 2;
+  const upperRadX = 130, upperRadY = 70, upperCY = 95;
+  const lowerRadX = 120, lowerRadY = 65, lowerCY = 130;
+  const N = 16;
+  let html = '';
+  // Upper arch
+  FDI_LAYOUT.upper.forEach((fdi, i) => {
+    const t = i / (N - 1);
+    const angle = Math.PI - t * Math.PI;
+    const x = cx + Math.cos(angle) * upperRadX;
+    const y = upperCY + Math.sin(angle) * (-upperRadY);
+    const isExtract = extractTeeth.includes(String(fdi)) || extractTeeth.includes(fdi);
+    html += `
+      <ellipse class="tooth-mark${isExtract ? ' extract' : ''}" cx="${x}" cy="${y}" rx="9" ry="11" data-fdi="${fdi}"/>
+      <text class="tooth-num${isExtract ? ' extract-num' : ''}" x="${x}" y="${y+2}" text-anchor="middle">${fdi}</text>
+    `;
+  });
+  // Lower arch
+  FDI_LAYOUT.lower.forEach((fdi, i) => {
+    const t = i / (N - 1);
+    const angle = Math.PI - t * Math.PI;
+    const x = cx + Math.cos(angle) * lowerRadX;
+    const y = (H - lowerCY) + Math.sin(angle) * lowerRadY;
+    const isExtract = extractTeeth.includes(String(fdi)) || extractTeeth.includes(fdi);
+    html += `
+      <ellipse class="tooth-mark${isExtract ? ' extract' : ''}" cx="${x}" cy="${y}" rx="9" ry="11" data-fdi="${fdi}"/>
+      <text class="tooth-num${isExtract ? ' extract-num' : ''}" x="${x}" y="${y+2}" text-anchor="middle">${fdi}</text>
+    `;
+  });
+  // Midline
+  html += `<line x1="${cx}" y1="20" x2="${cx}" y2="${H-20}" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3,3"/>`;
+  html += `<text x="${cx}" y="14" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.4)">상악</text>`;
+  html += `<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.4)">하악</text>`;
+  svg.innerHTML = html;
+}
+
+// 입력 변경 시 시각화 갱신
+['anb','crowding','overjet','overbite','profile','lipStrain','fma','impa'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', renderVisuals);
+});
 
 function computeRuleScore() {
   const i = getInputs();
@@ -319,7 +644,9 @@ function renderResult(data) {
   recBadge.textContent = recMap[rec]?.label || rec;
 
   const teethBox = document.getElementById('teethRec');
-  teethBox.innerHTML = (data.teeth || []).map(t => `<span class="tooth-pill">#${t}</span>`).join('');
+  const teeth = data.teeth || [];
+  teethBox.innerHTML = teeth.map(t => `<span class="tooth-pill">#${t}</span>`).join('');
+  renderArch(teeth);
 
   const reasonsEl = document.getElementById('reasons');
   reasonsEl.innerHTML = (data.reasoning || []).slice(0, 5).map(r => `<li>${escapeHtml(r)}</li>`).join('') || '<li style="color:var(--text-muted);">근거 없음</li>';
@@ -346,6 +673,7 @@ function updateBanner() {
   }
 }
 setTimeout(updateBanner, 100);
+setTimeout(() => { renderVisuals(); renderArch([]); }, 50);
 
 // 탭 + 스캐너 입력 마운트
 const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
