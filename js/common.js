@@ -61,12 +61,11 @@
 
     shell.innerHTML = `
       <aside class="sidebar" id="sidebar">
-        <div class="brand">
-          <div class="brand-mark">OA</div>
-          <div>
-            <div class="brand-name">Orthodontics AI</div>
-            <div class="brand-sub">v0.1 · 20-19</div>
-          </div>
+        <div class="brand" style="flex-direction:column; align-items:center; padding:14px 4px 20px;">
+          <a href="index.html" style="display:block; width:100%;">
+            <img src="assets/logo.png" alt="Orthodontics AI — Intelligent Planning. Beautiful Results." style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto;">
+          </a>
+          <div style="font-size:10px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:8px;">v0.1 · 20-19</div>
         </div>
         <nav>${navHtml}</nav>
         <div style="margin-top:24px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; font-size:12px; color: var(--text-muted);">
@@ -444,12 +443,9 @@
     footer.innerHTML = `
       <div class="footer-top">
         <div class="footer-brand">
-          <div class="brand-row">
-            <div class="brand-mark" aria-hidden="true">OA</div>
-            <div class="brand-text">
-              <strong>Orthodontics AI</strong>
-              <span>by 20-19 · Seoul</span>
-            </div>
+          <img src="assets/logo.png" alt="Orthodontics AI" style="width:240px; max-width:100%; height:auto; display:block; margin-bottom:14px;">
+          <div class="brand-text" style="margin-bottom:14px;">
+            <span>by 20-19 · Seoul</span>
           </div>
           <p>교정치과 의사를 위한 AI 진단·치료계획·재발 예측 통합 플랫폼.<br>
           Gemini · Supabase · Neo4j 기반의 차세대 임상 의사결정 보조 도구.</p>
