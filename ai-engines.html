@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="css/global.css">
 <style>
   .eng-hero { text-align: center; padding: 32px 24px 8px; }
-  .eng-hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 8px; }
-  .eng-hero p { color: var(--text-muted); max-width: 720px; margin: 0 auto; font-size: 14px; }
+  .eng-hero h1 { font-size: clamp(1.3rem, 3.2vw, 2.0rem); margin-bottom: 8px; }
+  .eng-hero p { color: var(--text-muted); max-width: 720px; margin: 0 auto; font-size: 11px; }
 
   .eng-tabs {
     display: grid;
@@ -34,7 +34,7 @@
     cursor: pointer;
     border-radius: 10px;
     font-weight: 500;
-    font-size: 13px;
+    font-size: 10px;
     font-family: inherit;
     transition: all .25s;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -45,8 +45,8 @@
   .eng-tabs button.active[data-engine="growth"]    { background: linear-gradient(135deg, #10B981, #059669); }
   .eng-tabs button.active[data-engine="facial"]    { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
   .eng-tabs button.active[data-engine="recurrence"]{ background: linear-gradient(135deg, #F59E0B, #D97706); }
-  .eng-tabs .code { font-size: 10px; opacity: 0.85; letter-spacing: 1.5px; font-weight: 800; }
-  .eng-tabs .name { font-size: 14px; font-weight: 600; }
+  .eng-tabs .code { font-size: 7px; opacity: 0.85; letter-spacing: 1.5px; font-weight: 800; }
+  .eng-tabs .name { font-size: 11px; font-weight: 600; }
 
   .eng-panel { display: none; animation: fadeIn .3s ease; }
   .eng-panel.active { display: block; }
@@ -63,10 +63,10 @@
 
   .eng-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
   .eng-meta-card { padding: 18px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; }
-  .eng-meta-card h3 { font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .eng-meta-card h3 { font-size: 11px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .eng-meta-card ul { list-style: none; padding: 0; margin: 0; }
   .eng-meta-card ul li {
-    padding: 8px 0; font-size: 13px; color: var(--text-secondary);
+    padding: 8px 0; font-size: 10px; color: var(--text-secondary);
     border-bottom: 1px dashed var(--border-subtle); line-height: 1.5;
   }
   .eng-meta-card ul li:last-child { border-bottom: none; }
@@ -81,6 +81,10 @@
     text-align: center;
   }
   .eng-cta a { margin: 0 4px; }
+  .eng-cta strong { font-size: 12px; }
+  .eng-cta p { font-size: 10px; }
+  .eng-meta-card code { font-size: 8px !important; }
+  .eng-panel ul li, .eng-panel ul, .eng-panel div[style*="font-size:12px"] { font-size: 9px !important; }
 </style>
 </head>
 <body>
@@ -219,8 +223,8 @@ function renderPanel(key) {
       </div>
 
       <div class="eng-cta">
-        <strong style="font-size:15px;">${E.name}을 사용해보세요</strong>
-        <p style="margin: 6px 0 14px; font-size:13px; color:var(--text-secondary);">실제 환자 데이터로 즉시 분석 가능</p>
+        <strong style="font-size:12px;">${E.name}을 사용해보세요</strong>
+        <p style="margin: 6px 0 14px; font-size:10px; color:var(--text-secondary);">실제 환자 데이터로 즉시 분석 가능</p>
         <a href="${E.page}" class="btn btn-primary">${TYPE_KO[key]} 페이지 →</a>
         <a href="${detail.docPath}" class="btn btn-ghost" target="_blank">📖 상세 문서</a>
       </div>
