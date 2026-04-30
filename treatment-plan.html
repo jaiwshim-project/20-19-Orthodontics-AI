@@ -207,8 +207,6 @@
 </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script>
@@ -331,8 +329,20 @@ function render(plan) {
   document.getElementById('followUp').textContent = plan.follow_up_schedule || '의사 결정에 따름';
 }
 
+async function ensurePdfLibs() {
+  if (window.html2canvas && window.jspdf) return;
+  const load = (src) => new Promise((ok, fail) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = fail;
+    document.head.appendChild(s);
+  });
+  if (!window.html2canvas) await load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!window.jspdf) await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
+
 async function downloadPDF() {
   if (!CURRENT_PLAN) return;
+  try { await ensurePdfLibs(); } catch (e) { window.toast('PDF 라이브러리 로드 실패: ' + e.message, 'error'); return; }
   const target = document.getElementById('content');
   // 버튼 + 면책 PDF 출력 시 숨김
   const hideEls = target.querySelectorAll('button');

@@ -220,13 +220,13 @@
   <div class="case-compare">
     <div class="case-side before-side">
       <div class="case-label">치료 전 Before</div>
-      <img src="assets/case_face_before.png" alt="치료 전 안모 4 view" loading="lazy">
+      <img src="assets/case_face_before.webp" alt="치료 전 안모 4 view" loading="lazy">
       <div class="case-caption">정면 · 미소 · 사선 · 측면</div>
     </div>
     <div class="case-arrow">→</div>
     <div class="case-side after-side">
       <div class="case-label">치료 후 After</div>
-      <img src="assets/case_face_after.png" alt="치료 후 안모 + 구강" loading="lazy">
+      <img src="assets/case_face_after.webp" alt="치료 후 안모 + 구강" loading="lazy">
       <div class="case-caption">치료 완료 · Equilibrium Zone 회복</div>
     </div>
   </div>
@@ -235,13 +235,13 @@
   <div class="case-compare">
     <div class="case-side before-side">
       <div class="case-label">치료 전 Before</div>
-      <img src="assets/case_intraoral_before.png" alt="치료 전 구강 5 view" loading="lazy">
+      <img src="assets/case_intraoral_before.webp" alt="치료 전 구강 5 view" loading="lazy">
       <div class="case-caption">발치 전 · 진단 시점</div>
     </div>
     <div class="case-arrow">→</div>
     <div class="case-side after-side">
       <div class="case-label">치료 후 After (2022/04)</div>
-      <img src="assets/case_intraoral_after.png" alt="치료 후 구강 5 view" loading="lazy">
+      <img src="assets/case_intraoral_after.webp" alt="치료 후 구강 5 view" loading="lazy">
       <div class="case-caption">치료 완료 · 가지런한 배열</div>
     </div>
   </div>
@@ -265,8 +265,6 @@
 </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script>
@@ -274,10 +272,36 @@ let DATA = null, PATIENT_ID = null;
 
 function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
+// 점진적 렌더링: 골격 즉시 표시 → Gemini 응답 도착 시 갱신
 async function init() {
   const params = new URLSearchParams(location.search);
   PATIENT_ID = params.get('id') || window.PatientStore.get()?.supabaseId || window.PatientStore.get()?.id;
   if (!PATIENT_ID) { showEmpty('환자가 선택되지 않았습니다.'); return; }
+
+  // sessionStorage 캐시 확인 (5분 TTL)
+  const cacheKey = `ba_${PATIENT_ID}`;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < 5 * 60 * 1000) {
+        DATA = data;
+        render(DATA);
+        return;
+      }
+    } catch {}
+  }
+
+  // 스켈레톤 → 즉시 골격 + 케이스 사진 + 룰베이스 추정 표시
+  const skeleton = await fetchPatientSkeleton(PATIENT_ID);
+  if (skeleton) {
+    DATA = skeleton;
+    render(DATA);
+  } else {
+    // 환자 데이터도 못 가져오면 로딩 메시지 유지
+  }
+
+  // Gemini 풀 응답은 백그라운드로 받아서 갱신
   try {
     const res = await window.apiFetch('/api/before-after', {
       method: 'POST',
@@ -286,12 +310,65 @@ async function init() {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      showEmpty(err.error || `HTTP ${res.status}`);
+      if (!skeleton) showEmpty(err.error || `HTTP ${res.status}`);
       return;
     }
     DATA = await res.json();
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: DATA, ts: Date.now() }));
     render(DATA);
-  } catch (e) { showEmpty(e.message); }
+    if (window.toast) window.toast('AI 카피 갱신 완료', 'success', 2000);
+  } catch (e) {
+    if (!skeleton) showEmpty(e.message);
+  }
+}
+
+// Gemini 호출 없이 환자 데이터만으로 골격 응답 생성
+async function fetchPatientSkeleton(pid) {
+  try {
+    const res = await window.apiFetch(`/api/get-diagnoses?patient_id=${pid}&limit=10`);
+    const data = await res.json();
+    const diagnoses = data.records || [];
+    if (diagnoses.length === 0) return null;
+    const ext = diagnoses.find(d => d.type === 'extraction')?.inputs || {};
+    const before = {
+      anb: ext.anb ?? null, crowding: ext.crowding ?? null,
+      overjet: ext.overjet ?? null, overbite: ext.overbite ?? null,
+      fma: ext.fma ?? null, impa: ext.impa ?? null,
+      profile: ext.profile ?? null, lipStrain: ext.lipStrain ?? null
+    };
+    const towards = (cur, target, factor = 0.7) => cur != null ? +(cur + (target - cur) * factor).toFixed(1) : null;
+    const after = {
+      anb: towards(before.anb, 2),
+      crowding: before.crowding != null ? Math.max(0, +(before.crowding * 0.05).toFixed(1)) : null,
+      overjet: towards(before.overjet, 2.5),
+      overbite: towards(before.overbite, 2.5),
+      fma: towards(before.fma, 25, 0.4),
+      impa: towards(before.impa, 90, 0.6),
+      profile: before.profile === 'convex' ? 'straight' : before.profile,
+      lipStrain: before.lipStrain === 'severe' ? 'mild' : 'none'
+    };
+    const patient = diagnoses[0]?.patient || {};
+    return {
+      headline: 'AI 카피 생성 중... (룰베이스 추정값 표시)',
+      summary: `${patient.name || '환자'} 환자의 4 진단 결과를 종합 중입니다. 잠시만 기다려 주세요. Gemini 정밀 분석 응답이 도착하면 자동 갱신됩니다.`,
+      before_state: '치료 전 — 측정값 분석 결과 표시',
+      after_state: '치료 후 예상 — 정상 범위 회귀 추정',
+      duration_estimate: '18-24개월 (예상)',
+      phases: [
+        { name: '발치 (Extraction)', duration_months: 2, summary: '치료 공간 확보' },
+        { name: '정렬 + 공간 폐쇄', duration_months: 16, summary: '브라켓 + 와이어' },
+        { name: '마무리 + 보정', duration_months: 6, summary: '교합 정밀 조정' }
+      ],
+      measurements: { before, after },
+      key_changes: ['AI 카피 생성 중...', '잠시만 기다려 주세요', 'Gemini 응답 도착 시 자동 갱신'],
+      patient_name: patient.name || '환자',
+      diagnosis_count: diagnoses.length,
+      _skeleton: true
+    };
+  } catch (e) {
+    console.warn('[skeleton] 생성 실패:', e.message);
+    return null;
+  }
 }
 
 function showEmpty(msg) {
@@ -509,7 +586,30 @@ function renderOverlay(before, after) {
   grid.innerHTML = cards.join('') || '<p style="color:var(--text-muted); padding:16px;">표시할 측정값 없음</p>';
 }
 
+// PDF 라이브러리 lazy load (클릭 시에만 로드)
+async function ensurePdfLibs() {
+  if (window.html2canvas && window.jspdf) return;
+  const load = (src) => new Promise((ok, fail) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = fail;
+    document.head.appendChild(s);
+  });
+  if (!window.html2canvas) await load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!window.jspdf) await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
+
 async function downloadPDF() {
+  const btn = document.getElementById('pdfBtn');
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ 라이브러리 로드 중...';
+  try {
+    await ensurePdfLibs();
+  } catch (e) {
+    btn.disabled = false; btn.textContent = orig;
+    window.toast('PDF 라이브러리 로드 실패: ' + e.message, 'error');
+    return;
+  }
+  btn.textContent = '⏳ 생성 중...';
   const target = document.getElementById('content');
   const hideEls = target.querySelectorAll('button, .no-print');
   hideEls.forEach(el => el.style.visibility = 'hidden');
@@ -537,6 +637,8 @@ async function downloadPDF() {
   } catch (e) {
     hideEls.forEach(el => el.style.visibility = '');
     window.toast('PDF 생성 실패: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = orig;
   }
 }
 

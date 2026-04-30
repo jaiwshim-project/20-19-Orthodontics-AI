@@ -123,8 +123,6 @@
 </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
 <script src="js/diagnosis-store.js"></script>
@@ -266,11 +264,24 @@ async function saveNote() {
   if (r.success !== false) window.toast('의사 메모를 저장했습니다.', 'success');
 }
 
+async function ensurePdfLibs() {
+  if (window.html2canvas && window.jspdf) return;
+  const load = (src) => new Promise((ok, fail) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = fail;
+    document.head.appendChild(s);
+  });
+  if (!window.html2canvas) await load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!window.jspdf) await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
+
 async function generatePDF() {
   if (!CURRENT) return;
   const btn = document.getElementById('pdfBtn');
   const orig = btn.textContent;
-  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
+  btn.disabled = true; btn.textContent = '⏳ 라이브러리 로드 중...';
+  try { await ensurePdfLibs(); } catch (e) { btn.disabled = false; btn.textContent = orig; window.toast('PDF 라이브러리 로드 실패: ' + e.message, 'error'); return; }
+  btn.textContent = '⏳ 생성 중...';
   try {
     const target = document.getElementById('detail');
     // 액션 카드 + JSON 박스 PDF 출력 시 숨김
