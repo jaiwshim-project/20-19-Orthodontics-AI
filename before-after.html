@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="환자 설득용 Before-After 자료 자동 생성.">
+<meta property="og:title" content="Before-After 상담 자료 · Orthodontics AI">
+<title>Before-After 상담 자료 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .ba-shell { max-width: 980px; margin: 0 auto; padding: 24px; }
+  .ba-hero { padding: 36px 28px; background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.06)); border-radius: 20px; border: 1px solid rgba(14,165,233,0.25); margin-bottom: 24px; text-align: center; }
+  .ba-hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 12px; }
+  .ba-headline { font-size: 18px; color: var(--color-primary); font-weight: 600; margin-bottom: 16px; }
+  .ba-summary { max-width: 720px; margin: 0 auto; font-size: 16px; line-height: 1.8; color: var(--text-primary); }
+
+  .ba-compare { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 16px; align-items: stretch; margin-bottom: 24px; }
+  @media (max-width: 768px) { .ba-compare { grid-template-columns: 1fr; } .ba-arrow { display:none; } }
+  .ba-card { padding: 24px; border-radius: 16px; border: 1px solid var(--border-subtle); }
+  .ba-card.before { background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.2); }
+  .ba-card.after { background: rgba(16,185,129,0.04); border-color: rgba(16,185,129,0.25); }
+  .ba-card .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 8px; }
+  .ba-card.before .lbl { color: var(--color-danger); }
+  .ba-card.after  .lbl { color: var(--color-success); }
+  .ba-card .text { font-size: 17px; line-height: 1.7; font-weight: 500; }
+  .ba-arrow { display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--color-primary); }
+
+  .changes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .change-pill { padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; text-align: center; font-size: 13px; font-weight: 500; }
+  .change-pill::before { content: '✓ '; color: var(--color-success); font-weight: 800; }
+
+  .meta-row { display: flex; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .meta-item { font-size: 13px; }
+  .meta-item .v { font-size: 18px; font-weight: 700; color: var(--color-primary); }
+
+  .visual-svg-wrap { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff; color: #000; }
+    .ba-card.before { background: #fef2f2; }
+    .ba-card.after { background: #f0fdf4; }
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="ba-shell">
+
+<div class="no-print" style="margin-bottom:16px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+  <a href="patient-history.html" class="btn btn-ghost btn-sm">← 환자 이력으로</a>
+  <div style="display:flex; gap:6px;">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 인쇄</button>
+    <button class="btn btn-primary btn-sm" id="pdfBtn" onclick="downloadPDF()">📥 PDF</button>
+    <button class="btn btn-ghost btn-sm" id="shareBtn" onclick="share()">📤 공유</button>
+  </div>
+</div>
+
+<div id="loading" style="text-align:center; padding:60px; color:var(--text-muted);">
+  <div style="font-size:48px;">📊</div>
+  <h3 style="margin: 16px 0;">상담 자료 자동 생성 중...</h3>
+  <p>4개 진단을 종합해 환자 친화 자료로 변환합니다 (10-20초)</p>
+</div>
+
+<div id="empty" style="display:none; text-align:center; padding:60px;">
+  <h3 id="emptyTitle">자료를 생성할 수 없습니다</h3>
+  <p id="emptyMsg" style="color:var(--text-muted);">—</p>
+  <a href="patient-history.html" class="btn btn-primary mt-4">환자 이력으로</a>
+</div>
+
+<div id="content" style="display:none;">
+
+  <div class="ba-hero">
+    <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">상담 자료</div>
+    <h1 id="patientName">환자</h1>
+    <div class="ba-headline" id="headline">—</div>
+    <p class="ba-summary" id="summary">—</p>
+  </div>
+
+  <div class="meta-row">
+    <div class="meta-item">예상 치료 기간<br><span class="v" id="duration">—</span></div>
+    <div class="meta-item">근거 진단<br><span class="v" id="diagCount">— 종</span></div>
+    <div class="meta-item">생성 일시<br><span class="v" id="genDate" style="font-size:14px;">—</span></div>
+  </div>
+
+  <div class="ba-compare">
+    <div class="ba-card before">
+      <div class="lbl">치료 전 (Before)</div>
+      <div class="text" id="beforeState">—</div>
+    </div>
+    <div class="ba-arrow">→</div>
+    <div class="ba-card after">
+      <div class="lbl">치료 후 (After)</div>
+      <div class="text" id="afterState">—</div>
+    </div>
+  </div>
+
+  <h3 style="margin: 24px 0 12px;">✨ 주요 변화</h3>
+  <div class="changes-grid" id="changesGrid"></div>
+
+  <h3 style="margin: 32px 0 12px;">📐 안모 변화 시각화</h3>
+  <div class="visual-svg-wrap">
+    <svg id="profileCompare" viewBox="0 0 800 540" style="width:100%; max-width:800px; display:block; margin:0 auto;">
+      <text x="200" y="30" text-anchor="middle" font-size="14" fill="#EF4444" font-weight="700">Before</text>
+      <text x="600" y="30" text-anchor="middle" font-size="14" fill="#10B981" font-weight="700">After</text>
+      <line x1="400" y1="40" x2="400" y2="520" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4 4"/>
+      <g transform="translate(0, 0)" id="profileBeforeG"></g>
+      <g transform="translate(400, 0)" id="profileAfterG"></g>
+    </svg>
+  </div>
+
+  <div style="margin-top: 32px; padding: 16px 20px; background: rgba(245,158,11,0.06); border-left: 3px solid var(--color-warning); border-radius: 0 8px 8px 0; font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+    ⚠️ 본 자료는 AI가 4개 진단 결과를 환자 상담용으로 자동 변환한 시각화이며, 최종 치료 방향은 자격을 갖춘 교정 전문의의 판단에 따릅니다.
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+let DATA = null, PATIENT_ID = null;
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function init() {
+  const params = new URLSearchParams(location.search);
+  PATIENT_ID = params.get('id') || window.PatientStore.get()?.supabaseId || window.PatientStore.get()?.id;
+  if (!PATIENT_ID) { showEmpty('환자가 선택되지 않았습니다.'); return; }
+  try {
+    const res = await window.apiFetch('/api/before-after', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patientId: PATIENT_ID })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showEmpty(err.error || `HTTP ${res.status}`);
+      return;
+    }
+    DATA = await res.json();
+    render(DATA);
+  } catch (e) { showEmpty(e.message); }
+}
+
+function showEmpty(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('empty').style.display = 'block';
+  document.getElementById('emptyMsg').textContent = msg;
+}
+
+function render(d) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+  document.getElementById('patientName').textContent = d.patient_name || '환자';
+  document.getElementById('headline').textContent = d.headline || '—';
+  document.getElementById('summary').textContent = d.summary || '—';
+  document.getElementById('beforeState').textContent = d.before_state || '치료 전 상태';
+  document.getElementById('afterState').textContent = d.after_state || '치료 후 예상';
+  document.getElementById('duration').textContent = d.duration_estimate || '—';
+  document.getElementById('diagCount').textContent = (d.diagnosis_count || 0) + ' 종';
+  document.getElementById('genDate').textContent = new Date().toLocaleDateString('ko-KR');
+  document.getElementById('changesGrid').innerHTML = (d.key_changes || [])
+    .map(c => `<div class="change-pill">${escapeHtml(c)}</div>`).join('') || '<p style="color:var(--text-muted);">—</p>';
+
+  // 측면 안모 비교 SVG
+  const beforePath = 'M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q 286 230 280 230 L 285 280 Q 283 300 275 320 Q 246 360 250 360 L 255 400 L 245 440 Q 215 452 185 432';
+  const afterPath  = 'M 195 100 Q 220 80 230 80 Q 330 200 320 220 Q 280 232 274 230 L 277 280 Q 275 300 273 320 Q 252 360 252 360 L 257 400 L 247 440 Q 217 452 187 432';
+  document.getElementById('profileBeforeG').innerHTML = `<path d="${beforePath}" fill="rgba(239,68,68,0.1)" stroke="#EF4444" stroke-width="2"/>`;
+  document.getElementById('profileAfterG').innerHTML  = `<path d="${afterPath}"  fill="rgba(16,185,129,0.1)" stroke="#10B981" stroke-width="2"/>`;
+}
+
+async function downloadPDF() {
+  const target = document.getElementById('content');
+  const hideEls = target.querySelectorAll('button, .no-print');
+  hideEls.forEach(el => el.style.visibility = 'hidden');
+  try {
+    const canvas = await html2canvas(target, { backgroundColor: '#0B1220', scale: 2, useCORS: true });
+    hideEls.forEach(el => el.style.visibility = '');
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageW = 210, pageH = 297, margin = 8;
+    const usableW = pageW - 2 * margin;
+    const imgH = canvas.height * usableW / canvas.width;
+    let heightLeft = imgH;
+    let position = margin;
+    pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+    heightLeft -= (pageH - 2 * margin);
+    while (heightLeft > 0) {
+      position = -(imgH - heightLeft) + margin;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, position, usableW, imgH);
+      heightLeft -= (pageH - 2 * margin);
+    }
+    pdf.save(`${DATA?.patient_name || 'patient'}_상담자료_${new Date().toISOString().slice(0,10)}.pdf`);
+    window.toast('✅ PDF 다운로드 완료', 'success');
+  } catch (e) {
+    hideEls.forEach(el => el.style.visibility = '');
+    window.toast('PDF 생성 실패: ' + e.message, 'error');
+  }
+}
+
+async function share() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `${DATA?.patient_name || '환자'} 교정 상담 자료`,
+        text: DATA?.summary || '',
+        url: location.href
+      });
+    } catch (e) { /* user cancelled */ }
+  } else {
+    await navigator.clipboard.writeText(location.href);
+    window.toast('링크가 클립보드에 복사되었습니다.', 'success');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

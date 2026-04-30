@@ -26,6 +26,11 @@
     lipUpper: '상순 위치 변화 권장량(mm). 음수=후방. E-line 기준 -4mm가 이상적. 상악 전치 후방 이동에 비례해 약 60% 후퇴. 발치 시 1차 안모 변화 예측.',
     lipLower: '하순 위치 변화 권장량(mm). 음수=후방. E-line 기준 -2mm 이상적. 하악 절치 위치와 강하게 연관. 입술 긴장도와 미소선 분석에 함께 고려.',
     chin: '턱(Pogonion) 위치 변화 권장량(mm). 양수=전방. 골격성 II급은 turbo·기능 장치로 전방, III급은 chin cup으로 후방. 수술 시 genioplasty 대안.',
+    ezlUpper: '상악 Equilibrium Zone Length(EZL, mm). 입술·뺨·혀의 압력 균형이 맞는 치열궁 길이. TTL과 비교해 EZL>TTL이면 스페이싱, EZL<TTL이면 crowding(돌출). 김용은 박사 이론.',
+    ezlLower: '하악 EZL(mm). 상악 EZL과 함께 양측 비교. 김용은 박사 40명 코호트에서 자연 치유 시 평균 -6mm 단축 관찰. 발치 결정의 새 핵심 지표.',
+    ttlUpper: '상악 Total Teeth Length(TTL, mm). 12개 치아의 mesiodistal width 합. EZL과 비교해 부조화 평가. 평균 87mm 내외(성인 표준).',
+    ttlLower: '하악 TTL(mm). 평균 76mm 내외. EZL/TTL 비율이 1.0에 가까우면 균형, 1.05↑ 스페이싱, 0.95↓ crowding 시사.',
+    naturalHealing: '발치 후 자연 치유 메커니즘 활용 여부. 김용은 박사 40명 5-16개월 관찰: 평균 arch perimeter -6mm, overbite +2.8mm, U1-SN -10° 자연 정렬. 보수적 치료 옵션.',
     incisorShift: '치료 중 하악 절치 위치 변화량(mm). 양수=전방, 음수=후방. 2mm 이상 전방 이동 시 재발 위험 급증. 보정 기간·종류 선택과 장기 안정성의 핵심 예측 변수.',
     residual: '치료 종료 시 잔여 Crowding(mm). 0에 가까울수록 안정적. 1mm 이상 잔존 시 재발 가속. 보정 강도(Bonded vs Essix) 결정과 정기 검진 주기 단축 사유.',
     retainer: '보정 장치 종류. Hawley(가철)<Essix(투명)<Dual<Bonded(고정) 순으로 안정성 증가. 환자 협조도와 케이스 복잡도에 따라 선택. 야간 착용·24개월 이상 권장.',
@@ -319,6 +324,27 @@
       </svg>`;
   }
 
+  // EZL vs TTL 균형 다이어그램 (김용은 박사 이론)
+  function svgEZLBalance(ezl, ttl) {
+    const W = 240, H = 80;
+    const max = Math.max(ezl, ttl, 100);
+    const ezlW = (ezl / max) * W;
+    const ttlW = (ttl / max) * W;
+    const diff = ezl - ttl;
+    const status = Math.abs(diff) <= 1.5 ? 'balanced' : diff > 1.5 ? 'spacing' : 'crowding';
+    const colors = { balanced: '#10B981', spacing: '#F59E0B', crowding: '#EF4444' };
+    return `
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px;">
+        <text x="0" y="12" font-size="9" fill="#F59E0B" font-weight="600">EZL ${ezl.toFixed(1)}mm</text>
+        <rect x="0" y="16" width="${ezlW}" height="14" rx="3" fill="#F59E0B" opacity="0.7"/>
+        <text x="0" y="48" font-size="9" fill="#000" fill="rgba(255,255,255,0.6)" font-weight="600">TTL ${ttl.toFixed(1)}mm</text>
+        <rect x="0" y="52" width="${ttlW}" height="14" rx="3" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.5)"/>
+        <text x="${W}" y="76" text-anchor="end" font-size="10" fill="${colors[status]}" font-weight="700">
+          ${status === 'balanced' ? '✓ 균형' : status === 'spacing' ? '⚠ 스페이싱 +' + diff.toFixed(1) + 'mm' : '⚠ Crowding ' + diff.toFixed(1) + 'mm'}
+        </text>
+      </svg>`;
+  }
+
   // 안모 슬라이더 변화 막대
   function svgSliderBar(val, min, max, label) {
     const W = 200;
@@ -343,7 +369,7 @@
     svgAngleVertical, svgFrankfort, svgIncisorAngle,
     svgBarCompare, svgStageBar, svgHeightBar,
     svgLip, svgProfile, svgRetainer, svgComplianceMeter,
-    svgTimeline, svgSliderBar,
+    svgTimeline, svgSliderBar, svgEZLBalance,
     FIELD_LEGENDS
   };
 })();

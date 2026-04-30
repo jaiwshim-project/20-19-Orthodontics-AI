@@ -22,6 +22,11 @@
       { path: 'dashboard.html',       label: '환자 대시보드',      icon: '📊' },
       { path: 'patient-history.html', label: '환자 이력',          icon: '📂' }
     ]},
+    { group: '환자 도구', items: [
+      { path: 'treatment-plan.html', label: '종합 치료계획',     icon: '🩺' },
+      { path: 'before-after.html',   label: 'Before-After 자료', icon: '📊' },
+      { path: 'face-3d.html',        label: '3D 얼굴 시뮬',      icon: '🧬' }
+    ]},
     { group: '도구', items: [
       { path: '3d-viewer.html',       label: '3D 뷰어 (EZL-STL)', icon: '🧊' },
       { path: 'chatbot.html',         label: 'RAG 챗봇',           icon: '💬' }

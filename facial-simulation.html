@@ -60,6 +60,10 @@
       <path id="profileAfter"  d="" fill="url(#skin)" fill-opacity="0.18" stroke="#0EA5E9" stroke-width="3" stroke-linejoin="round"/>
       <!-- E-line -->
       <line id="eline" x1="0" y1="0" x2="0" y2="0" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <!-- 중립대 영역 (Buccinator Mechanism) -->
+      <g id="neutralZone" opacity="0.3"></g>
+      <!-- 압력 벡터 (혀, 입술) -->
+      <g id="pressureVectors"></g>
       <!-- Landmarks (rendered by JS) -->
       <g id="landmarks"></g>
     </svg>
@@ -67,6 +71,25 @@
       <span class="metric-pill">E-line ↔ 상순: <strong id="ellipUpper">— mm</strong></span>
       <span class="metric-pill">E-line ↔ 하순: <strong id="ellipLower">— mm</strong></span>
       <span class="metric-pill">코-턱 비율: <strong id="noseChin">—</strong></span>
+    </div>
+
+    <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:8px;">
+      <button class="btn btn-ghost btn-sm" id="togglePressure" style="font-size:11px;">💨 압력 벡터</button>
+      <button class="btn btn-ghost btn-sm" id="toggleNeutral" style="font-size:11px;">🌐 중립대</button>
+    </div>
+
+    <div style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px;">
+      <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">자동 측정값 (Cephalometric)</div>
+      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size:12px;">
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">U1-SN</span><strong id="m_u1sn" style="color:var(--color-primary); font-family:monospace;">—°</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">IMPA</span><strong id="m_impa" style="color:var(--color-primary); font-family:monospace;">—°</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">Interincisal</span><strong id="m_interinc" style="color:var(--color-primary); font-family:monospace;">—°</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">FMA</span><strong id="m_fma" style="color:var(--color-primary); font-family:monospace;">—°</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">U1-A·Pog</span><strong id="m_u1apog" style="color:var(--color-primary); font-family:monospace;">— mm</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-subtle);"><span style="color:var(--text-muted);">L1-A·Pog</span><strong id="m_l1apog" style="color:var(--color-primary); font-family:monospace;">— mm</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span style="color:var(--text-muted);">UL/E-line</span><strong id="m_ule" style="color:var(--color-primary); font-family:monospace;">— mm</strong></div>
+        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span style="color:var(--text-muted);">LL/E-line</span><strong id="m_lle" style="color:var(--color-primary); font-family:monospace;">— mm</strong></div>
+      </div>
     </div>
     <div class="toggle-row">
       <button class="btn btn-ghost btn-sm" id="toggleBefore">Before/After 토글</button>
@@ -216,6 +239,49 @@ function update() {
       <text x="${p.x + 6}" y="${p.y + 4}" font-size="10" fill="rgba(229,231,235,0.7)">${name}</text>
     `;
   });
+
+  // 압력 벡터 (Buccinator Mechanism)
+  const pv = document.getElementById('pressureVectors');
+  if (pv && pv.dataset.show !== 'false') {
+    pv.innerHTML = `
+      <defs>
+        <marker id="arrTongue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#EF4444"/></marker>
+        <marker id="arrLip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#0EA5E9"/></marker>
+      </defs>
+      <line x1="${after.A.x - 60}" y1="${after.A.y - 10}" x2="${after.A.x - 8}" y2="${after.A.y - 5}" stroke="#EF4444" stroke-width="2" marker-end="url(#arrTongue)" opacity="0.7"/>
+      <text x="${after.A.x - 55}" y="${after.A.y - 14}" font-size="9" fill="#EF4444" font-weight="600">혀 압력 →</text>
+      <line x1="${after.Ls.x + 60}" y1="${after.Ls.y - 10}" x2="${after.Ls.x + 8}" y2="${after.Ls.y - 5}" stroke="#0EA5E9" stroke-width="2" marker-end="url(#arrLip)" opacity="0.7"/>
+      <text x="${after.Ls.x + 38}" y="${after.Ls.y - 14}" font-size="9" fill="#0EA5E9" font-weight="600">← 입술</text>
+      <line x1="${after.Li.x + 60}" y1="${after.Li.y + 8}" x2="${after.Li.x + 8}" y2="${after.Li.y + 4}" stroke="#0EA5E9" stroke-width="2" marker-end="url(#arrLip)" opacity="0.7"/>
+    `;
+  }
+
+  // 중립대 영역 (Equilibrium Zone)
+  const nz = document.getElementById('neutralZone');
+  if (nz && nz.dataset.show !== 'false') {
+    nz.innerHTML = `
+      <ellipse cx="${after.A.x - 4}" cy="${(after.A.y + after.B.y)/2}" rx="14" ry="${Math.abs(after.A.y - after.B.y)/2 + 8}"
+        fill="rgba(16,185,129,0.15)" stroke="#10B981" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="${after.A.x - 4}" y="${(after.A.y + after.B.y)/2}" text-anchor="middle" font-size="9" fill="#10B981" font-weight="600">중립대</text>
+    `;
+  }
+
+  // 자동 측정값 (cephalometric estimation)
+  const u1sn = 102 - parseFloat(document.getElementById('sMaxRetract').value) * 1.5;
+  const impa = 92 - parseFloat(document.getElementById('sMandShift').value) * 0.8;
+  const fma  = 25 + Math.abs(parseFloat(document.getElementById('sChin').value)) * 0.4;
+  const interinc = 360 - u1sn - impa - 100;
+  const u1apog = 6 - parseFloat(document.getElementById('sMaxRetract').value);
+  const l1apog = 4 - parseFloat(document.getElementById('sLipLower').value) * 0.7;
+  const setM = (id, v, unit) => { const el = document.getElementById(id); if (el) el.textContent = `${v.toFixed(1)} ${unit}`; };
+  setM('m_u1sn', u1sn, '°');
+  setM('m_impa', impa, '°');
+  setM('m_interinc', interinc, '°');
+  setM('m_fma', fma, '°');
+  setM('m_u1apog', u1apog, 'mm');
+  setM('m_l1apog', l1apog, 'mm');
+  setM('m_ule', dU/2.2, 'mm');
+  setM('m_lle', dL/2.2, 'mm');
 }
 
 function perpDistance(p, a, b) {
@@ -396,6 +462,18 @@ function renderVisuals() {
 
 document.querySelectorAll('input[type=range]').forEach(s => s.addEventListener('input', () => { update(); renderVisuals(); }));
 document.getElementById('toggleBefore').onclick = () => { showBefore = !showBefore; update(); };
+document.getElementById('togglePressure').onclick = (e) => {
+  const pv = document.getElementById('pressureVectors');
+  pv.dataset.show = pv.dataset.show === 'false' ? 'true' : 'false';
+  e.target.classList.toggle('active');
+  update();
+};
+document.getElementById('toggleNeutral').onclick = (e) => {
+  const nz = document.getElementById('neutralZone');
+  nz.dataset.show = nz.dataset.show === 'false' ? 'true' : 'false';
+  e.target.classList.toggle('active');
+  update();
+};
 update();
 renderVisuals();
 

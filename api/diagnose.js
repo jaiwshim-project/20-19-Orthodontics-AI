@@ -9,11 +9,24 @@ const KO_RULE = `
 숫자 필드와 enum 값(extract/non_extract/borderline 등)은 영문 그대로 유지.`;
 
 const PROMPTS = {
-  extraction: `당신은 교정치과 발치 판단 AI입니다.
-입력된 환자 데이터를 기반으로 발치/비발치 권장도(0-100), 권장 발치 치아(FDI 표기), 5가지 근거, 위험요소, 비발치 대안을 JSON으로 반환하세요.
-반드시 다음 JSON 스키마를 준수:
-{"score": number, "recommendation": "extract"|"non_extract"|"borderline", "teeth": [string], "reasoning": [string], "risks": [string], "alternatives": [string]}
-어린이(17세 이하)는 성장 잠재력을 고려해 발치 보류 가중치를 적용합니다.${KO_RULE}`,
+  extraction: `당신은 교정치과 발치 판단 AI(TSC-2)입니다.
+Tweed-Steiner-Down 룰에 더해 김용은 박사의 EZL/TTL 균형 이론과 Buccinator Mechanism을 통합 적용하세요.
+
+핵심 분석 축:
+1) 골격 분석 (ANB, FMA, IMPA) — Tweed/Steiner
+2) 치아 분석 (Crowding, Overjet, Overbite, Profile, LipStrain)
+3) EZL/TTL 균형 (김용은 박사 이론):
+   - EZL = Equilibrium Zone Length (혀↔입술/뺨 압력 균형 치열궁 길이)
+   - TTL = Total Teeth Length (12치아 폭 합)
+   - EZL - TTL > 1.5mm: 스페이싱 (발치 X, 공간 폐쇄)
+   - EZL - TTL < -1.5mm: 양측 발치 강력 시사
+   - 균형: -1.5 ~ +1.5mm
+4) Natural Healing 옵션 (40명 코호트 검증): 발치 후 5-16개월 관찰 시 평균 arch -6mm, overbite +2.8mm 자연 정렬
+
+JSON 스키마:
+{"score": number, "recommendation": "extract"|"non_extract"|"borderline"|"natural_healing", "teeth": [string], "reasoning": [string], "risks": [string], "alternatives": [string], "ezlAnalysis": {"upperBalance": number, "lowerBalance": number, "interpretation": string}}
+
+어린이(17세 이하): 성장 잠재력 고려해 발치 보류 가중치 적용.${KO_RULE}`,
 
   growth: `당신은 교정치과 성장 예측 AI입니다.
 입력된 환자(어린이) 데이터를 기반으로 잔여 성장량, 골성숙 단계, 권장 치료 시기, 5가지 근거를 JSON으로 반환하세요.

@@ -137,11 +137,35 @@
         <label>IMPA (도)</label>
         <input class="input" type="number" id="impa" step="0.1" value="92">
       </div>
+      <div class="field">
+        <label>상악 EZL (mm) <span style="color:var(--color-warning); font-size:10px;">신규</span></label>
+        <input class="input" type="number" id="ezlUpper" step="0.1" value="86">
+      </div>
+      <div class="field">
+        <label>상악 TTL (mm)</label>
+        <input class="input" type="number" id="ttlUpper" step="0.1" value="91">
+      </div>
+      <div class="field">
+        <label>하악 EZL (mm)</label>
+        <input class="input" type="number" id="ezlLower" step="0.1" value="74">
+      </div>
+      <div class="field">
+        <label>하악 TTL (mm)</label>
+        <input class="input" type="number" id="ttlLower" step="0.1" value="83">
+      </div>
     </div>
 
-    <div style="display:flex; gap:8px; margin-top:8px;">
+    <div style="margin-top:8px; padding:10px 12px; background:rgba(245,158,11,0.06); border-left:2px solid var(--color-warning); border-radius:0 6px 6px 0; font-size:11px; color:var(--text-secondary); line-height:1.5;">
+      💡 <strong>EZL/TTL 균형 (김용은 박사 이론)</strong>: Equilibrium Zone Length(혀↔입술 압력 균형 길이) vs Total Teeth Length(치아 폭 합). EZL−TTL > 1.5mm = 스페이싱, &lt; -1.5mm = Crowding(발치 후보).
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="computeRuleScore()">룰베이스 계산</button>
       <button class="btn btn-primary" onclick="callGemini()">🧠 Gemini AI 분석</button>
+      <label style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; cursor:pointer;">
+        <input type="checkbox" id="naturalHealing" style="accent-color:var(--color-success);">
+        <span style="font-size:12px;">🌱 자연 치유 옵션</span>
+      </label>
     </div>
     </div>
 
@@ -236,7 +260,12 @@ function getInputs() {
     profile: document.getElementById('profile').value,
     lipStrain: document.getElementById('lipStrain').value,
     fma: parseFloat(document.getElementById('fma').value),
-    impa: parseFloat(document.getElementById('impa').value)
+    impa: parseFloat(document.getElementById('impa').value),
+    ezlUpper: parseFloat(document.getElementById('ezlUpper').value) || 0,
+    ttlUpper: parseFloat(document.getElementById('ttlUpper').value) || 0,
+    ezlLower: parseFloat(document.getElementById('ezlLower').value) || 0,
+    ttlLower: parseFloat(document.getElementById('ttlLower').value) || 0,
+    naturalHealing: document.getElementById('naturalHealing')?.checked || false
   };
 }
 
@@ -272,7 +301,23 @@ function renderVisuals() {
     withLegend(profileCard(i.profile), 'profile'),
     withLegend(lipStrainCard(i.lipStrain), 'lipStrain'),
     withLegend(angleCard('FMA', '°', i.fma, [20, 30], [10, 50], 'Frankfort-하악 평면 각도 · 정상 25°±5', svgFMA(i.fma)), 'fma'),
-    withLegend(angleCard('IMPA', '°', i.impa, [85, 95], [70, 110], '하악 절치-하악 평면 각 · 정상 90°±5', svgIMPA(i.impa)), 'impa')
+    withLegend(angleCard('IMPA', '°', i.impa, [85, 95], [70, 110], '하악 절치-하악 평면 각 · 정상 90°±5', svgIMPA(i.impa)), 'impa'),
+    withLegend(`<div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">상악 EZL/TTL 균형</div>
+        <div class="vc-val ${Math.abs(i.ezlUpper - i.ttlUpper) <= 1.5 ? 'ok' : (i.ezlUpper - i.ttlUpper) < -1.5 ? 'danger' : 'warn'}">${(i.ezlUpper - i.ttlUpper).toFixed(1)} mm</div>
+      </div>
+      ${(window.VisualHelpers||{}).svgEZLBalance ? window.VisualHelpers.svgEZLBalance(i.ezlUpper, i.ttlUpper) : ''}
+      <div class="vc-note">EZL(혀↔입술 균형 길이) vs TTL(치아 폭 합). 김용은 박사 이론.</div>
+    </div>`, 'ezlUpper'),
+    withLegend(`<div class="visual-card">
+      <div class="vc-head">
+        <div class="vc-name">하악 EZL/TTL 균형</div>
+        <div class="vc-val ${Math.abs(i.ezlLower - i.ttlLower) <= 1.5 ? 'ok' : (i.ezlLower - i.ttlLower) < -1.5 ? 'danger' : 'warn'}">${(i.ezlLower - i.ttlLower).toFixed(1)} mm</div>
+      </div>
+      ${(window.VisualHelpers||{}).svgEZLBalance ? window.VisualHelpers.svgEZLBalance(i.ezlLower, i.ttlLower) : ''}
+      <div class="vc-note">하악 EZL/TTL — 양측 부조화 시 양악 발치 권장.</div>
+    </div>`, 'ezlLower')
   ];
   grid.innerHTML = cards.join('');
 }
@@ -529,10 +574,12 @@ function renderArch(extractTeeth = []) {
 }
 
 // 입력 변경 시 시각화 갱신
-['anb','crowding','overjet','overbite','profile','lipStrain','fma','impa'].forEach(id => {
+['anb','crowding','overjet','overbite','profile','lipStrain','fma','impa','ezlUpper','ttlUpper','ezlLower','ttlLower'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', renderVisuals);
+  if (el) el.addEventListener('change', renderVisuals);
 });
+document.getElementById('naturalHealing')?.addEventListener('change', () => { computeRuleScore(); renderVisuals(); });
 
 function computeRuleScore() {
   const i = getInputs();
@@ -565,6 +612,24 @@ function computeRuleScore() {
   if (impaDelta > 5) {
     score += impaDelta * 0.6;
     reasons.push(`IMPA ${i.impa}° 편차 ${impaDelta}° × 0.6 (Tweed 분석)`);
+  }
+
+  // EZL/TTL 균형 분석 (김용은 박사 이론)
+  const diffUpper = i.ezlUpper - i.ttlUpper;
+  const diffLower = i.ezlLower - i.ttlLower;
+  if (diffUpper < -1.5 || diffLower < -1.5) {
+    const totalDeficit = Math.abs(Math.min(diffUpper, diffLower));
+    score += totalDeficit * 4;
+    reasons.push(`EZL−TTL 부조화 (상 ${diffUpper.toFixed(1)} / 하 ${diffLower.toFixed(1)}mm) — 김용은 박사 이론 기반 발치 가중치 +${(totalDeficit*4).toFixed(1)}점`);
+  } else if (diffUpper > 1.5 || diffLower > 1.5) {
+    score -= 8;
+    reasons.push('EZL−TTL 양수 (스페이싱) — 발치보다 공간 폐쇄·IPR 검토 -8점');
+  }
+
+  // Natural healing 옵션
+  if (i.naturalHealing) {
+    score -= 15;
+    reasons.push('🌱 자연 치유 옵션 활성화 — 김용은 박사 40명 코호트(arch -6mm, overbite +2.8mm 자연 정렬) 가중치 -15점');
   }
 
   let teeth = [];
