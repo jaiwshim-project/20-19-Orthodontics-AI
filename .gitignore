@@ -32,3 +32,15 @@ build/
 # Logs
 *.log
 logs/
+
+# Study materials (학습 자료 폴더 — Git 추적 제외)
+01 치과 교정학/
+01 치과과 교정학/
+
+# Large media (>50MB)
+*.pptx
+*.pdf
+!docs/*.pdf
+*.mov
+*.mp4
+*.zip
