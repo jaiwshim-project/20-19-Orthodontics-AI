@@ -266,7 +266,14 @@ window.ScannerInput.mount(document.getElementById('scannerMount'), {
     if (fields.boneAge !== null && fields.boneAge !== undefined) document.getElementById('boneAge').value = fields.boneAge;
     if (fields.cvms !== null && fields.cvms !== undefined) document.getElementById('cvms').value = fields.cvms;
   },
-  onSwitchToData: () => tabsCtl.switchTo('data')
+  onSwitchToData: () => {
+    tabsCtl.switchTo('data');
+    setTimeout(() => {
+      window.toast && window.toast('성장 예측 자동 실행 중...', 'info', 2500);
+      callGemini();
+      document.getElementById('finalHeight')?.closest('.card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+  }
 });
 </script>
 </body>

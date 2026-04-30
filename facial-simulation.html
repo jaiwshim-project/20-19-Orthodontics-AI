@@ -269,7 +269,14 @@ window.ScannerInput.mount(document.getElementById('scannerMount'), {
     if (typeof fields.chin === 'number') document.getElementById('sChin').value = fields.chin;
     update();
   },
-  onSwitchToData: () => tabsCtl.switchTo('data')
+  onSwitchToData: () => {
+    tabsCtl.switchTo('data');
+    setTimeout(() => {
+      window.toast && window.toast('AI 안모 해석 자동 실행 중...', 'info', 2500);
+      callGemini();
+      document.getElementById('faceSvg')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+  }
 });
 </script>
 </body>

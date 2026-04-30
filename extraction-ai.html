@@ -336,7 +336,15 @@ window.ScannerInput.mount(document.getElementById('scannerMount'), {
     if (fields.fma !== null) document.getElementById('fma').value = fields.fma;
     if (fields.impa !== null) document.getElementById('impa').value = fields.impa;
   },
-  onSwitchToData: () => tabsCtl.switchTo('data')
+  onSwitchToData: () => {
+    tabsCtl.switchTo('data');
+    setTimeout(() => {
+      window.toast && window.toast('정밀 진단 자동 실행 중...', 'info', 2500);
+      callGemini();
+      // 결과 영역으로 부드럽게 스크롤
+      document.getElementById('recBadge')?.closest('.card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+  }
 });
 </script>
 </body>

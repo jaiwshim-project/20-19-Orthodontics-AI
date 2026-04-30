@@ -291,7 +291,14 @@ window.ScannerInput.mount(document.getElementById('scannerMount'), {
     if (fields.incisorShift !== null && fields.incisorShift !== undefined) document.getElementById('incisorShift').value = fields.incisorShift;
     if (fields.residual !== null && fields.residual !== undefined) document.getElementById('residual').value = fields.residual;
   },
-  onSwitchToData: () => tabsCtl.switchTo('data')
+  onSwitchToData: () => {
+    tabsCtl.switchTo('data');
+    setTimeout(() => {
+      window.toast && window.toast('재발 예측 자동 실행 중...', 'info', 2500);
+      callGemini();
+      document.getElementById('overallScore')?.closest('.card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+  }
 });
 </script>
 </body>
