@@ -288,12 +288,14 @@ function render(probs, factors, v) {
 
 async function callGemini() {
   const inputs = vals();
+  const patient = window.PatientStore.get() || {};
   window.toast('Gemini AI 분석 중...', 'info');
+  computeRule();
   try {
     const res = await window.apiFetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'recurrence', patient: window.PatientStore.get() || {}, inputs })
+      body: JSON.stringify({ type: 'recurrence', patient, inputs })
     });
     const data = await res.json();
     window._lastResult = data;
@@ -301,18 +303,29 @@ async function callGemini() {
       const p = data.probabilities;
       document.getElementById('overallScore').textContent = `${Math.round(p.y10 || 0)}%`;
     }
-    if (data.fallback) window.toast('AI 호출 실패 — 룰베이스 사용', 'warning');
+    if (data.fallback) {
+      window.toast('AI 호출 실패 — 룰베이스 사용', 'warning');
+    } else {
+      window.toast('✅ Gemini 분석 완료 — 자동 저장 중...', 'success');
+    }
     computeRule();
+    if (patient?.name && !data.fallback) setTimeout(() => saveCurrentDiagnosis(true), 600);
   } catch (e) {
     window.toast('AI 호출 실패: ' + e.message, 'error');
     computeRule();
   }
 }
 
-async function saveCurrentDiagnosis() {
+async function saveCurrentDiagnosis(silent = false) {
   const patient = window.PatientStore.get();
-  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
-  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  if (!patient || !patient.name) {
+    if (!silent) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); }
+    return;
+  }
+  if (!window._lastResult) {
+    if (!silent) window.toast('먼저 AI 분석을 실행하세요.', 'warning');
+    return;
+  }
   const scannerEl = document.getElementById('scannerMount');
   const uploadedImages = scannerEl?._getUploadedImages?.() || {};
   let imagesMeta = [];

@@ -40,20 +40,32 @@ export default async function handler(req, res) {
     // Try Supabase first
     try {
       const sb = getAdmin();
-      // 1) 환자 upsert (이름 + dob 기준)
-      const patientPayload = {
-        name: patient.name,
-        dob: patient.dob || null,
-        age_group: patient.ageGroup || null,
-        gender: patient.gender || null,
-        metadata: { age: patient.age || null }
-      };
-      const { data: patRow, error: patErr } = await sb
-        .from('patients')
-        .insert(patientPayload)
-        .select()
-        .single();
-      if (patErr) throw patErr;
+      // 1) 환자 조회 — supabaseId 있으면 기존 사용, 없으면 name+dob로 조회 후 INSERT
+      let patRow = null;
+      const existingId = patient.supabaseId || patient.id;
+      if (existingId && /^[0-9a-f-]{36}$/i.test(existingId)) {
+        const { data: byId } = await sb.from('patients').select('*').eq('id', existingId).maybeSingle();
+        if (byId) patRow = byId;
+      }
+      if (!patRow && patient.name) {
+        const dob = patient.dob || null;
+        let q = sb.from('patients').select('*').eq('name', patient.name);
+        if (dob) q = q.eq('dob', dob); else q = q.is('dob', null);
+        const { data: byNameDob } = await q.limit(1);
+        if (byNameDob?.[0]) patRow = byNameDob[0];
+      }
+      if (!patRow) {
+        const patientPayload = {
+          name: patient.name,
+          dob: patient.dob || null,
+          age_group: patient.ageGroup || null,
+          gender: patient.gender || null,
+          metadata: { age: patient.age || null }
+        };
+        const { data, error } = await sb.from('patients').insert(patientPayload).select().single();
+        if (error) throw error;
+        patRow = data;
+      }
 
       // 2) 진단 저장
       const diagPayload = {

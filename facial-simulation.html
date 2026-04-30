@@ -264,27 +264,36 @@ function getFacialInputs() {
 
 async function callGemini() {
   const inputs = getFacialInputs();
+  const patient = window.PatientStore.get() || {};
   document.getElementById('aiOpinion').textContent = '분석 중...';
   try {
     const res = await window.apiFetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'facial', patient: window.PatientStore.get() || {}, inputs })
+      body: JSON.stringify({ type: 'facial', patient, inputs })
     });
     const data = await res.json();
     window._lastResult = data;
     document.getElementById('aiOpinion').textContent =
       `[권장도 ${data.score}/100] ${data.recommendation || ''}\n\n` +
       (data.reasoning || []).slice(0, 4).map((r,i)=>`${i+1}. ${r}`).join('\n');
+    if (!data.fallback) window.toast('✅ Gemini 분석 완료 — 자동 저장 중...', 'success');
+    if (patient?.name && !data.fallback) setTimeout(() => saveCurrentDiagnosis(true), 600);
   } catch (e) {
     document.getElementById('aiOpinion').textContent = '분석 실패: ' + e.message;
   }
 }
 
-async function saveCurrentDiagnosis() {
+async function saveCurrentDiagnosis(silent = false) {
   const patient = window.PatientStore.get();
-  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
-  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  if (!patient || !patient.name) {
+    if (!silent) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); }
+    return;
+  }
+  if (!window._lastResult) {
+    if (!silent) window.toast('먼저 AI 분석을 실행하세요.', 'warning');
+    return;
+  }
   const scannerEl = document.getElementById('scannerMount');
   const uploadedImages = scannerEl?._getUploadedImages?.() || {};
   let imagesMeta = [];

@@ -619,9 +619,13 @@ async function callGemini() {
     if (data.fallback) {
       window.toast('AI 호출 실패 — 룰베이스 결과를 표시합니다.', 'warning', 4000);
     } else {
-      window.toast('✅ Gemini 분석 완료', 'success');
+      window.toast('✅ Gemini 분석 완료 — 자동 저장 중...', 'success');
     }
     renderResult(data);
+    // 자동 저장 (환자 정보 있을 때만)
+    if (window.PatientStore.get()?.name && !data.fallback) {
+      setTimeout(() => saveCurrentDiagnosis(true), 600);
+    }
   } catch (e) {
     const msg = e.name === 'AbortError' ? '응답 시간 초과 (35초). 룰베이스 결과 표시.' : 'AI 호출 실패: ' + e.message;
     window.toast(msg, 'error', 4500);
@@ -631,10 +635,16 @@ async function callGemini() {
   }
 }
 
-async function saveCurrentDiagnosis() {
+async function saveCurrentDiagnosis(silent = false) {
   const patient = window.PatientStore.get();
-  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
-  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  if (!patient || !patient.name) {
+    if (!silent) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); }
+    return;
+  }
+  if (!window._lastResult) {
+    if (!silent) window.toast('먼저 AI 분석을 실행하세요.', 'warning');
+    return;
+  }
   // 스캐너 탭의 이미지 가져오기
   const scannerEl = document.getElementById('scannerMount');
   const uploadedImages = scannerEl?._getUploadedImages?.() || {};
