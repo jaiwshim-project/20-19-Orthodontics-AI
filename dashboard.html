@@ -91,7 +91,7 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th><th>이름</th><th>연령</th><th>성별</th><th>최근 진단</th><th>상태</th><th>재발 위험</th><th>업데이트</th>
+          <th>ID</th><th>이름</th><th>연령</th><th>성별</th><th>최근 진단</th><th>건수</th><th>상태</th><th>재발 위험</th><th>업데이트</th>
         </tr>
       </thead>
       <tbody id="patientTbody"></tbody>
@@ -104,67 +104,93 @@
 
 <script src="js/common.js"></script>
 <script src="js/charts.js"></script>
+<script src="js/diagnosis-store.js"></script>
 <script>
-// Mock data — 실제 환경에선 /api/patients에서 fetch
-const MOCK = (() => {
-  const types = ['extraction','growth','facial','recurrence'];
-  const names = ['김민준','이서연','박지호','최유나','정도윤','강하은','조시우','윤예린','임선우','한지유','오태양','신서아','류건우','배수아','홍시현','전주원','문서윤','노이안','구하린','석재민','이도윤','김지안','박지원','최서아','정민서','강선재','조하윤','윤도현','임예원','한태민','오시원','신지호','류주아','배준영','홍서윤','전현우','문지호','노하준','구나현','석재희'];
-  const arr = [];
-  for (let i = 0; i < 40; i++) {
-    const isChild = Math.random() < 0.45;
-    const age = isChild ? Math.floor(Math.random() * 8) + 8 : Math.floor(Math.random() * 35) + 18;
-    arr.push({
-      id: 'P' + String(1001 + i),
-      name: names[i],
-      age,
-      ageGroup: isChild ? 'child' : 'adult',
-      gender: Math.random() < 0.5 ? 'male' : 'female',
-      lastType: types[Math.floor(Math.random() * 4)],
-      status: ['진단 완료','치료 중','보정 중','재평가'][Math.floor(Math.random() * 4)],
-      recurrence: Math.floor(Math.random() * 80),
-      updated: new Date(Date.now() - Math.random() * 90 * 86400 * 1000).toISOString().slice(0, 10)
-    });
-  }
-  return arr;
-})();
+const TYPE_KO = { extraction: '발치', growth: '성장', facial: '안모', recurrence: '재발' };
+const STATUS_KO = {
+  pending_review: { label: '검토 대기', cls: 'badge-warning' },
+  reviewed:       { label: '검토 완료', cls: 'badge-primary' },
+  accepted:       { label: '수용',     cls: 'badge-success' },
+  rejected:       { label: '거부',     cls: 'badge-danger' },
+  archived:       { label: '보관',     cls: 'badge-primary' }
+};
+
+let DATA = []; // 저장된 진단 레코드 통합 목록
+let DATA_SOURCE = 'local';
+
+async function loadData() {
+  const result = await window.DiagnosisStore.list({ limit: 200 });
+  DATA = result.records || [];
+  DATA_SOURCE = result.source;
+  return DATA;
+}
+
+// 환자 단위로 그룹핑된 뷰 (마지막 진단 + 재발 risk)
+function groupByPatient(records) {
+  const map = new Map();
+  records.forEach(r => {
+    const p = r.patient || {};
+    const key = (p.id || p.name || '익명') + '|' + (p.dob || '');
+    if (!map.has(key)) {
+      map.set(key, {
+        id: p.id || key,
+        name: p.name || '(익명)',
+        ageGroup: p.ageGroup || 'adult',
+        age: r.patient?.age || (p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 31557600000) : null),
+        gender: p.gender || '',
+        diagnoses: []
+      });
+    }
+    map.get(key).diagnoses.push(r);
+  });
+  return Array.from(map.values()).map(p => {
+    p.diagnoses.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    p.lastType = p.diagnoses[0]?.type;
+    p.status = p.diagnoses[0]?.result?.status || 'pending_review';
+    p.recurrence = p.diagnoses.find(d => d.type === 'recurrence')?.result?.probabilities?.y10 ?? null;
+    p.updated = (p.diagnoses[0]?.created_at || '').slice(0, 10);
+    return p;
+  });
+}
 
 let charts = {};
+let GROUPED = [];
 
-function refreshAll() {
-  // KPIs
-  const total = MOCK.length;
-  const done = MOCK.filter(p => p.status === '진단 완료').length;
-  const ongoing = MOCK.filter(p => p.status === '치료 중' || p.status === '보정 중').length;
-  const alert = MOCK.filter(p => p.recurrence > 50).length;
+async function refreshAll() {
+  await loadData();
+  GROUPED = groupByPatient(DATA);
+
+  const total = GROUPED.length;
+  const totalDiag = DATA.length;
+  const accepted = DATA.filter(d => d.result?.status === 'accepted').length;
+  const pending = DATA.filter(d => (d.result?.status || 'pending_review') === 'pending_review').length;
+  const alert = GROUPED.filter(p => (p.recurrence ?? 0) > 50).length;
+
   document.getElementById('kpiTotal').textContent = total;
-  document.getElementById('kpiDone').textContent = done;
-  document.getElementById('kpiOngoing').textContent = ongoing;
+  document.getElementById('kpiDone').textContent = accepted;
+  document.getElementById('kpiOngoing').textContent = pending;
   document.getElementById('kpiAlert').textContent = alert;
-  document.getElementById('kpiTotalDelta').textContent = `▲ ${Math.round(total * 0.08)} (이번 달)`;
-  document.getElementById('kpiDoneDelta').textContent = `▲ ${Math.round(done * 0.12)}`;
-  document.getElementById('kpiOngoingDelta').textContent = `${ongoing > 10 ? '▲' : '▼'} ${Math.abs(Math.round(ongoing * 0.05))}`;
-  document.getElementById('kpiAlertDelta').textContent = `▲ ${Math.max(1, Math.round(alert * 0.2))}`;
+  document.getElementById('kpiTotalDelta').textContent = `진단 누적 ${totalDiag}건 · ${DATA_SOURCE === 'supabase' ? '클라우드' : DATA_SOURCE === 'mixed' ? '클라우드+로컬' : '로컬'}`;
+  document.getElementById('kpiDoneDelta').textContent = `수용된 진단`;
+  document.getElementById('kpiOngoingDelta').textContent = `검토 대기`;
+  document.getElementById('kpiAlertDelta').textContent = `재발 위험 50%↑`;
 
-  // Age donut
-  const child = MOCK.filter(p => p.ageGroup === 'child').length;
+  const child = GROUPED.filter(p => p.ageGroup === 'child').length;
   if (charts.age) charts.age.destroy();
   charts.age = window.Charts.donut('ageChart', {
     labels: ['어린이', '성인'],
-    values: [child, total - child],
+    values: [child, Math.max(1, total) - child],
     colors: ['#F59E0B', '#0EA5E9']
   });
 
-  // Type bar
-  const typeMap = { extraction:'발치', growth:'성장', facial:'안모', recurrence:'재발' };
-  const typeCount = ['extraction','growth','facial','recurrence'].map(t => MOCK.filter(p => p.lastType === t).length);
+  const typeCount = ['extraction','growth','facial','recurrence'].map(t => DATA.filter(d => d.type === t).length);
   if (charts.type) charts.type.destroy();
   charts.type = window.Charts.bar('typeChart', {
-    labels: Object.values(typeMap),
+    labels: ['발치', '성장', '안모', '재발'],
     values: typeCount,
     label: '진단 수'
   });
 
-  // Trend line — 최근 6개월
   const months = [];
   const counts = [];
   for (let i = 5; i >= 0; i--) {
@@ -172,7 +198,7 @@ function refreshAll() {
     d.setMonth(d.getMonth() - i);
     const ym = d.toISOString().slice(0, 7);
     months.push(ym.slice(5) + '월');
-    counts.push(MOCK.filter(p => p.updated.startsWith(ym)).length + Math.floor(Math.random() * 4));
+    counts.push(DATA.filter(rec => (rec.created_at || '').startsWith(ym)).length);
   }
   if (charts.trend) charts.trend.destroy();
   charts.trend = window.Charts.line('trendChart', {
@@ -186,36 +212,59 @@ function refreshAll() {
 function renderTable() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
   const fAge = document.getElementById('filterAge').value;
-  const filtered = MOCK.filter(p => {
-    if (q && !p.name.includes(q) && !p.id.toLowerCase().includes(q)) return false;
+  const filtered = GROUPED.filter(p => {
+    if (q && !(p.name || '').toLowerCase().includes(q) && !(p.id || '').toLowerCase().includes(q)) return false;
     if (fAge && p.ageGroup !== fAge) return false;
     return true;
   });
-  const typeMap = { extraction:'발치', growth:'성장', facial:'안모', recurrence:'재발' };
   const tbody = document.getElementById('patientTbody');
-  tbody.innerHTML = filtered.slice(0, 30).map(p => {
-    const riskCls = p.recurrence > 50 ? 'badge-danger' : p.recurrence > 30 ? 'badge-warning' : 'badge-success';
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:40px;">
+      저장된 진단이 없습니다. <a href="extraction-ai.html">발치 판단</a> 등에서 환자 등록 후 분석·저장해 보세요.
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.slice(0, 60).map(p => {
+    const recurr = p.recurrence;
+    const riskCls = recurr == null ? 'badge-primary' : recurr > 50 ? 'badge-danger' : recurr > 30 ? 'badge-warning' : 'badge-success';
+    const recLbl = recurr == null ? '—' : `${Math.round(recurr)}%`;
+    const stat = STATUS_KO[p.status] || STATUS_KO.pending_review;
+    const lastDiagId = p.diagnoses[0]?.id || '';
     return `
-      <tr>
-        <td><code style="color:var(--text-muted);">${p.id}</code></td>
-        <td><strong>${p.name}</strong></td>
-        <td>${p.age}세 <span class="badge ${p.ageGroup === 'child' ? 'badge-warning' : 'badge-primary'}" style="margin-left:4px;">${p.ageGroup === 'child' ? '어린이' : '성인'}</span></td>
-        <td>${p.gender === 'male' ? '남' : '여'}</td>
-        <td>${typeMap[p.lastType]}</td>
-        <td><span class="badge badge-primary">${p.status}</span></td>
-        <td><span class="badge ${riskCls}">${p.recurrence}%</span></td>
+      <tr style="cursor:pointer;" onclick="location.href='patient-detail.html?id=${encodeURIComponent(lastDiagId)}'">
+        <td><code style="color:var(--text-muted); font-size:11px;">${(p.id || '').slice(-8)}</code></td>
+        <td><strong>${escapeHtml(p.name)}</strong></td>
+        <td>${p.age != null ? p.age + '세' : '—'} <span class="badge ${p.ageGroup === 'child' ? 'badge-warning' : 'badge-primary'}" style="margin-left:4px;">${p.ageGroup === 'child' ? '어린이' : '성인'}</span></td>
+        <td>${p.gender === 'male' ? '남' : p.gender === 'female' ? '여' : '—'}</td>
+        <td>${TYPE_KO[p.lastType] || p.lastType}</td>
+        <td>${p.diagnoses.length}건</td>
+        <td><span class="badge ${stat.cls}">${stat.label}</span></td>
+        <td><span class="badge ${riskCls}">${recLbl}</span></td>
         <td style="color:var(--text-muted);">${p.updated}</td>
       </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:40px;">검색 결과 없음</td></tr>';
+  }).join('');
 }
 
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
 function exportCSV() {
-  const header = ['id','name','age','ageGroup','gender','lastType','status','recurrence','updated'];
-  const rows = [header.join(',')].concat(MOCK.map(p => header.map(h => p[h]).join(',')));
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const rows = [['id','name','age','ageGroup','gender','type','status','recurrence','created_at']];
+  DATA.forEach(d => rows.push([
+    d.id || '',
+    d.patient?.name || '',
+    d.patient?.age || '',
+    d.patient?.ageGroup || '',
+    d.patient?.gender || '',
+    d.type,
+    d.result?.status || 'pending_review',
+    d.result?.probabilities?.y10 ?? '',
+    d.created_at || ''
+  ]));
+  const csv = '﻿' + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `patients-${Date.now()}.csv`;
+  a.download = `diagnoses-${Date.now()}.csv`;
   a.click();
   window.toast('CSV 내보내기 완료', 'success');
 }

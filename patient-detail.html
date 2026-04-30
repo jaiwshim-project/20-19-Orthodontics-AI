@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="환자 진단 상세 — 검토·수용·거부 워크플로우.">
+<title>진단 상세 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .detail-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  @media (max-width: 1024px) { .detail-grid { grid-template-columns: 1fr; } }
+  .meta-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border-subtle); font-size: 13px; }
+  .meta-row .k { color: var(--text-muted); }
+  .meta-row .v { font-weight: 600; }
+  .reason-list li { padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.6; }
+  .action-bar { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+  .action-bar .btn { flex: 1; min-width: 120px; }
+  .json-box { background: rgba(0,0,0,0.4); padding: 12px 14px; border-radius: 8px; font-family: 'Inter', monospace; font-size: 11px; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto; color: var(--text-secondary); }
+  .status-banner { padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; }
+  .status-banner.pending  { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); color: var(--color-warning); }
+  .status-banner.accepted { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: var(--color-success); }
+  .status-banner.rejected { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: var(--color-danger); }
+  .status-banner.reviewed, .status-banner.archived { background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.25); color: var(--color-primary); }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:24px;">
+  <a href="dashboard.html" class="btn btn-ghost btn-sm">← 대시보드로</a>
+</div>
+
+<div id="loading" style="text-align:center; padding:60px; color:var(--text-muted);">불러오는 중...</div>
+<div id="empty" style="text-align:center; padding:60px; display:none;">
+  <h3>진단을 찾을 수 없습니다</h3>
+  <p style="color:var(--text-muted);">URL이 잘못되었거나 데이터가 삭제되었을 수 있습니다.</p>
+  <a href="dashboard.html" class="btn btn-primary mt-4">대시보드로</a>
+</div>
+
+<div id="detail" style="display:none;">
+
+  <div id="statusBanner" class="status-banner pending"></div>
+
+  <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <span class="badge badge-primary" id="typeBadge">—</span>
+      <h2 style="margin-top:8px;" id="patientName">환자</h2>
+      <p style="color:var(--text-muted); font-size:14px;" id="patientMeta"></p>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">진단 권장도</div>
+      <div style="font-size:48px; font-weight:800;" id="scoreNum">—</div>
+      <div style="font-size:13px;" id="scoreLabel">—</div>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+
+    <div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">📌 AI 분석 근거</h3>
+        <ul id="reasoning" class="reason-list" style="list-style:none; padding:0;"></ul>
+      </div>
+
+      <div class="card mt-4">
+        <h3 style="margin-bottom:12px;">⚠️ 위험 요소</h3>
+        <ul id="risks" class="reason-list" style="list-style:none; padding:0;"></ul>
+        <h3 style="margin: 16px 0 12px;">🛡️ 대안</h3>
+        <ul id="alternatives" class="reason-list" style="list-style:none; padding:0;"></ul>
+      </div>
+
+      <div class="card mt-4" id="probCard" style="display:none;">
+        <h3 style="margin-bottom:12px;">📊 재발 확률 (1·3·5·10년)</h3>
+        <div id="probGrid" style="display:grid; grid-template-columns: repeat(4,1fr); gap:8px; text-align:center;"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">🩺 입력 데이터</h3>
+        <div id="inputsList"></div>
+      </div>
+
+      <div class="card mt-4">
+        <h3 style="margin-bottom:12px;">📝 의사 메모</h3>
+        <textarea id="doctorNote" class="input" rows="4" placeholder="검토 의견을 남기세요..."></textarea>
+        <button class="btn btn-ghost btn-sm mt-2" onclick="saveNote()">메모 저장</button>
+      </div>
+
+      <div class="card mt-4">
+        <h3 style="margin-bottom:12px;">⚖️ 검토 결정</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">전문의 판단으로 본 AI 진단을 어떻게 처리할지 선택하세요.</p>
+        <div class="action-bar">
+          <button class="btn btn-primary"  onclick="changeStatus('accepted')" style="background:linear-gradient(135deg, #10B981, #059669);">✓ 수용</button>
+          <button class="btn btn-ghost"    onclick="changeStatus('reviewed')">📋 검토 완료</button>
+          <button class="btn btn-ghost"    onclick="changeStatus('rejected')" style="border-color:rgba(239,68,68,0.4); color:var(--color-danger);">✗ 거부</button>
+          <button class="btn btn-ghost"    onclick="changeStatus('archived')">📦 보관</button>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <h3 style="margin-bottom:12px;">🔍 원본 JSON</h3>
+        <pre class="json-box" id="rawJson"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/diagnosis-store.js"></script>
+<script>
+const TYPE_KO = { extraction: '발치 판단', growth: '성장 예측', facial: '안모 시뮬레이션', recurrence: '재발 예측' };
+const STATUS_KO = {
+  pending_review: { label: '검토 대기', cls: 'pending'  },
+  reviewed:       { label: '검토 완료', cls: 'reviewed' },
+  accepted:       { label: '✓ 수용됨',  cls: 'accepted' },
+  rejected:       { label: '✗ 거부됨',  cls: 'rejected' },
+  archived:       { label: '📦 보관됨', cls: 'archived' }
+};
+const REC_KO = { extract: '발치 권장', non_extract: '비발치 권장', borderline: '경계 — 추가 검토 필요' };
+
+let CURRENT = null;
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function init() {
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    return;
+  }
+  const result = await window.DiagnosisStore.get(id);
+  if (!result || !result.record) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    return;
+  }
+  CURRENT = result.record;
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('detail').style.display = 'block';
+  render();
+}
+
+function render() {
+  const r = CURRENT;
+  const p = r.patient || {};
+  const res = r.result || {};
+  const status = res.status || 'pending_review';
+
+  // Status banner
+  const stat = STATUS_KO[status] || STATUS_KO.pending_review;
+  const banner = document.getElementById('statusBanner');
+  banner.className = 'status-banner ' + stat.cls;
+  banner.innerHTML = `<strong>현재 상태: ${stat.label}</strong>${res.status_changed_at ? ' · ' + new Date(res.status_changed_at).toLocaleString('ko-KR') : ''}`;
+
+  // Header
+  document.getElementById('typeBadge').textContent = TYPE_KO[r.type] || r.type;
+  document.getElementById('patientName').textContent = p.name || '(익명)';
+  const ageInfo = p.age != null ? `${p.age}세` : (p.dob || '');
+  const ageGrpKo = p.ageGroup === 'child' ? '어린이' : p.ageGroup === 'adult' ? '성인' : '';
+  const genderKo = p.gender === 'male' ? '남' : p.gender === 'female' ? '여' : '';
+  document.getElementById('patientMeta').textContent = `${ageInfo} · ${ageGrpKo} ${genderKo} · 진단 ${new Date(r.created_at).toLocaleString('ko-KR')}`;
+
+  // Score
+  const score = res.score != null ? Math.round(res.score) : '—';
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreLabel').textContent = REC_KO[res.recommendation] || res.recommendation || '';
+
+  // Reasoning
+  document.getElementById('reasoning').innerHTML =
+    (res.reasoning || []).map(x => `<li>${escapeHtml(x)}</li>`).join('') ||
+    '<li style="color:var(--text-muted);">근거 없음</li>';
+
+  // Risks / alternatives
+  document.getElementById('risks').innerHTML =
+    (res.risks || []).map(x => `<li>${escapeHtml(x)}</li>`).join('') || '<li style="color:var(--text-muted);">—</li>';
+  document.getElementById('alternatives').innerHTML =
+    (res.alternatives || []).map(x => `<li>${escapeHtml(x)}</li>`).join('') || '<li style="color:var(--text-muted);">—</li>';
+
+  // Probabilities (recurrence)
+  if (res.probabilities) {
+    document.getElementById('probCard').style.display = 'block';
+    const p1 = res.probabilities;
+    document.getElementById('probGrid').innerHTML = ['y1','y3','y5','y10'].map(k => `
+      <div style="padding:14px; background:rgba(255,255,255,0.03); border-radius:10px;">
+        <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">${k.toUpperCase()}</div>
+        <div style="font-size:24px; font-weight:700; color:${(p1[k] || 0) > 50 ? '#EF4444' : (p1[k] || 0) > 30 ? '#F59E0B' : '#10B981'};">${Math.round(p1[k] || 0)}%</div>
+      </div>
+    `).join('');
+  }
+
+  // Inputs
+  const inp = r.inputs || {};
+  document.getElementById('inputsList').innerHTML = Object.keys(inp).length
+    ? Object.entries(inp).map(([k, v]) => `<div class="meta-row"><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></div>`).join('')
+    : '<p style="color:var(--text-muted); font-size:13px;">입력 데이터 없음</p>';
+
+  // Doctor note
+  document.getElementById('doctorNote').value = res.doctor_note || '';
+
+  // Raw
+  document.getElementById('rawJson').textContent = JSON.stringify(r, null, 2);
+}
+
+async function changeStatus(newStatus) {
+  if (!CURRENT) return;
+  if (newStatus === 'rejected' && !confirm('이 AI 진단을 거부 처리하시겠습니까?')) return;
+  const note = document.getElementById('doctorNote').value;
+  const r = await window.DiagnosisStore.updateStatus(CURRENT.id, newStatus, note || undefined);
+  if (r.success !== false) {
+    CURRENT.result = CURRENT.result || {};
+    CURRENT.result.status = newStatus;
+    CURRENT.result.status_changed_at = new Date().toISOString();
+    CURRENT.result.doctor_note = note;
+    render();
+    window.toast(`상태를 "${STATUS_KO[newStatus].label}"으로 변경했습니다.`, 'success');
+  } else {
+    window.toast('변경 실패: ' + (r.error || ''), 'error');
+  }
+}
+
+async function saveNote() {
+  if (!CURRENT) return;
+  const note = document.getElementById('doctorNote').value;
+  const status = CURRENT.result?.status || 'pending_review';
+  const r = await window.DiagnosisStore.updateStatus(CURRENT.id, status, note);
+  if (r.success !== false) window.toast('의사 메모를 저장했습니다.', 'success');
+}
+
+init();
+</script>
+</body>
+</html>

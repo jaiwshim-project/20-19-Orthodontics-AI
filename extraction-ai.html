@@ -142,6 +142,10 @@
       <span id="recBadge" class="badge badge-primary">대기</span>
     </div>
     <div id="teethRec" class="tooth-recommendation" style="justify-content:center; margin-top:12px;"></div>
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-subtle); text-align:center;">
+      <button class="btn btn-primary" onclick="saveCurrentDiagnosis()">💾 환자 대시보드에 저장</button>
+      <a class="btn btn-ghost" href="dashboard.html" style="margin-left:8px;">📊 대시보드</a>
+    </div>
   </div>
 
 </div>
@@ -180,6 +184,7 @@
 
 <script src="js/common.js"></script>
 <script src="js/scanner-input.js"></script>
+<script src="js/diagnosis-store.js"></script>
 <script>
 function getInputs() {
   return {
@@ -276,7 +281,25 @@ async function callGemini() {
   }
 }
 
+async function saveCurrentDiagnosis() {
+  const patient = window.PatientStore.get();
+  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
+  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const r = await window.DiagnosisStore.save({
+    patient, type: 'extraction',
+    inputs: getInputs(),
+    result: window._lastResult,
+    imagesMeta: window._lastImagesMeta || []
+  });
+  if (r.success) {
+    window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? 'Supabase 클라우드' : '로컬'}). 대시보드에서 확인하세요.`, 'success', 4000);
+  } else {
+    window.toast('저장 실패: ' + (r.error || ''), 'error');
+  }
+}
+
 function renderResult(data) {
+  window._lastResult = data;
   const score = Math.round(data.score || 0);
   document.getElementById('scoreNum').textContent = score;
   const arc = document.getElementById('scoreArc');

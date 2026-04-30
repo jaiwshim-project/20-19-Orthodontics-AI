@@ -85,6 +85,10 @@
     <h4 style="margin-top:16px;">🧠 AI 권장</h4>
     <button class="btn btn-primary" onclick="callGemini()">Gemini로 변화 의미 해석</button>
     <div id="aiOpinion" style="margin-top:12px; font-size:13px; color:var(--text-secondary); white-space:pre-wrap;"></div>
+    <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-subtle);">
+      <button class="btn btn-primary" onclick="saveCurrentDiagnosis()">💾 대시보드에 저장</button>
+      <a class="btn btn-ghost" href="dashboard.html" style="margin-left:8px;">📊 대시보드</a>
+    </div>
     </div>
 
     <div class="tab-panel" data-tab="scan">
@@ -102,6 +106,7 @@
 
 <script src="js/common.js"></script>
 <script src="js/scanner-input.js"></script>
+<script src="js/diagnosis-store.js"></script>
 <script>
 // Base landmark coordinates (Before)
 const BASE = {
@@ -230,14 +235,18 @@ function snapshot() {
   img.src = 'data:image/svg+xml;base64,' + svg64;
 }
 
-async function callGemini() {
-  const inputs = {
+function getFacialInputs() {
+  return {
     maxRetract: parseFloat(document.getElementById('sMaxRetract').value),
     mandShift: parseFloat(document.getElementById('sMandShift').value),
     lipUpper: parseFloat(document.getElementById('sLipUpper').value),
     lipLower: parseFloat(document.getElementById('sLipLower').value),
     chin: parseFloat(document.getElementById('sChin').value)
   };
+}
+
+async function callGemini() {
+  const inputs = getFacialInputs();
   document.getElementById('aiOpinion').textContent = '분석 중...';
   try {
     const res = await fetch('/api/diagnose', {
@@ -246,12 +255,23 @@ async function callGemini() {
       body: JSON.stringify({ type: 'facial', patient: window.PatientStore.get() || {}, inputs })
     });
     const data = await res.json();
+    window._lastResult = data;
     document.getElementById('aiOpinion').textContent =
       `[권장도 ${data.score}/100] ${data.recommendation || ''}\n\n` +
       (data.reasoning || []).slice(0, 4).map((r,i)=>`${i+1}. ${r}`).join('\n');
   } catch (e) {
     document.getElementById('aiOpinion').textContent = '분석 실패: ' + e.message;
   }
+}
+
+async function saveCurrentDiagnosis() {
+  const patient = window.PatientStore.get();
+  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
+  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const r = await window.DiagnosisStore.save({
+    patient, type: 'facial', inputs: getFacialInputs(), result: window._lastResult
+  });
+  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
 }
 
 document.querySelectorAll('input[type=range]').forEach(s => s.addEventListener('input', update));

@@ -41,6 +41,28 @@
     incisorShift: '하악 절치 변화 (mm)', residual: '잔여 Crowding (mm)'
   };
 
+  const FIELD_LEGENDS = {
+    anb: 'A점-Nasion-B점 각도(Steiner 분석). 상하악 골격 관계 지표. 정상 2°±2. 4° 이상이면 골격성 II급(상악 전돌), 0° 이하면 III급(하악 전돌). 발치·수술 결정의 일차 기준.',
+    crowding: '치열궁 길이와 치아 폭 합의 차이(mm). 음수일수록 공간 부족. Proffit 기준 <4mm 경미, 4–8mm 중등도, >8mm 심함. 발치 vs IPR·확장 결정의 가장 직접적 근거.',
+    overjet: '상하악 전치 절단연의 수평 거리(mm). 정상 2–4mm. 5mm 초과 시 II급 동반 가능성, 음수면 III급 반대교합. 치아 외상 위험·입술 관계·안모 돌출과 직결되는 핵심 지표.',
+    overbite: '상하악 전치의 수직 겹침(mm). 정상 2–4mm. 6mm 이상 deep bite, 0 이하 open bite. 측두하악관절 부담, 치주 건강, 발음에 영향. 교합 깊이는 안모와 직결.',
+    profile: '측면 안모 형태 분류. straight(균형), convex(볼록·II급/상악 전돌), concave(오목·III급/하악 전돌). 발치 시 안모 변화 방향을 결정하며 비발치 결정 시 보존 우선.',
+    lipStrain: '입을 다물 때 입술 긴장도. none(자연 폐구), mild(경미한 노력), severe(현저). 전치 돌출의 간접 지표이며 발치 후방이동으로 긴장 완화·심미 개선 기대 가능.',
+    fma: 'Frankfort-하악평면 각도(Tweed 분석). 정상 25°±5. 30° 이상 hyperdivergent(수직 성장형), 20° 이하 hypodivergent(수평형). 치료 방향, 예후, 보정 프로토콜 결정의 핵심.',
+    impa: '하악 절치 장축과 하악 평면의 각도. 정상 90°±5. 95° 초과 시 설측 경사 한계 시사. Tweed 진단 삼각형의 핵심으로 IMPA 정상화는 장기 안정성과 직결.',
+    boneAge: '손목 X-ray 기반 골 성숙도 추정 나이(세). MP3·sesamoid·distal phalanx 단계로 평가. 역연령과 비교해 성장 잠재력과 치료 시기 결정. 잔여 성장량 예측의 일차 지표.',
+    cvms: '경추 골성숙 단계(1-6, Baccetti). CS3가 peak velocity로 골격 치료 골든타임. CS5-6은 성장 완료. Lateral Ceph로 측정 가능해 손목 X-ray 없이 시기 판단 가능.',
+    height: '환자의 현재 신장(cm). 부모 키와 함께 mid-parental height 계산해 잔여 성장량 추정. 치료 기간·기능 장치 효과 예측에 사용. 6개월 단위로 재측정 권장.',
+    weight: '환자의 현재 체중(kg). 신장과 함께 BMI 산출. 영양 상태와 골 성숙 진행 평가에 보조적 사용. 어린이의 경우 성장 곡선 백분위수 추적의 기준치.',
+    maxRetract: '상악 전치 후방 이동 권장량(mm). 양수=후방 이동, 음수=전방. 발치 후 공간 폐쇄 시 가능한 이동량 추정. 안모 볼록 개선과 입술 긴장 완화의 핵심 변수.',
+    mandShift: '하악 전후방 이동 권장량(mm). 양수=전방, 음수=후방. 골격성 II급에선 전방 이동, III급에선 후방 이동 검토. 기능 장치·수술 결정의 직접 지표.',
+    lipUpper: '상순 위치 변화 권장량(mm). 음수=후방. E-line 기준 -4mm가 이상적. 상악 전치 후방 이동에 비례해 약 60% 후퇴. 발치 시 1차 안모 변화 예측.',
+    lipLower: '하순 위치 변화 권장량(mm). 음수=후방. E-line 기준 -2mm 이상적. 하악 절치 위치와 강하게 연관. 입술 긴장도와 미소선 분석에 함께 고려.',
+    chin: '턱(Pogonion) 위치 변화 권장량(mm). 양수=전방. 골격성 II급에선 turbo·기능 장치로 전방, III급에선 chin cup으로 후방 이동 검토. 수술 시 genioplasty 대안.',
+    incisorShift: '치료 중 하악 절치 위치 변화량(mm). 양수=전방, 음수=후방. 2mm 이상 전방 이동 시 재발 위험 급증. 보정 기간·종류 선택과 장기 안정성의 핵심 예측 변수.',
+    residual: '치료 종료 시 잔여 Crowding(mm). 0에 가까울수록 안정적. 1mm 이상 잔존 시 재발 가속. 보정 강도(Bonded vs Essix) 결정과 정기 검진 주기 단축 사유.'
+  };
+
   function escapeHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
@@ -247,9 +269,12 @@
           </div>
           <div class="scanner-fields">
             ${keys.map(k => `
-              <div class="ext-field">
-                <span class="key">${escapeHtml(FIELD_LABELS[k] || k)}</span>
-                <span class="val">${escapeHtml(fields[k])}</span>
+              <div class="ext-field" style="flex-direction:column; align-items:stretch; padding:10px 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="key">${escapeHtml(FIELD_LABELS[k] || k)}</span>
+                  <span class="val">${escapeHtml(fields[k])}</span>
+                </div>
+                ${FIELD_LEGENDS[k] ? `<div style="font-size:11px; color:var(--text-muted); line-height:1.55; padding-top:6px; border-top:1px dashed var(--border-subtle);">${escapeHtml(FIELD_LEGENDS[k])}</div>` : ''}
               </div>
             `).join('')}
           </div>

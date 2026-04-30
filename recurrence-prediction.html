@@ -127,6 +127,10 @@
     <div style="margin-top:20px; padding:14px; background: rgba(255,255,255,0.03); border-radius:10px; font-size:13px;" id="protocolBox">
       권장 보정 프로토콜이 분석 후 표시됩니다.
     </div>
+    <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border-subtle); text-align:center;">
+      <button class="btn btn-primary" onclick="saveCurrentDiagnosis()">💾 대시보드에 저장</button>
+      <a class="btn btn-ghost" href="dashboard.html" style="margin-left:8px;">📊 대시보드</a>
+    </div>
   </div>
 
 </div>
@@ -153,6 +157,7 @@
 <script src="js/common.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/scanner-input.js"></script>
+<script src="js/diagnosis-store.js"></script>
 <script>
 let chart = null;
 
@@ -268,9 +273,9 @@ async function callGemini() {
       body: JSON.stringify({ type: 'recurrence', patient: window.PatientStore.get() || {}, inputs })
     });
     const data = await res.json();
+    window._lastResult = data;
     if (data.probabilities) {
       const p = data.probabilities;
-      // API는 항상 0-100 스케일 (normalizeProbabilities 통일)
       document.getElementById('overallScore').textContent = `${Math.round(p.y10 || 0)}%`;
     }
     if (data.fallback) window.toast('AI 호출 실패 — 룰베이스 사용', 'warning');
@@ -279,6 +284,16 @@ async function callGemini() {
     window.toast('AI 호출 실패: ' + e.message, 'error');
     computeRule();
   }
+}
+
+async function saveCurrentDiagnosis() {
+  const patient = window.PatientStore.get();
+  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
+  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const r = await window.DiagnosisStore.save({
+    patient, type: 'recurrence', inputs: vals(), result: window._lastResult
+  });
+  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
 }
 
 setTimeout(computeRule, 100);

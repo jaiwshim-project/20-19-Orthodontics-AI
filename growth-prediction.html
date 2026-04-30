@@ -123,6 +123,10 @@
       <strong style="color:var(--color-primary);">권장 치료 시기:</strong>
       <span id="treatTiming">분석 후 표시</span>
     </div>
+    <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border-subtle); text-align:center;">
+      <button class="btn btn-primary" onclick="saveCurrentDiagnosis()">💾 대시보드에 저장</button>
+      <a class="btn btn-ghost" href="dashboard.html" style="margin-left:8px;">📊 대시보드</a>
+    </div>
   </div>
 </div>
 
@@ -147,6 +151,7 @@
 <script src="js/common.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/scanner-input.js"></script>
+<script src="js/diagnosis-store.js"></script>
 <script>
 let chartRef = null;
 
@@ -240,6 +245,7 @@ async function callGemini() {
       body: JSON.stringify({ type: 'growth', patient, inputs })
     });
     const data = await res.json();
+    window._lastResult = data;
     if (data.fallback) window.toast('AI 호출 실패 — 룰베이스로 폴백', 'warning');
     if (typeof data.remainingGrowthCm === 'number') {
       document.getElementById('remaining').textContent = `${data.remainingGrowthCm.toFixed(1)} cm`;
@@ -250,6 +256,16 @@ async function callGemini() {
     window.toast('AI 호출 실패: ' + e.message, 'error');
     computeRule();
   }
+}
+
+async function saveCurrentDiagnosis() {
+  const patient = window.PatientStore.get();
+  if (!patient || !patient.name) { window.toast('환자 정보를 먼저 입력하세요.', 'warning'); window.openPatientModal(); return; }
+  if (!window._lastResult) { window.toast('먼저 AI 분석을 실행하세요.', 'warning'); return; }
+  const r = await window.DiagnosisStore.save({
+    patient, type: 'growth', inputs: vals(), result: window._lastResult
+  });
+  if (r.success) window.toast(`✅ 저장 완료 (${r.source === 'supabase' ? '클라우드' : '로컬'})`, 'success');
 }
 
 // Init
