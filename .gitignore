@@ -1,0 +1,34 @@
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+*.swo
+
+# Build / Cache
+.next/
+dist/
+build/
+.cache/
+.turbo/
+
+# Logs
+*.log
+logs/

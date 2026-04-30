@@ -65,7 +65,13 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="inputCard">
+    <div class="tabs">
+      <button type="button" class="tab-btn active" data-tab="data"><span class="tab-icon">🎚</span>슬라이더 조정</button>
+      <button type="button" class="tab-btn" data-tab="scan"><span class="tab-icon">📷</span>측면 사진 자동 분석</button>
+    </div>
+
+    <div class="tab-panel active" data-tab="data">
     <h3 style="margin-bottom:12px;">조정 슬라이더</h3>
     <div class="slider-row"><label>상악 후방 (mm)</label><input type="range" id="sMaxRetract" min="-2" max="6" step="0.1" value="0"><span class="v" id="vMaxRetract">0.0</span></div>
     <div class="slider-row"><label>하악 전후방 (mm)</label><input type="range" id="sMandShift" min="-5" max="5" step="0.1" value="0"><span class="v" id="vMandShift">0.0</span></div>
@@ -79,6 +85,14 @@
     <h4 style="margin-top:16px;">🧠 AI 권장</h4>
     <button class="btn btn-primary" onclick="callGemini()">Gemini로 변화 의미 해석</button>
     <div id="aiOpinion" style="margin-top:12px; font-size:13px; color:var(--text-secondary); white-space:pre-wrap;"></div>
+    </div>
+
+    <div class="tab-panel" data-tab="scan">
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+        환자 측면 사진을 자연광에서 촬영해 업로드하면 권장 변화량(상악·하악·입술·턱)을 자동 추출합니다.
+      </p>
+      <div id="scannerMount"></div>
+    </div>
   </div>
 
 </div>
@@ -87,6 +101,7 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/scanner-input.js"></script>
 <script>
 // Base landmark coordinates (Before)
 const BASE = {
@@ -242,6 +257,20 @@ async function callGemini() {
 document.querySelectorAll('input[type=range]').forEach(s => s.addEventListener('input', update));
 document.getElementById('toggleBefore').onclick = () => { showBefore = !showBefore; update(); };
 update();
+
+const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
+window.ScannerInput.mount(document.getElementById('scannerMount'), {
+  type: 'facial',
+  onAnalyzed: (fields) => {
+    if (typeof fields.maxRetract === 'number') document.getElementById('sMaxRetract').value = fields.maxRetract;
+    if (typeof fields.mandShift === 'number') document.getElementById('sMandShift').value = fields.mandShift;
+    if (typeof fields.lipUpper === 'number') document.getElementById('sLipUpper').value = fields.lipUpper;
+    if (typeof fields.lipLower === 'number') document.getElementById('sLipLower').value = fields.lipLower;
+    if (typeof fields.chin === 'number') document.getElementById('sChin').value = fields.chin;
+    update();
+  },
+  onSwitchToData: () => tabsCtl.switchTo('data')
+});
 </script>
 </body>
 </html>

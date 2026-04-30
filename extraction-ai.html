@@ -61,8 +61,13 @@
 
 <div class="grid grid-2">
 
-  <div class="card">
-    <h3 style="margin-bottom:16px;">📋 입력 데이터</h3>
+  <div class="card" id="inputCard">
+    <div class="tabs" id="inputTabs">
+      <button type="button" class="tab-btn active" data-tab="data"><span class="tab-icon">📋</span>데이터 직접 입력</button>
+      <button type="button" class="tab-btn" data-tab="scan"><span class="tab-icon">📷</span>구강 스캐너 사진</button>
+    </div>
+
+    <div class="tab-panel active" data-tab="data">
     <div class="grid grid-2" style="gap:12px;">
       <div class="field">
         <label>ANB 각 (도)</label>
@@ -109,6 +114,11 @@
     <div style="display:flex; gap:8px; margin-top:8px;">
       <button class="btn btn-ghost" onclick="computeRuleScore()">룰베이스 계산</button>
       <button class="btn btn-primary" onclick="callGemini()">🧠 Gemini AI 분석</button>
+    </div>
+    </div>
+
+    <div class="tab-panel" data-tab="scan">
+      <div id="scannerMount"></div>
     </div>
   </div>
 
@@ -169,6 +179,7 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/scanner-input.js"></script>
 <script>
 function getInputs() {
   return {
@@ -310,6 +321,23 @@ function updateBanner() {
   }
 }
 setTimeout(updateBanner, 100);
+
+// 탭 + 스캐너 입력 마운트
+const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
+window.ScannerInput.mount(document.getElementById('scannerMount'), {
+  type: 'extraction',
+  onAnalyzed: (fields) => {
+    if (fields.anb !== null && fields.anb !== undefined) document.getElementById('anb').value = fields.anb;
+    if (fields.crowding !== null) document.getElementById('crowding').value = fields.crowding;
+    if (fields.overjet !== null) document.getElementById('overjet').value = fields.overjet;
+    if (fields.overbite !== null) document.getElementById('overbite').value = fields.overbite;
+    if (fields.profile) document.getElementById('profile').value = fields.profile;
+    if (fields.lipStrain) document.getElementById('lipStrain').value = fields.lipStrain;
+    if (fields.fma !== null) document.getElementById('fma').value = fields.fma;
+    if (fields.impa !== null) document.getElementById('impa').value = fields.impa;
+  },
+  onSwitchToData: () => tabsCtl.switchTo('data')
+});
 </script>
 </body>
 </html>

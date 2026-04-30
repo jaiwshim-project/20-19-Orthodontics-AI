@@ -39,8 +39,13 @@
 
 <div class="grid grid-2">
 
-  <div class="card">
-    <h3 style="margin-bottom:16px;">📋 입력</h3>
+  <div class="card" id="inputCard">
+    <div class="tabs">
+      <button type="button" class="tab-btn active" data-tab="data"><span class="tab-icon">📋</span>데이터 직접 입력</button>
+      <button type="button" class="tab-btn" data-tab="scan"><span class="tab-icon">📷</span>치료 후 사진 분석</button>
+    </div>
+
+    <div class="tab-panel active" data-tab="data">
     <div class="grid grid-2" style="gap:12px;">
       <div class="field">
         <label>치료 종료 시 IMPA (도)</label>
@@ -95,6 +100,15 @@
       <button class="btn btn-ghost" onclick="computeRule()">룰베이스 계산</button>
       <button class="btn btn-primary" onclick="callGemini()">🧠 AI 정밀 예측</button>
     </div>
+    </div>
+
+    <div class="tab-panel" data-tab="scan">
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+        치료 종료 시점의 측면 두부방사선 또는 모형 사진을 업로드하면 IMPA·절치 변화·잔여 Crowding을 자동 추출합니다.
+        <strong style="color:var(--color-warning);">보정 장치/협조도/기간</strong>은 직접 입력해 주세요.
+      </p>
+      <div id="scannerMount"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -138,6 +152,7 @@
 
 <script src="js/common.js"></script>
 <script src="js/charts.js"></script>
+<script src="js/scanner-input.js"></script>
 <script>
 let chart = null;
 
@@ -267,6 +282,17 @@ async function callGemini() {
 }
 
 setTimeout(computeRule, 100);
+
+const tabsCtl = window.ScannerInput.setupTabs(document.getElementById('inputCard'));
+window.ScannerInput.mount(document.getElementById('scannerMount'), {
+  type: 'recurrence',
+  onAnalyzed: (fields) => {
+    if (fields.impa !== null && fields.impa !== undefined) document.getElementById('impa').value = fields.impa;
+    if (fields.incisorShift !== null && fields.incisorShift !== undefined) document.getElementById('incisorShift').value = fields.incisorShift;
+    if (fields.residual !== null && fields.residual !== undefined) document.getElementById('residual').value = fields.residual;
+  },
+  onSwitchToData: () => tabsCtl.switchTo('data')
+});
 </script>
 </body>
 </html>
