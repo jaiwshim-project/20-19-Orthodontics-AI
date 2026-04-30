@@ -84,6 +84,21 @@
 
   <div id="diagList"></div>
 
+  <div class="card mt-4" id="imagesSection" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <h3 style="margin:0;">🖼 업로드된 모든 이미지 <span id="imgCount" style="font-size:12px; color:var(--text-muted); font-weight:400; margin-left:6px;"></span></h3>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" data-img-filter="all">전체</button>
+        <button class="btn btn-ghost btn-sm" data-img-filter="scanner">3D 스캐너</button>
+        <button class="btn btn-ghost btn-sm" data-img-filter="xray">X-ray</button>
+        <button class="btn btn-ghost btn-sm" data-img-filter="faceFront">정면</button>
+        <button class="btn btn-ghost btn-sm" data-img-filter="faceSide">측면</button>
+        <button class="btn btn-ghost btn-sm" data-img-filter="intraoral">입속</button>
+      </div>
+    </div>
+    <div id="imagesGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px;"></div>
+  </div>
+
   <div class="card mt-4" style="background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.06)); border-color: rgba(14,165,233,0.3);">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
@@ -240,7 +255,66 @@ function render() {
   });
 
   renderList();
+  renderImages();
 }
+
+const SLOT_LABELS = { scanner: '3D 스캐너', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속' };
+let IMG_FILTER = 'all';
+
+function renderImages() {
+  // 모든 진단의 imagesMeta 합치기
+  const allImages = [];
+  DIAGNOSES.forEach(d => {
+    const imgs = d.result?.imagesMeta || [];
+    imgs.forEach(img => {
+      allImages.push({
+        ...img,
+        diagnosisType: d.type,
+        diagnosisId: d.id,
+        diagnosisDate: d.created_at
+      });
+    });
+  });
+  const section = document.getElementById('imagesSection');
+  if (allImages.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  document.getElementById('imgCount').textContent = `· 총 ${allImages.length}장`;
+
+  const filtered = IMG_FILTER === 'all' ? allImages : allImages.filter(i => i.slot === IMG_FILTER);
+  const grid = document.getElementById('imagesGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">이 카테고리에 이미지 없음</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(im => `
+    <div style="border:1px solid var(--border-subtle); border-radius:10px; overflow:hidden; background:rgba(0,0,0,0.3); transition:transform .2s;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
+      <a href="${escapeHtml(im.url)}" target="_blank" rel="noopener">
+        <img src="${escapeHtml(im.url)}" alt="${escapeHtml(im.slot)}" style="width:100%; height:160px; object-fit:cover; display:block; cursor:zoom-in;">
+      </a>
+      <div style="padding:8px 10px; font-size:11px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:var(--color-primary); font-weight:600;">${SLOT_LABELS[im.slot] || im.slot}</span>
+          <span style="color:var(--text-muted);">${TYPE_LABELS[im.diagnosisType]?.label || im.diagnosisType}</span>
+        </div>
+        <div style="color:var(--text-muted); font-size:10px;">${new Date(im.diagnosisDate).toLocaleDateString('ko-KR')} · ${(im.size/1024).toFixed(0)}KB</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('[data-img-filter]')?.forEach(b => {
+  b.onclick = () => {
+    IMG_FILTER = b.dataset.imgFilter;
+    document.querySelectorAll('[data-img-filter]').forEach(x => x.classList.remove('btn-primary'));
+    document.querySelectorAll('[data-img-filter]').forEach(x => x.classList.add('btn-ghost'));
+    b.classList.remove('btn-ghost');
+    b.classList.add('btn-primary');
+    renderImages();
+  };
+});
 
 function renderList() {
   const filtered = CURRENT_TYPE === 'all' ? DIAGNOSES : DIAGNOSES.filter(d => d.type === CURRENT_TYPE);

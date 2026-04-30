@@ -103,6 +103,13 @@
       }).join('');
 
       container.innerHTML = `
+        <div data-prev-images hidden style="margin-bottom:12px; padding:12px 14px; background:rgba(14,165,233,0.06); border:1px solid rgba(14,165,233,0.25); border-radius:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:12px; color:var(--color-primary);">📸 이전 진단 이미지 <span data-prev-count style="font-weight:400; color:var(--text-muted);"></span></strong>
+            <button type="button" data-clear-prev style="background:transparent; border:none; color:var(--text-muted); font-size:11px; cursor:pointer;">숨기기</button>
+          </div>
+          <div data-prev-grid style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:6px;"></div>
+        </div>
         <div class="scanner-dual">${dualHtml}</div>
         <p style="font-size:11px; color:var(--text-muted); text-align:center; margin: 4px 0 12px;">
           최소 1장만 있어도 분석 가능. 여러 장 업로드 시 정확도가 가장 높습니다.
@@ -210,6 +217,37 @@
       }
 
       SLOT_KEYS.forEach(setupSlot);
+
+      // 환자 supabaseId 있으면 같은 type의 최근 진단 이미지 자동 로드
+      (async () => {
+        try {
+          const patient = window.PatientStore?.get();
+          const pid = patient?.supabaseId || patient?.id;
+          if (!pid || !window.apiFetch) return;
+          const res = await window.apiFetch(`/api/get-diagnoses?patient_id=${encodeURIComponent(pid)}&type=${options.type}&limit=5`);
+          const data = await res.json();
+          const images = [];
+          (data.records || []).forEach(d => {
+            (d.result?.imagesMeta || []).forEach(im => images.push({ ...im, date: d.created_at }));
+          });
+          if (images.length === 0) return;
+          const prevBox = container.querySelector('[data-prev-images]');
+          const prevGrid = container.querySelector('[data-prev-grid]');
+          const prevCount = container.querySelector('[data-prev-count]');
+          prevBox.hidden = false;
+          prevCount.textContent = `(${images.length}장 발견)`;
+          const SLOT_KO = { scanner: '3D', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속' };
+          prevGrid.innerHTML = images.slice(0, 10).map(im => `
+            <a href="${im.url}" target="_blank" rel="noopener" style="display:block; border:1px solid var(--border-subtle); border-radius:6px; overflow:hidden; cursor:zoom-in; position:relative;">
+              <img src="${im.url}" style="width:100%; height:60px; object-fit:cover; display:block;">
+              <div style="position:absolute; bottom:0; left:0; right:0; padding:2px 4px; background:rgba(0,0,0,0.7); font-size:9px; color:#fff; font-weight:600;">${SLOT_KO[im.slot] || im.slot}</div>
+            </a>
+          `).join('');
+          container.querySelector('[data-clear-prev]').onclick = () => { prevBox.hidden = true; };
+        } catch (e) {
+          console.warn('[scanner] 이전 이미지 로드 실패:', e.message);
+        }
+      })();
 
       // 외부에서 업로드된 이미지 가져갈 수 있도록 노출
       container._getUploadedImages = () => {
