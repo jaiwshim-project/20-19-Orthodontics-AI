@@ -57,9 +57,35 @@ function fallbackResult(type, inputs) {
     return { ...base, score, recommendation: crowding > 6 ? 'extract' : crowding > 3 ? 'borderline' : 'non_extract', teeth: crowding > 6 ? ['14', '24', '34', '44'] : [] };
   }
   if (type === 'recurrence') {
-    return { ...base, probabilities: { y1: 0.05, y3: 0.15, y5: 0.25, y10: 0.4 } };
+    // 0-100 스케일로 통일 (프론트엔드와 일치)
+    return { ...base, probabilities: { y1: 5, y3: 15, y5: 25, y10: 40 } };
+  }
+  if (type === 'growth') {
+    return { ...base, remainingGrowthCm: 0, skeletalStage: 'unknown', recommendation: 'CVMS 재평가 필요' };
+  }
+  if (type === 'facial') {
+    return { ...base, facialChange: { profileShift: 'minimal', lipPosition: 'unchanged', chinPosition: 'unchanged' } };
   }
   return base;
+}
+
+function clampScore(n, lo = 0, hi = 100) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return 50;
+  return Math.min(hi, Math.max(lo, v));
+}
+
+function normalizeProbabilities(p) {
+  if (!p || typeof p !== 'object') return { y1: 5, y3: 15, y5: 25, y10: 40 };
+  // Gemini가 0-1 스케일로 반환하면 100배. 0-100이면 그대로.
+  const maxVal = Math.max(p.y1 || 0, p.y3 || 0, p.y5 || 0, p.y10 || 0);
+  const factor = maxVal <= 1 ? 100 : 1;
+  return {
+    y1: clampScore((p.y1 || 0) * factor),
+    y3: clampScore((p.y3 || 0) * factor),
+    y5: clampScore((p.y5 || 0) * factor),
+    y10: clampScore((p.y10 || 0) * factor)
+  };
 }
 
 export default async function handler(req, res) {
@@ -100,10 +126,12 @@ export default async function handler(req, res) {
       parsed = fallbackResult(type, cleanInputs);
     }
 
-    if (typeof parsed.score !== 'number') parsed.score = 50;
+    parsed.score = clampScore(parsed.score);
     if (!Array.isArray(parsed.reasoning)) parsed.reasoning = [];
     if (!Array.isArray(parsed.risks)) parsed.risks = [];
     if (!Array.isArray(parsed.alternatives)) parsed.alternatives = [];
+    if (type === 'recurrence') parsed.probabilities = normalizeProbabilities(parsed.probabilities);
+    if (type === 'growth' && typeof parsed.remainingGrowthCm !== 'number') parsed.remainingGrowthCm = 0;
 
     if (save && cleanPatient?.id) {
       try {

@@ -64,10 +64,10 @@
           <div id="patientChip" style="cursor:pointer;">👤 환자 정보 입력</div>
         </div>
       </aside>
-      <header class="page-header">
+      <header class="page-header" role="banner">
         <div style="display:flex; align-items:center; gap:12px;">
-          <button class="menu-toggle" onclick="window.toggleSidebar()" aria-label="메뉴">☰</button>
-          <span class="title">${title}</span>
+          <button class="menu-toggle" onclick="window.toggleSidebar()" aria-label="사이드바 메뉴 열기">☰</button>
+          <span class="title" aria-current="page">${title}</span>
         </div>
         <div class="actions">
           <button class="btn btn-ghost btn-sm" onclick="window.openPatientModal()">환자 변경</button>
@@ -88,8 +88,28 @@
   // -------- Sidebar Toggle --------
   window.toggleSidebar = function () {
     const sb = document.getElementById('sidebar');
-    if (sb) sb.classList.toggle('open');
+    if (!sb) return;
+    sb.classList.toggle('open');
+    let backdrop = document.getElementById('sidebar-backdrop');
+    if (sb.classList.contains('open')) {
+      if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'sidebar-backdrop';
+        backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90;backdrop-filter:blur(4px);';
+        backdrop.onclick = () => window.toggleSidebar();
+        document.body.appendChild(backdrop);
+      }
+    } else if (backdrop) {
+      backdrop.remove();
+    }
   };
+  // ESC 닫기
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const sb = document.getElementById('sidebar');
+      if (sb && sb.classList.contains('open')) window.toggleSidebar();
+    }
+  });
 
   // -------- Routing Helper --------
   window.navigate = function (path) {

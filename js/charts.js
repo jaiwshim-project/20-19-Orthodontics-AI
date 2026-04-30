@@ -119,6 +119,24 @@
     growthCurve(target, data) {
       defaults();
       const ctx = ensureCtx(target);
+      // peakAge 마커는 chartjs-plugin-annotation 미설치 환경에서도 동작하도록
+      // 데이터셋의 점 색상으로 표시 (가까운 인덱스만 강조).
+      const peakIndex = data.peakAge != null
+        ? data.ages.findIndex(a => Math.abs(a - data.peakAge) < 0.6)
+        : -1;
+      const peakDataset = peakIndex >= 0
+        ? [{
+            label: 'Peak Velocity',
+            data: data.ages.map((_, i) => i === peakIndex ? data.height[i] : null),
+            yAxisID: 'y1',
+            borderColor: palette.warning,
+            backgroundColor: palette.warning,
+            pointRadius: 8,
+            pointHoverRadius: 10,
+            showLine: false,
+            spanGaps: false
+          }]
+        : [];
       return new Chart(ctx, {
         type: 'line',
         data: {
@@ -140,27 +158,13 @@
               backgroundColor: palette.accent + '22',
               tension: 0.4, fill: false,
               borderDash: [4, 4]
-            }
+            },
+            ...peakDataset
           ]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top' },
-            annotation: data.peakAge ? {
-              annotations: {
-                peak: {
-                  type: 'line',
-                  xMin: data.peakAge,
-                  xMax: data.peakAge,
-                  borderColor: palette.warning,
-                  borderWidth: 2,
-                  borderDash: [6, 4],
-                  label: { content: 'Peak Velocity', display: true, position: 'start', color: palette.warning }
-                }
-              }
-            } : {}
-          },
+          plugins: { legend: { position: 'top' } },
           scales: {
             x: { grid: { color: palette.grid }, title: { display: true, text: '나이 (세)' } },
             y1: { position: 'left', grid: { color: palette.grid }, title: { display: true, text: '신장 (cm)', color: palette.primary } },

@@ -153,15 +153,18 @@ class EZLEngine {
     const a = sizeX / 2, b = sizeZ / 2;
     const h = ((a - b) ** 2) / ((a + b) ** 2 + 1e-6);
     const ellipsePerim = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+    // 결정론적 변동: bbox 크기 기반 의사 난수(같은 메쉬 = 같은 결과)
+    const seed = Math.abs(Math.sin(sizeX * 12.9898 + sizeZ * 78.233) * 43758.5453);
+    const jitter = (k) => ((seed * (k + 1)) % 1 - 0.5);
     return {
       archUpper: Math.max(70, ellipsePerim * 0.5 + 78),
       archLower: Math.max(65, ellipsePerim * 0.48 + 72),
-      toothSumUpper: 91 + (Math.random() - 0.5) * 4,
-      toothSumLower: 84 + (Math.random() - 0.5) * 3.5,
-      antUpper: 45.8 + (Math.random() - 0.5) * 1.5,
-      antLower: 35.4 + (Math.random() - 0.5) * 1.5,
-      ovrUpper: 91 + (Math.random() - 0.5) * 4,
-      ovrLower: 83 + (Math.random() - 0.5) * 4,
+      toothSumUpper: 91 + jitter(1) * 4,
+      toothSumLower: 84 + jitter(2) * 3.5,
+      antUpper: 45.8 + jitter(3) * 1.5,
+      antLower: 35.4 + jitter(4) * 1.5,
+      ovrUpper: 91 + jitter(5) * 4,
+      ovrLower: 83 + jitter(6) * 4,
       speePoints: this._generateSpeePoints(sizeX),
       triangleCount,
       sizeX, sizeZ

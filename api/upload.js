@@ -56,11 +56,29 @@ export default async function handler(req, res) {
     if (!filename || !base64) {
       return res.status(400).json({ error: 'filename과 base64가 필요합니다.' });
     }
+    // 파일명 보안: path traversal·경로 분리자 차단
+    if (/[\/\\]|\.\./.test(filename)) {
+      return res.status(400).json({ error: '유효하지 않은 파일명입니다.' });
+    }
+    // 허용 확장자 화이트리스트
+    const allowedExt = ['stl', 'png', 'jpg', 'jpeg', 'pdf'];
+    const ext = (filename.toLowerCase().split('.').pop() || '');
+    if (!allowedExt.includes(ext)) {
+      return res.status(400).json({ error: `지원하지 않는 파일 형식: .${ext}. 허용: ${allowedExt.join(', ')}` });
+    }
     const mime = contentType || inferMimeFromName(filename);
-    const buffer = Buffer.from(base64, 'base64');
+    let buffer;
+    try {
+      buffer = Buffer.from(base64, 'base64');
+    } catch {
+      return res.status(400).json({ error: '잘못된 base64 데이터입니다.' });
+    }
 
     if (buffer.length > MAX_BYTES) {
       return res.status(413).json({ error: '파일 크기가 50MB를 초과합니다.' });
+    }
+    if (buffer.length === 0) {
+      return res.status(400).json({ error: '빈 파일입니다.' });
     }
 
     let analysis = '';
