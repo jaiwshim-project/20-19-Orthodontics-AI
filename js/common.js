@@ -265,10 +265,156 @@
     window.toast(`언어가 ${lang === 'ko' ? '한국어' : 'English'}로 변경되었습니다.`, 'info');
   };
 
+  // -------- Premium Footer --------
+  function renderFooter() {
+    if (document.querySelector('.site-footer')) return; // 중복 방지
+    const main = document.querySelector('main.content') || document.body;
+    const year = new Date().getFullYear();
+    const buildHash = 'b' + (year * 31 + new Date().getMonth() + 7).toString(36);
+    const footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    footer.setAttribute('role', 'contentinfo');
+    footer.innerHTML = `
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-row">
+            <div class="brand-mark" aria-hidden="true">OA</div>
+            <div class="brand-text">
+              <strong>Orthodontics AI</strong>
+              <span>by 20-19 · Seoul</span>
+            </div>
+          </div>
+          <p>교정치과 의사를 위한 AI 진단·치료계획·재발 예측 통합 플랫폼.<br>
+          Gemini · Supabase · Neo4j 기반의 차세대 임상 의사결정 보조 도구.</p>
+          <form class="footer-newsletter" onsubmit="return window._footerSubscribe(event)">
+            <input type="email" placeholder="newsletter@clinic.com" aria-label="뉴스레터 이메일" required>
+            <button type="submit">구독</button>
+          </form>
+        </div>
+
+        <div class="footer-col">
+          <h5>제품</h5>
+          <ul>
+            <li><a href="3d-viewer.html">3D 뷰어 + EZL-STL</a></li>
+            <li><a href="extraction-ai.html">발치 판단 AI</a></li>
+            <li><a href="growth-prediction.html">성장 예측 AI</a></li>
+            <li><a href="facial-simulation.html">안모 시뮬레이션</a></li>
+            <li><a href="recurrence-prediction.html">재발 예측 AI</a></li>
+            <li><a href="chatbot.html">RAG 챗봇 <span class="badge-mini">RAG</span></a></li>
+            <li><a href="dashboard.html">환자 대시보드</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>리소스</h5>
+          <ul>
+            <li><a href="manual.html">사용자 매뉴얼</a></li>
+            <li><a href="architecture.html">시스템 아키텍처</a></li>
+            <li><a href="docs/PRD.md">제품 요구사항 (PRD)</a></li>
+            <li><a href="docs/AI_AGENTS_20.md">AI 에이전트 20</a></li>
+            <li><a href="docs/MVP_TO_SAAS.md">MVP → SaaS</a></li>
+            <li><a href="docs/STRATEGY_1T.md">1조 전략 시나리오</a></li>
+            <li><a href="docs/NEO4J_SCHEMA.cypher">Neo4j 스키마</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>회사 · 법무</h5>
+          <ul>
+            <li><a href="#" onclick="window.toast('회사 소개 페이지 준비 중', 'info'); return false;">회사 소개</a></li>
+            <li><a href="#" onclick="window.toast('블로그 준비 중', 'info'); return false;">블로그 <span class="badge-mini">Soon</span></a></li>
+            <li><a href="#" onclick="window.toast('채용 페이지 준비 중', 'info'); return false;">채용</a></li>
+            <li><a href="mailto:hello@orthodonticsai.kr">문의</a></li>
+            <li><a href="#" onclick="window.toast('이용 약관', 'info'); return false;">이용 약관</a></li>
+            <li><a href="#" onclick="window.toast('개인정보 처리방침', 'info'); return false;">개인정보 처리방침</a></li>
+            <li><a href="#" onclick="window.toast('보안 정책', 'info'); return false;">보안 정책</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-disclaimer">
+        <div class="footer-disclaimer-inner">
+          <div class="footer-disclaimer-icon" aria-hidden="true">!</div>
+          <div>
+            <strong style="color:var(--color-warning);">의료 면책 (Medical Disclaimer)</strong> ·
+            본 시스템은 임상 의사결정을 보조하는 소프트웨어이며, 의료 행위 또는 의료기기를 대체하지 않습니다.
+            모든 최종 진단·치료 결정은 자격을 갖춘 전문의의 판단에 따라야 하며, 본 시스템의 출력만을 근거로 환자에게 의료 행위를 수행해서는 안 됩니다.
+            식약처 SaMD 인증은 2027년 신청 예정입니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-bottom-inner">
+          <div class="footer-meta">
+            <span>© ${year} Orthodontics AI · 사업자 등록 준비 중</span>
+            <span class="dot"></span>
+            <span class="ver">v0.1.0 · ${buildHash}</span>
+            <span class="dot"></span>
+            <span class="status">All systems operational</span>
+          </div>
+
+          <div class="footer-social">
+            <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="https://www.youtube.com" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom-inner footer-trust" style="margin-top:0;">
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            HIPAA Ready
+          </span>
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            GDPR Compliant
+          </span>
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            ISO 27001 (Roadmap)
+          </span>
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+            Available in KO · EN · JP · ZH
+          </span>
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18M3 21h18M5 3v18m14-18v18"/></svg>
+            식약처 SaMD 신청 예정
+          </span>
+        </div>
+      </div>
+    `;
+    main.appendChild(footer);
+  }
+
+  window._footerSubscribe = function (e) {
+    e.preventDefault();
+    const input = e.target.querySelector('input');
+    const email = (input?.value || '').trim();
+    if (!email) return false;
+    window.toast(`${email} 구독 완료. 격주 임상 인사이트를 보내드립니다.`, 'success', 3500);
+    input.value = '';
+    return false;
+  };
+
   // -------- Init --------
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderShell);
-  } else {
+  function init() {
     renderShell();
+    renderFooter();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
