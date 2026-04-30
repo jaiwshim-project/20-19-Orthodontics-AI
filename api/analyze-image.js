@@ -2,78 +2,86 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+const KO_RULE = `
+중요: notes는 반드시 한국어로 작성하세요. 의학 용어는 영문 병기 가능 (예: "치근 흡수(root resorption)").`;
+
+const DUAL_IMAGE_RULE = `
+입력 이미지는 최대 5장이며, 각 이미지 직전에 라벨 텍스트가 붙어있습니다:
+- "[3D 스캐너 / 구강 모형]"   → 치아 배열·Crowding·Overjet·Overbite 측정
+- "[X-ray / 두부방사선]"      → ANB·FMA·IMPA·골격 관계·CVMS 측정
+- "[정면 안모]"                → 안면 대칭·하안면부 비율·미소선 평가
+- "[측면 안모 / Profile]"     → E-line·입술 돌출·턱 위치·Profile(straight/convex/concave)
+- "[입술 벌린 정면 / Intraoral]" → 미소시 치아 노출·치은 노출·중심선
+제공된 이미지 종류에 따라 가능한 항목만 추출하고, 관찰 불가 항목은 null로 반환하세요.`;
+
 const SCHEMAS = {
   extraction: {
     instruction: `당신은 교정치과 영상 분석 AI입니다.
-입력된 측면 두부방사선 또는 구강 사진을 분석해 다음 측정값을 JSON으로 반환하세요.
-관찰이 어려우면 null을 반환하고, 관찰 가능하면 합리적 추정값을 제시하세요.
-반드시 다음 스키마:
+입력된 이미지(들)를 분석해 다음 측정값을 JSON으로 반환하세요.
+스키마:
 {
   "fields": {
-    "anb": number | null,        // ANB 각 (도)
-    "crowding": number | null,   // 부조화 (mm)
-    "overjet": number | null,    // (mm)
-    "overbite": number | null,   // (mm)
+    "anb": number | null,
+    "crowding": number | null,
+    "overjet": number | null,
+    "overbite": number | null,
     "profile": "straight"|"convex"|"concave" | null,
     "lipStrain": "none"|"mild"|"severe" | null,
-    "fma": number | null,        // FMA (도)
-    "impa": number | null        // IMPA (도)
+    "fma": number | null,
+    "impa": number | null
   },
-  "confidence": number,           // 0-1
-  "notes": string                 // 관찰 소견 한 줄 — 반드시 한국어
-}
-중요: notes는 반드시 한국어로 작성하세요. 의학 용어는 영문 병기 가능.`
+  "confidence": number,
+  "notes": string
+}${DUAL_IMAGE_RULE}${KO_RULE}`
   },
   growth: {
     instruction: `당신은 골성숙 단계 분석 AI입니다.
-입력된 손목 X-ray(Hand-wrist) 또는 측면 두부방사선의 경추(C2-C4)를 관찰해 골연령과 CVMS 단계를 추정하세요.
+손목 X-ray와 측면 두부방사선 중 1장 또는 2장으로 골연령(boneAge)과 CVMS 단계(cvms 1-6)를 추정하세요.
 스키마:
 {
   "fields": {
-    "boneAge": number | null,        // 추정 골연령 (세)
-    "cvms": 1|2|3|4|5|6 | null,      // CVMS 단계
-    "height": null,                  // 사진으로 측정 불가 — null
-    "weight": null                   // 사진으로 측정 불가 — null
+    "boneAge": number | null,
+    "cvms": 1|2|3|4|5|6 | null,
+    "height": null,
+    "weight": null
   },
   "confidence": number,
   "notes": string
 }
-신장·체중은 사진에서 추출할 수 없으므로 항상 null. 골성숙 지표(MP3, sesamoid, distal phalanx)를 관찰 후 판단.
-중요: notes는 반드시 한국어로 작성하세요.`
+신장·체중은 사진에서 추출 불가능 — 항상 null.
+손목 X-ray가 있으면 MP3·sesamoid·distal phalanx 관찰. Ceph가 있으면 C2-C4로 CVMS 판정.${KO_RULE}`
   },
   facial: {
     instruction: `당신은 안모 분석 AI입니다.
-입력된 측면 환자 사진을 분석해 현재 안모 상태와 권장되는 변화 방향을 mm 단위로 제시하세요.
-양수 = 후방/내측 이동 권장, 음수 = 전방/외측. 0 = 변화 불필요.
+환자 측면 사진과 (선택적으로) 두부방사선을 분석해 권장 변화량(mm)을 제시.
+양수=후방/내측, 음수=전방/외측, 0=변화 불필요.
 스키마:
 {
   "fields": {
-    "maxRetract": number,    // 상악 후방 권장 (-2 ~ 6mm)
-    "mandShift": number,     // 하악 전후방 (-5 ~ 5mm)
-    "lipUpper": number,      // 상순 (-3 ~ 3mm)
-    "lipLower": number,      // 하순 (-3 ~ 3mm)
-    "chin": number           // 턱 (-3 ~ 3mm)
+    "maxRetract": number,
+    "mandShift": number,
+    "lipUpper": number,
+    "lipLower": number,
+    "chin": number
   },
   "confidence": number,
   "notes": string
 }
-관찰: 입술 돌출, 턱 후퇴, E-line 관계.
-중요: notes는 반드시 한국어로 작성하세요.`
+관찰: 입술 돌출, 턱 후퇴, E-line 관계, 연조직 두께(있을 시 ceph).${KO_RULE}`
   },
   recurrence: {
-    instruction: `당신은 치료 종료 시점의 교정 결과를 분석하는 AI입니다.
-입력된 측면 ceph 또는 모형 사진을 보고 다음을 추정하세요.
+    instruction: `당신은 치료 종료 시점의 교정 결과 분석 AI입니다.
+모형 사진/STL과 두부방사선 중 1장 또는 2장으로 다음을 추정.
 스키마:
 {
   "fields": {
-    "impa": number | null,         // 치료 후 IMPA (도)
-    "incisorShift": number | null, // 하악 절치 위치 변화 추정 (mm, +가 전방)
-    "residual": number | null      // 잔여 Crowding (mm)
+    "impa": number | null,
+    "incisorShift": number | null,
+    "residual": number | null
   },
   "confidence": number,
   "notes": string
-}
-중요: notes는 반드시 한국어로 작성하세요.`
+}${KO_RULE}`
   }
 };
 
@@ -125,31 +133,68 @@ function sanitizeFields(type, fields) {
   return out;
 }
 
+const SLOT_LABELS = {
+  scanner:   '[3D 스캐너 / 구강 모형]',
+  xray:      '[X-ray / 두부방사선]',
+  faceFront: '[정면 안모]',
+  faceSide:  '[측면 안모 / Profile]',
+  intraoral: '[입술 벌린 정면 / Intraoral]'
+};
+
+const SLOT_DISPLAY = {
+  scanner: '3D', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속'
+};
+
+function normalizeImages(body) {
+  const out = [];
+  if (body.images && typeof body.images === 'object') {
+    for (const key of Object.keys(SLOT_LABELS)) {
+      const img = body.images[key];
+      if (img?.base64) {
+        out.push({
+          key,
+          label: SLOT_LABELS[key],
+          display: SLOT_DISPLAY[key],
+          base64: img.base64,
+          contentType: img.contentType || 'image/jpeg'
+        });
+      }
+    }
+  } else if (body.base64) {
+    out.push({ key: 'scanner', label: SLOT_LABELS.scanner, display: SLOT_DISPLAY.scanner, base64: body.base64, contentType: body.contentType || 'image/jpeg' });
+  }
+  return out;
+}
+
 export const config = {
-  api: { bodyParser: { sizeLimit: '25mb' } }
+  api: { bodyParser: { sizeLimit: '50mb' } }
 };
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  const { type, base64, contentType = 'image/jpeg' } = req.body || {};
+  const body = req.body || {};
+  const { type } = body;
 
   if (!type || !SCHEMAS[type]) {
     return res.status(400).json({ error: `유효하지 않은 type: ${type}. 허용: ${Object.keys(SCHEMAS).join(', ')}` });
   }
-  if (!base64) {
-    return res.status(400).json({ error: 'base64 이미지 데이터가 필요합니다.' });
+
+  const images = normalizeImages(body);
+  if (images.length === 0) {
+    return res.status(400).json({ error: '최소 1장의 이미지(scanner/xray/faceFront/faceSide/intraoral 중 하나)가 필요합니다.' });
   }
 
-  // 이미지 크기 가드 (base64는 약 1.33배 부풀음)
-  if (base64.length > 25 * 1024 * 1024 * 1.4) {
-    return res.status(413).json({ error: '이미지가 너무 큽니다 (최대 ~25MB).' });
+  // 총 base64 크기 가드
+  const totalBytes = images.reduce((s, i) => s + i.base64.length, 0);
+  if (totalBytes > 45 * 1024 * 1024 * 1.4) {
+    return res.status(413).json({ error: '이미지 합계가 너무 큽니다 (총 ~45MB 이내).' });
   }
 
   if (!GEMINI_API_KEY) {
     console.warn('[analyze-image] GEMINI_API_KEY 미설정 → 폴백 사용');
-    return res.status(200).json(fallbackFields(type));
+    return res.status(200).json({ ...fallbackFields(type), usedImages: images.map(i => i.display) });
   }
 
   try {
@@ -160,10 +205,15 @@ export default async function handler(req, res) {
       generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
     });
 
-    const result = await model.generateContent([
-      { inlineData: { data: base64, mimeType: contentType } },
-      { text: '이미지를 분석하고 정의된 JSON 스키마로만 응답하세요.' }
-    ]);
+    // Gemini Vision 멀티 이미지 컨텐츠 빌드
+    const parts = [];
+    for (const img of images) {
+      parts.push({ text: img.label });
+      parts.push({ inlineData: { data: img.base64, mimeType: img.contentType } });
+    }
+    parts.push({ text: '위 이미지(들)를 분석하고 정의된 JSON 스키마로만 응답하세요.' });
+
+    const result = await model.generateContent(parts);
     const text = result.response.text();
 
     let parsed;
@@ -171,19 +221,20 @@ export default async function handler(req, res) {
       parsed = JSON.parse(text);
     } catch (e) {
       console.warn('[analyze-image] JSON 파싱 실패:', text.slice(0, 200));
-      return res.status(200).json(fallbackFields(type));
+      return res.status(200).json({ ...fallbackFields(type), usedImages: images.map(i => i.display) });
     }
 
     const cleaned = {
       fields: sanitizeFields(type, parsed.fields || {}),
       confidence: clampNumber(parsed.confidence, 0, 1) ?? 0.5,
-      notes: typeof parsed.notes === 'string' ? parsed.notes.slice(0, 400) : '',
+      notes: typeof parsed.notes === 'string' ? parsed.notes.slice(0, 500) : '',
+      usedImages: images.map(i => i.display),
       fallback: false
     };
 
     return res.status(200).json(cleaned);
   } catch (e) {
     console.error('[analyze-image] 실패:', e);
-    return res.status(200).json({ ...fallbackFields(type), error: e.message });
+    return res.status(200).json({ ...fallbackFields(type), error: e.message, usedImages: images.map(i => i.display) });
   }
 }

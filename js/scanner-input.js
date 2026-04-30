@@ -1,29 +1,33 @@
 /* ==============================================================
-   ScannerInput — 구강 스캐너 사진 입력 탭 컴포넌트
-   각 AI 페이지에 mount(container, options)로 부착.
-   사진 업로드 → /api/analyze-image 호출 → onAnalyzed(fields)로 폼 자동 채움.
+   ScannerInput — 멀티 이미지 슬롯 업로드 컴포넌트
+   슬롯 키: scanner / xray / faceFront / faceSide / intraoral
+   각 AI 페이지가 사용할 슬롯 목록을 TYPE_CONFIG에서 선언.
    ============================================================== */
 
 (function () {
+  const COMMON_SLOTS = {
+    scanner:    { title: '3D 스캐너 / 구강 모형',   hint: 'STL 스크린샷 · 모형 사진',     icon: '🦷', tag: '3D' },
+    xray:       { title: 'X-ray / 두부방사선',      hint: 'Lateral Ceph · Pano · 손목', icon: '🩻', tag: 'X-ray' },
+    faceFront:  { title: '정면 안모 사진',           hint: '입을 다문 정면, 자연광',       icon: '😐', tag: '정면' },
+    faceSide:   { title: '측면 안모 사진',           hint: '90도 측면 (Profile)',         icon: '👤', tag: '측면' },
+    intraoral:  { title: '입술 벌린 정면',           hint: '치아 노출 정면 사진',          icon: '😬', tag: '입속' }
+  };
+
   const TYPE_CONFIG = {
     extraction: {
-      title: '구강 사진 + 측면 두부방사선 업로드',
-      hint: '구강 정면/측면 사진 또는 Lateral Cephalogram. JPG/PNG, 최대 20MB',
+      slots: ['scanner', 'xray', 'faceFront', 'faceSide', 'intraoral'],
       fields: ['anb', 'crowding', 'overjet', 'overbite', 'profile', 'lipStrain', 'fma', 'impa']
     },
     growth: {
-      title: '손목 X-ray 또는 측면 두부방사선 업로드',
-      hint: 'Hand-wrist 골연령 사진 또는 측면 ceph. JPG/PNG, 최대 20MB',
+      slots: ['xray', 'scanner', 'faceFront', 'faceSide'],
       fields: ['boneAge', 'cvms', 'height', 'weight']
     },
     facial: {
-      title: '측면 안모 사진 업로드',
-      hint: '환자 측면(profile) 사진을 자연광에서 촬영. JPG/PNG, 최대 20MB',
+      slots: ['faceSide', 'faceFront', 'intraoral', 'xray'],
       fields: ['maxRetract', 'mandShift', 'lipUpper', 'lipLower', 'chin']
     },
     recurrence: {
-      title: '치료 종료 시 측면 두부방사선 / 모형 사진',
-      hint: '치료 직후 Lateral Ceph 또는 STL 스크린샷. JPG/PNG, 최대 20MB',
+      slots: ['scanner', 'xray', 'intraoral', 'faceSide'],
       fields: ['impa', 'incisorShift', 'residual']
     }
   };
@@ -43,7 +47,7 @@
 
   window.ScannerInput = {
     /**
-     * @param {HTMLElement} container 마운트 대상 요소
+     * @param {HTMLElement} container
      * @param {Object} options { type, onAnalyzed: (fields, raw) => void, onSwitchToData: () => void }
      */
     mount(container, options = {}) {
@@ -52,38 +56,57 @@
         container.innerHTML = '<p>지원하지 않는 진단 type입니다.</p>';
         return;
       }
+      const SLOT_KEYS = cfg.slots;
+
+      const dualHtml = SLOT_KEYS.map(key => {
+        const slot = COMMON_SLOTS[key];
+        if (!slot) return '';
+        return `
+          <div class="scanner-slot" data-slot="${key}">
+            <div class="scanner-slot-label">
+              <span>${escapeHtml(slot.tag)}</span>
+              <span class="pill optional">선택</span>
+            </div>
+            <div class="scanner-zone" data-zone>
+              <input type="file" accept="image/*" hidden data-file>
+              <div data-empty class="inner">
+                <div class="scanner-icon" aria-hidden="true">${slot.icon}</div>
+                <div class="scanner-title">${escapeHtml(slot.title)}</div>
+                <div class="scanner-hint">${escapeHtml(slot.hint)}</div>
+              </div>
+              <div data-preview hidden class="inner"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
 
       container.innerHTML = `
-        <div class="scanner-zone" data-zone>
-          <input type="file" accept="image/*" hidden data-file>
-          <div data-empty>
-            <div class="scanner-icon" aria-hidden="true">📷</div>
-            <div class="scanner-title">${escapeHtml(cfg.title)}</div>
-            <div class="scanner-hint">${escapeHtml(cfg.hint)}</div>
-          </div>
-          <div data-preview hidden></div>
-        </div>
+        <div class="scanner-dual">${dualHtml}</div>
+        <p style="font-size:11px; color:var(--text-muted); text-align:center; margin: 4px 0 12px;">
+          최소 1장만 있어도 분석 가능. 여러 장 업로드 시 정확도가 가장 높습니다.
+        </p>
         <div data-status hidden class="scanner-status"></div>
         <div data-fields hidden></div>
         <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
-          <button type="button" class="btn btn-primary" data-analyze hidden>🧠 AI 분석 시작</button>
+          <button type="button" class="btn btn-primary" data-analyze disabled>🧠 AI 분석 시작</button>
           <button type="button" class="btn btn-ghost" data-apply hidden>✓ 분석 결과 적용 → 데이터 탭</button>
-          <button type="button" class="btn btn-ghost" data-clear hidden>다시 업로드</button>
+          <button type="button" class="btn btn-ghost" data-clear hidden>모두 초기화</button>
         </div>
       `;
 
-      const zone = container.querySelector('[data-zone]');
-      const fileInput = container.querySelector('[data-file]');
-      const emptyEl = container.querySelector('[data-empty]');
-      const previewEl = container.querySelector('[data-preview]');
+      const slots = {};
+      SLOT_KEYS.forEach(key => {
+        slots[key] = {
+          el: container.querySelector(`[data-slot="${key}"]`),
+          file: null, base64: null, contentType: null
+        };
+      });
+
       const statusEl = container.querySelector('[data-status]');
       const fieldsEl = container.querySelector('[data-fields]');
       const analyzeBtn = container.querySelector('[data-analyze]');
       const applyBtn = container.querySelector('[data-apply]');
       const clearBtn = container.querySelector('[data-clear]');
-
-      let currentFile = null;
-      let currentBase64 = null;
       let lastAnalysis = null;
 
       function setStatus(text, kind) {
@@ -91,83 +114,98 @@
         statusEl.hidden = false;
         statusEl.textContent = text;
         statusEl.className = 'scanner-status ' + (kind || '');
+        statusEl.style.whiteSpace = 'pre-wrap';
       }
 
-      function reset() {
-        currentFile = null; currentBase64 = null; lastAnalysis = null;
-        emptyEl.hidden = false;
-        previewEl.hidden = true;
-        previewEl.innerHTML = '';
-        analyzeBtn.hidden = true;
-        applyBtn.hidden = true;
-        clearBtn.hidden = true;
-        fieldsEl.hidden = true;
-        fieldsEl.innerHTML = '';
-        setStatus('');
-        fileInput.value = '';
+      function refreshAnalyzeBtn() {
+        const anyUploaded = SLOT_KEYS.some(k => slots[k].base64);
+        analyzeBtn.disabled = !anyUploaded;
+        clearBtn.hidden = !anyUploaded;
       }
 
-      function loadFile(file) {
-        if (!file) return;
-        if (!file.type.startsWith('image/')) {
-          setStatus('이미지 파일만 지원합니다 (JPG/PNG).', 'error');
-          return;
-        }
-        if (file.size > 20 * 1024 * 1024) {
-          setStatus('파일이 20MB를 초과합니다.', 'error');
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = e => {
-          currentFile = file;
-          currentBase64 = (e.target.result || '').split(',')[1];
+      function setupSlot(key) {
+        const slot = slots[key];
+        const zone = slot.el.querySelector('[data-zone]');
+        const fileInput = slot.el.querySelector('[data-file]');
+        const emptyEl = slot.el.querySelector('[data-empty]');
+        const previewEl = slot.el.querySelector('[data-preview]');
+
+        function showPreview(dataUrl, file) {
+          slot.file = file;
+          slot.base64 = dataUrl.split(',')[1];
+          slot.contentType = file.type;
           emptyEl.hidden = true;
           previewEl.hidden = false;
           previewEl.innerHTML = `
-            <div class="scanner-preview">
-              <img src="${e.target.result}" alt="업로드된 이미지">
-              <button type="button" class="remove-btn" aria-label="제거" onclick="event.stopPropagation();">×</button>
+            <div class="scanner-preview" style="margin:0;">
+              <img src="${dataUrl}" alt="${escapeHtml(key)} 이미지">
+              <button type="button" class="remove-btn" aria-label="제거" data-remove>×</button>
             </div>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:4px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(file.name)}</div>
           `;
-          previewEl.querySelector('.remove-btn').onclick = (ev) => { ev.stopPropagation(); reset(); };
-          analyzeBtn.hidden = false;
-          clearBtn.hidden = false;
-          setStatus(`${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB) — AI 분석 버튼을 클릭하세요.`, '');
-        };
-        reader.readAsDataURL(file);
+          previewEl.querySelector('[data-remove]').onclick = (ev) => { ev.stopPropagation(); resetSlot(key); };
+          refreshAnalyzeBtn();
+        }
+
+        function loadFile(file) {
+          if (!file) return;
+          if (!file.type.startsWith('image/')) { setStatus('이미지 파일만 지원합니다 (JPG/PNG).', 'error'); return; }
+          if (file.size > 20 * 1024 * 1024) { setStatus('파일이 20MB를 초과합니다.', 'error'); return; }
+          const reader = new FileReader();
+          reader.onload = e => showPreview(e.target.result, file);
+          reader.readAsDataURL(file);
+        }
+
+        zone.addEventListener('click', () => { if (!slot.file) fileInput.click(); });
+        fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+        zone.addEventListener('drop', e => {
+          e.preventDefault();
+          zone.classList.remove('drag');
+          loadFile(e.dataTransfer.files[0]);
+        });
       }
 
-      // Click → file picker
-      zone.addEventListener('click', (e) => {
-        if (currentFile) return;
-        fileInput.click();
-      });
-      fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
+      function resetSlot(key) {
+        const slot = slots[key];
+        slot.file = null; slot.base64 = null; slot.contentType = null;
+        slot.el.querySelector('[data-empty]').hidden = false;
+        const previewEl = slot.el.querySelector('[data-preview]');
+        previewEl.hidden = true;
+        previewEl.innerHTML = '';
+        slot.el.querySelector('[data-file]').value = '';
+        refreshAnalyzeBtn();
+      }
 
-      // Drag & drop
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
-      zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
-      zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.classList.remove('drag');
-        loadFile(e.dataTransfer.files[0]);
-      });
+      function resetAll() {
+        SLOT_KEYS.forEach(resetSlot);
+        lastAnalysis = null;
+        applyBtn.hidden = true;
+        fieldsEl.hidden = true;
+        fieldsEl.innerHTML = '';
+        setStatus('');
+      }
 
-      // Analyze
+      SLOT_KEYS.forEach(setupSlot);
+
       analyzeBtn.addEventListener('click', async () => {
-        if (!currentBase64) return;
+        const images = {};
+        const usedTags = [];
+        SLOT_KEYS.forEach(k => {
+          if (slots[k].base64) {
+            images[k] = { base64: slots[k].base64, contentType: slots[k].contentType };
+            usedTags.push(COMMON_SLOTS[k].tag);
+          }
+        });
+        if (Object.keys(images).length === 0) { setStatus('이미지를 1장 이상 업로드하세요.', 'error'); return; }
         analyzeBtn.disabled = true;
-        setStatus('AI 분석 중... (Gemini Vision, 5-15초 소요)', 'analyzing');
+        setStatus(`AI 분석 중 (${usedTags.join(' + ')})... Gemini Vision 5-15초 소요`, 'analyzing');
         try {
           const res = await fetch('/api/analyze-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              type: options.type,
-              filename: currentFile.name,
-              contentType: currentFile.type,
-              base64: currentBase64
-            })
+            body: JSON.stringify({ type: options.type, images })
           });
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
@@ -178,8 +216,8 @@
           renderFields(data);
           setStatus(
             data.fallback
-              ? `⚠️ ${data.note || 'AI 호출이 실패해 데모 추정값을 사용했습니다. 반드시 직접 검증하세요.'}`
-              : `✅ 분석 완료 (신뢰도 ${Math.round((data.confidence || 0) * 100)}%) — 데이터 탭으로 적용하세요.`,
+              ? `⚠️ ${data.note || 'AI 호출 실패 — 데모 추정값 표시. 직접 검증 필요.'}`
+              : `✅ 분석 완료 (${usedTags.join(' + ')} · 신뢰도 ${Math.round((data.confidence || 0) * 100)}%) — 데이터 탭으로 적용하세요.`,
             data.fallback ? 'error' : 'success'
           );
           applyBtn.hidden = false;
@@ -187,25 +225,26 @@
           console.error('[scanner] 분석 실패:', e);
           const isFetchFail = e.message === 'Failed to fetch' || e.name === 'TypeError';
           const hint = isFetchFail
-            ? 'API 서버가 실행되지 않았습니다. 터미널에서 `npm run dev` 실행 후 http://localhost:3000 으로 접속하세요. (정적 http-server는 /api/* 라우팅을 지원하지 않습니다.)'
+            ? 'API 서버 미실행. 터미널에서 `npm run dev` 후 http://localhost:3000 접속.'
             : '데이터 탭에서 직접 입력하세요.';
           setStatus(`❌ 분석 실패: ${e.message}\n${hint}`, 'error');
-          statusEl.style.whiteSpace = 'pre-wrap';
         } finally {
-          analyzeBtn.disabled = false;
+          refreshAnalyzeBtn();
         }
       });
 
       function renderFields(data) {
         const fields = data.fields || {};
         const keys = cfg.fields.filter(k => fields[k] !== undefined && fields[k] !== null && fields[k] !== '');
-        if (!keys.length) {
-          fieldsEl.hidden = true;
-          return;
-        }
+        if (!keys.length) { fieldsEl.hidden = true; return; }
         fieldsEl.hidden = false;
+        const sourceTag = Array.isArray(data.usedImages) && data.usedImages.length
+          ? `<span style="font-size:10px; padding:2px 8px; border-radius:4px; background:rgba(14,165,233,0.1); color:var(--color-primary); margin-left:8px;">${escapeHtml(data.usedImages.join(' + '))}</span>`
+          : '';
         fieldsEl.innerHTML = `
-          <div style="margin: 14px 0 8px; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">추출된 측정값</div>
+          <div style="margin: 14px 0 8px; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">
+            추출된 측정값 ${sourceTag}
+          </div>
           <div class="scanner-fields">
             ${keys.map(k => `
               <div class="ext-field">
@@ -218,24 +257,16 @@
         `;
       }
 
-      // Apply → fill form
       applyBtn.addEventListener('click', () => {
         if (!lastAnalysis || !lastAnalysis.fields) return;
-        if (typeof options.onAnalyzed === 'function') {
-          options.onAnalyzed(lastAnalysis.fields, lastAnalysis);
-        }
-        if (typeof options.onSwitchToData === 'function') {
-          options.onSwitchToData();
-        }
+        if (typeof options.onAnalyzed === 'function') options.onAnalyzed(lastAnalysis.fields, lastAnalysis);
+        if (typeof options.onSwitchToData === 'function') options.onSwitchToData();
         if (window.toast) window.toast('분석 결과가 데이터 탭에 적용되었습니다.', 'success');
       });
 
-      clearBtn.addEventListener('click', reset);
+      clearBtn.addEventListener('click', resetAll);
     },
 
-    /**
-     * 탭 위젯 표준 셋업: 컨테이너 안에 .tabs와 .tab-panel[data-tab]이 있을 때.
-     */
     setupTabs(container) {
       const btns = container.querySelectorAll('.tab-btn[data-tab]');
       const panels = container.querySelectorAll('.tab-panel[data-tab]');

@@ -440,21 +440,61 @@ tbody tr:hover { background: rgba(255,255,255,0.03); }
 .tab-panel.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
+.scanner-dual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 8px;
+}
+@media (max-width: 540px) {
+  .scanner-dual { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 380px) {
+  .scanner-dual { grid-template-columns: 1fr; }
+}
+.scanner-slot {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.scanner-slot-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.scanner-slot-label .pill {
+  padding: 2px 8px; border-radius: 999px;
+  background: rgba(14,165,233,0.15);
+  color: var(--color-primary);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.scanner-slot-label .pill.optional {
+  background: rgba(229,231,235,0.06);
+  color: var(--text-muted);
+}
+
 .scanner-zone {
   border: 2px dashed var(--border-strong);
   border-radius: var(--radius-md);
-  padding: 32px 20px;
+  padding: 24px 16px;
   text-align: center;
   cursor: pointer;
   transition: all .2s;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  min-height: 140px;
+  display: flex; align-items: center; justify-content: center;
 }
 .scanner-zone:hover { border-color: var(--color-primary); background: rgba(14,165,233,0.04); }
 .scanner-zone.drag { border-color: var(--color-primary); background: rgba(14,165,233,0.08); transform: scale(1.01); }
-.scanner-zone .scanner-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.85; }
-.scanner-zone .scanner-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-.scanner-zone .scanner-hint { font-size: 12px; color: var(--text-muted); }
+.scanner-zone .scanner-icon { font-size: 28px; margin-bottom: 6px; opacity: 0.85; }
+.scanner-zone .scanner-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+.scanner-zone .scanner-hint { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+.scanner-zone .inner { width: 100%; }
 .scanner-preview {
   position: relative;
   margin-top: 14px;
