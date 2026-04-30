@@ -17,11 +17,14 @@
       { path: 'facial-simulation.html', label: '안모 시뮬레이션',   icon: '👤' },
       { path: 'recurrence-prediction.html', label: '재발 예측',     icon: '🔁' }
     ]},
-    { group: '도구', items: [
-      { path: '3d-viewer.html',       label: '3D 뷰어 (EZL-STL)', icon: '🧊' },
-      { path: 'chatbot.html',         label: 'RAG 챗봇',           icon: '💬' },
+    { group: '환자', items: [
+      { path: 'patient-select.html',  label: '환자 선택/등록',     icon: '👤' },
       { path: 'dashboard.html',       label: '환자 대시보드',      icon: '📊' },
       { path: 'patient-history.html', label: '환자 이력',          icon: '📂' }
+    ]},
+    { group: '도구', items: [
+      { path: '3d-viewer.html',       label: '3D 뷰어 (EZL-STL)', icon: '🧊' },
+      { path: 'chatbot.html',         label: 'RAG 챗봇',           icon: '💬' }
     ]},
     { group: '문서', items: [
       { path: 'manual.html',       label: '매뉴얼',     icon: '📖' },

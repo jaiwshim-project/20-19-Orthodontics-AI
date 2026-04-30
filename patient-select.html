@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="환자 선택 — 저장된 환자에서 선택하거나 신규 환자를 등록합니다.">
+<meta property="og:title" content="환자 선택 · Orthodontics AI">
+<title>환자 선택 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .ps-hero {
+    text-align: center;
+    padding: 32px 24px 16px;
+  }
+  .ps-hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin-bottom: 8px;
+  }
+  .ps-hero p {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .ps-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    padding: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ps-tabs button {
+    flex: 1;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all .2s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .ps-tabs button:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+  .ps-tabs button.active {
+    background: var(--gradient-primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(14,165,233,0.3);
+  }
+  .ps-tabs button .icon { font-size: 18px; }
+  .ps-tabs button .count {
+    margin-left: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(4px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ===== 저장된 환자 탭 ===== */
+  .search-bar {
+    display: flex; gap: 8px;
+    margin-bottom: 18px;
+  }
+  .search-bar .input {
+    flex: 1;
+    font-size: 15px;
+    padding: 14px 18px;
+  }
+  .search-bar .filter-btn {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .search-bar .filter-btn.active {
+    background: rgba(14,165,233,0.18);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .pcard {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pcard::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(139,92,246,0.04));
+    opacity: 0; transition: opacity .2s;
+  }
+  .pcard:hover { transform: translateY(-2px); border-color: rgba(14,165,233,0.5); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+  .pcard:hover::before { opacity: 1; }
+  .pcard > * { position: relative; z-index: 1; }
+  .pcard .pname {
+    font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .pcard .pmeta { font-size: 12px; color: var(--text-secondary); margin-bottom: 14px; }
+  .pcard .pstats {
+    display: flex; gap: 16px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 12px;
+  }
+  .pcard .pstat { flex: 1; }
+  .pcard .pstat-num { font-size: 18px; font-weight: 700; color: var(--color-primary); }
+  .pcard .pstat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .pcard .ptypes { display:flex; flex-wrap:wrap; gap:4px; margin-bottom: 12px; min-height: 22px; }
+  .pcard .ptype {
+    font-size: 10px; padding: 3px 8px; border-radius: 4px;
+    background: rgba(14,165,233,0.12);
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+  .pcard .pactions {
+    display: flex; gap: 6px;
+  }
+  .pcard .pactions .btn { flex: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-muted);
+  }
+  .empty-state .ico { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state h3 { color: var(--text-primary); margin-bottom: 8px; }
+
+  /* ===== 신규 등록 탭 ===== */
+  .form-shell {
+    max-width: 520px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+  }
+  .form-shell .form-step {
+    font-size: 11px;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .form-shell h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .form-shell label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .form-shell .input, .form-shell .select {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  .form-shell .submit-btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+
+<section class="ps-hero">
+  <h1>환자 선택 또는 등록</h1>
+  <p>저장된 환자를 선택하거나 새 환자를 등록하세요. 모든 진단은 선택된 환자에 종속됩니다.</p>
+</section>
+
+<div class="container">
+
+<div class="ps-tabs" role="tablist">
+  <button id="tabList" class="active" data-tab="list" role="tab">
+    <span class="icon">📋</span>저장된 환자<span class="count" id="countList">0</span>
+  </button>
+  <button id="tabNew" data-tab="new" role="tab">
+    <span class="icon">+</span>신규 환자 등록
+  </button>
+</div>
+
+<div class="panel active" id="panelList">
+  <div class="search-bar">
+    <input class="input" id="searchInput" placeholder="🔍 이름으로 검색…">
+    <button class="filter-btn" data-age-filter="" id="filterAll">전체</button>
+    <button class="filter-btn" data-age-filter="adult" id="filterAdult">성인</button>
+    <button class="filter-btn" data-age-filter="child" id="filterChild">어린이</button>
+  </div>
+
+  <div id="patientGrid" class="patient-grid"></div>
+
+  <div id="emptyList" class="empty-state" style="display:none;">
+    <div class="ico">👥</div>
+    <h3>저장된 환자가 없습니다</h3>
+    <p>오른쪽 [+ 신규 환자 등록] 탭에서 첫 환자를 등록하세요.</p>
+    <button class="btn btn-primary mt-4" onclick="switchTab('new')">+ 신규 환자 등록 →</button>
+  </div>
+</div>
+
+<div class="panel" id="panelNew">
+  <div class="form-shell">
+    <div class="form-step">Step 1 of 1</div>
+    <h2>새 환자 등록</h2>
+    <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;">생년월일 입력 시 자동으로 만 나이와 연령 구분이 계산됩니다.</p>
+
+    <div class="field">
+      <label>이름 <span style="color:var(--color-danger);">*</span></label>
+      <input class="input" id="psName" placeholder="홍길동" autocomplete="off">
+    </div>
+
+    <div class="grid grid-2" style="gap:14px;">
+      <div class="field">
+        <label>생년월일</label>
+        <input class="input" type="date" id="psDob" max="2026-04-30">
+        <div id="psAgeHint" style="font-size:11px; color:var(--text-muted); margin-top:4px; min-height:14px;"></div>
+      </div>
+      <div class="field">
+        <label>연령 구분</label>
+        <select class="select" id="psAgeGroup">
+          <option value="">자동 (생년월일 기준)</option>
+          <option value="child">어린이 (≤17세)</option>
+          <option value="adult">성인</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>성별</label>
+      <select class="select" id="psGender">
+        <option value="">선택</option>
+        <option value="male">남성</option>
+        <option value="female">여성</option>
+        <option value="other">기타</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary submit-btn" id="psSubmit">+ 환자 등록 후 진단 시작</button>
+
+    <p style="font-size:11px; color:var(--text-muted); margin-top:16px; text-align:center;">
+      등록 시 환자 정보가 Supabase 클라우드에 영구 저장되며, 모든 진단은 이 환자와 연결됩니다.
+    </p>
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+let ALL_PATIENTS = [];
+let CURRENT_FILTER = '';
+
+const TYPE_KO = { extraction: '발치', growth: '성장', facial: '안모', recurrence: '재발' };
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function loadPatients() {
+  const grid = document.getElementById('patientGrid');
+  grid.innerHTML = '<div class="empty-state"><div class="ico">⏳</div><p>불러오는 중...</p></div>';
+  try {
+    const res = await window.apiFetch('/api/get-patients');
+    const data = await res.json();
+    ALL_PATIENTS = data.records || [];
+    document.getElementById('countList').textContent = ALL_PATIENTS.length;
+    if (data.fallback) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+        <div class="ico">☁️</div>
+        <h3>클라우드 미연결</h3>
+        <p>Supabase에 연결되지 않아 저장된 환자를 불러올 수 없습니다.</p>
+        <button class="btn btn-primary mt-4" onclick="switchTab('new')">신규 환자 등록 →</button>
+      </div>`;
+      return;
+    }
+    renderList();
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="ico">⚠️</div><h3>불러오기 실패</h3><p>${escapeHtml(e.message)}</p></div>`;
+  }
+}
+
+function renderList() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let filtered = ALL_PATIENTS;
+  if (q) filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(q));
+  if (CURRENT_FILTER) filtered = filtered.filter(p => p.age_group === CURRENT_FILTER);
+
+  document.getElementById('countList').textContent = filtered.length;
+  const grid = document.getElementById('patientGrid');
+  const empty = document.getElementById('emptyList');
+
+  if (!filtered.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    if (q) empty.querySelector('p').textContent = `"${q}" 검색 결과 없음. 신규 등록하시겠습니까?`;
+    return;
+  }
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+
+  grid.innerHTML = filtered.map(p => {
+    const ageGrp = p.age_group === 'child' ? '어린이' : '성인';
+    const ageGrpCls = p.age_group === 'child' ? 'badge-warning' : 'badge-primary';
+    const gender = p.gender === 'male' ? '남' : p.gender === 'female' ? '여' : '—';
+    const dob = p.dob || '—';
+    const lastAt = p.last_diagnosis_at ? new Date(p.last_diagnosis_at).toLocaleDateString('ko-KR') : '—';
+    const types = (p.diagnosis_types || []).map(t => `<span class="ptype">${TYPE_KO[t] || t}</span>`).join('');
+    return `
+      <div class="pcard" data-pid="${escapeHtml(p.id)}">
+        <div class="pname">
+          ${escapeHtml(p.name)}
+          <span class="badge ${ageGrpCls}" style="font-size:10px;">${ageGrp}</span>
+        </div>
+        <div class="pmeta">${gender} · 생 ${dob} · 등록 ${new Date(p.created_at).toLocaleDateString('ko-KR')}</div>
+        <div class="pstats">
+          <div class="pstat">
+            <div class="pstat-num">${p.diagnosis_count || 0}</div>
+            <div class="pstat-lbl">진단 건수</div>
+          </div>
+          <div class="pstat">
+            <div class="pstat-num">${p.last_recurrence_y10 != null ? Math.round(p.last_recurrence_y10) + '%' : '—'}</div>
+            <div class="pstat-lbl">재발 위험</div>
+          </div>
+        </div>
+        <div class="ptypes">${types || '<span style="font-size:11px; color:var(--text-muted);">진단 이력 없음</span>'}</div>
+        <div class="pactions">
+          <button class="btn btn-primary btn-sm" data-action="select">✓ 선택</button>
+          ${p.diagnosis_count > 0 ? `<button class="btn btn-ghost btn-sm" data-action="history">📂 이력</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.pcard').forEach(card => {
+    const pid = card.dataset.pid;
+    card.querySelectorAll('[data-action="select"]').forEach(b => b.onclick = (e) => { e.stopPropagation(); selectPatient(pid, false); });
+    card.querySelectorAll('[data-action="history"]').forEach(b => b.onclick = (e) => { e.stopPropagation(); selectPatient(pid, true); });
+    card.onclick = () => selectPatient(pid, false);
+  });
+}
+
+function selectPatient(pid, goHistory) {
+  const p = ALL_PATIENTS.find(r => r.id === pid);
+  if (!p) return;
+  window.PatientStore.set({
+    id: p.id, supabaseId: p.id,
+    name: p.name, dob: p.dob,
+    ageGroup: p.age_group, gender: p.gender, age: p.age
+  });
+  window.toast(`${p.name} 환자를 선택했습니다.`, 'success');
+  if (goHistory && p.diagnosis_count > 0) {
+    window.location.href = `patient-history.html?id=${encodeURIComponent(p.id)}`;
+  } else {
+    setTimeout(() => window.location.href = 'extraction-ai.html', 600);
+  }
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.ps-tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)));
+  if (tabName === 'list') loadPatients();
+}
+
+// 신규 등록 폼
+document.getElementById('psDob').addEventListener('change', e => {
+  const dob = e.target.value;
+  const hint = document.getElementById('psAgeHint');
+  if (dob) {
+    const age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    const grp = age <= 17 ? '어린이' : '성인';
+    hint.innerHTML = `→ 만 <strong style="color:var(--color-primary);">${age}세</strong> · ${grp}`;
+  } else {
+    hint.innerHTML = '';
+  }
+});
+
+document.getElementById('psSubmit').addEventListener('click', async () => {
+  const name = document.getElementById('psName').value.trim();
+  const dob = document.getElementById('psDob').value;
+  let ageGroup = document.getElementById('psAgeGroup').value;
+  const gender = document.getElementById('psGender').value;
+  if (!name) { window.toast('이름을 입력하세요.', 'warning'); return; }
+  let age = null;
+  if (dob) {
+    age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    if (!ageGroup) ageGroup = age <= 17 ? 'child' : 'adult';
+  }
+  const btn = document.getElementById('psSubmit');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+  try {
+    const res = await window.apiFetch('/api/register-patient', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, dob, ageGroup, gender, age })
+    });
+    const json = await res.json();
+    if (json.success && json.patient) {
+      window.PatientStore.set({
+        id: json.patient.id, supabaseId: json.patient.id,
+        name, dob, ageGroup, gender, age
+      });
+      if (json.duplicate) {
+        window.toast(`이미 등록된 환자입니다 — ${name}. 기존 환자로 진단 시작합니다.`, 'info');
+      } else {
+        window.toast(`✅ ${name} 환자 등록 완료. 진단 페이지로 이동합니다.`, 'success');
+      }
+      setTimeout(() => window.location.href = 'extraction-ai.html', 800);
+    } else {
+      window.toast('등록 실패: ' + (json.message || '알 수 없는 오류'), 'error');
+      btn.disabled = false;
+      btn.textContent = '+ 환자 등록 후 진단 시작';
+    }
+  } catch (e) {
+    window.toast('네트워크 오류: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = '+ 환자 등록 후 진단 시작';
+  }
+});
+
+// Tab events
+document.querySelectorAll('.ps-tabs button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+// Search & filter
+document.getElementById('searchInput').oninput = renderList;
+document.querySelectorAll('[data-age-filter]').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('[data-age-filter]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    CURRENT_FILTER = b.dataset.ageFilter;
+    renderList();
+  };
+});
+document.getElementById('filterAll').classList.add('active');
+
+// URL hash로 신규 탭 직행 가능 (?tab=new)
+const params = new URLSearchParams(location.search);
+if (params.get('tab') === 'new') switchTab('new');
+
+loadPatients();
+</script>
+</body>
+</html>
