@@ -188,51 +188,81 @@
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  // -------- Patient Modal --------
+  // -------- Patient Modal (저장된 명단 + 신규 등록) --------
   window.openPatientModal = function () {
     const existing = window.PatientStore.get() || {};
     const backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop';
     backdrop.innerHTML = `
-      <div class="modal" onclick="event.stopPropagation()">
-        <h3>환자 정보 입력</h3>
-        <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">진단 결과는 입력된 환자에 종속됩니다.</p>
-        <div class="field">
-          <label>이름</label>
-          <input class="input" id="pmName" value="${escapeHtml(existing.name || '')}" placeholder="홍길동">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:560px;">
+        <h3>환자 선택 또는 신규 등록</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">진단 결과는 선택된 환자에 종속됩니다.</p>
+
+        <div class="tabs" style="margin-bottom:16px;">
+          <button type="button" class="tab-btn active" data-pmtab="list"><span class="tab-icon">📋</span>저장된 환자</button>
+          <button type="button" class="tab-btn" data-pmtab="new"><span class="tab-icon">+</span>신규 등록</button>
         </div>
-        <div class="grid grid-2">
+
+        <div class="tab-panel active" data-pmtab="list">
+          <input class="input" id="pmSearch" placeholder="이름으로 검색…" style="margin-bottom:12px;">
+          <div id="pmList" style="max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+            <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">불러오는 중…</div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-pmtab="new">
           <div class="field">
-            <label>생년월일</label>
-            <input class="input" type="date" id="pmDob" value="${existing.dob || ''}">
+            <label>이름</label>
+            <input class="input" id="pmName" value="${escapeHtml(existing.name || '')}" placeholder="홍길동">
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label>생년월일</label>
+              <input class="input" type="date" id="pmDob" value="${existing.dob || ''}">
+            </div>
+            <div class="field">
+              <label>연령 구분</label>
+              <select class="select" id="pmAgeGroup">
+                <option value="">자동 판정</option>
+                <option value="child" ${existing.ageGroup === 'child' ? 'selected' : ''}>어린이 (≤17세)</option>
+                <option value="adult" ${existing.ageGroup === 'adult' ? 'selected' : ''}>성인</option>
+              </select>
+            </div>
           </div>
           <div class="field">
-            <label>연령 구분</label>
-            <select class="select" id="pmAgeGroup">
-              <option value="">자동 판정</option>
-              <option value="child" ${existing.ageGroup === 'child' ? 'selected' : ''}>어린이 (≤17세)</option>
-              <option value="adult" ${existing.ageGroup === 'adult' ? 'selected' : ''}>성인</option>
+            <label>성별</label>
+            <select class="select" id="pmGender">
+              <option value="">선택</option>
+              <option value="male"   ${existing.gender === 'male' ? 'selected' : ''}>남성</option>
+              <option value="female" ${existing.gender === 'female' ? 'selected' : ''}>여성</option>
+              <option value="other"  ${existing.gender === 'other' ? 'selected' : ''}>기타</option>
             </select>
           </div>
+          <div class="actions">
+            <button class="btn btn-ghost" id="pmClear">초기화</button>
+            <button class="btn btn-primary" id="pmSave">신규 환자로 저장</button>
+          </div>
         </div>
-        <div class="field">
-          <label>성별</label>
-          <select class="select" id="pmGender">
-            <option value="">선택</option>
-            <option value="male"   ${existing.gender === 'male' ? 'selected' : ''}>남성</option>
-            <option value="female" ${existing.gender === 'female' ? 'selected' : ''}>여성</option>
-            <option value="other"  ${existing.gender === 'other' ? 'selected' : ''}>기타</option>
-          </select>
-        </div>
-        <div class="actions">
-          <button class="btn btn-ghost" id="pmCancel">취소</button>
-          <button class="btn btn-ghost" id="pmClear">초기화</button>
-          <button class="btn btn-primary" id="pmSave">저장</button>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:14px; padding-top:14px; border-top:1px solid var(--border-subtle);">
+          <button class="btn btn-ghost" id="pmCancel">닫기</button>
         </div>
       </div>
     `;
     backdrop.onclick = () => backdrop.remove();
     document.body.appendChild(backdrop);
+
+    // Tab toggling
+    backdrop.querySelectorAll('[data-pmtab]').forEach(el => {
+      if (el.classList.contains('tab-btn')) {
+        el.onclick = () => {
+          backdrop.querySelectorAll('.tab-btn[data-pmtab]').forEach(b => b.classList.toggle('active', b.dataset.pmtab === el.dataset.pmtab));
+          backdrop.querySelectorAll('.tab-panel[data-pmtab]').forEach(p => p.classList.toggle('active', p.dataset.pmtab === el.dataset.pmtab));
+        };
+      }
+    });
+
+    // Buttons
     document.getElementById('pmCancel').onclick = () => backdrop.remove();
     document.getElementById('pmClear').onclick = () => { window.PatientStore.clear(); backdrop.remove(); window.toast('환자 정보를 초기화했습니다.', 'success'); };
     document.getElementById('pmSave').onclick = () => {
@@ -245,8 +275,90 @@
       if (!data.name) { window.toast('이름을 입력하세요.', 'warning'); return; }
       window.PatientStore.set(data);
       backdrop.remove();
-      window.toast('환자 정보가 저장되었습니다.', 'success');
+      window.toast('신규 환자가 저장되었습니다.', 'success');
     };
+
+    // Load patient list
+    async function loadList(q = '') {
+      const listEl = document.getElementById('pmList');
+      listEl.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">불러오는 중…</div>';
+      try {
+        const url = (window.API_BASE || '') + '/api/get-patients' + (q ? `?q=${encodeURIComponent(q)}` : '');
+        const res = await fetch(url);
+        const data = await res.json();
+        renderList(data.records || [], data.fallback);
+      } catch (e) {
+        listEl.innerHTML = `<div style="padding:16px; color:var(--color-danger); font-size:13px;">불러오기 실패: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function renderList(records, fallback) {
+      const listEl = document.getElementById('pmList');
+      if (fallback) {
+        listEl.innerHTML = `<div style="padding:16px; color:var(--color-warning); font-size:13px;">⚠️ 클라우드 미연결 — 신규 등록 탭을 사용하세요.</div>`;
+        return;
+      }
+      if (!records.length) {
+        listEl.innerHTML = `<div style="padding:24px; text-align:center; color:var(--text-muted); font-size:13px;">저장된 환자가 없습니다.<br>신규 등록 탭에서 새 환자를 추가하세요.</div>`;
+        return;
+      }
+      listEl.innerHTML = records.map(r => {
+        const ageGrp = r.age_group === 'child' ? '어린이' : r.age_group === 'adult' ? '성인' : '미정';
+        const ageGrpCls = r.age_group === 'child' ? 'badge-warning' : 'badge-primary';
+        const gender = r.gender === 'male' ? '남' : r.gender === 'female' ? '여' : '—';
+        const dob = r.dob ? `생 ${r.dob}` : '';
+        const lastAt = r.last_diagnosis_at ? new Date(r.last_diagnosis_at).toLocaleDateString('ko-KR') : '진단 이력 없음';
+        const types = (r.diagnosis_types || []).map(t => ({ extraction:'발치', growth:'성장', facial:'안모', recurrence:'재발' }[t] || t)).join(' · ');
+        const recurr = r.last_recurrence_y10;
+        const recurrLbl = recurr != null ? ` · 재발 ${Math.round(recurr)}%` : '';
+        return `
+          <div class="patient-row" data-pid="${escapeHtml(r.id)}" style="padding:12px 14px; border:1px solid var(--border-subtle); border-radius:10px; cursor:pointer; transition:all .15s; background:rgba(255,255,255,0.02);">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+              <div style="min-width:0; flex:1;">
+                <div style="font-weight:600;">${escapeHtml(r.name)}
+                  <span class="badge ${ageGrpCls}" style="margin-left:6px; font-size:10px;">${ageGrp}</span>
+                  <span style="color:var(--text-muted); font-size:11px; margin-left:6px;">${gender} · ${dob}</span>
+                </div>
+                <div style="color:var(--text-muted); font-size:11px; margin-top:4px;">진단 ${r.diagnosis_count}건${types ? ' (' + types + ')' : ''}${recurrLbl} · ${lastAt}</div>
+              </div>
+              <button class="btn btn-primary btn-sm" data-select="${escapeHtml(r.id)}">선택 →</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Hover effect via JS (간단)
+      listEl.querySelectorAll('.patient-row').forEach(row => {
+        row.onmouseenter = () => row.style.borderColor = 'rgba(14,165,233,0.4)';
+        row.onmouseleave = () => row.style.borderColor = 'var(--border-subtle)';
+        row.onclick = () => selectPatient(row.dataset.pid, records);
+      });
+    }
+
+    function selectPatient(id, records) {
+      const p = records.find(r => r.id === id);
+      if (!p) return;
+      window.PatientStore.set({
+        id: p.id,
+        name: p.name,
+        dob: p.dob,
+        ageGroup: p.age_group,
+        gender: p.gender,
+        age: p.age,
+        supabaseId: p.id
+      });
+      backdrop.remove();
+      window.toast(`${p.name} 환자를 선택했습니다 (진단 ${p.diagnosis_count}건).`, 'success');
+    }
+
+    // Search debounce
+    let searchTimer;
+    document.getElementById('pmSearch').addEventListener('input', e => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => loadList(e.target.value.trim()), 300);
+    });
+
+    loadList();
   };
 
   // -------- i18n (skeleton) --------
