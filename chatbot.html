@@ -79,9 +79,10 @@
     <aside class="chat-aside">
       <h3 style="margin:0 0 12px; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">설정</h3>
       <select class="model-select" id="modelSelect">
-        <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠름)</option>
-        <option value="gemini-1.5-pro">Gemini 1.5 Pro (정밀)</option>
-        <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (실험)</option>
+        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (빠름)</option>
+        <option value="gemini-2.5-pro">Gemini 2.5 Pro (정밀)</option>
+        <option value="gemini-2.0-flash">Gemini 2.0 Flash (Legacy)</option>
+        <option value="gemini-flash-latest">Gemini Flash Latest (자동 갱신)</option>
       </select>
       <h3 style="margin:16px 0 12px; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">참조한 지식</h3>
       <div id="sources"><p style="color:var(--text-muted); font-size:12px;">대화 후 RAG로 참조된 출처가 여기 표시됩니다.</p></div>

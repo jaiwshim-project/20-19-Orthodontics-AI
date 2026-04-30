@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
   try {
     const body = normalizeBody(req.body);
-    const { messages = [], model = 'gemini-1.5-flash', userId } = body;
+    const { messages = [], model = 'gemini-2.5-flash', userId } = body;
 
     if (!messages.length) {
       return res.status(400).json({ error: 'messages가 비어있습니다.' });
@@ -53,6 +53,7 @@ export default async function handler(req, res) {
         reply: '죄송합니다. AI 서비스 키가 설정되지 않아 답변을 생성할 수 없습니다. 관리자에게 GEMINI_API_KEY 설정을 요청해 주세요.',
         sources: [],
         usage: { model: 'fallback' },
+        // 키 미설정 폴백
         fallback: true
       });
     }

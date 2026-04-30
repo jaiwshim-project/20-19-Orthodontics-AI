@@ -20,8 +20,9 @@ const SCHEMAS = {
     "impa": number | null        // IMPA (도)
   },
   "confidence": number,           // 0-1
-  "notes": string                 // 관찰 소견 한 줄
-}`
+  "notes": string                 // 관찰 소견 한 줄 — 반드시 한국어
+}
+중요: notes는 반드시 한국어로 작성하세요. 의학 용어는 영문 병기 가능.`
   },
   growth: {
     instruction: `당신은 골성숙 단계 분석 AI입니다.
@@ -37,7 +38,8 @@ const SCHEMAS = {
   "confidence": number,
   "notes": string
 }
-신장·체중은 사진에서 추출할 수 없으므로 항상 null. 골성숙 지표(MP3, sesamoid, distal phalanx)를 관찰 후 판단.`
+신장·체중은 사진에서 추출할 수 없으므로 항상 null. 골성숙 지표(MP3, sesamoid, distal phalanx)를 관찰 후 판단.
+중요: notes는 반드시 한국어로 작성하세요.`
   },
   facial: {
     instruction: `당신은 안모 분석 AI입니다.
@@ -55,7 +57,8 @@ const SCHEMAS = {
   "confidence": number,
   "notes": string
 }
-관찰: 입술 돌출, 턱 후퇴, E-line 관계.`
+관찰: 입술 돌출, 턱 후퇴, E-line 관계.
+중요: notes는 반드시 한국어로 작성하세요.`
   },
   recurrence: {
     instruction: `당신은 치료 종료 시점의 교정 결과를 분석하는 AI입니다.
@@ -69,7 +72,8 @@ const SCHEMAS = {
   },
   "confidence": number,
   "notes": string
-}`
+}
+중요: notes는 반드시 한국어로 작성하세요.`
   }
 };
 
@@ -151,7 +155,7 @@ export default async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       systemInstruction: SCHEMAS[type].instruction,
       generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
     });

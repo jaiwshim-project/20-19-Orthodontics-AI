@@ -3,27 +3,32 @@ import { saveDiagnosis } from '../lib/supabase.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+const KO_RULE = `
+중요: 모든 문자열 필드(reasoning, risks, alternatives, recommendation, notes 등)는 반드시 한국어로 작성하세요.
+의학 전문 용어는 영문 병기 가능 (예: "치열궁 길이(arch length)").
+숫자 필드와 enum 값(extract/non_extract/borderline 등)은 영문 그대로 유지.`;
+
 const PROMPTS = {
   extraction: `당신은 교정치과 발치 판단 AI입니다.
 입력된 환자 데이터를 기반으로 발치/비발치 권장도(0-100), 권장 발치 치아(FDI 표기), 5가지 근거, 위험요소, 비발치 대안을 JSON으로 반환하세요.
 반드시 다음 JSON 스키마를 준수:
 {"score": number, "recommendation": "extract"|"non_extract"|"borderline", "teeth": [string], "reasoning": [string], "risks": [string], "alternatives": [string]}
-어린이(17세 이하)는 성장 잠재력을 고려해 발치 보류 가중치를 적용합니다.`,
+어린이(17세 이하)는 성장 잠재력을 고려해 발치 보류 가중치를 적용합니다.${KO_RULE}`,
 
   growth: `당신은 교정치과 성장 예측 AI입니다.
 입력된 환자(어린이) 데이터를 기반으로 잔여 성장량, 골성숙 단계, 권장 치료 시기, 5가지 근거를 JSON으로 반환하세요.
 스키마:
-{"score": number, "remainingGrowthCm": number, "skeletalStage": string, "recommendation": string, "reasoning": [string], "risks": [string], "alternatives": [string]}`,
+{"score": number, "remainingGrowthCm": number, "skeletalStage": string, "recommendation": string, "reasoning": [string], "risks": [string], "alternatives": [string]}${KO_RULE}`,
 
   facial: `당신은 교정치과 안모 변화 시뮬레이션 AI입니다.
 입력값을 기반으로 안모 변화 방향, 심미적 영향, 권장도(0-100), 5가지 근거를 JSON으로 반환하세요.
 스키마:
-{"score": number, "recommendation": string, "facialChange": {"profileShift": string, "lipPosition": string, "chinPosition": string}, "reasoning": [string], "risks": [string], "alternatives": [string]}`,
+{"score": number, "recommendation": string, "facialChange": {"profileShift": string, "lipPosition": string, "chinPosition": string}, "reasoning": [string], "risks": [string], "alternatives": [string]}${KO_RULE}`,
 
   recurrence: `당신은 교정치과 재발 예측 AI입니다.
 입력값을 기반으로 1/3/5/10년 재발 확률, 위험 요인, 권장 보정 프로토콜을 JSON으로 반환하세요.
 스키마:
-{"score": number, "recommendation": string, "probabilities": {"y1": number, "y3": number, "y5": number, "y10": number}, "reasoning": [string], "risks": [string], "alternatives": [string]}`
+{"score": number, "recommendation": string, "probabilities": {"y1": number, "y3": number, "y5": number, "y10": number}, "reasoning": [string], "risks": [string], "alternatives": [string]}${KO_RULE}`
 };
 
 function fixKoreanEncoding(text) {
@@ -109,7 +114,7 @@ export default async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       systemInstruction: PROMPTS[type],
       generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
     });
