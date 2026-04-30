@@ -659,6 +659,8 @@ async function saveCurrentDiagnosis() {
 
 function renderResult(data) {
   window._lastResult = data;
+  const patient = window.PatientStore.get();
+  const isChild = patient?.ageGroup === 'child';
   const score = Math.round(data.score || 0);
   document.getElementById('scoreNum').textContent = score;
   const arc = document.getElementById('scoreArc');
@@ -678,6 +680,10 @@ function renderResult(data) {
   const teethBox = document.getElementById('teethRec');
   const teeth = data.teeth || [];
   teethBox.innerHTML = teeth.map(t => `<span class="tooth-pill">#${t}</span>`).join('');
+  // 어린이 + 점수 낮음일 때 별도 안내
+  if (isChild && score < 40) {
+    teethBox.innerHTML += `<div style="font-size:11px; color:var(--color-success); margin-top:8px; padding:6px 10px; background:rgba(16,185,129,0.08); border-radius:6px; line-height:1.5;">✓ 어린이 환자 비발치 권장. <a href="growth-prediction.html" style="color:var(--color-primary);">성장 예측 페이지</a>에서 CVMS 단계와 잔여 성장량 분석을 진행하세요.</div>`;
+  }
   renderArch(teeth);
 
   const reasonsEl = document.getElementById('reasons');
@@ -699,7 +705,15 @@ function updateBanner() {
   }
   if (p.ageGroup === 'child') {
     banner.className = 'age-banner child';
-    banner.innerHTML = `🧒 <strong>${p.name}</strong> (어린이 ${p.age}세) — 성장 잠재력을 고려해 비발치/2단계 치료를 우선 검토합니다.`;
+    banner.innerHTML = `
+      <div style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="flex:1; min-width:240px;">
+          🧒 <strong>${p.name}</strong> (어린이 ${p.age}세) — <strong>성장 잠재력 활용 우선</strong>.<br>
+          <span style="font-size:12px;">발치 점수에 자동 -25점 가중치가 적용되어 권장도가 낮게 나옵니다. 이는 정상 동작이며, 어린이는 일반적으로 <strong>성장 예측</strong>이 더 적합합니다.</span>
+        </div>
+        <a href="growth-prediction.html" class="btn btn-primary btn-sm" style="white-space:nowrap;">📈 성장 예측으로 →</a>
+      </div>
+    `;
   } else {
     banner.innerHTML = `👤 <strong>${p.name}</strong> (성인 ${p.age || '?'}세) — 표준 성인 룰셋이 적용됩니다.`;
   }
