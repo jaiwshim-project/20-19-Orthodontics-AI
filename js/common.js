@@ -61,11 +61,11 @@
 
     shell.innerHTML = `
       <aside class="sidebar" id="sidebar">
-        <div class="brand" style="flex-direction:column; align-items:center; padding:14px 4px 20px;">
-          <a href="index.html" style="display:block; width:100%;">
-            <img src="assets/logo.png" alt="Orthodontics AI — Intelligent Planning. Beautiful Results." style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto;">
+        <div class="brand" style="flex-direction:column; align-items:stretch; padding:14px 8px 20px;">
+          <a href="index.html" aria-label="Orthodontics AI — 홈으로">
+            <img src="assets/logo.png" alt="Orthodontics AI — Intelligent Planning. Beautiful Results.">
           </a>
-          <div style="font-size:10px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:8px;">v0.1 · 20-19</div>
+          <div style="font-size:10px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:10px; text-align:center;">v0.1 · 20-19</div>
         </div>
         <nav>${navHtml}</nav>
         <div style="margin-top:24px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; font-size:12px; color: var(--text-muted);">
@@ -443,8 +443,8 @@
     footer.innerHTML = `
       <div class="footer-top">
         <div class="footer-brand">
-          <img src="assets/logo.png" alt="Orthodontics AI" style="width:240px; max-width:100%; height:auto; display:block; margin-bottom:14px;">
-          <div class="brand-text" style="margin-bottom:14px;">
+          <img src="assets/logo.png" alt="Orthodontics AI">
+          <div class="brand-text" style="margin: 14px 0;">
             <span>by 20-19 · Seoul</span>
           </div>
           <p>교정치과 의사를 위한 AI 진단·치료계획·재발 예측 통합 플랫폼.<br>
