@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="환자 진단 이력 — 4종 AI 진단 결과를 한 화면에서 검토.">
+<meta property="og:title" content="환자 진단 이력 · Orthodontics AI">
+<title>환자 이력 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .patient-hero {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .ph-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .ph-name { font-size: 28px; font-weight: 800; }
+  .ph-meta { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .ph-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+  .ph-stat { text-align: center; min-width: 80px; }
+  .ph-stat .num { font-size: 24px; font-weight: 700; color: var(--color-primary); }
+  .ph-stat .lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .type-tabs { display: flex; gap: 4px; margin-bottom: 16px; padding: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 12px; }
+  .type-tabs button {
+    flex: 1; padding: 10px; background: transparent; border: none;
+    color: var(--text-secondary); cursor: pointer; border-radius: 8px;
+    font-weight: 500; font-size: 13px; transition: all .2s;
+  }
+  .type-tabs button.active { background: var(--gradient-primary); color: #fff; font-weight: 600; }
+  .type-tabs button .cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 999px; background: rgba(255,255,255,0.18); font-size: 10px; }
+
+  .diag-card {
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg); padding: 20px;
+    margin-bottom: 14px;
+    transition: border-color .15s;
+  }
+  .diag-card:hover { border-color: rgba(14,165,233,0.4); }
+  .diag-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .diag-meta { font-size: 12px; color: var(--text-muted); }
+  .diag-score { font-size: 32px; font-weight: 800; }
+  .diag-summary { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6; }
+  .diag-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .reasoning-strip li { padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 4px; font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+
+<div style="margin-bottom:16px;">
+  <a href="dashboard.html" class="btn btn-ghost btn-sm">← 대시보드로</a>
+  <button class="btn btn-ghost btn-sm" onclick="window.openPatientModal()">↻ 다른 환자 선택</button>
+</div>
+
+<div id="loading" style="text-align:center; padding:60px; color:var(--text-muted);">불러오는 중…</div>
+<div id="empty" class="empty-state" style="display:none;">
+  <h3>환자를 찾을 수 없습니다</h3>
+  <p>URL이 잘못되었거나 환자 데이터가 삭제되었습니다.</p>
+  <a href="dashboard.html" class="btn btn-primary mt-4">대시보드로</a>
+</div>
+
+<div id="content" style="display:none;">
+
+  <div class="patient-hero">
+    <div class="ph-row">
+      <div>
+        <div class="ph-name" id="pName">—</div>
+        <div class="ph-meta" id="pMeta">—</div>
+      </div>
+      <div class="ph-stats" id="pStats"></div>
+    </div>
+  </div>
+
+  <div class="type-tabs" id="typeTabs"></div>
+
+  <div id="diagList"></div>
+
+  <div class="card mt-4">
+    <h3 style="margin-bottom:12px;">📊 새 진단 시작</h3>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">현재 환자(<span id="actName">—</span>)에 대해 추가 진단을 진행하세요.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <a href="extraction-ai.html" class="btn btn-primary">🦷 발치 판단</a>
+      <a href="growth-prediction.html" class="btn btn-ghost">📈 성장 예측</a>
+      <a href="facial-simulation.html" class="btn btn-ghost">👤 안모 시뮬</a>
+      <a href="recurrence-prediction.html" class="btn btn-ghost">🔁 재발 예측</a>
+    </div>
+  </div>
+
+</div>
+
+</div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/diagnosis-store.js"></script>
+<script>
+const TYPE_LABELS = {
+  all:        { label: '전체', icon: '📋' },
+  extraction: { label: '발치 판단', icon: '🦷' },
+  growth:     { label: '성장 예측', icon: '📈' },
+  facial:     { label: '안모 시뮬', icon: '👤' },
+  recurrence: { label: '재발 예측', icon: '🔁' }
+};
+const REC_KO = { extract: '발치 권장', non_extract: '비발치 권장', borderline: '경계' };
+const STATUS_KO = {
+  pending_review: { label: '검토 대기', cls: 'badge-warning' },
+  reviewed:       { label: '검토 완료', cls: 'badge-primary' },
+  accepted:       { label: '✓ 수용',   cls: 'badge-success' },
+  rejected:       { label: '✗ 거부',   cls: 'badge-danger'  },
+  archived:       { label: '📦 보관',  cls: 'badge-primary' }
+};
+
+let PATIENT = null;
+let DIAGNOSES = [];
+let CURRENT_TYPE = 'all';
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function init() {
+  const params = new URLSearchParams(location.search);
+  let patientId = params.get('id');
+  // active patient에서 fallback
+  if (!patientId) {
+    const active = window.PatientStore.get();
+    patientId = active?.supabaseId || active?.id;
+  }
+  if (!patientId) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    document.getElementById('empty').innerHTML = `
+      <h3>환자가 선택되지 않았습니다</h3>
+      <p>먼저 환자를 선택해 주세요.</p>
+      <button class="btn btn-primary mt-4" onclick="window.openPatientModal()">환자 선택</button>
+    `;
+    return;
+  }
+
+  // 환자 정보 + 모든 진단 로드
+  try {
+    const url = (window.API_BASE || '') + '/api/get-patients';
+    const res = await fetch(url);
+    const data = await res.json();
+    PATIENT = (data.records || []).find(p => p.id === patientId);
+    if (!PATIENT) {
+      // local-only 환자일 수 있음
+      const active = window.PatientStore.get();
+      if (active?.id === patientId || active?.supabaseId === patientId) {
+        PATIENT = {
+          id: patientId,
+          name: active.name,
+          dob: active.dob,
+          age_group: active.ageGroup,
+          gender: active.gender,
+          age: active.age,
+          diagnosis_count: 0
+        };
+      } else {
+        showEmpty();
+        return;
+      }
+    }
+    // 진단 목록
+    const diagRes = await window.DiagnosisStore.list({ limit: 200 });
+    DIAGNOSES = (diagRes.records || []).filter(d =>
+      d.patient_id === patientId ||
+      d.patient?.id === patientId ||
+      d.patient?.name === PATIENT.name
+    );
+    render();
+  } catch (e) {
+    showEmpty(e.message);
+  }
+}
+
+function showEmpty(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('empty').style.display = 'block';
+  if (msg) document.getElementById('empty').innerHTML += `<p style="color:var(--color-danger);">${escapeHtml(msg)}</p>`;
+}
+
+function render() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+
+  // Hero
+  const ageGrp = PATIENT.age_group === 'child' ? '어린이' : '성인';
+  const gender = PATIENT.gender === 'male' ? '남' : PATIENT.gender === 'female' ? '여' : '—';
+  const ageInfo = PATIENT.age != null ? `${PATIENT.age}세` : (PATIENT.dob || '');
+  document.getElementById('pName').textContent = PATIENT.name;
+  document.getElementById('pMeta').innerHTML = `${ageInfo} · ${ageGrp} · ${gender} ${PATIENT.dob ? '· 생 ' + PATIENT.dob : ''}`;
+  document.getElementById('actName').textContent = PATIENT.name;
+
+  const counts = { extraction:0, growth:0, facial:0, recurrence:0 };
+  DIAGNOSES.forEach(d => { if (counts[d.type] != null) counts[d.type]++; });
+  const accepted = DIAGNOSES.filter(d => d.result?.status === 'accepted').length;
+  const lastRecurr = DIAGNOSES.filter(d => d.type === 'recurrence').sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''))[0]?.result?.probabilities?.y10;
+
+  document.getElementById('pStats').innerHTML = `
+    <div class="ph-stat"><div class="num">${DIAGNOSES.length}</div><div class="lbl">총 진단</div></div>
+    <div class="ph-stat"><div class="num" style="color:var(--color-success);">${accepted}</div><div class="lbl">수용됨</div></div>
+    <div class="ph-stat"><div class="num" style="color:var(--color-warning);">${lastRecurr != null ? Math.round(lastRecurr) + '%' : '—'}</div><div class="lbl">재발 위험</div></div>
+  `;
+
+  // Tabs
+  document.getElementById('typeTabs').innerHTML = ['all', 'extraction', 'growth', 'facial', 'recurrence'].map(t => {
+    const cnt = t === 'all' ? DIAGNOSES.length : (counts[t] || 0);
+    return `<button class="${CURRENT_TYPE === t ? 'active' : ''}" data-type="${t}">${TYPE_LABELS[t].icon} ${TYPE_LABELS[t].label}<span class="cnt">${cnt}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#typeTabs button').forEach(b => {
+    b.onclick = () => { CURRENT_TYPE = b.dataset.type; render(); };
+  });
+
+  renderList();
+}
+
+function renderList() {
+  const filtered = CURRENT_TYPE === 'all' ? DIAGNOSES : DIAGNOSES.filter(d => d.type === CURRENT_TYPE);
+  const sorted = filtered.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+  const list = document.getElementById('diagList');
+  if (!sorted.length) {
+    list.innerHTML = `<div class="empty-state">
+      <p>${CURRENT_TYPE === 'all' ? '저장된 진단이 없습니다.' : `${TYPE_LABELS[CURRENT_TYPE].label} 진단이 없습니다.`}</p>
+      <p style="font-size:12px; margin-top:8px;">아래 새 진단 시작 영역에서 분석 후 저장하세요.</p>
+    </div>`;
+    return;
+  }
+  list.innerHTML = sorted.map(d => {
+    const r = d.result || {};
+    const status = STATUS_KO[r.status || 'pending_review'];
+    const recLabel = REC_KO[r.recommendation] || r.recommendation || '';
+    const score = r.score != null ? Math.round(r.score) : '—';
+    const date = new Date(d.created_at).toLocaleString('ko-KR');
+    const typeLabel = TYPE_LABELS[d.type]?.label || d.type;
+    const reasoning = (r.reasoning || []).slice(0, 2);
+    const teeth = (r.teeth || []).join(', ');
+    const probs = r.probabilities;
+    const probLine = probs ? `1년 ${Math.round(probs.y1||0)}% · 3년 ${Math.round(probs.y3||0)}% · 5년 ${Math.round(probs.y5||0)}% · 10년 ${Math.round(probs.y10||0)}%` : '';
+
+    return `
+      <div class="diag-card">
+        <div class="diag-head">
+          <div>
+            <span class="badge badge-primary">${TYPE_LABELS[d.type]?.icon || ''} ${typeLabel}</span>
+            <span class="badge ${status.cls}" style="margin-left:6px;">${status.label}</span>
+            <div class="diag-meta" style="margin-top:6px;">${date}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="diag-score gradient-text">${score}</div>
+            <div style="font-size:11px; color:var(--text-muted);">권장도</div>
+          </div>
+        </div>
+        <div class="diag-summary">
+          ${recLabel ? `<strong style="color:var(--color-primary);">${escapeHtml(recLabel)}</strong>${teeth ? ` · 권장 발치: ${escapeHtml(teeth)}` : ''}` : ''}
+          ${probLine ? `<br>📊 ${probLine}` : ''}
+        </div>
+        ${reasoning.length ? `
+        <ul class="reasoning-strip" style="list-style:none; padding:0; margin: 8px 0 12px;">
+          ${reasoning.map(x => `<li>${escapeHtml(x)}</li>`).join('')}
+        </ul>` : ''}
+        <div class="diag-actions">
+          <a href="patient-detail.html?id=${encodeURIComponent(d.id)}" class="btn btn-primary btn-sm">📖 전체 보기 / 검토</a>
+          <button class="btn btn-ghost btn-sm" onclick='copyJson(${JSON.stringify(JSON.stringify(d))})'>📋 JSON 복사</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.copyJson = function (json) {
+  navigator.clipboard.writeText(json).then(() => window.toast('JSON이 클립보드에 복사되었습니다.', 'success'));
+};
+
+init();
+</script>
+</body>
+</html>

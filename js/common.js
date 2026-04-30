@@ -18,9 +18,10 @@
       { path: 'recurrence-prediction.html', label: '재발 예측',     icon: '🔁' }
     ]},
     { group: '도구', items: [
-      { path: '3d-viewer.html', label: '3D 뷰어 (EZL-STL)', icon: '🧊' },
-      { path: 'chatbot.html',   label: 'RAG 챗봇',           icon: '💬' },
-      { path: 'dashboard.html', label: '환자 대시보드',      icon: '📊' }
+      { path: '3d-viewer.html',       label: '3D 뷰어 (EZL-STL)', icon: '🧊' },
+      { path: 'chatbot.html',         label: 'RAG 챗봇',           icon: '💬' },
+      { path: 'dashboard.html',       label: '환자 대시보드',      icon: '📊' },
+      { path: 'patient-history.html', label: '환자 이력',          icon: '📂' }
     ]},
     { group: '문서', items: [
       { path: 'manual.html',       label: '매뉴얼',     icon: '📖' },
@@ -348,7 +349,15 @@
         supabaseId: p.id
       });
       backdrop.remove();
-      window.toast(`${p.name} 환자를 선택했습니다 (진단 ${p.diagnosis_count}건).`, 'success');
+      // 진단 이력이 있으면 history 페이지로 안내, 없으면 그냥 활성화만
+      if (p.diagnosis_count > 0) {
+        const goHistory = confirm(`${p.name} 환자가 선택되었습니다.\n저장된 진단 ${p.diagnosis_count}건이 있습니다.\n\n[확인] 이전 진단 결과 보기 → patient-history.html\n[취소] 현재 페이지 유지 (활성 환자만 변경)`);
+        if (goHistory) {
+          window.location.href = `patient-history.html?id=${encodeURIComponent(p.id)}`;
+          return;
+        }
+      }
+      window.toast(`${p.name} 환자를 선택했습니다.`, 'success');
     }
 
     // Search debounce
