@@ -600,19 +600,34 @@ function computeRuleScore() {
 async function callGemini() {
   const patient = window.PatientStore.get() || { ageGroup: 'adult' };
   const inputs = getInputs();
-  window.toast('Gemini 호출 중... (응답까지 몇 초 소요)', 'info');
+  const btn = document.querySelector('button[onclick="callGemini()"]');
+  if (btn) { btn.disabled = true; btn.dataset._orig = btn.textContent; btn.textContent = '🧠 분석 중... (5-30초)'; }
+  window.toast('Gemini 호출 중... 첫 호출은 cold start로 15-25초 걸릴 수 있습니다.', 'info', 4000);
+  // 룰베이스 점수를 즉시 표시 (사용자 빈 화면 방지)
+  computeRuleScore();
   try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 35000);
     const res = await window.apiFetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'extraction', patient, inputs })
+      body: JSON.stringify({ type: 'extraction', patient, inputs }),
+      signal: ctrl.signal
     });
+    clearTimeout(timer);
     const data = await res.json();
-    if (data.fallback) window.toast('AI 호출 실패 — 룰베이스로 폴백되었습니다.', 'warning');
+    if (data.fallback) {
+      window.toast('AI 호출 실패 — 룰베이스 결과를 표시합니다.', 'warning', 4000);
+    } else {
+      window.toast('✅ Gemini 분석 완료', 'success');
+    }
     renderResult(data);
   } catch (e) {
-    window.toast('AI 호출 실패: ' + e.message, 'error');
+    const msg = e.name === 'AbortError' ? '응답 시간 초과 (35초). 룰베이스 결과 표시.' : 'AI 호출 실패: ' + e.message;
+    window.toast(msg, 'error', 4500);
     computeRuleScore();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset._orig || '🧠 Gemini AI 분석'; }
   }
 }
 

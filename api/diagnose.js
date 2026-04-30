@@ -114,13 +114,17 @@ export default async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       systemInstruction: PROMPTS[type],
       generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
     });
 
     const userMsg = `환자: ${JSON.stringify(cleanPatient)}\n입력: ${JSON.stringify(cleanInputs)}\n\nJSON으로만 응답하세요.`;
-    const result = await model.generateContent(userMsg);
+    // 30초 timeout으로 Gemini 응답 보호
+    const result = await Promise.race([
+      model.generateContent(userMsg),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 30s')), 30000))
+    ]);
     const text = result.response.text();
 
     let parsed;
