@@ -32,8 +32,9 @@
       { path: 'chatbot.html',         label: 'RAG 챗봇',           icon: '💬' }
     ]},
     { group: '문서', items: [
-      { path: 'manual.html',       label: '매뉴얼',     icon: '📖' },
-      { path: 'architecture.html', label: '아키텍처',   icon: '🗺️' }
+      { path: 'manual.html',       label: '매뉴얼',           icon: '📖' },
+      { path: 'architecture.html', label: '아키텍처',         icon: '🗺️' },
+      { path: 'ai-engines.html',   label: 'AI 엔진 구조도',   icon: '🧬' }
     ]}
   ];
 
@@ -504,6 +505,133 @@
     return svg;
   }
 
+  // -------- AI 엔진 구조도 SVG (전역 노출 — ai-engines.html에서 재사용) --------
+  window.ENGINE_DEFS = window.ENGINE_DEFS || {};
+  const ENGINE_DEFS = window.ENGINE_DEFS;
+  Object.assign(ENGINE_DEFS, {
+    extraction: {
+      code: 'TSC-1',
+      name: '발치 판단 AI',
+      subtitle: 'Tweed-Steiner Composite',
+      page: 'extraction-ai.html',
+      color: '#0EA5E9',
+      inputs: ['ANB·Crowding·Overjet', 'Overbite·Profile·LipStrain', 'FMA·IMPA', 'EZL/TTL (김용은 박사)'],
+      process: ['룰베이스 사전 점수', 'Tweed/Steiner/Down 분석', 'EZL−TTL 균형 가중', '어린이 -25 가중치', 'Gemini 2.5 Flash'],
+      output: ['score 0-100', 'extract / non_extract / borderline', 'FDI 권장 발치 치아', '5 근거 + 위험 + 대안']
+    },
+    growth: {
+      code: 'CMG-1',
+      name: '성장 예측 AI',
+      subtitle: 'CVMS × Mid-Parental',
+      page: 'growth-prediction.html',
+      color: '#10B981',
+      inputs: ['신장 · 체중', '부모 키 (mid-parental)', '골연령 · 역연령', 'CVMS 1-6'],
+      process: ['Tanner mid-parental 공식', 'CVMS factor (CS3=0.55)', '골연령-역연령 ageDelta×0.8', 'Gemini 2.5 Flash'],
+      output: ['잔여 성장량 (cm)', 'skeletalStage', 'peak velocity 시점', '권장 치료 시기']
+    },
+    facial: {
+      code: 'LPI-1',
+      name: '안모 시뮬레이션',
+      subtitle: 'Lateral Profile Interpolation',
+      page: 'facial-simulation.html',
+      color: '#8B5CF6',
+      inputs: ['상악 후방 (mm)', '하악 전후방 (mm)', '상순 · 하순 (mm)', '턱 (Pogonion, mm)'],
+      process: ['SVG vertex morph', 'Soft tissue 60-70% 비율', 'E-line (Ricketts) 측정', '코-턱 비율', 'Gemini 의미 해석'],
+      output: ['profileShift', 'lipPosition', 'chinPosition', '권장도 + 5 근거']
+    },
+    recurrence: {
+      code: 'MFR-1',
+      name: '재발 예측 AI',
+      subtitle: 'Multi-Factor Relapse',
+      page: 'recurrence-prediction.html',
+      color: '#F59E0B',
+      inputs: ['IMPA · 절치 변화', '보정장치 4종', '보정 기간 · 협조도', '잔여 Crowding · 사랑니'],
+      process: ['baseline 25%', '8 가중치 합산', '시간 분포 (y1×0.18 ~ y10×1.0)', 'Gemini structured output'],
+      output: ['1·3·5·10년 확률', '권장 보정 프로토콜', '위험 요인 우선순위', '권장 대책']
+    }
+  });
+
+  window.buildEngineArchSVG = buildEngineArchSVG;
+  function buildEngineArchSVG(key) {
+    const E = ENGINE_DEFS[key];
+    if (!E) return '';
+    const W = 520, H = 340;
+    const rowH = 24;
+    const inputX = 20, inputW = 140;
+    const procX = 200, procW = 180;
+    const outputX = 410, outputW = 100;
+    const startY = 70;
+
+    // Header
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; display:block;">
+      <defs>
+        <linearGradient id="hdr-${key}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="${E.color}"/>
+          <stop offset="100%" stop-color="${E.color}" stop-opacity="0.4"/>
+        </linearGradient>
+        <marker id="arr-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="${E.color}"/></marker>
+      </defs>
+      <rect x="10" y="10" width="${W-20}" height="40" rx="10" fill="url(#hdr-${key})" stroke="${E.color}" stroke-width="1"/>
+      <text x="22" y="32" fill="#fff" font-size="11" font-weight="800" font-family="Inter,sans-serif" letter-spacing="1.5">${E.code}</text>
+      <text x="80" y="32" fill="#fff" font-size="14" font-weight="700" font-family="Pretendard,sans-serif">${E.name}</text>
+      <text x="${W-20}" y="32" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="10" font-family="Inter,sans-serif" font-style="italic">${E.subtitle}</text>`;
+
+    // Section labels
+    svg += `<text x="${inputX + inputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">INPUT</text>
+            <text x="${procX + procW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">PROCESS</text>
+            <text x="${outputX + outputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">OUTPUT</text>`;
+
+    // Input nodes
+    E.inputs.forEach((label, i) => {
+      const y = startY + i * (rowH + 6);
+      svg += `<rect x="${inputX}" y="${y}" width="${inputW}" height="${rowH}" rx="5" fill="${E.color}" fill-opacity="0.08" stroke="${E.color}" stroke-width="0.8" stroke-opacity="0.4"/>
+              <text x="${inputX + 8}" y="${y + rowH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="10" font-family="Pretendard,sans-serif">${label}</text>
+              <line x1="${inputX + inputW + 2}" y1="${y + rowH/2}" x2="${procX - 2}" y2="${y + rowH/2 + (E.inputs.length-1-i*1.5)*0}" stroke="${E.color}" stroke-width="0.8" opacity="0.4" marker-end="url(#arr-${key})"/>`;
+    });
+
+    // Process box (single big box)
+    const procH = (rowH + 6) * E.process.length + 16;
+    const procY = startY - 4;
+    svg += `<rect x="${procX}" y="${procY}" width="${procW}" height="${procH}" rx="8" fill="${E.color}" fill-opacity="0.14" stroke="${E.color}" stroke-width="1.2"/>`;
+    E.process.forEach((label, i) => {
+      const y = procY + 12 + i * (rowH + 6);
+      const isAI = label.toLowerCase().includes('gemini');
+      svg += `<rect x="${procX + 8}" y="${y}" width="${procW - 16}" height="${rowH}" rx="4" fill="${isAI ? '#fff' : 'rgba(0,0,0,0.3)'}" fill-opacity="${isAI ? 0.12 : 0.4}"/>
+              <text x="${procX + 14}" y="${y + rowH/2 + 4}" fill="${isAI ? E.color : 'rgba(229,231,235,0.85)'}" font-size="10" font-weight="${isAI ? '700' : '500'}" font-family="Pretendard,sans-serif">${isAI ? '🧠 ' : ''}${label}</text>`;
+    });
+
+    // Output nodes
+    E.output.forEach((label, i) => {
+      const y = startY + i * (rowH + 6);
+      svg += `<line x1="${procX + procW + 2}" y1="${y + rowH/2}" x2="${outputX - 2}" y2="${y + rowH/2}" stroke="${E.color}" stroke-width="0.8" opacity="0.4" marker-end="url(#arr-${key})"/>
+              <rect x="${outputX}" y="${y}" width="${outputW}" height="${rowH}" rx="5" fill="${E.color}" fill-opacity="0.18" stroke="${E.color}" stroke-width="1"/>
+              <text x="${outputX + outputW/2}" y="${y + rowH/2 + 4}" text-anchor="middle" fill="#fff" font-size="9" font-weight="600" font-family="Pretendard,sans-serif">${label}</text>`;
+    });
+
+    // Footer link
+    svg += `<a href="${E.page}" target="_self">
+              <rect x="${W/2 - 60}" y="${H - 32}" width="120" height="22" rx="11" fill="${E.color}" fill-opacity="0.2" stroke="${E.color}" stroke-width="1"/>
+              <text x="${W/2}" y="${H - 17}" text-anchor="middle" fill="#fff" font-size="10" font-weight="600" font-family="Pretendard,sans-serif">${E.name} 페이지 →</text>
+            </a>`;
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function buildAIArchSection() {
+    return `
+      <div class="footer-archs-link">
+        <a href="ai-engines.html" class="footer-arch-cta">
+          <div class="cta-ico">🧬</div>
+          <div>
+            <strong>AI 엔진 구조도 보기</strong>
+            <span>TSC-1 발치 · CMG-1 성장 · LPI-1 안모 · MFR-1 재발 — 4탭 비교</span>
+          </div>
+          <div class="cta-arrow">→</div>
+        </a>
+      </div>
+    `;
+  }
+
   // -------- Premium Footer --------
   function renderFooter() {
     if (document.querySelector('.site-footer')) return; // 중복 방지
@@ -567,6 +695,8 @@
           </ul>
         </div>
       </div>
+
+      ${buildAIArchSection()}
 
       <div class="footer-sitemap">
         <div class="footer-sitemap-inner">

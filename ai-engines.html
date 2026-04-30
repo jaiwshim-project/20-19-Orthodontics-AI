@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="4개 AI 엔진의 알고리즘 구조도 — TSC-1 / CMG-1 / LPI-1 / MFR-1.">
+<meta property="og:title" content="AI 엔진 구조도 · Orthodontics AI">
+<title>AI 엔진 구조도 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .eng-hero { text-align: center; padding: 32px 24px 8px; }
+  .eng-hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 8px; }
+  .eng-hero p { color: var(--text-muted); max-width: 720px; margin: 0 auto; font-size: 14px; }
+
+  .eng-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    max-width: 880px;
+    margin: 24px auto 28px;
+    padding: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+  }
+  @media (max-width: 768px) { .eng-tabs { grid-template-columns: repeat(2, 1fr); } }
+  .eng-tabs button {
+    padding: 14px 10px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all .25s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .eng-tabs button:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+  .eng-tabs button.active { color: #fff; font-weight: 700; box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
+  .eng-tabs button.active[data-engine="extraction"] { background: linear-gradient(135deg, #0EA5E9, #0284C7); }
+  .eng-tabs button.active[data-engine="growth"]    { background: linear-gradient(135deg, #10B981, #059669); }
+  .eng-tabs button.active[data-engine="facial"]    { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+  .eng-tabs button.active[data-engine="recurrence"]{ background: linear-gradient(135deg, #F59E0B, #D97706); }
+  .eng-tabs .code { font-size: 10px; opacity: 0.85; letter-spacing: 1.5px; font-weight: 800; }
+  .eng-tabs .name { font-size: 14px; font-weight: 600; }
+
+  .eng-panel { display: none; animation: fadeIn .3s ease; }
+  .eng-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+
+  .eng-arch-wrap {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .eng-arch-wrap svg { width: 100%; max-width: 1100px; height: auto; display: block; margin: 0 auto; }
+
+  .eng-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .eng-meta-card { padding: 18px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; }
+  .eng-meta-card h3 { font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .eng-meta-card ul { list-style: none; padding: 0; margin: 0; }
+  .eng-meta-card ul li {
+    padding: 8px 0; font-size: 13px; color: var(--text-secondary);
+    border-bottom: 1px dashed var(--border-subtle); line-height: 1.5;
+  }
+  .eng-meta-card ul li:last-child { border-bottom: none; }
+  .eng-meta-card ul li::before { content: '▸ '; color: var(--color-primary); font-weight: 700; }
+
+  .eng-cta {
+    margin-top: 16px;
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.06));
+    border: 1px solid rgba(14,165,233,0.25);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .eng-cta a { margin: 0 4px; }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+
+<section class="eng-hero">
+  <span class="badge badge-accent">Architecture</span>
+  <h1 style="margin-top:8px;">AI 엔진 구조도</h1>
+  <p>4가지 AI 엔진(발치 판단 · 성장 예측 · 안모 시뮬 · 재발 예측)의 데이터 플로우와 알고리즘 구성을 한 화면에서 비교합니다.</p>
+</section>
+
+<div class="container">
+
+<div class="eng-tabs" role="tablist">
+  <button class="active" data-engine="extraction"><span class="code">TSC-1</span><span class="name">🦷 발치 판단</span></button>
+  <button data-engine="growth"><span class="code">CMG-1</span><span class="name">📈 성장 예측</span></button>
+  <button data-engine="facial"><span class="code">LPI-1</span><span class="name">👤 안모 시뮬</span></button>
+  <button data-engine="recurrence"><span class="code">MFR-1</span><span class="name">🔁 재발 예측</span></button>
+</div>
+
+<div id="panels"></div>
+
+</div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+const ENGINE_KEYS = ['extraction', 'growth', 'facial', 'recurrence'];
+
+const ENGINE_DETAIL = {
+  extraction: {
+    formula: 'score = Σ(Crowding×6 + |ANB-2|×5 + Profile + Lip + Overjet + |IMPA-90|×0.6 + EZL/TTL부조화×4) − 어린이25',
+    references: [
+      'Tweed CH 1946 — FMA-IMPA 분석',
+      'Steiner CC 1953 — SNA·SNB·ANB',
+      'Proffit WR 2018 — Crowding 분류',
+      '김용은 박사 — EZL/TTL 균형 + Buccinator'
+    ],
+    notes: [
+      '룰베이스 사전 점수는 즉시 갱신, Gemini 정밀 분석은 수동 트리거',
+      '어린이 환자는 자동 -25 가중치 (성장 우선 정책)',
+      '신뢰도 70% 미만 응답 시 추가 검사(CBCT, Pano) 권장',
+      'Class III concave 환자: 발치 단독 해결 불가, 수술 검토'
+    ],
+    docPath: 'docs/engines/ENGINE_EXTRACTION.md'
+  },
+  growth: {
+    formula: 'remaining = max(0, (target − height) × growthFactor[CVMS] − (boneAge − chronAge) × 0.8)',
+    references: [
+      'Baccetti T 2005 — CVMS 6단계',
+      'Tanner JM 1976 — Mid-parental height',
+      'Greulich-Pyle 1959 — Hand-wrist 골연령',
+      'Hägg-Taranger 1982 — 사춘기 가속기'
+    ],
+    notes: [
+      'CVMS 3 = peak velocity, 골격 치료 골든타임',
+      '신장·체중은 사진 측정 불가 — 직접 입력 필수',
+      '성별 보정 ±13cm로 mid-parental 산출',
+      '6개월 단위 재측정 권장'
+    ],
+    docPath: 'docs/engines/ENGINE_GROWTH.md'
+  },
+  facial: {
+    formula: 'after.Ls.x = before.Ls.x − (maxRetract × 2.2 × 0.6) + (lipUpper × 2.2 × 1.0)',
+    references: [
+      'Ricketts RM 1968 — E-line 미적 기준',
+      'Drobocky-Smith 1989 — Soft tissue 60-70%',
+      'Bishara SE 1998 — 장기 측면 변화',
+      'Burstone CJ 1958 — Integumental profile'
+    ],
+    notes: [
+      '1mm = 2.2px 스케일 SVG morph',
+      'E-line: 상순 -4mm, 하순 -2mm 이상적',
+      '코-턱 비율 0.45-0.55 균형',
+      '2D 측면 전용 — CBCT 3D는 V2 로드맵'
+    ],
+    docPath: 'docs/engines/ENGINE_FACIAL.md'
+  },
+  recurrence: {
+    formula: 'base = 25 + Σ(impaΔ×1.2 + |incisorShift|×3 + retainerW + complianceW + residual×4 + 사랑니8 − 발치4)',
+    references: [
+      'Little RM 1988 — 10년 retention 통계',
+      'Renkema AM 2008 — Bonded retainer',
+      'Sadowsky C 1982 — 장기 재발',
+      'Naraghi S 2010 — 사랑니 영향'
+    ],
+    notes: [
+      'baseline 25% (인구 평균)',
+      '시간 분포: y1=18% / y3=42% / y5=68% / y10=100%',
+      'Bonded -10% / Dual -15% / Hawley +5%',
+      '협조도 하 +18%, 협조도 상 -10%'
+    ],
+    docPath: 'docs/engines/ENGINE_RECURRENCE.md'
+  }
+};
+
+const TYPE_KO = { extraction: '발치 판단', growth: '성장 예측', facial: '안모 시뮬', recurrence: '재발 예측' };
+
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderPanel(key) {
+  const E = (window.ENGINE_DEFS || {})[key];
+  const detail = ENGINE_DETAIL[key];
+  if (!E || !detail) return '';
+  return `
+    <div class="eng-panel ${key === 'extraction' ? 'active' : ''}" data-panel="${key}">
+      <div class="eng-arch-wrap">
+        ${window.buildEngineArchSVG ? window.buildEngineArchSVG(key) : '<p>구조도를 로드하는 중...</p>'}
+      </div>
+
+      <div class="eng-meta-grid">
+        <div class="eng-meta-card">
+          <h3>📐 핵심 공식</h3>
+          <code style="display:block; padding:12px; background:rgba(0,0,0,0.4); border-radius:8px; font-size:11px; line-height:1.7; word-break:break-word; color:${E.color};">${escapeHtml(detail.formula)}</code>
+        </div>
+
+        <div class="eng-meta-card">
+          <h3>📚 임상 근거</h3>
+          <ul>${detail.references.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>
+        </div>
+
+        <div class="eng-meta-card">
+          <h3>💡 적용 노트</h3>
+          <ul>${detail.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul>
+        </div>
+
+        <div class="eng-meta-card">
+          <h3>🔗 입출력 요약</h3>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">INPUT</div>
+          <ul style="margin-bottom:10px;">${E.inputs.slice(0, 4).map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">OUTPUT</div>
+          <ul>${E.output.slice(0, 4).map(o => `<li>${escapeHtml(o)}</li>`).join('')}</ul>
+        </div>
+      </div>
+
+      <div class="eng-cta">
+        <strong style="font-size:15px;">${E.name}을 사용해보세요</strong>
+        <p style="margin: 6px 0 14px; font-size:13px; color:var(--text-secondary);">실제 환자 데이터로 즉시 분석 가능</p>
+        <a href="${E.page}" class="btn btn-primary">${TYPE_KO[key]} 페이지 →</a>
+        <a href="${detail.docPath}" class="btn btn-ghost" target="_blank">📖 상세 문서</a>
+      </div>
+    </div>
+  `;
+}
+
+// 4 탭 패널 한꺼번에 렌더 (common.js 로드 후)
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const panels = document.getElementById('panels');
+    panels.innerHTML = ENGINE_KEYS.map(renderPanel).join('');
+
+    // Tab switching
+    document.querySelectorAll('.eng-tabs button').forEach(b => {
+      b.onclick = () => {
+        const key = b.dataset.engine;
+        document.querySelectorAll('.eng-tabs button').forEach(x => x.classList.toggle('active', x === b));
+        document.querySelectorAll('.eng-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === key));
+        // URL hash 업데이트
+        history.replaceState(null, '', `#${key}`);
+      };
+    });
+
+    // URL hash 기반 초기 탭
+    const hash = (location.hash || '').slice(1);
+    if (ENGINE_KEYS.includes(hash)) {
+      document.querySelector(`.eng-tabs button[data-engine="${hash}"]`)?.click();
+    }
+  }, 50);
+});
+</script>
+</body>
+</html>
