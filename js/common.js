@@ -674,6 +674,7 @@
           <ul>
             <li><a href="manual.html">사용자 매뉴얼</a></li>
             <li><a href="architecture.html">시스템 아키텍처</a></li>
+            <li><a href="quote.html">📋 외주 개발 견적서 <span class="badge-mini">New</span></a></li>
             <li><a href="docs/PRD.md">제품 요구사항 (PRD)</a></li>
             <li><a href="docs/AI_AGENTS_20.md">AI 에이전트 20</a></li>
             <li><a href="docs/MVP_TO_SAAS.md">MVP → SaaS</a></li>
