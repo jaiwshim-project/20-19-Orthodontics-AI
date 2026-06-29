@@ -1,4 +1,4 @@
-/* ==============================================================
+﻿/* ==============================================================
    20-19 Orthodontics AI — Common Scripts
    사이드바, 라우팅, 토스트, 환자 스토어, i18n 골격
    ============================================================== */
@@ -11,14 +11,20 @@
     { group: '홈', items: [
       { path: 'index.html', label: '대시보드 허브', icon: '🏠' }
     ]},
-    { group: 'AI 진단', items: [
-      { path: 'extraction-ai.html',     label: '발치 판단',         icon: '🦷' },
+    { group: '진단 워크플로우(신규환자용)', items: [
+      { path: 'photo-upload.html',         label: '1단계 사진 입력',    icon: '📷' },
+      { path: 'classification.html',       label: '2단계 Class 분류',   icon: '🎯' },
+      { path: 'equilibrium-analysis.html', label: '3단계 EZ/TZ 분석',   icon: 'EZ' },
+      { path: 'extraction-ai.html',        label: '4단계 발치 판단',    icon: '🦷' }
+    ]},
+    { group: 'AI 보조', items: [
       { path: 'growth-prediction.html', label: '성장 예측',         icon: '📈' },
       { path: 'facial-simulation.html', label: '안모 시뮬레이션',   icon: '👤' },
       { path: 'recurrence-prediction.html', label: '재발 예측',     icon: '🔁' }
     ]},
     { group: '환자', items: [
       { path: 'patient-select.html',  label: '환자 선택/등록',     icon: '👤' },
+      { path: 'patient-view.html',    label: '환자 정보보기',      icon: '🔍' },
       { path: 'dashboard.html',       label: '환자 대시보드',      icon: '📊' },
       { path: 'patient-history.html', label: '환자 이력',          icon: '📂' }
     ]},
@@ -330,10 +336,23 @@
       const listEl = document.getElementById('pmList');
       listEl.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">불러오는 중…</div>';
       try {
-        const url = (window.API_BASE || '') + '/api/get-patients' + (q ? `?q=${encodeURIComponent(q)}` : '');
-        const res = await fetch(url);
-        const data = await res.json();
-        renderList(data.records || [], data.fallback);
+        let records = [];
+        try {
+          const url = (window.API_BASE || '') + '/api/get-patients' + (q ? `?q=${encodeURIComponent(q)}` : '');
+          const res = await fetch(url);
+          const data = await res.json();
+          records = data.records || [];
+          if (data.fallback) throw new Error('fallback');
+        } catch (_) {
+          const SB_URL = 'https://htqdfuuzgrjrwvdgwhlc.supabase.co';
+          const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0cWRmdXV6Z3Jqcnd2ZGd3aGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDQxMDMsImV4cCI6MjA5MzEyMDEwM30.UEpUrEy0Bf5uWOjT2VgP6avX8rQ0mHOcTjbw_D6zoaY';
+          const qParam = q ? `&name=ilike.*${encodeURIComponent(q)}*` : '';
+          const res2 = await fetch(`${SB_URL}/rest/v1/patients?select=id,name,age_group,gender,metadata,created_at&order=created_at.desc&limit=50${qParam}`, {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+          });
+          if (res2.ok) records = await res2.json();
+        }
+        renderList(records, false);
       } catch (e) {
         listEl.innerHTML = `<div style="padding:16px; color:var(--color-danger); font-size:13px;">불러오기 실패: ${escapeHtml(e.message)}</div>`;
       }
@@ -492,11 +511,11 @@
         svg += `<line x1="${linkX}" y1="${midY}" x2="${ix + 8}" y2="${midY}" stroke="${color}" stroke-width="1" opacity="0.35"/>`;
         // Item box (clickable via <a>)
         svg += `<a href="${item.path}" target="_self">
-                  <rect x="${ix + 6}" y="${iy}" width="${iw - 6}" height="${itemH}" rx="6" fill="rgba(255,255,255,0.04)" stroke="${color}" stroke-width="0.8" stroke-opacity="0.3" class="sm-item">
+                  <rect x="${ix + 6}" y="${iy}" width="${iw - 6}" height="${itemH}" rx="6" fill="#FFFFFF" stroke="${color}" stroke-width="0.8" stroke-opacity="0.35" class="sm-item">
                     <title>${item.label}</title>
                   </rect>
-                  <text x="${ix + 14}" y="${iy + itemH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="11" font-family="Inter, sans-serif">${item.icon}</text>
-                  <text x="${ix + 32}" y="${iy + itemH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="11" font-weight="500" font-family="Pretendard, sans-serif">${item.label}</text>
+                  <text x="${ix + 14}" y="${iy + itemH/2 + 4}" fill="#64748B" font-size="11" font-family="Inter, sans-serif">${item.icon}</text>
+                  <text x="${ix + 32}" y="${iy + itemH/2 + 4}" fill="#334155" font-size="11" font-weight="500" font-family="Pretendard, sans-serif">${item.label}</text>
                 </a>`;
       });
     });
@@ -577,15 +596,15 @@
       <text x="${W-20}" y="32" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="7" font-family="Inter,sans-serif" font-style="italic">${E.subtitle}</text>`;
 
     // Section labels
-    svg += `<text x="${inputX + inputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">INPUT</text>
-            <text x="${procX + procW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">PROCESS</text>
-            <text x="${outputX + outputW/2}" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">OUTPUT</text>`;
+    svg += `<text x="${inputX + inputW/2}" y="64" text-anchor="middle" fill="#94A3B8" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">INPUT</text>
+            <text x="${procX + procW/2}" y="64" text-anchor="middle" fill="#94A3B8" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">PROCESS</text>
+            <text x="${outputX + outputW/2}" y="64" text-anchor="middle" fill="#94A3B8" font-size="7" font-weight="700" font-family="Inter,sans-serif" letter-spacing="1">OUTPUT</text>`;
 
     // Input nodes
     E.inputs.forEach((label, i) => {
       const y = startY + i * (rowH + 6);
       svg += `<rect x="${inputX}" y="${y}" width="${inputW}" height="${rowH}" rx="5" fill="${E.color}" fill-opacity="0.08" stroke="${E.color}" stroke-width="0.8" stroke-opacity="0.4"/>
-              <text x="${inputX + 8}" y="${y + rowH/2 + 4}" fill="rgba(229,231,235,0.85)" font-size="7" font-family="Pretendard,sans-serif">${label}</text>
+              <text x="${inputX + 8}" y="${y + rowH/2 + 4}" fill="#334155" font-size="7" font-family="Pretendard,sans-serif">${label}</text>
               <line x1="${inputX + inputW + 2}" y1="${y + rowH/2}" x2="${procX - 2}" y2="${y + rowH/2 + (E.inputs.length-1-i*1.5)*0}" stroke="${E.color}" stroke-width="0.8" opacity="0.4" marker-end="url(#arr-${key})"/>`;
     });
 
@@ -596,8 +615,8 @@
     E.process.forEach((label, i) => {
       const y = procY + 12 + i * (rowH + 6);
       const isAI = label.toLowerCase().includes('gemini');
-      svg += `<rect x="${procX + 8}" y="${y}" width="${procW - 16}" height="${rowH}" rx="4" fill="${isAI ? '#fff' : 'rgba(0,0,0,0.3)'}" fill-opacity="${isAI ? 0.12 : 0.4}"/>
-              <text x="${procX + 14}" y="${y + rowH/2 + 4}" fill="${isAI ? E.color : 'rgba(229,231,235,0.85)'}" font-size="7" font-weight="${isAI ? '700' : '500'}" font-family="Pretendard,sans-serif">${isAI ? '🧠 ' : ''}${label}</text>`;
+      svg += `<rect x="${procX + 8}" y="${y}" width="${procW - 16}" height="${rowH}" rx="4" fill="${isAI ? '#fff' : 'rgba(255,255,255,0.55)'}" fill-opacity="1"/>
+              <text x="${procX + 14}" y="${y + rowH/2 + 4}" fill="${isAI ? E.color : '#334155'}" font-size="7" font-weight="${isAI ? '700' : '500'}" font-family="Pretendard,sans-serif">${isAI ? '🧠 ' : ''}${label}</text>`;
     });
 
     // Output nodes
@@ -660,6 +679,7 @@
           <h5>제품</h5>
           <ul>
             <li><a href="3d-viewer.html">3D 뷰어 + EZL-STL</a></li>
+            <li><a href="equilibrium-analysis.html">EZ/TZ 평형존 분석</a></li>
             <li><a href="extraction-ai.html">발치 판단 AI</a></li>
             <li><a href="growth-prediction.html">성장 예측 AI</a></li>
             <li><a href="facial-simulation.html">안모 시뮬레이션</a></li>
@@ -674,6 +694,7 @@
           <ul>
             <li><a href="manual.html">사용자 매뉴얼</a></li>
             <li><a href="architecture.html">시스템 아키텍처</a></li>
+            <li><a href="business-plan.html">📊 사업계획서 <span class="badge-mini">IR</span></a></li>
             <li><a href="quote.html">📋 외주 개발 견적서 <span class="badge-mini">New</span></a></li>
             <li><a href="docs/PRD.md">제품 요구사항 (PRD)</a></li>
             <li><a href="docs/AI_AGENTS_20.md">AI 에이전트 20</a></li>
@@ -795,3 +816,4 @@
     init();
   }
 })();
+
