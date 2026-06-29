@@ -29,7 +29,7 @@
     gap: 4px;
     margin-bottom: 24px;
     padding: 6px;
-    background: rgba(255,255,255,0.03);
+    background: #F1F5F9;
     border: 1px solid var(--border-subtle);
     border-radius: 14px;
     max-width: 480px;
@@ -50,7 +50,7 @@
     transition: all .2s;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .ps-tabs button:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+  .ps-tabs button:hover { color: var(--text-primary); background: rgba(14,165,233,0.08); }
   .ps-tabs button.active {
     background: var(--gradient-primary);
     color: #fff;
@@ -98,55 +98,50 @@
   }
 
   .patient-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
-  }
-  .pcard {
-    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     border: 1px solid var(--border-subtle);
-    border-radius: 14px;
-    padding: 18px;
-    cursor: pointer;
-    transition: all .2s;
-    position: relative;
+    border-radius: 12px;
     overflow: hidden;
   }
-  .pcard::before {
-    content:''; position:absolute; inset:0;
-    background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(139,92,246,0.04));
-    opacity: 0; transition: opacity .2s;
+  .pcard.pcard-header {
+    background: #f1f5f9;
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    cursor: default;
   }
-  .pcard:hover { transform: translateY(-2px); border-color: rgba(14,165,233,0.5); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
-  .pcard:hover::before { opacity: 1; }
-  .pcard > * { position: relative; z-index: 1; }
-  .pcard .pname {
-    font-size: 18px; font-weight: 700;
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 6px;
-  }
-  .pcard .pmeta { font-size: 12px; color: var(--text-secondary); margin-bottom: 14px; }
-  .pcard .pstats {
-    display: flex; gap: 16px;
-    padding: 10px 0;
-    border-top: 1px solid var(--border-subtle);
+  .pcard.pcard-header:hover { background: #f1f5f9; }
+  .pcard {
+    display: flex; align-items: center; gap: 0;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: background .1s;
     border-bottom: 1px solid var(--border-subtle);
-    margin-bottom: 12px;
+    font-size: 12px;
   }
-  .pcard .pstat { flex: 1; }
-  .pcard .pstat-num { font-size: 18px; font-weight: 700; color: var(--color-primary); }
-  .pcard .pstat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .pcard .ptypes { display:flex; flex-wrap:wrap; gap:4px; margin-bottom: 12px; min-height: 22px; }
-  .pcard .ptype {
-    font-size: 10px; padding: 3px 8px; border-radius: 4px;
-    background: rgba(14,165,233,0.12);
-    color: var(--color-primary);
-    font-weight: 500;
+  .pcard:last-child { border-bottom: none; }
+  .pcard:hover { background: rgba(14,165,233,0.04); }
+  .pcard .col-name { min-width: 130px; font-weight: 700; font-size: 13px; }
+  .pcard .col-class { width: 65px; text-align: center; }
+  .pcard .col-gender { width: 40px; text-align: center; }
+  .pcard .col-age { width: 40px; text-align: center; }
+  .pcard .col-start { width: 85px; text-align: center; color: var(--text-secondary); }
+  .pcard .col-end { width: 85px; text-align: center; color: var(--text-secondary); }
+  .pcard .col-extract { width: 65px; text-align: center; }
+  .pcard .col-status { width: 55px; text-align: center; }
+  .pcard .col-photos { width: 70px; text-align: center; color: var(--color-primary); font-weight: 600; }
+  .pcard .col-action { width: 70px; text-align: center; margin-left: auto; }
+  .pcard .col-action .btn { font-size: 11px; padding: 4px 10px; }
+  .status-complete { color: #16a34a; font-weight: 600; }
+  .status-progress { color: #d97706; font-weight: 600; }
+  .filter-row {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;
   }
-  .pcard .pactions {
-    display: flex; gap: 6px;
+  .filter-row select {
+    font-size: 12px; padding: 6px 10px; border-radius: 8px;
+    border: 1px solid var(--border-strong); background: #fff; color: var(--text-primary);
   }
-  .pcard .pactions .btn { flex: 1; }
+  .filter-row label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
   .empty-state {
     text-align: center;
@@ -222,6 +217,15 @@
     <button class="filter-btn" data-age-filter="child" id="filterChild">어린이</button>
   </div>
 
+  <div class="filter-row" id="advFilters">
+    <label>클래스</label>
+    <select id="filterClass"><option value="">전체</option><option value="class1">Class I</option><option value="class2">Class II</option><option value="class3">Class III</option></select>
+    <label>성별</label>
+    <select id="filterGender"><option value="">전체</option><option value="male">남</option><option value="female">여</option></select>
+    <label>교정상태</label>
+    <select id="filterStatus"><option value="">전체</option><option value="completed">완료</option><option value="in_progress">진행중</option></select>
+  </div>
+
   <div id="patientGrid" class="patient-grid"></div>
 
   <div id="emptyList" class="empty-state" style="display:none;">
@@ -294,15 +298,28 @@ async function loadPatients() {
   const grid = document.getElementById('patientGrid');
   grid.innerHTML = '<div class="empty-state"><div class="ico">⏳</div><p>불러오는 중...</p></div>';
   try {
-    const res = await window.apiFetch('/api/get-patients');
-    const data = await res.json();
-    ALL_PATIENTS = data.records || [];
+    let records = [];
+    try {
+      const res = await window.apiFetch('/api/get-patients');
+      const data = await res.json();
+      records = data.records || [];
+      if (data.fallback) throw new Error('fallback');
+    } catch (apiErr) {
+      // API 서버 없으면 Supabase REST 직접 호출
+      const SB_URL = 'https://htqdfuuzgrjrwvdgwhlc.supabase.co';
+      const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0cWRmdXV6Z3Jqcnd2ZGd3aGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDQxMDMsImV4cCI6MjA5MzEyMDEwM30.UEpUrEy0Bf5uWOjT2VgP6avX8rQ0mHOcTjbw_D6zoaY';
+      const res2 = await fetch(SB_URL + '/rest/v1/patients?select=id,name,age_group,gender,metadata,created_at&order=created_at.desc&limit=100', {
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+      });
+      if (res2.ok) records = await res2.json();
+    }
+    ALL_PATIENTS = records;
     document.getElementById('countList').textContent = ALL_PATIENTS.length;
-    if (data.fallback) {
+    if (!records.length) {
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
-        <div class="ico">☁️</div>
-        <h3>클라우드 미연결</h3>
-        <p>Supabase에 연결되지 않아 저장된 환자를 불러올 수 없습니다.</p>
+        <div class="ico">📋</div>
+        <h3>등록된 환자가 없습니다</h3>
+        <p>1단계 사진 입력에서 환자를 저장하거나, 신규 등록하세요.</p>
         <button class="btn btn-primary mt-4" onclick="switchTab('new')">신규 환자 등록 →</button>
       </div>`;
       return;
@@ -332,35 +349,51 @@ function renderList() {
   grid.style.display = 'grid';
   empty.style.display = 'none';
 
-  grid.innerHTML = filtered.map(p => {
-    const ageGrp = p.age_group === 'child' ? '어린이' : '성인';
-    const ageGrpCls = p.age_group === 'child' ? 'badge-warning' : 'badge-primary';
+  // 추가 필터 적용
+  const fClass = document.getElementById('filterClass').value;
+  const fGender = document.getElementById('filterGender').value;
+  const fStatus = document.getElementById('filterStatus').value;
+  if (fClass) filtered = filtered.filter(p => (p.metadata?.classification || '') === fClass);
+  if (fGender) filtered = filtered.filter(p => (p.gender || '') === fGender);
+  if (fStatus) filtered = filtered.filter(p => (p.metadata?.orthodonticStatus || '') === fStatus);
+
+  document.getElementById('countList').textContent = filtered.length;
+
+  const headerHtml = `<div class="pcard pcard-header">
+    <span class="col-name">환자명</span>
+    <span class="col-class">클래스</span>
+    <span class="col-gender">성별</span>
+    <span class="col-age">나이</span>
+    <span class="col-start">교정시작일</span>
+    <span class="col-end">교정완료일</span>
+    <span class="col-extract">발치여부</span>
+    <span class="col-status">상태</span>
+    <span class="col-photos">사진</span>
+    <span class="col-action">선택</span>
+  </div>`;
+
+  grid.innerHTML = headerHtml + filtered.map(p => {
+    const meta = p.metadata || {};
+    const status = meta.orthodonticStatus === 'completed' ? '완료' : meta.orthodonticStatus === 'in_progress' ? '진행중' : '—';
+    const statusClass = status === '완료' ? 'status-complete' : status === '진행중' ? 'status-progress' : '';
+    const cls = meta.classification ? meta.classification.replace('class', 'Class ') : '—';
     const gender = p.gender === 'male' ? '남' : p.gender === 'female' ? '여' : '—';
-    const dob = p.dob || '—';
-    const lastAt = p.last_diagnosis_at ? new Date(p.last_diagnosis_at).toLocaleDateString('ko-KR') : '—';
-    const types = (p.diagnosis_types || []).map(t => `<span class="ptype">${TYPE_KO[t] || t}</span>`).join('');
+    const age = meta.age || '—';
+    const startDate = meta.startDate || '—';
+    const endDate = meta.endDate || (status === '완료' ? '완료' : '—');
+    const photoCount = (meta.initial?.intraoral || 0) + (meta.final?.intraoral || 0);
     return `
       <div class="pcard" data-pid="${escapeHtml(p.id)}">
-        <div class="pname">
-          ${escapeHtml(p.name)}
-          <span class="badge ${ageGrpCls}" style="font-size:10px;">${ageGrp}</span>
-        </div>
-        <div class="pmeta">${gender} · 생 ${dob} · 등록 ${new Date(p.created_at).toLocaleDateString('ko-KR')}</div>
-        <div class="pstats">
-          <div class="pstat">
-            <div class="pstat-num">${p.diagnosis_count || 0}</div>
-            <div class="pstat-lbl">진단 건수</div>
-          </div>
-          <div class="pstat">
-            <div class="pstat-num">${p.last_recurrence_y10 != null ? Math.round(p.last_recurrence_y10) + '%' : '—'}</div>
-            <div class="pstat-lbl">재발 위험</div>
-          </div>
-        </div>
-        <div class="ptypes">${types || '<span style="font-size:11px; color:var(--text-muted);">진단 이력 없음</span>'}</div>
-        <div class="pactions">
-          <button class="btn btn-primary btn-sm" data-action="select">✓ 선택</button>
-          ${p.diagnosis_count > 0 ? `<button class="btn btn-ghost btn-sm" data-action="history">📂 이력</button>` : ''}
-        </div>
+        <span class="col-name">${escapeHtml(p.name)}</span>
+        <span class="col-class">${cls}</span>
+        <span class="col-gender">${gender}</span>
+        <span class="col-age">${age}</span>
+        <span class="col-start">${startDate}</span>
+        <span class="col-end">${endDate}</span>
+        <span class="col-extract">${meta.extraction || '—'}</span>
+        <span class="col-status ${statusClass}">${status}</span>
+        <span class="col-photos">${photoCount}장</span>
+        <span class="col-action"><button class="btn btn-primary btn-sm" data-action="select">✓ 선택</button></span>
       </div>
     `;
   }).join('');
@@ -379,14 +412,11 @@ function selectPatient(pid, goHistory) {
   window.PatientStore.set({
     id: p.id, supabaseId: p.id,
     name: p.name, dob: p.dob,
-    ageGroup: p.age_group, gender: p.gender, age: p.age
+    ageGroup: p.age_group, gender: p.gender, age: p.age,
+    metadata: p.metadata
   });
   window.toast(`${p.name} 환자를 선택했습니다.`, 'success');
-  if (goHistory && p.diagnosis_count > 0) {
-    window.location.href = `patient-history.html?id=${encodeURIComponent(p.id)}`;
-  } else {
-    setTimeout(() => window.location.href = 'extraction-ai.html', 600);
-  }
+  setTimeout(() => window.location.href = `patient-view.html?id=${encodeURIComponent(p.id)}`, 500);
 }
 
 function switchTab(tabName) {
@@ -457,6 +487,9 @@ document.querySelectorAll('.ps-tabs button').forEach(b => b.onclick = () => swit
 
 // Search & filter
 document.getElementById('searchInput').oninput = renderList;
+document.getElementById('filterClass').onchange = renderList;
+document.getElementById('filterGender').onchange = renderList;
+document.getElementById('filterStatus').onchange = renderList;
 document.querySelectorAll('[data-age-filter]').forEach(b => {
   b.onclick = () => {
     document.querySelectorAll('[data-age-filter]').forEach(x => x.classList.remove('active'));
