@@ -10,6 +10,9 @@
   const VERCEL_API_BASE = 'https://20-19-orthodontics-ai.vercel.app';
 
   function detectBase() {
+    if (location.protocol === 'file:') {
+      return VERCEL_API_BASE;
+    }
     const host = location.hostname;
     if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('.vercel.app')) {
       return ''; // same-origin

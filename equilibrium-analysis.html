@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZ/TZ 평형 영역 분석 | Orthodontics AI</title>
+<meta name="description" content="5방향 구강사진과 PM 기준값을 기반으로 EZ/TZ 곡선 길이를 비교하는 발치 판단 보조 도구">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-compact {
+    padding: 34px 24px 22px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: linear-gradient(135deg, rgba(14,165,233,.08), rgba(124,58,237,.06));
+  }
+  .hero-compact h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 10px; }
+  .hero-compact p { max-width: 980px; }
+  .analysis-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 22px;
+    align-items: start;
+  }
+  .content { overflow-x: hidden; }
+  .analysis-layout > *, .card, .file-slot { min-width: 0; }
+  .canvas-frame {
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f8fafc;
+    box-shadow: var(--shadow-soft);
+  }
+  canvas { display: block; width: 100%; min-height: 520px; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: #fff;
+  }
+  .toolbar .active { box-shadow: 0 0 0 3px rgba(14,165,233,.16); }
+  .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .metric {
+    padding: 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background: #fff;
+  }
+  .metric .label { font-size: 12px; color: var(--text-muted); }
+  .metric .value { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-top: 4px; }
+  .decision {
+    padding: 18px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(14,165,233,.12), rgba(124,58,237,.10));
+    border: 1px solid rgba(14,165,233,.22);
+  }
+  .decision .status { font-size: 22px; font-weight: 800; color: var(--color-primary-dark); }
+  .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .file-slot {
+    border: 1px dashed var(--border-strong);
+    border-radius: 14px;
+    padding: 12px;
+    background: #f8fafc;
+  }
+  .file-slot label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); }
+  .photo-set-list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .photo-set-item {
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+    min-height: 78px;
+  }
+  .photo-set-item strong { display:block; font-size:12px; color:var(--text-primary); margin-bottom:6px; }
+  .photo-set-item span { display:block; font-size:12px; color:var(--text-muted); word-break:break-all; }
+  .note-list { padding-left: 18px; margin-top: 10px; color: var(--text-secondary); }
+  .note-list li { margin-bottom: 6px; }
+  .dropzone {
+    border: 2px dashed var(--border-strong, #cbd5e1);
+    border-radius: 18px;
+    padding: 36px 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    transition: all .2s;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .dropzone.drag-over {
+    border-color: var(--color-primary, #0ea5e9);
+    background: linear-gradient(135deg, rgba(14,165,233,.08), rgba(124,58,237,.06));
+    transform: scale(1.01);
+  }
+  .dropzone-icon { color: #94a3b8; margin-bottom: 10px; }
+  .dropzone.drag-over .dropzone-icon { color: var(--color-primary, #0ea5e9); }
+  .dropzone-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+  .dropzone-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .dropzone-btn { display: inline-flex; }
+  .photo-set-list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .photo-set-item {
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 8px;
+    background: #fff;
+    min-height: 90px;
+    text-align: center;
+    transition: all .2s;
+  }
+  .photo-set-item.active-slot { border-color: var(--color-primary, #0ea5e9); background: rgba(14,165,233,.04); }
+  .photo-set-item.has-image { border-color: #22c55e; background: rgba(34,197,94,.04); }
+  .photo-set-item strong { display: block; font-size: 11px; color: var(--text-primary); margin-bottom: 4px; }
+  .photo-set-item span { display: block; font-size: 10px; color: var(--text-muted); word-break: break-all; }
+  .photo-thumb {
+    width: 100%; height: 52px; border-radius: 8px; margin-bottom: 6px;
+    background: #f1f5f9; background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: center;
+    color: #cbd5e1; font-size: 20px;
+  }
+  .photo-thumb.loaded { border: 2px solid #22c55e; }
+  .dropzone-mini {
+    border: 1px dashed var(--border-strong, #cbd5e1);
+    border-radius: 14px;
+    padding: 12px;
+    background: #f8fafc;
+    text-align: center;
+    transition: all .2s;
+    cursor: pointer;
+    position: relative;
+  }
+  .dropzone-mini.drag-over { border-color: var(--color-primary, #0ea5e9); background: rgba(14,165,233,.06); }
+  .dropzone-mini label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); cursor: pointer; }
+  .dropzone-mini input[type="file"] { width: 100%; font-size: 11px; }
+  .drop-thumb {
+    width: 100%; height: 48px; border-radius: 8px; margin-top: 8px;
+    background: #e2e8f0; background-size: cover; background-position: center;
+    display: none;
+  }
+  .drop-thumb.loaded { display: block; border: 2px solid #22c55e; }
+  .arch-tabs { display:flex; gap:8px; margin-bottom:12px; }
+  .arch-tabs .btn.active { background: var(--gradient-primary); color:#fff; border-color:transparent; }
+  .saved-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+    max-height: 180px;
+    overflow: auto;
+  }
+  .saved-item {
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .saved-item strong { display:block; color: var(--text-primary); font-size: 13px; margin-bottom: 4px; }
+  .ai-result-panel {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid rgba(14,165,233,.22);
+    border-radius: 16px;
+    background: #fff;
+  }
+  .ai-result-panel h4 { margin-bottom: 8px; }
+  .ai-result-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; margin-top:10px; }
+  .ai-result-card { border:1px solid var(--border-subtle); border-radius:12px; padding:12px; background:#f8fafc; }
+  .ai-result-card .label { font-size:12px; color:var(--text-muted); }
+  .ai-result-card .value { font-size:18px; font-weight:800; color:var(--text-primary); margin-top:4px; }
+  .ai-result-panel ul { padding-left:18px; margin:8px 0 0; color:var(--text-secondary); }
+  @media (max-width: 1100px) {
+    .analysis-layout { grid-template-columns: 1fr; }
+    .content { margin-left: 0; }
+    .photo-set-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .form-row, .metric-grid { grid-template-columns: 1fr; }
+    .hero-compact { padding: 28px 16px 20px; }
+    .hero-compact h1 { font-size: 2rem; }
+    .hero-compact p { overflow-wrap: anywhere; }
+    .container { padding-left: 16px; padding-right: 16px; }
+    .grid.grid-3 { grid-template-columns: 1fr; }
+    .toolbar .btn { flex: 1 1 140px; justify-content: center; }
+    canvas { min-height: 420px; }
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <section class="hero-compact">
+    <div class="container">
+      <h1>EZ/TZ 평형 영역 분석</h1>
+      <p>
+        5방향 구강사진, 측면 두부방사선 사진, 1:1 플라스틱 모델(PM)을 바탕으로 현재 치아 배열 영역(TZ)과
+        안정적 평형 영역(EZ)의 곡선 길이를 비교합니다. 초기 버전은 의사가 control point를 직접 찍는 반자동 계측 방식입니다.
+      </p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="grid grid-3" style="margin-bottom:22px;">
+      <div class="card">
+        <h4>1. 자료 업로드</h4>
+        <p>정면, 우측 측면, 좌측 측면, 상악 교합면, 하악 교합면 사진을 하나의 세트로 정리합니다.</p>
+      </div>
+      <div class="card">
+        <h4>2. EZ/TZ 표시</h4>
+        <p>교합면 사진 위에 TZ와 EZ control point를 찍으면 곡선과 길이가 자동 계산됩니다.</p>
+      </div>
+      <div class="card">
+        <h4>3. 판단 보조</h4>
+        <p>PM 스케일과 안모/치축/치주 보정 인자를 반영해 비발치, 경계, 발치 검토로 분류합니다.</p>
+      </div>
+    </div>
+
+    <div class="analysis-layout">
+      <section>
+        <div class="card" style="margin-bottom:16px;">
+          <h3>환자 및 자료</h3>
+          <div class="form-row" style="margin-top:14px;">
+            <div class="field">
+              <label for="patientName">환자명 또는 케이스 코드</label>
+              <input class="input" id="patientName" placeholder="예: CASE-0001">
+            </div>
+            <div class="field">
+              <label for="dentitionStage">치열 단계</label>
+              <select class="select" id="dentitionStage">
+                <option value="permanent_dentition">영구치열</option>
+                <option value="mixed_dentition">혼합치열</option>
+                <option value="adult">성인</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 style="margin-top:18px;">5방향 구강사진 세트</h4>
+          <div id="fromStep1Notice" style="display:none; margin-bottom:10px; padding:10px 14px; background:rgba(34,197,94,.06); border:1px solid rgba(34,197,94,.2); border-radius:12px; font-size:12px; color:#16a34a; display:none;">
+            <strong>1단계에서 입력된 사진</strong>을 자동으로 불러왔습니다. <a href="photo-upload.html" style="color:var(--color-primary);">사진 수정 →</a>
+          </div>
+          <div class="dropzone" id="photoDropzone">
+            <div class="dropzone-inner">
+              <div class="dropzone-icon">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-.87-8.914 5.25 5.25 0 0 1 10.24 0 4.5 4.5 0 0 1-.87 8.914H6.75Z"/></svg>
+              </div>
+              <p class="dropzone-title">5방향 구강사진을 여기에 드래그하세요</p>
+              <p class="dropzone-subtitle">정면 · 우측 측면 · 좌측 측면 · 상악 교합면 · 하악 교합면<br>5장을 한꺼번에 놓으면 자동으로 분류합니다</p>
+              <label class="btn btn-ghost dropzone-btn" for="photoSetFiles">또는 파일 선택</label>
+              <input type="file" id="photoSetFiles" accept="image/*" multiple style="display:none;">
+            </div>
+          </div>
+          <div class="photo-set-list" id="photoSetList">
+            <div class="photo-set-item" data-photo-slot="frontal"><div class="photo-thumb" id="thumb-frontal"></div><strong>1. 정면</strong><span>미업로드</span></div>
+            <div class="photo-set-item" data-photo-slot="rightLateral"><div class="photo-thumb" id="thumb-rightLateral"></div><strong>2. 우측 측면</strong><span>미업로드</span></div>
+            <div class="photo-set-item" data-photo-slot="leftLateral"><div class="photo-thumb" id="thumb-leftLateral"></div><strong>3. 좌측 측면</strong><span>미업로드</span></div>
+            <div class="photo-set-item" data-photo-slot="upperOcclusal"><div class="photo-thumb" id="thumb-upperOcclusal"></div><strong>4. 상악 교합면</strong><span>미업로드</span></div>
+            <div class="photo-set-item active-slot" data-photo-slot="lowerOcclusal"><div class="photo-thumb" id="thumb-lowerOcclusal"></div><strong>5. 하악 교합면</strong><span>미업로드</span></div>
+          </div>
+
+          <h4 style="margin-top:18px;">보조 자료</h4>
+          <div class="grid grid-3" style="margin-top:10px;">
+            <div class="dropzone-mini" id="dropCeph"><label>측면 두부방사선 사진</label><input type="file" accept="image/*" data-aux="ceph"><div class="drop-thumb" id="thumb-ceph"></div></div>
+            <div class="dropzone-mini" id="dropPm"><label>PM 1:1 플라스틱 모델</label><input type="file" accept="image/*" data-aux="pm"><div class="drop-thumb" id="thumb-pm"></div></div>
+            <div class="dropzone-mini" id="dropOther"><label>기타 참고자료</label><input type="file" accept="image/*" data-aux="other"><div class="drop-thumb" id="thumb-other"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="arch-tabs">
+            <button class="btn btn-primary active" id="upperTab" type="button">상악 분석</button>
+            <button class="btn btn-ghost" id="lowerTab" type="button">하악 분석</button>
+          </div>
+
+          <div class="file-slot" style="margin-bottom:12px;">
+            <label id="occlusalLabel" for="occlusalFile">분석할 상악 교합면 사진</label>
+            <input type="file" id="occlusalFile" accept="image/*">
+          </div>
+
+          <div class="canvas-frame">
+            <div class="toolbar">
+              <button class="btn btn-primary active" id="tzMode" type="button">TZ 점 찍기</button>
+              <button class="btn btn-ghost" id="ezMode" type="button">EZ 점 찍기</button>
+              <button class="btn btn-ghost" id="aiDetectBtn" type="button" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;border:none;">AI 치아 검출</button>
+              <button class="btn btn-ghost" id="autoTzBtn" type="button">TZ 자동</button>
+              <button class="btn btn-ghost" id="autoEzBtn" type="button">EZ 자동</button>
+              <button class="btn btn-ghost" id="autoBothBtn" type="button">둘 다 자동</button>
+              <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
+              <button class="btn btn-ghost" id="clearBtn" type="button">현재 삭제</button>
+              <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
+            </div>
+            <canvas id="curveCanvas" width="900" height="580"></canvas>
+            <div style="padding:10px 14px; background:#f1f5f9; border-top:1px solid var(--border-subtle); font-size:12px; color:#475569;">
+              <strong>사용법:</strong> 클릭=포인트 추가 | 드래그=포인트 이동 | 더블클릭=포인트 삭제 | 좌측 구치부→전치부→우측 구치부 순서로 14개 포인트 권장
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>스케일 및 보정</h3>
+        <div class="field">
+          <label for="knownMm">기준 거리 실제 길이(mm)</label>
+          <input class="input" type="number" id="knownMm" value="10" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label for="knownPx">같은 거리의 픽셀 길이(px)</label>
+          <input class="input" type="number" id="knownPx" value="100" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label for="scaleSource">스케일 출처</label>
+          <select class="select" id="scaleSource">
+            <option value="plastic_model">PM 1:1 모델</option>
+            <option value="known_tooth_width">알려진 치아 폭경</option>
+            <option value="ruler">사진 내 ruler</option>
+            <option value="manual">수동 입력</option>
+          </select>
+        </div>
+
+        <h3 style="margin-top:24px;">Ceph/임상 보정 인자</h3>
+        <div class="field">
+          <label for="profile">안모/입술 돌출</label>
+          <select class="select" id="profile">
+            <option value="balanced">균형</option>
+            <option value="protrusive">돌출</option>
+            <option value="retrusive">후퇴</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="incisorInclination">전치 경사</label>
+          <select class="select" id="incisorInclination">
+            <option value="normal">정상 범위</option>
+            <option value="proclined">순측 경사</option>
+            <option value="retroclined">설측 경사</option>
+          </select>
+        </div>
+        <label style="display:flex; gap:8px; align-items:center; margin:8px 0;">
+          <input type="checkbox" id="periodontalRisk"> 치주 또는 치조골 한계 있음
+        </label>
+        <label style="display:flex; gap:8px; align-items:center; margin:8px 0 18px;">
+          <input type="checkbox" id="growthPotential"> 성장 가능성 있음
+        </label>
+
+        <button class="btn btn-primary" id="analyzeBtn" type="button" style="width:100%; justify-content:center;">EZ/TZ 수동 계산</button>
+        <button class="btn btn-ghost" id="aiDiagnosisBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">AI 종합 진단</button>
+        <button class="btn btn-ghost" id="saveBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">분석 저장</button>
+
+        <hr style="border:0; border-top:1px solid var(--border-subtle); margin:22px 0;">
+
+        <div class="decision" id="decisionBox">
+          <div class="text-muted">판정 결과</div>
+          <div class="status">분석 대기</div>
+          <p style="margin-top:8px;">상악/하악 교합면 사진에서 EZ/TZ 점을 찍고 분석 계산을 누르세요.</p>
+        </div>
+
+        <div class="metric-grid" style="margin-top:14px;">
+          <div class="metric"><div class="label">상악 차이</div><div class="value" id="upperMetric">-</div></div>
+          <div class="metric"><div class="label">하악 차이</div><div class="value" id="lowerMetric">-</div></div>
+          <div class="metric"><div class="label">총 차이</div><div class="value" id="totalMetric">-</div></div>
+          <div class="metric"><div class="label">px/mm</div><div class="value" id="scaleMetric">-</div></div>
+        </div>
+
+        <ul class="note-list" id="reasonList"></ul>
+
+        <div class="ai-result-panel" id="aiResultPanel">
+          <h4>AI 종합 진단 결과</h4>
+          <p class="text-muted">구강 5방향, 세팔로, 안면사진을 업로드한 뒤 AI 종합 진단을 누르세요.</p>
+        </div>
+
+        <h3 style="margin-top:24px;">최근 저장 기록</h3>
+        <div class="saved-list" id="savedList"></div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/photo-store.js"></script>
+<script src="js/equilibrium-zone-engine.js"></script>
+<script src="js/curve-editor.js"></script>
+<script>
+(function () {
+  const state = {
+    activeArch: 'upper',
+    archData: {
+      upper: { ezPoints: [], tzPoints: [], image: null },
+      lower: { ezPoints: [], tzPoints: [], image: null }
+    },
+    files: {},
+    uploadedFiles: {},
+    lastResult: null,
+    lastAiDiagnosis: null
+  };
+
+  // === IndexedDB 세션 유지 ===
+  const DB_NAME = 'oa_eq_session';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'session';
+  const SESSION_KEY = 'current';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = () => { req.result.createObjectStore(STORE_NAME); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveSession() {
+    try {
+      // 이미지를 base64로 변환하여 저장 (DB 열기 전에 비동기 작업 완료)
+      const imageData = {};
+      for (const [key, file] of Object.entries(state.uploadedFiles)) {
+        if (file instanceof File || file instanceof Blob) {
+          imageData[key] = await fileToBase64(file);
+        }
+      }
+
+      const db = await openDB();
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+
+      const payload = {
+        activeArch: state.activeArch,
+        archData: {
+          upper: { ezPoints: state.archData.upper?.ezPoints || [], tzPoints: state.archData.upper?.tzPoints || [] },
+          lower: { ezPoints: state.archData.lower?.ezPoints || [], tzPoints: state.archData.lower?.tzPoints || [] }
+        },
+        files: state.files,
+        imageData,
+        formValues: {
+          patientName: document.getElementById('patientName').value,
+          dentitionStage: document.getElementById('dentitionStage').value,
+          knownMm: document.getElementById('knownMm').value,
+          knownPx: document.getElementById('knownPx').value,
+          scaleSource: document.getElementById('scaleSource').value,
+          profile: document.getElementById('profile').value,
+          incisorInclination: document.getElementById('incisorInclination').value,
+          periodontalRisk: document.getElementById('periodontalRisk').checked,
+          growthPotential: document.getElementById('growthPotential').checked
+        },
+        savedAt: Date.now()
+      };
+
+      store.put(payload, SESSION_KEY);
+      await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+      db.close();
+    } catch (e) { console.warn('[session] save failed:', e); }
+  }
+
+  async function loadSession() {
+    try {
+      const db = await openDB();
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(SESSION_KEY);
+      const data = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = rej; });
+      db.close();
+      if (!data || !data.savedAt) return false;
+      // 24시간 이상 오래된 세션은 무시
+      if (Date.now() - data.savedAt > 24 * 60 * 60 * 1000) return false;
+      return data;
+    } catch (e) { console.warn('[session] load failed:', e); return false; }
+  }
+
+  async function restoreSession() {
+    const data = await loadSession();
+    if (!data) return;
+    _restoring = true;
+
+    // 폼 값 복원
+    if (data.formValues) {
+      const fv = data.formValues;
+      if (fv.patientName) document.getElementById('patientName').value = fv.patientName;
+      if (fv.dentitionStage) document.getElementById('dentitionStage').value = fv.dentitionStage;
+      if (fv.knownMm) document.getElementById('knownMm').value = fv.knownMm;
+      if (fv.knownPx) document.getElementById('knownPx').value = fv.knownPx;
+      if (fv.scaleSource) document.getElementById('scaleSource').value = fv.scaleSource;
+      if (fv.profile) document.getElementById('profile').value = fv.profile;
+      if (fv.incisorInclination) document.getElementById('incisorInclination').value = fv.incisorInclination;
+      document.getElementById('periodontalRisk').checked = !!fv.periodontalRisk;
+      document.getElementById('growthPotential').checked = !!fv.growthPotential;
+    }
+
+    // 이미지 복원
+    if (data.imageData) {
+      for (const [key, base64] of Object.entries(data.imageData)) {
+        if (!base64) continue;
+        const blob = base64ToBlob(base64);
+        const file = new File([blob], data.files?.[key]?.name || `${key}.jpg`, { type: blob.type });
+        state.uploadedFiles[key] = file;
+        state.files[key] = data.files?.[key] || { name: file.name, size: file.size, type: file.type };
+      }
+    }
+
+    // 곡선 포인트 복원
+    if (data.archData) {
+      state.archData.upper = { ezPoints: data.archData.upper?.ezPoints || [], tzPoints: data.archData.upper?.tzPoints || [] };
+      state.archData.lower = { ezPoints: data.archData.lower?.ezPoints || [], tzPoints: data.archData.lower?.tzPoints || [] };
+    }
+
+    // 활성 탭 복원 + 이미지 로드
+    const arch = data.activeArch || 'lower';
+    state.activeArch = arch;
+    document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
+    document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
+    document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
+    document.getElementById('upperTab').classList.toggle('btn-ghost', arch !== 'upper');
+    document.getElementById('lowerTab').classList.toggle('btn-primary', arch === 'lower');
+    document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
+    document.getElementById('occlusalLabel').textContent = arch === 'upper' ? '분석할 상악 교합면 사진' : '분석할 하악 교합면 사진';
+
+    const occlusalFile = state.uploadedFiles[arch === 'lower' ? 'lowerOcclusal' : 'upperOcclusal'];
+    if (occlusalFile) {
+      await editor.setImage(occlusalFile);
+      // setImage가 points를 초기화하므로 이후에 포인트 복원
+      const archPoints = state.archData[arch];
+      editor.points.ez = archPoints.ezPoints || [];
+      editor.points.tz = archPoints.tzPoints || [];
+      // state.archData도 업데이트
+      state.archData[arch] = editor.getData();
+      editor.render();
+    }
+
+    renderPhotoSetStatus();
+    syncScale();
+    recalc(false);
+    _restoring = false;
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function base64ToBlob(dataUrl) {
+    const [header, data] = dataUrl.split(',');
+    const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
+    const binary = atob(data);
+    const arr = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  // 세션 자동 저장: 데이터 변경 시 디바운스
+  let _saveTimer = null;
+  let _restoring = false;
+  function scheduleSave() {
+    if (_restoring) return;
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(saveSession, 800);
+  }
+
+  const localKey = 'oa_equilibrium_analyses';
+  const canvas = document.getElementById('curveCanvas');
+  const editor = new CurveEditor({
+    canvas,
+    onChange(data) {
+      if (_restoring) return;
+      state.archData[state.activeArch] = data;
+      recalc(false);
+      scheduleSave();
+    }
+  });
+
+  const photoSlots = [
+    { key: 'frontal', label: '정면', hints: ['front', 'frontal', 'center', 'facial', '정면', '전면'] },
+    { key: 'rightLateral', label: '우측 측면', hints: ['right', 'rt', 'r-lat', 'rightlateral', '우측', '오른쪽'] },
+    { key: 'leftLateral', label: '좌측 측면', hints: ['left', 'lt', 'l-lat', 'leftlateral', '좌측', '왼쪽'] },
+    { key: 'upperOcclusal', label: '상악 교합면', hints: ['upper', 'maxilla', 'maxillary', 'up', '상악'] },
+    { key: 'lowerOcclusal', label: '하악 교합면', hints: ['lower', 'mandible', 'mandibular', 'low', '하악'] }
+  ];
+
+  function setArch(arch) {
+    state.archData[state.activeArch] = editor.getData();
+    state.activeArch = arch;
+    scheduleSave();
+    document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
+    document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
+    document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
+    document.getElementById('upperTab').classList.toggle('btn-ghost', arch !== 'upper');
+    document.getElementById('lowerTab').classList.toggle('btn-primary', arch === 'lower');
+    document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
+    document.getElementById('occlusalLabel').textContent = arch === 'upper' ? '분석할 상악 교합면 사진' : '분석할 하악 교합면 사진';
+    editor.setData(state.archData[arch] || {});
+    recalc(false);
+  }
+
+  function setMode(mode) {
+    editor.setMode(mode);
+    document.getElementById('tzMode').classList.toggle('active', mode === 'tz');
+    document.getElementById('tzMode').classList.toggle('btn-primary', mode === 'tz');
+    document.getElementById('tzMode').classList.toggle('btn-ghost', mode !== 'tz');
+    document.getElementById('ezMode').classList.toggle('active', mode === 'ez');
+    document.getElementById('ezMode').classList.toggle('btn-primary', mode === 'ez');
+    document.getElementById('ezMode').classList.toggle('btn-ghost', mode !== 'ez');
+  }
+
+  document.getElementById('upperTab').onclick = () => setArch('upper');
+  document.getElementById('lowerTab').onclick = () => setArch('lower');
+  document.getElementById('tzMode').onclick = () => setMode('tz');
+  document.getElementById('ezMode').onclick = () => setMode('ez');
+  document.getElementById('aiDetectBtn').onclick = () => aiDetectLandmarks();
+  document.getElementById('autoTzBtn').onclick = () => autoTraceCurve('tz');
+  document.getElementById('autoEzBtn').onclick = () => autoTraceCurve('ez');
+  document.getElementById('autoBothBtn').onclick = () => autoTraceCurve('both');
+
+  async function aiDetectLandmarks() {
+    if (!editor.image) {
+      notify('먼저 교합면 사진을 업로드하세요.', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('aiDetectBtn');
+    btn.disabled = true;
+    btn.textContent = 'AI 분석 중...';
+
+    try {
+      // Canvas에서 이미지를 base64로 변환
+      const tempCanvas = document.createElement('canvas');
+      const maxDim = 1200;
+      let w = editor.image.width, h = editor.image.height;
+      if (w > maxDim || h > maxDim) {
+        const scale = maxDim / Math.max(w, h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+      tempCanvas.width = w;
+      tempCanvas.height = h;
+      const tctx = tempCanvas.getContext('2d');
+      tctx.drawImage(editor.image, 0, 0, w, h);
+      const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.85);
+      const base64 = dataUrl.split(',')[1];
+
+      const res = await apiFetch('/api/detect-arch-landmarks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          base64,
+          contentType: 'image/jpeg',
+          imageWidth: editor.image.width,
+          imageHeight: editor.image.height
+        })
+      });
+
+      const data = await res.json();
+
+      if (!data.success || !data.pixelPoints || data.pixelPoints.length < 5) {
+        notify('AI 검출 실패: ' + (data.error || '포인트를 찾지 못했습니다'), 'error');
+        return;
+      }
+
+      // TZ 포인트로 설정 (실제 치아 위치)
+      const tzPoints = data.pixelPoints.map(p => ({ x: p.x, y: p.y }));
+      editor.points.tz = tzPoints;
+
+      // EZ: TZ 곡선의 내부 오프셋 (아치 안쪽으로 수축)
+      // 아치 중심점 계산 (모든 TZ 포인트의 평균)
+      const avgX = tzPoints.reduce((s, p) => s + p.x, 0) / tzPoints.length;
+      const avgY = tzPoints.reduce((s, p) => s + p.y, 0) / tzPoints.length;
+      editor.points.ez = tzPoints.map(p => ({
+        x: Math.round(avgX + (p.x - avgX) * 0.92),
+        y: Math.round(avgY + (p.y - avgY) * 0.92)
+      }));
+
+      editor._emit();
+      state.archData[state.activeArch] = editor.getData();
+      recalc(false);
+
+      const archLabel = data.arch === 'upper' ? '상악' : '하악';
+      notify(`AI가 ${data.count}개 치아 랜드마크를 검출했습니다 (${archLabel}, 신뢰도 ${Math.round(data.confidence * 100)}%). 점을 드래그하여 보정하세요.`, 'success');
+
+    } catch (e) {
+      console.error('[AI Detect]', e);
+      notify('AI 검출 오류: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'AI 치아 검출';
+    }
+  }
+  document.getElementById('undoBtn').onclick = () => editor.undo();
+  document.getElementById('clearBtn').onclick = () => editor.clear();
+  document.getElementById('clearAllBtn').onclick = () => editor.clear('all');
+
+  function autoTraceCurve(mode) {
+    const data = editor.autoTrace(mode, { arch: state.activeArch });
+    if (!data) {
+      notify('먼저 상악 또는 하악 교합면 사진을 업로드하세요.', 'warning');
+      return;
+    }
+    state.archData[state.activeArch] = data;
+    recalc(false);
+    const label = mode === 'both' ? 'EZ/TZ' : mode.toUpperCase();
+    notify(`${label} 기준 곡선을 자동 생성했습니다. 필요하면 점을 드래그하듯 다시 찍어 보정하세요.`, 'success');
+  }
+
+  document.getElementById('occlusalFile').addEventListener('change', async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    state.files[state.activeArch + 'Occlusal'] = fileMeta(file);
+    state.uploadedFiles[state.activeArch] = file;
+    await editor.setImage(file);
+    state.archData[state.activeArch] = editor.getData();
+    recalc(false);
+  });
+
+  // === 5방향 드롭존 ===
+  const dropzone = document.getElementById('photoDropzone');
+
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).slice(0, 5);
+    if (files.length) processPhotoSet(files);
+  });
+  dropzone.addEventListener('click', (e) => {
+    if (e.target.closest('label') || e.target.closest('input')) return;
+    document.getElementById('photoSetFiles').click();
+  });
+
+  document.getElementById('photoSetFiles').addEventListener('change', async event => {
+    const files = Array.from(event.target.files || []).filter(file => file.type.startsWith('image/')).slice(0, 5);
+    if (files.length) processPhotoSet(files);
+  });
+
+  async function processPhotoSet(files) {
+    const sorted = await classifyFivePhotos(files);
+    const usedKeys = new Set();
+
+    for (const { key, file } of sorted) {
+      if (!key || usedKeys.has(key)) continue;
+      usedKeys.add(key);
+      state.files[key] = fileMeta(file);
+      state.uploadedFiles[key] = file;
+      await loadOcclusalIntoAnalysis(key, file);
+    }
+
+    renderPhotoSetStatus();
+    const count = usedKeys.size;
+    notify(count === 5 ? '5방향 구강사진 분류 완료. 하악 교합면 사진을 자동 배치했습니다.' : `${count}개 이미지를 분류했습니다.`, count >= 4 ? 'success' : 'warning');
+
+    // 하악 교합면이 있으면 자동으로 하악 분석 탭 전환 + 자동 트레이싱
+    if (usedKeys.has('lowerOcclusal')) {
+      setArch('lower');
+      autoTraceCurve('both');
+    }
+    scheduleSave();
+  }
+
+  async function classifyFivePhotos(files) {
+    const analyzed = await Promise.all(files.map(async (file) => {
+      const url = URL.createObjectURL(file);
+      const img = await loadImageFromUrl(url);
+      const ratio = img.width / img.height;
+      URL.revokeObjectURL(url);
+      return { file, ratio, key: null };
+    }));
+
+    // 1차: 파일명 기반 분류
+    const usedKeys = new Set();
+    for (const item of analyzed) {
+      const key = detectPhotoSlot(item.file, usedKeys);
+      if (key) { item.key = key; usedKeys.add(key); }
+    }
+
+    // 2차: 파일명으로 분류 안 된 것들 → 비율 기반
+    const unassigned = analyzed.filter(a => !a.key);
+    if (unassigned.length > 0) {
+      // 교합면: 가로가 세로보다 긴 사진 (ratio > 1.2)
+      const landscape = unassigned.filter(a => a.ratio > 1.15).sort((a, b) => b.ratio - a.ratio);
+      const portrait = unassigned.filter(a => a.ratio <= 1.15);
+
+      if (landscape.length >= 2 && !usedKeys.has('upperOcclusal') && !usedKeys.has('lowerOcclusal')) {
+        // 2장 교합면: 상단 밝은 쪽 = 상악, 하단 밝은 쪽 = 하악
+        const isFirst = await isUpperOcclusal(landscape[0], landscape[1]);
+        landscape[isFirst ? 0 : 1].key = 'upperOcclusal'; usedKeys.add('upperOcclusal');
+        landscape[isFirst ? 1 : 0].key = 'lowerOcclusal'; usedKeys.add('lowerOcclusal');
+        landscape.slice(2).forEach(item => { portrait.push(item); });
+      } else if (landscape.length === 1) {
+        if (!usedKeys.has('lowerOcclusal')) {
+          landscape[0].key = 'lowerOcclusal'; usedKeys.add('lowerOcclusal');
+        } else if (!usedKeys.has('upperOcclusal')) {
+          landscape[0].key = 'upperOcclusal'; usedKeys.add('upperOcclusal');
+        }
+      }
+
+      // 나머지 portrait: 순서대로 정면, 우측, 좌측
+      const facialSlots = ['frontal', 'rightLateral', 'leftLateral'].filter(s => !usedKeys.has(s));
+      portrait.filter(p => !p.key).forEach((item, idx) => {
+        if (idx < facialSlots.length) { item.key = facialSlots[idx]; usedKeys.add(facialSlots[idx]); }
+      });
+    }
+
+    return analyzed;
+  }
+
+  function loadImageFromUrl(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  function getImageBrightness(img) {
+    const canvas = document.createElement('canvas');
+    const size = 64;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+    const data = ctx.getImageData(0, 0, size, size).data;
+    let sum = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      sum += (data[i] + data[i + 1] + data[i + 2]) / 3;
+    }
+    return sum / (size * size);
+  }
+
+  async function isUpperOcclusal(a, b) {
+    // 상악 교합면: 이미지 상단에 치아(밝은 부분)가 많음
+    // 하악 교합면: 이미지 하단에 치아(밝은 부분)가 많음
+    const getTopBottomBrightness = (file) => {
+      return new Promise(resolve => {
+        const url = URL.createObjectURL(file.file);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const w = 64, h = 64;
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const topData = ctx.getImageData(0, 0, w, h / 2).data;
+          const botData = ctx.getImageData(0, h / 2, w, h / 2).data;
+          let topSum = 0, botSum = 0;
+          for (let i = 0; i < topData.length; i += 4) topSum += (topData[i] + topData[i+1] + topData[i+2]) / 3;
+          for (let i = 0; i < botData.length; i += 4) botSum += (botData[i] + botData[i+1] + botData[i+2]) / 3;
+          URL.revokeObjectURL(url);
+          resolve({ top: topSum / (w * h / 2), bottom: botSum / (w * h / 2) });
+        };
+        img.src = url;
+      });
+    };
+
+    const brA = await getTopBottomBrightness(a);
+    const brB = await getTopBottomBrightness(b);
+    // 상악: top이 더 밝음 (치아가 위에), 하악: bottom이 더 밝음 (치아가 아래에)
+    const aIsUpper = brA.top > brA.bottom;
+    const bIsUpper = brB.top > brB.bottom;
+    if (aIsUpper && !bIsUpper) return true;
+    if (!aIsUpper && bIsUpper) return false;
+    return brA.top > brB.top;
+  }
+
+  // 보조 자료 드롭존
+  ['dropCeph', 'dropPm', 'dropOther'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+      if (!file) return;
+      const input = el.querySelector('input[type="file"]');
+      const auxKey = input.dataset.aux;
+      state.files[auxKey] = fileMeta(file);
+      state.uploadedFiles[auxKey] = file;
+      const thumb = el.querySelector('.drop-thumb');
+      if (thumb) {
+        thumb.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+        thumb.classList.add('loaded');
+      }
+      notify(`${file.name} 등록 완료`, 'success');
+    });
+  });
+
+  document.querySelectorAll('[data-aux]').forEach(input => {
+    input.addEventListener('change', event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      state.files[event.target.dataset.aux] = fileMeta(file);
+      state.uploadedFiles[event.target.dataset.aux] = file;
+      notify(`${file.name} 파일을 등록했습니다.`, 'success');
+    });
+  });
+
+  ['knownMm','knownPx','scaleSource','profile','incisorInclination','periodontalRisk','growthPotential'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => { syncScale(); recalc(false); scheduleSave(); });
+    document.getElementById(id).addEventListener('change', () => { syncScale(); recalc(false); scheduleSave(); });
+  });
+  document.getElementById('patientName').addEventListener('input', scheduleSave);
+  document.getElementById('dentitionStage').addEventListener('change', scheduleSave);
+
+  function syncScale() {
+    const s = getScale();
+    editor.setPxPerMm(s.pxPerMm);
+  }
+
+  document.getElementById('analyzeBtn').onclick = () => recalc(true);
+  document.getElementById('aiDiagnosisBtn').onclick = runAiDiagnosis;
+  document.getElementById('saveBtn').onclick = saveAnalysis;
+
+  function fileMeta(file) {
+    return { name: file.name, size: file.size, type: file.type };
+  }
+
+  function readFileAsPayload(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result || '');
+        resolve({
+          base64: dataUrl.split(',')[1] || '',
+          contentType: file.type || 'image/jpeg',
+          name: file.name
+        });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function normalizeFileName(name) {
+    return String(name).toLowerCase().replace(/[\s_.-]+/g, '');
+  }
+
+  function detectPhotoSlot(file, usedKeys) {
+    const normalized = normalizeFileName(file.name);
+    const matched = photoSlots.find(slot => !usedKeys.has(slot.key) && slot.hints.some(hint => normalized.includes(normalizeFileName(hint))));
+    if (matched) return matched.key;
+    return photoSlots.find(slot => !usedKeys.has(slot.key))?.key || null;
+  }
+
+  async function loadOcclusalIntoAnalysis(key, file) {
+    if (key === 'upperOcclusal') {
+      setArch('upper');
+      await editor.setImage(file);
+      state.archData.upper = editor.getData();
+    }
+    if (key === 'lowerOcclusal') {
+      setArch('lower');
+      await editor.setImage(file);
+      state.archData.lower = editor.getData();
+    }
+  }
+
+  function renderPhotoSetStatus() {
+    photoSlots.forEach(slot => {
+      const item = document.querySelector(`[data-photo-slot="${slot.key}"]`);
+      if (!item) return;
+      const span = item.querySelector('span');
+      const thumb = document.getElementById(`thumb-${slot.key}`);
+      const file = state.uploadedFiles[slot.key];
+      if (file) {
+        if (span) span.textContent = file.name.length > 12 ? file.name.slice(0, 10) + '...' : file.name;
+        item.classList.add('has-image');
+        if (thumb) {
+          thumb.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+          thumb.classList.add('loaded');
+        }
+      } else {
+        if (span) span.textContent = '미업로드';
+        item.classList.remove('has-image');
+        if (thumb) { thumb.style.backgroundImage = ''; thumb.classList.remove('loaded'); }
+      }
+    });
+  }
+
+  function getScale() {
+    const knownMm = Number(document.getElementById('knownMm').value);
+    const knownPx = Number(document.getElementById('knownPx').value);
+    const pxPerMm = knownMm > 0 && knownPx > 0 ? knownPx / knownMm : null;
+    return {
+      pxPerMm,
+      source: document.getElementById('scaleSource').value,
+      confidence: document.getElementById('scaleSource').value === 'plastic_model' ? 0.9 : 0.7
+    };
+  }
+
+  function getModifiers() {
+    return {
+      profile: document.getElementById('profile').value,
+      incisorInclination: document.getElementById('incisorInclination').value,
+      periodontalRisk: document.getElementById('periodontalRisk').checked,
+      growthPotential: document.getElementById('growthPotential').checked
+    };
+  }
+
+  function recalc(showToast) {
+    state.archData[state.activeArch] = editor.getData();
+    const result = EquilibriumZoneEngine.analyzeCase({
+      upper: state.archData.upper,
+      lower: state.archData.lower,
+      scale: getScale(),
+      modifiers: getModifiers()
+    });
+    state.lastResult = result;
+    renderResult(result);
+    if (showToast) notify('EZ/TZ 분석을 계산했습니다.', 'success');
+  }
+
+  function fmt(v) {
+    return Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)} mm` : '-';
+  }
+
+
+  function buildEzTzSnapshot() {
+    recalc(false);
+    return {
+      upper: {
+        ezLengthMm: state.lastResult?.upper?.ezLengthMm ?? null,
+        tzLengthMm: state.lastResult?.upper?.tzLengthMm ?? null,
+        differenceMm: state.lastResult?.upper?.discrepancyMm ?? null
+      },
+      lower: {
+        ezLengthMm: state.lastResult?.lower?.ezLengthMm ?? null,
+        tzLengthMm: state.lastResult?.lower?.tzLengthMm ?? null,
+        differenceMm: state.lastResult?.lower?.discrepancyMm ?? null
+      },
+      totalDiscrepancyMm: state.lastResult?.totalDiscrepancyMm ?? null,
+      decision: state.lastResult?.decision ?? null
+    };
+  }
+
+  async function runAiDiagnosis() {
+    const btn = document.getElementById('aiDiagnosisBtn');
+    const files = state.uploadedFiles || {};
+    if (!Object.keys(files).length && !state.lastResult) {
+      notify('먼저 구강사진, 세팔로 또는 안면사진을 업로드하세요.', 'warning');
+      return;
+    }
+
+    btn.disabled = true;
+    const prevText = btn.textContent;
+    btn.textContent = 'AI 분석 중...';
+    try {
+      const images = {};
+      for (const [key, file] of Object.entries(files)) {
+        if (file?.type?.startsWith('image/')) images[key] = await readFileAsPayload(file);
+      }
+      const payload = {
+        patient: {
+          name: document.getElementById('patientName').value.trim() || 'Unnamed case',
+          stage: document.getElementById('dentitionStage').value
+        },
+        images,
+        ezTz: buildEzTzSnapshot(),
+        modifiers: getModifiers()
+      };
+      const res = await (window.apiFetch || fetch)('/api/comprehensive-diagnosis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'AI 종합 진단 실패');
+      state.lastAiDiagnosis = data;
+      renderAiDiagnosis(data);
+      notify(data.fallback ? '규칙 기반 종합 진단을 표시했습니다.' : 'AI 종합 진단을 완료했습니다.', data.fallback ? 'warning' : 'success');
+    } catch (e) {
+      console.warn('[equilibrium] AI diagnosis failed:', e);
+      notify(e.message || 'AI 종합 진단에 실패했습니다.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = prevText;
+    }
+  }
+
+  function renderAiDiagnosis(data) {
+    const panel = document.getElementById('aiResultPanel');
+    const cls = data.classification || {};
+    const ez = data.ezTz || {};
+    const extraction = data.extraction || {};
+    const plan = data.treatmentPlan || {};
+    const evidence = Array.isArray(cls.evidence) ? cls.evidence : [];
+    const steps = Array.isArray(plan.steps) ? plan.steps : [];
+    const reasons = Array.isArray(extraction.reasons) ? extraction.reasons : [];
+    panel.innerHTML = `
+      <h4>AI 종합 진단 결과</h4>
+      <div class="ai-result-grid">
+        <div class="ai-result-card"><div class="label">1. 클래스 분류</div><div class="value">${escapeHtml(cls.class || '-')}</div><p class="text-muted">신뢰도 ${Math.round((cls.confidence || 0) * 100)}%</p></div>
+        <div class="ai-result-card"><div class="label">4. 발치 여부</div><div class="value">${escapeHtml(extraction.label || extraction.recommendation || '-')}</div></div>
+        <div class="ai-result-card"><div class="label">2. 상악 EZ/TZ</div><div class="value">${fmt(ez.upper?.differenceMm)}</div><p class="text-muted">EZ ${fmt(ez.upper?.ezMm)} / TZ ${fmt(ez.upper?.tzMm)}</p></div>
+        <div class="ai-result-card"><div class="label">2. 하악 EZ/TZ</div><div class="value">${fmt(ez.lower?.differenceMm)}</div><p class="text-muted">EZ ${fmt(ez.lower?.ezMm)} / TZ ${fmt(ez.lower?.tzMm)}</p></div>
+      </div>
+      <h4 style="margin-top:14px;">3. EZ/TZ 곡선 해석</h4>
+      <p>${escapeHtml(data.curveAnnotation?.ezDescription || '')}</p>
+      <p>${escapeHtml(data.curveAnnotation?.tzDescription || '')}</p>
+      <p class="text-muted">${escapeHtml(data.curveAnnotation?.visualInstruction || '캔버스에 EZ/TZ 곡선을 표시하세요.')}</p>
+      <h4 style="margin-top:14px;">판정 근거</h4>
+      <ul>${[...evidence, ...reasons].slice(0, 8).map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>
+      <h4 style="margin-top:14px;">5. 치료 계획 추천</h4>
+      <p>${escapeHtml(plan.summary || '')}</p>
+      <ul>${steps.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>
+    `;
+  }
+
+  function renderResult(result) {
+    document.getElementById('upperMetric').textContent = fmt(result.upper.discrepancyMm);
+    document.getElementById('lowerMetric').textContent = fmt(result.lower.discrepancyMm);
+    document.getElementById('totalMetric').textContent = fmt(result.totalDiscrepancyMm);
+    document.getElementById('scaleMetric').textContent = result.scale.pxPerMm ? result.scale.pxPerMm.toFixed(2) : '-';
+
+    const box = document.getElementById('decisionBox');
+    box.querySelector('.status').textContent = result.decision.label;
+    box.querySelector('p').textContent = `원 차이 ${result.decision.rawDiscrepancyMm ?? '-'} mm, 보정 후 ${result.decision.adjustedDiscrepancyMm ?? '-'} mm 기준으로 분류했습니다.`;
+
+    const reasons = result.decision.reasons.length
+      ? result.decision.reasons
+      : ['보정 인자가 선택되지 않았습니다. EZ/TZ 차이를 중심으로 판단합니다.'];
+    document.getElementById('reasonList').innerHTML = reasons.map(r => `<li>${escapeHtml(r)}</li>`).join('');
+  }
+
+  async function saveAnalysis() {
+    recalc(false);
+    const patientName = document.getElementById('patientName').value.trim() || 'Unnamed case';
+    const payload = {
+      patient: {
+        name: patientName,
+        stage: document.getElementById('dentitionStage').value
+      },
+      analysis: {
+        ...state.lastResult,
+        curves: state.archData,
+        files: state.files,
+        modifiers: getModifiers(),
+        aiDiagnosis: state.lastAiDiagnosis
+      },
+      notes: 'EZ/TZ equilibrium analysis MVP'
+    };
+
+    const localRecord = { id: 'local_' + Date.now(), ...payload, createdAt: new Date().toISOString() };
+    const local = safeParse(localStorage.getItem(localKey), []);
+    local.unshift(localRecord);
+    localStorage.setItem(localKey, JSON.stringify(local.slice(0, 100)));
+    renderSavedList();
+
+    try {
+      const res = await (window.apiFetch || fetch)('/api/save-equilibrium-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'save failed');
+      notify(data.fallback ? '브라우저에 임시 저장했습니다. Supabase 설정을 확인하세요.' : '분석을 저장했습니다.', data.fallback ? 'warning' : 'success');
+    } catch (e) {
+      notify('서버 저장은 실패했지만 브라우저에 임시 저장했습니다.', 'warning');
+      console.warn('[equilibrium] save fallback:', e);
+    }
+  }
+
+  function renderSavedList() {
+    const records = safeParse(localStorage.getItem(localKey), []);
+    const box = document.getElementById('savedList');
+    if (!records.length) {
+      box.innerHTML = '<div class="saved-item">저장된 분석이 없습니다.</div>';
+      return;
+    }
+    box.innerHTML = records.slice(0, 5).map(record => {
+      const decision = record.analysis?.decision?.label || '분석 결과 없음';
+      const total = record.analysis?.totalDiscrepancyMm;
+      const date = record.createdAt ? new Date(record.createdAt).toLocaleString('ko-KR') : '-';
+      return `<div class="saved-item"><strong>${escapeHtml(record.patient?.name || 'Unnamed case')}</strong>${escapeHtml(decision)} · 총 차이 ${fmt(total)}<br>${escapeHtml(date)}</div>`;
+    }).join('');
+  }
+
+  function safeParse(text, fallback) {
+    try { return text ? JSON.parse(text) : fallback; } catch { return fallback; }
+  }
+
+  function notify(message, type = 'info') {
+    if (window.toast) window.toast(message, type);
+    else console.log(`[${type}] ${message}`);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  setMode('tz');
+  renderSavedList();
+  recalc(false);
+
+  // 페이지 로드 시 이전 세션 복원, 없으면 PhotoStore에서 가져옴
+  restoreSession().then(async () => {
+    // 세션에 이미지 없으면 PhotoStore(1단계)에서 로드
+    if (!state.uploadedFiles.lowerOcclusal && window.PhotoStore) {
+      const psData = await PhotoStore.loadCase();
+      if (psData && psData.photos) {
+        const mapping = { lowerOcclusal: 'lowerOcclusal', upperOcclusal: 'upperOcclusal', frontal: 'frontal', rightLateral: 'rightLateral', leftLateral: 'leftLateral', ceph: 'ceph' };
+        for (const [psKey, stateKey] of Object.entries(mapping)) {
+          const entry = psData.photos[psKey];
+          if (!entry || !entry.base64 || state.uploadedFiles[stateKey]) continue;
+          const blob = PhotoStore.base64ToBlob(entry.base64);
+          if (!blob) continue;
+          const file = new File([blob], entry.name || `${psKey}.jpg`, { type: blob.type });
+          state.uploadedFiles[stateKey] = file;
+          state.files[stateKey] = { name: file.name, size: file.size, type: file.type };
+        }
+        // 하악 교합면이 있으면 자동 로드
+        if (state.uploadedFiles.lowerOcclusal) {
+          _restoring = true;
+          setArch('lower');
+          await editor.setImage(state.uploadedFiles.lowerOcclusal);
+          editor.points.ez = [];
+          editor.points.tz = [];
+          state.archData.lower = editor.getData();
+          editor.render();
+          _restoring = false;
+          autoTraceCurve('both');
+          renderPhotoSetStatus();
+          if (psData.patient?.name) {
+            document.getElementById('patientName').value = psData.patient.name;
+          }
+          const notice = document.getElementById('fromStep1Notice');
+          if (notice) notice.style.display = 'block';
+        }
+      }
+    }
+  }).catch(() => {});
+
+  // 페이지 이탈 시 즉시 저장
+  window.addEventListener('beforeunload', () => { saveSession(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveSession(); });
+})();
+</script>
+</body>
+</html>
