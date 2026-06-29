@@ -1,10 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0EA5E9"/>
-      <stop offset="100%" stop-color="#8B5CF6"/>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </linearGradient>
+    <linearGradient id="tooth-grad" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E0F2FE"/>
+    </linearGradient>
+    <linearGradient id="node-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7DD3FC"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="14" fill="url(#g)"/>
-  <text x="32" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="white">OA</text>
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="url(#bg-grad)"/>
+  <!-- Neural network connections -->
+  <g stroke="#7DD3FC" stroke-width="0.8" opacity="0.5">
+    <line x1="14" y1="14" x2="32" y2="24"/>
+    <line x1="50" y1="14" x2="32" y2="24"/>
+    <line x1="14" y1="14" x2="20" y2="38"/>
+    <line x1="50" y1="14" x2="44" y2="38"/>
+    <line x1="20" y1="38" x2="32" y2="24"/>
+    <line x1="44" y1="38" x2="32" y2="24"/>
+    <line x1="20" y1="38" x2="32" y2="54"/>
+    <line x1="44" y1="38" x2="32" y2="54"/>
+  </g>
+  <!-- Stylized tooth shape -->
+  <path d="M32 18 C26 18, 22 22, 22 28 C22 33, 24 36, 26 40 C27 43, 28 48, 29 52 C29.5 54, 30.5 54, 31 52 L32 47 L33 52 C33.5 54, 34.5 54, 35 52 C36 48, 37 43, 38 40 C40 36, 42 33, 42 28 C42 22, 38 18, 32 18 Z" fill="url(#tooth-grad)" opacity="0.95"/>
+  <!-- Neural nodes -->
+  <circle cx="14" cy="14" r="3.5" fill="url(#node-grad)" opacity="0.9"/>
+  <circle cx="50" cy="14" r="3.5" fill="url(#node-grad)" opacity="0.9"/>
+  <circle cx="20" cy="38" r="2.5" fill="url(#node-grad)" opacity="0.8"/>
+  <circle cx="44" cy="38" r="2.5" fill="url(#node-grad)" opacity="0.8"/>
+  <circle cx="32" cy="54" r="2.5" fill="url(#node-grad)" opacity="0.7"/>
+  <!-- Center node on tooth -->
+  <circle cx="32" cy="24" r="3" fill="#0EA5E9" opacity="0.9"/>
+  <circle cx="32" cy="24" r="1.5" fill="#FFFFFF"/>
 </svg>
