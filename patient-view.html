@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>환자 정보보기 | Orthodontics AI</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .patient-header {
+    display: flex; align-items: center; gap: 20px;
+    padding: 24px; margin-bottom: 24px;
+    background: linear-gradient(135deg, rgba(14,165,233,.06), rgba(124,58,237,.04));
+    border: 1px solid var(--border-subtle); border-radius: 16px;
+  }
+  .patient-header .avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--gradient-primary); display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #fff; font-weight: 700;
+  }
+  .patient-header .info h2 { margin: 0 0 4px; font-size: 22px; }
+  .patient-header .info .meta { font-size: 13px; color: var(--text-secondary); }
+  .patient-header .badges { display: flex; gap: 8px; margin-top: 8px; }
+  .patient-header .badge-item {
+    padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .badge-class { background: rgba(14,165,233,.1); color: #0284c7; border: 1px solid rgba(14,165,233,.2); }
+  .badge-status { background: rgba(34,197,94,.1); color: #16a34a; border: 1px solid rgba(34,197,94,.2); }
+  .badge-extract { background: rgba(245,158,11,.1); color: #d97706; border: 1px solid rgba(245,158,11,.2); }
+
+  .section-title {
+    font-size: 16px; font-weight: 700; color: var(--text-primary);
+    margin: 24px 0 12px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+  .photo-compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .photo-group h4 {
+    font-size: 13px; font-weight: 700; color: var(--text-muted);
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .photo-group.before h4 { color: #dc2626; }
+  .photo-group.after h4 { color: #16a34a; }
+  .photo-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .photo-item {
+    width: 120px; text-align: center;
+  }
+  .photo-item img {
+    width: 120px; height: 80px; object-fit: cover;
+    border-radius: 10px; border: 1px solid var(--border-subtle);
+    cursor: pointer; transition: transform .15s;
+  }
+  .photo-item img:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .photo-item .label { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .info-card {
+    padding: 14px; border: 1px solid var(--border-subtle); border-radius: 12px; background: #fff;
+  }
+  .info-card .label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .info-card .value { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+  .empty-photos {
+    padding: 30px; text-align: center; color: var(--text-muted);
+    border: 1px dashed var(--border-strong); border-radius: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .photo-compare { grid-template-columns: 1fr; }
+    .photo-item { width: 100px; }
+    .photo-item img { width: 100px; height: 66px; }
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container" style="max-width:1100px;">
+
+  <div class="patient-header" id="patientHeader">
+    <div class="avatar" id="avatarInit">—</div>
+    <div class="info">
+      <h2 id="patientName">환자 정보 로딩 중...</h2>
+      <div class="meta" id="patientMeta"></div>
+      <div class="badges" id="patientBadges"></div>
+    </div>
+    <div style="margin-left:auto;">
+      <a href="patient-select.html" class="btn btn-ghost">← 환자 목록</a>
+    </div>
+  </div>
+
+  <h3 class="section-title">환자 기본 정보</h3>
+  <div class="info-grid" id="infoGrid"></div>
+
+  <h3 class="section-title">구강 5방향 사진 (교정 전 vs 교정 후)</h3>
+  <div class="photo-compare" id="intraoralCompare">
+    <div class="empty-photos">사진 데이터 로딩 중...</div>
+  </div>
+
+  <h3 class="section-title">안면 사진 (교정 전 vs 교정 후)</h3>
+  <div class="photo-compare" id="faceCompare">
+    <div class="empty-photos">사진 데이터 로딩 중...</div>
+  </div>
+
+  <h3 class="section-title">세팔로 / X-ray (교정 전 vs 교정 후)</h3>
+  <div class="photo-compare" id="xrayCompare">
+    <div class="empty-photos">사진 데이터 로딩 중...</div>
+  </div>
+
+  <h3 class="section-title">3D 모델 (MeshLab PLY)</h3>
+  <div class="photo-compare" id="modelCompare">
+    <div class="empty-photos">3D 모델 로딩 중...</div>
+  </div>
+
+</div>
+</main>
+
+<!-- 이미지 확대 모달 -->
+<div id="imgModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; cursor:zoom-out;">
+  <img id="imgModalImg" style="max-width:90vw; max-height:90vh; border-radius:12px;">
+  <button onclick="document.getElementById('imgModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:28px; width:44px; height:44px; border-radius:50%; cursor:pointer;">✕</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+(async function () {
+  const SUPABASE_URL = 'https://htqdfuuzgrjrwvdgwhlc.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0cWRmdXV6Z3Jqcnd2ZGd3aGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDQxMDMsImV4cCI6MjA5MzEyMDEwM30.UEpUrEy0Bf5uWOjT2VgP6avX8rQ0mHOcTjbw_D6zoaY';
+  const headers = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+
+  const params = new URLSearchParams(window.location.search);
+  const patientId = params.get('id');
+
+  if (!patientId) {
+    document.getElementById('patientName').textContent = '환자를 선택해주세요';
+    return;
+  }
+
+  // Supabase에서 환자 정보 로드
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/patients?id=eq.${patientId}&select=*`, { headers });
+  const patients = await res.json();
+  const patient = patients[0];
+
+  if (!patient) {
+    document.getElementById('patientName').textContent = '환자를 찾을 수 없습니다';
+    return;
+  }
+
+  const meta = patient.metadata || {};
+  const name = patient.name || '—';
+  const chartNo = meta.chartNumber || name.split(' ')[0] || '';
+
+  // 헤더
+  document.getElementById('avatarInit').textContent = name.replace(/^\d+\s*/, '').charAt(0) || '?';
+  document.getElementById('patientName').textContent = name;
+  document.getElementById('patientMeta').textContent = `차트 #${chartNo} · 등록일 ${new Date(patient.created_at).toLocaleDateString('ko-KR')}`;
+
+  const badges = [];
+  if (meta.classification) badges.push(`<span class="badge-item badge-class">${meta.classification.replace('class', 'Class ')}</span>`);
+  if (meta.orthodonticStatus) badges.push(`<span class="badge-item badge-status">${meta.orthodonticStatus === 'completed' ? '교정 완료' : '교정 진행중'}</span>`);
+  if (meta.extraction) badges.push(`<span class="badge-item badge-extract">발치: ${meta.extraction}</span>`);
+  document.getElementById('patientBadges').innerHTML = badges.join('');
+
+  // 기본 정보 그리드
+  const infoItems = [
+    { label: '클래스', value: meta.classification ? meta.classification.replace('class', 'Class ') : '—' },
+    { label: '교정 상태', value: meta.orthodonticStatus === 'completed' ? '완료' : '진행중' },
+    { label: '치열 단계', value: meta.stage === 'permanent_dentition' ? '영구치열' : meta.stage === 'mixed_dentition' ? '혼합치열' : meta.stage || '—' },
+    { label: '성별', value: patient.gender === 'male' ? '남' : patient.gender === 'female' ? '여' : '—' },
+    { label: '초진 구강사진', value: (meta.initial?.intraoral || 0) + '장' },
+    { label: '초진 안면사진', value: (meta.initial?.face || 0) + '장' },
+    { label: '초진 X-ray', value: (meta.initial?.xray || 0) + '장' },
+    { label: '초진 3D모델', value: (meta.initial?.model || 0) + '개' },
+    { label: '최종 구강사진', value: (meta.final?.intraoral || 0) + '장' },
+    { label: '최종 안면사진', value: (meta.final?.face || 0) + '장' },
+    { label: '최종 X-ray', value: (meta.final?.xray || 0) + '장' },
+    { label: '최종 3D모델', value: (meta.final?.model || 0) + '개' },
+  ];
+  document.getElementById('infoGrid').innerHTML = infoItems.map(i => `<div class="info-card"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+
+  // 사진 로드 — Supabase Storage URL 우선, 로컬 폴더 폴백
+  const STORAGE_BASE = `${SUPABASE_URL}/storage/v1/object/public/patient-photos`;
+  const basePath = `재분류/클래스1/전체자료_5방향_세팔로_안면_AB기준/${name}/`;
+
+  const PHOTO_LABELS = {
+    '01_front': '정면', '02_left': '좌측', '03_lower': '하악 교합면',
+    '04_right': '우측', '05_upper': '상악 교합면',
+    '01_45degree': '45도', '02_front': '정면', '03_lateral': '측면', '04_smile': '스마일',
+    '01_ceph': '세팔로', '02_pano': '파노라마'
+  };
+
+  function renderPhotoSection(containerId, category) {
+    const container = document.getElementById(containerId);
+    const initialCount = meta.initial?.[category] || 0;
+    const finalCount = meta.final?.[category] || 0;
+
+    if (initialCount === 0 && finalCount === 0) {
+      container.innerHTML = '<div class="empty-photos">사진이 등록되지 않았습니다.</div>';
+      return;
+    }
+
+    let beforeHtml = '<div class="photo-group before"><h4>교정 전 (Initial)</h4><div class="photo-row">';
+    let afterHtml = '<div class="photo-group after"><h4>교정 후 (Final)</h4><div class="photo-row">';
+
+    const slots = category === 'intraoral'
+      ? ['01_front', '02_left', '03_lower', '04_right', '05_upper']
+      : category === 'face'
+      ? ['01_45degree', '02_front', '03_lateral', '04_smile']
+      : ['01_ceph', '02_pano'];
+
+    for (const slot of slots) {
+      const label = PHOTO_LABELS[slot] || slot;
+      const urlKey_i = meta.initial_urls?.[category]?.[slot];
+      const urlKey_f = meta.final_urls?.[category]?.[slot];
+      const initThumb = basePath + '초진/' + category + '/thumb/' + slot + '.jpg';
+      const finalThumb = basePath + '최종/' + category + '/thumb/' + slot + '.jpg';
+      const initFull = urlKey_i || (basePath + '초진/' + category + '/' + slot + '.jpg');
+      const finalFull = urlKey_f || (basePath + '최종/' + category + '/' + slot + '.jpg');
+
+      beforeHtml += `<div class="photo-item"><img src="${initThumb}" alt="${label}" onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='${initFull}'}else{this.style.display='none'}" onclick="showImg('${initFull}')"><div class="label">${label}</div></div>`;
+      afterHtml += `<div class="photo-item"><img src="${finalThumb}" alt="${label}" onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='${finalFull}'}else{this.style.display='none'}" onclick="showImg('${finalFull}')"><div class="label">${label}</div></div>`;
+    }
+
+    beforeHtml += '</div></div>';
+    afterHtml += '</div></div>';
+    container.innerHTML = beforeHtml + afterHtml;
+  }
+
+  renderPhotoSection('intraoralCompare', 'intraoral');
+  renderPhotoSection('faceCompare', 'face');
+  renderPhotoSection('xrayCompare', 'xray');
+  renderModelSection();
+
+  // 3D 모델 렌더링
+  function renderModelSection() {
+    const container = document.getElementById('modelCompare');
+    const initialModel = meta.initial?.model || 0;
+    const finalModel = meta.final?.model || 0;
+    if (initialModel === 0 && finalModel === 0) {
+      container.innerHTML = '<div class="empty-photos">3D 모델이 등록되지 않았습니다.</div>';
+      return;
+    }
+
+    const phases = [];
+    if (initialModel > 0) phases.push({ label: '교정 전 (Initial)', phase: '초진' });
+    if (finalModel > 0) phases.push({ label: '교정 후 (Final)', phase: '최종' });
+
+    container.innerHTML = phases.map(ph => {
+      const isAfter = ph.phase === '최종';
+      return `<div class="photo-group ${isAfter ? 'after' : 'before'}">
+        <h4>${ph.label}</h4>
+        <div style="display:flex; gap:12px;">
+          <div style="text-align:center;">
+            <div id="model3d_${ph.phase}_upper" style="width:180px; height:140px; background:#1e293b; border-radius:10px; border:1px solid var(--border-subtle);"></div>
+            <div class="label">상악</div>
+          </div>
+          <div style="text-align:center;">
+            <div id="model3d_${ph.phase}_lower" style="width:180px; height:140px; background:#1e293b; border-radius:10px; border:1px solid var(--border-subtle);"></div>
+            <div class="label">하악</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // 각 모델 로드 (Supabase Storage 우선, 로컬 폴백)
+    const modelExts = ['stl', 'ply'];
+    function getModelUrl(phase, slot) {
+      const phaseKr = phase === 'initial' ? '초진' : '최종';
+      const urlKey = phase === 'initial' ? 'initial_urls' : 'final_urls';
+      const storedUrl = meta[urlKey]?.model?.[slot];
+      if (storedUrl) return storedUrl;
+      return basePath + phaseKr + '/model/' + slot + '.' + (phaseKr === '초진' ? 'ply' : 'stl');
+    }
+    const modelFiles = [
+      { id: 'model3d_초진_upper', path: getModelUrl('initial', '02_upper'), flip: true },
+      { id: 'model3d_초진_lower', path: getModelUrl('initial', '01_lower'), flip: false },
+      { id: 'model3d_최종_upper', path: getModelUrl('final', '02_upper'), flip: true },
+      { id: 'model3d_최종_lower', path: getModelUrl('final', '01_lower'), flip: false },
+    ];
+
+    modelFiles.forEach(({ id, path, flip }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      load3DModel(el, path, flip);
+    });
+  }
+
+  function load3DModel(container, filePath, flipUpper) {
+    if (!window.THREE) return;
+    const width = container.clientWidth || 180;
+    const height = container.clientHeight || 140;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1e293b);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 10000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const d1 = new THREE.DirectionalLight(0xffffff, 0.8); d1.position.set(1, 1, 1); scene.add(d1);
+    const d2 = new THREE.DirectionalLight(0x88aaff, 0.4); d2.position.set(-1, -0.5, -1); scene.add(d2);
+
+    let controls = null;
+    try { controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableZoom = true; controls.autoRotate = false; } catch(e) {}
+
+    const ext = filePath.split('.').pop().toLowerCase();
+    const loader = ext === 'stl' ? new THREE.STLLoader() : new THREE.PLYLoader();
+
+    fetch(filePath).then(r => { if (!r.ok) throw new Error(); return r.arrayBuffer(); }).then(buf => {
+      const geometry = loader.parse(buf);
+      geometry.computeVertexNormals();
+      const mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: 0xf5e6d3, specular: 0x333333, shininess: 30 }));
+      geometry.computeBoundingBox();
+      const center = new THREE.Vector3(); geometry.boundingBox.getCenter(center);
+      mesh.position.sub(center);
+      if (flipUpper) mesh.rotation.x = Math.PI;
+
+      const size = new THREE.Vector3(); geometry.boundingBox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const dist = maxDim * 1.2;
+      camera.position.set(0, maxDim * 0.3, dist);
+      camera.lookAt(0, 0, 0);
+      scene.add(mesh);
+
+      const startTime = Date.now();
+      function animate() {
+        requestAnimationFrame(animate);
+        const t = (Date.now() - startTime) / 1000;
+        camera.position.x = dist * Math.sin(t * 0.8) * Math.sin(Math.PI / 4);
+        camera.position.z = dist * Math.cos(t * 0.8) * Math.sin(Math.PI / 4);
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+      }
+      animate();
+    }).catch(() => {
+      container.innerHTML = '<div style="color:#64748b; font-size:11px; display:flex; align-items:center; justify-content:center; height:100%;">파일 없음</div>';
+    });
+  }
+
+  // 이미지 확대 모달
+  document.getElementById('imgModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('imgModal') || e.target.tagName === 'BUTTON') {
+      document.getElementById('imgModal').style.display = 'none';
+    }
+  });
+})();
+
+function showImg(src) {
+  document.getElementById('imgModalImg').src = src;
+  document.getElementById('imgModal').style.display = 'flex';
+}
+</script>
+</body>
+</html>
