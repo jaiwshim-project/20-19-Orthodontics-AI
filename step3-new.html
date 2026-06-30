@@ -541,9 +541,14 @@
     editor.points.tz = [];
     editor.render();
 
-    // EZL 자동 계산
-    const pxPerMm = getScale();
-    const result = EquilibriumZoneEngine.buildEZCurve({ anchorPoints: ezAnchors, pxPerMm: pxPerMm });
+    // EZL 자동 계산 — 양끝 어금니 픽셀 거리로 스케일 직접 산출
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    const molarPx = Math.hypot(last.x - first.x, last.y - first.y);
+    const ezPxPerMm = molarPx > 0 ? molarPx / molarMm : null;
+    document.getElementById('knownMm').value = molarMm.toFixed(1);
+    document.getElementById('knownPx').value = (molarPx > 0 ? molarPx : 100).toFixed(1);
+
+    const result = EquilibriumZoneEngine.buildEZCurve({ anchorPoints: ezAnchors, pxPerMm: ezPxPerMm });
     if (result.lengthMm) {
       document.getElementById('ezlMm').value = result.lengthMm.toFixed(2);
       document.getElementById('ezlMetric').textContent = result.lengthMm.toFixed(2) + ' mm';
@@ -733,8 +738,14 @@
   }
   document.getElementById('calcEzlBtn').onclick = () => {
     const ezPts = editor.points.ez || [];
-    if (ezPts.length < 3) { if (window.toast) window.toast('EZ 곡선 모드에서 치조골 중심을 따라 7~9개 anchor point를 찍으세요.', 'warning'); return; }
-    const pxPerMm = getScale();
+    if (ezPts.length < 3) { if (window.toast) window.toast('EZ 곡선 자동 생성 버튼을 먼저 누르거나, EZ 수동 편집으로 3개 이상 점을 찍으세요.', 'warning'); return; }
+    // 양끝 어금니 거리로 스케일 계산
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    const sorted = EquilibriumZoneEngine.sortAnchorPoints(ezPts);
+    const ezFirst = sorted[0];
+    const ezLast = sorted[sorted.length - 1];
+    const molarPx = Math.hypot(ezLast.x - ezFirst.x, ezLast.y - ezFirst.y);
+    const pxPerMm = molarPx > 0 ? molarPx / molarMm : getScale();
     const result = EquilibriumZoneEngine.buildEZCurve({
       anchorPoints: ezPts,
       pxPerMm: pxPerMm
