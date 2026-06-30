@@ -597,16 +597,18 @@
   };
 
   function fallbackLocalTTL() {
-    // 이미지 분석으로 치아 영역 경계를 검출 → 표준 비율로 14개 치아 폭경 배분
-    const traceData = editor.autoTrace('tz', { arch: state.activeArch });
-    // TZ 곡선 표시하지 않음 — 내부 계산용으로만 사용
-    editor.points.tz = [];
-    editor.render();
-    if (!traceData || !traceData.tzPoints || traceData.tzPoints.length < 5) {
+    // 이미지 분석으로 치아 위치만 내부 계산 (화면에 TZ 곡선 표시하지 않음)
+    if (!editor.image) {
       if (window.toast) window.toast('이미지에서 치아를 검출할 수 없습니다.', 'error');
       return;
     }
-    const centers = traceData.tzPoints;
+    const arch = state.activeArch;
+    const curve = editor._estimateArchCurves(editor.image.width, editor.image.height, arch);
+    if (!curve || !curve.tz || curve.tz.length < 5) {
+      if (window.toast) window.toast('이미지에서 치아를 검출할 수 없습니다.', 'error');
+      return;
+    }
+    const centers = curve.tz;
 
     // 하악 표준 근원심 폭경 비율 (Bolton 분석 기반, 단위: mm 평균값)
     // 7번(#37) ~ 7번(#47): 좌측 제2대구치 → 우측 제2대구치
