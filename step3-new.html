@@ -553,8 +553,8 @@
           base64,
           contentType: 'image/jpeg',
           arch: state.activeArch,
-          imageWidth: editor.image.width,
-          imageHeight: editor.image.height,
+          imageWidth: w,
+          imageHeight: h,
           molarDistanceMm: Number(document.getElementById('molarMm').value) || 54
         })
       });
@@ -564,21 +564,24 @@
         throw new Error(data.error || 'AI가 치아를 충분히 검출하지 못했습니다.');
       }
 
-      // 결과를 state에 적용
+      // 결과를 state에 적용 (AI 좌표는 축소 이미지 기준 → 원본 크기로 변환)
+      const scaleX = editor.image.width / w;
+      const scaleY = editor.image.height / h;
       state.teeth[state.activeArch] = data.teeth.map(t => ({
         index: t.index,
-        distalPoint: t.distalPoint,
-        mesialPoint: t.mesialPoint,
+        distalPoint: { x: Math.round(t.distalPoint.x * scaleX), y: Math.round(t.distalPoint.y * scaleY) },
+        mesialPoint: { x: Math.round(t.mesialPoint.x * scaleX), y: Math.round(t.mesialPoint.y * scaleY) },
         note: t.note || ''
       }));
       state.currentToothIndex = Math.min(15, data.teeth.length + 1);
       state.currentPointStep = 'distal';
 
-      // 스케일 적용
+      // 스케일 적용 (AI의 pxPerMm은 축소 이미지 기준 → 원본으로 변환)
       if (data.pxPerMm && data.pxPerMm > 0) {
+        const pxPerMmOriginal = data.pxPerMm * scaleX;
         const molarMm = Number(document.getElementById('molarMm').value) || 54;
         document.getElementById('knownMm').value = molarMm.toFixed(1);
-        document.getElementById('knownPx').value = (data.pxPerMm * molarMm).toFixed(1);
+        document.getElementById('knownPx').value = (pxPerMmOriginal * molarMm).toFixed(1);
       }
 
       const pxPerMm = getScale();
