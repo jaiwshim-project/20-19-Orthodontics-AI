@@ -760,13 +760,9 @@
   document.getElementById('calcEzlBtn').onclick = () => {
     const ezPts = editor.points.ez || [];
     if (ezPts.length < 3) { if (window.toast) window.toast('EZ 곡선 자동 생성 버튼을 먼저 누르거나, EZ 수동 편집으로 3개 이상 점을 찍으세요.', 'warning'); return; }
-    // 양끝 어금니 거리로 스케일 계산
-    const molarMm = Number(document.getElementById('molarMm').value) || 54;
-    const sorted = EquilibriumZoneEngine.sortAnchorPoints(ezPts);
-    const ezFirst = sorted[0];
-    const ezLast = sorted[sorted.length - 1];
-    const molarPx = Math.hypot(ezLast.x - ezFirst.x, ezLast.y - ezFirst.y);
-    const pxPerMm = molarPx > 0 ? molarPx / molarMm : getScale();
+    // 스케일: knownMm/knownPx (autoGenerateEZ에서 TZ 양끝 기준으로 설정됨)
+    const pxPerMm = getScale();
+    if (!pxPerMm) { if (window.toast) window.toast('먼저 EZ 곡선 자동 생성 또는 스케일을 설정하세요.', 'warning'); return; }
     const result = EquilibriumZoneEngine.buildEZCurve({
       anchorPoints: ezPts,
       pxPerMm: pxPerMm
