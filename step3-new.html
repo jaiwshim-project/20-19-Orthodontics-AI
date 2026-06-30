@@ -564,27 +564,32 @@
         throw new Error(data.error || 'AI가 치아를 충분히 검출하지 못했습니다.');
       }
 
-      // 결과를 state에 적용 (AI 좌표는 축소 이미지 기준 → 원본 크기로 변환)
-      const scaleX = editor.image.width / w;
-      const scaleY = editor.image.height / h;
+      // 결과를 state에 적용 (AI 좌표는 축소 이미지 기준 — 그대로 사용)
       state.teeth[state.activeArch] = data.teeth.map(t => ({
         index: t.index,
-        distalPoint: { x: Math.round(t.distalPoint.x * scaleX), y: Math.round(t.distalPoint.y * scaleY) },
-        mesialPoint: { x: Math.round(t.mesialPoint.x * scaleX), y: Math.round(t.mesialPoint.y * scaleY) },
+        distalPoint: t.distalPoint,
+        mesialPoint: t.mesialPoint,
         note: t.note || ''
       }));
       state.currentToothIndex = Math.min(15, data.teeth.length + 1);
       state.currentPointStep = 'distal';
 
-      // 스케일 적용 (AI의 pxPerMm은 축소 이미지 기준 → 원본으로 변환)
-      if (data.pxPerMm && data.pxPerMm > 0) {
-        const pxPerMmOriginal = data.pxPerMm * scaleX;
-        const molarMm = Number(document.getElementById('molarMm').value) || 54;
+      // 스케일: 양끝 어금니 간 픽셀 거리(축소 이미지 기준)를 molarMm으로 나눔
+      const molarMm = Number(document.getElementById('molarMm').value) || 54;
+      const aiTeeth = data.teeth;
+      const firstTooth = aiTeeth.find(t => t.index === 1);
+      const lastTooth = aiTeeth.find(t => t.index === aiTeeth.length);
+      let aiPxPerMm = data.pxPerMm;
+      if (firstTooth && lastTooth) {
+        const molarPx = Math.hypot(lastTooth.mesialPoint.x - firstTooth.distalPoint.x, lastTooth.mesialPoint.y - firstTooth.distalPoint.y);
+        if (molarPx > 0) aiPxPerMm = molarPx / molarMm;
+      }
+      if (aiPxPerMm && aiPxPerMm > 0) {
         document.getElementById('knownMm').value = molarMm.toFixed(1);
-        document.getElementById('knownPx').value = (pxPerMmOriginal * molarMm).toFixed(1);
+        document.getElementById('knownPx').value = (aiPxPerMm * molarMm).toFixed(1);
       }
 
-      const pxPerMm = getScale();
+      const pxPerMm = aiPxPerMm || getScale();
       const ttlResult = ToothWidthEngine.calculateTTL(state.teeth[state.activeArch], pxPerMm);
       document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
 
