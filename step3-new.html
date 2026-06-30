@@ -521,15 +521,21 @@
     // 악궁 폭 (양끝 어금니 간 거리)
     const archWidth = Math.hypot(last.x - first.x, last.y - first.y);
 
-    // 각 치아에서 악궁 중심 방향으로 설측 오프셋
-    // 구치부: archWidth의 8~10% 안쪽
-    // 전치부: archWidth의 3~4% 안쪽 (치아에 가깝게)
+    // EZ = 치아 설측 치조골 중심선
+    // 참고: 양끝(대구치)에서 치아 바로 안쪽, 구치부에서 조금 더 안쪽, 전치부에서 치아에 거의 접함
     function toEzPoint(tzPt, positionRatio) {
       // positionRatio: 0=좌측끝, 0.5=전치부, 1=우측끝
       const anteriorWeight = Math.sin(Math.PI * positionRatio); // 전치부=1, 양끝=0
 
-      // 오프셋 거리: 구치부 크게, 전치부 작게
-      const offsetDist = archWidth * (0.09 - anteriorWeight * 0.05);
+      // 오프셋 mm: 양끝 2mm, 구치부(중간) 3mm, 전치부 1mm — 매끄러운 보간
+      const pxPerMm = archWidth / 54;
+      // anteriorWeight: 0(양끝)→1(전치부)
+      // 양끝(0): 2mm, 구치부(~0.3): 3mm, 전치부(1): 1mm
+      const offsetMmFinal = positionRatio < 0.05 || positionRatio > 0.95
+        ? 2.0
+        : 1.0 + 2.0 * Math.pow(1 - anteriorWeight, 0.8);
+      // anteriorWeight=0 → 1+2=3mm, anteriorWeight=0.5 → 1+1.15=2.15mm, anteriorWeight=1 → 1+0=1mm
+      const offsetDist = offsetMmFinal * pxPerMm;
 
       // 오프셋 방향: 치아에서 악궁 중심 방향
       const dx = archCenterX - tzPt.x;
