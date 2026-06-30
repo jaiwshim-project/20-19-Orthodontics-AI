@@ -599,6 +599,9 @@
   function fallbackLocalTTL() {
     // 이미지 분석으로 치아 영역 경계를 검출 → 표준 비율로 14개 치아 폭경 배분
     const traceData = editor.autoTrace('tz', { arch: state.activeArch });
+    // TZ 곡선 표시하지 않음 — 내부 계산용으로만 사용
+    editor.points.tz = [];
+    editor.render();
     if (!traceData || !traceData.tzPoints || traceData.tzPoints.length < 5) {
       if (window.toast) window.toast('이미지에서 치아를 검출할 수 없습니다.', 'error');
       return;
