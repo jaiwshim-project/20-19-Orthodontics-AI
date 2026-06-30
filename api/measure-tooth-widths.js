@@ -1,5 +1,7 @@
 import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const config = { api: { bodyParser: { sizeLimit: '20mb' } } };
@@ -53,7 +55,24 @@ export default async function handler(req, res) {
     const userPrompt = buildUserPrompt(archType, width, height, molarMm);
 
     let response;
-    if (isAzureChatConfigured()) {
+    if (ANTHROPIC_API_KEY) {
+      const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: ANTHROPIC_MODEL,
+          max_tokens: 3000,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: contentType || 'image/jpeg', data: base64 } },
+            { type: 'text', text: userPrompt }
+          ]}]
+        })
+      });
+      const anthropicData = await anthropicRes.json();
+      if (!anthropicRes.ok) throw new Error(anthropicData?.error?.message || 'Anthropic API error');
+      response = (anthropicData.content || []).filter(p => p.type === 'text').map(p => p.text).join('');
+    } else if (isAzureChatConfigured()) {
       response = await azureVisionCompletion({
         system: SYSTEM_PROMPT,
         images: [{ base64, contentType: contentType || 'image/jpeg' }],
@@ -71,7 +90,7 @@ export default async function handler(req, res) {
       ]);
       response = result.response.text();
     } else {
-      return res.status(500).json({ error: 'AI provider not configured (GEMINI_API_KEY or Azure OpenAI required)' });
+      return res.status(500).json({ error: 'AI provider not configured' });
     }
 
     const jsonMatch = response.match(/\{[\s\S]*\}/);
