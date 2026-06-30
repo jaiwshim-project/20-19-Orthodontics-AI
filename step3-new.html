@@ -496,56 +496,76 @@
     const arch = state.activeArch;
     const w = editor.image.width;
     const h = editor.image.height;
+    const isLower = (arch === 'lower');
 
-    // 이미지 분석으로 치아 영역 검출
+    // 이미지 분석으로 치아 영역 + TZ 포인트 검출
+    const analysis = editor._analyzeToothArea(w, h);
     const curve = editor._estimateArchCurves(w, h, arch);
     if (!curve || !curve.tz || curve.tz.length < 5) {
       if (window.toast) window.toast('이미지에서 치아 영역을 검출할 수 없습니다.', 'error');
       return;
     }
     const tzPoints = curve.tz;
-    const isLower = (arch === 'lower');
-
-    // EZ 곡선: 치아 설측(혀쪽) 치조골 중심선
-    // 양끝점 = 최후방 대구치 설측 경계 (치아 바로 안쪽)
-    // 구치부 = 치아 열보다 확실히 안쪽 (설측으로 이동)
-    // 전치부 = 치아 설측면에 가깝게 (약간만 안쪽)
     const n = tzPoints.length;
     const first = tzPoints[0];
     const last = tzPoints[n - 1];
-
-    // 악궁 기하학적 중심 (모든 치아 포인트의 평균)
-    const archCenterX = tzPoints.reduce((s, p) => s + p.x, 0) / n;
-    const archCenterY = tzPoints.reduce((s, p) => s + p.y, 0) / n;
-
-    // 악궁 폭 (양끝 어금니 간 거리)
     const archWidth = Math.hypot(last.x - first.x, last.y - first.y);
+    const pxPerMm = archWidth / 54;
 
-    // EZ = 치아 설측 치조골 중심선
-    // 참고: 양끝(대구치)에서 치아 바로 안쪽, 구치부에서 조금 더 안쪽, 전치부에서 치아에 거의 접함
-    function toEzPoint(tzPt, positionRatio) {
-      // positionRatio: 0=좌측끝, 0.5=전치부, 1=우측끝
-      const anteriorWeight = Math.sin(Math.PI * positionRatio); // 전치부=1, 양끝=0
+    // 이미지를 축소하여 치아 픽셀 분석용 데이터 준비
+    const sample = analysis.sample;
+    const scale = analysis.scale;
 
-      // 오프셋 mm: 양끝 2mm, 구치부(중간) 3mm, 전치부 1mm — 매끄러운 보간
-      const pxPerMm = archWidth / 54;
-      // anteriorWeight: 0(양끝)→1(전치부)
-      // 양끝(0): 2mm, 구치부(~0.3): 3mm, 전치부(1): 1mm
-      const offsetMmFinal = positionRatio < 0.05 || positionRatio > 0.95
-        ? 2.0
-        : 1.0 + 2.0 * Math.pow(1 - anteriorWeight, 0.8);
-      // anteriorWeight=0 → 1+2=3mm, anteriorWeight=0.5 → 1+1.15=2.15mm, anteriorWeight=1 → 1+0=1mm
-      const offsetDist = offsetMmFinal * pxPerMm;
+    // 각 TZ 포인트에서 설측 방향으로 이동하면서 치아 픽셀의 안쪽 경계를 찾음
+    function findLingualEdge(idx) {
+      const tzPt = tzPoints[idx];
+      const prev = tzPoints[Math.max(0, idx - 1)];
+      const next = tzPoints[Math.min(n - 1, idx + 1)];
 
-      // 오프셋 방향: 치아에서 악궁 중심 방향
-      const dx = archCenterX - tzPt.x;
-      const dy = archCenterY - tzPt.y;
-      const dist = Math.hypot(dx, dy) || 1;
+      // 악궁 접선 → 법선(안쪽 방향)
+      const tx = next.x - prev.x;
+      const ty = next.y - prev.y;
+      const tLen = Math.hypot(tx, ty) || 1;
+      let nx = -ty / tLen;
+      let ny = tx / tLen;
+      if (isLower && ny > 0) { nx = -nx; ny = -ny; }
+      if (!isLower && ny < 0) { nx = -nx; ny = -ny; }
 
-      return {
-        x: Math.round(tzPt.x + (dx / dist) * offsetDist),
-        y: Math.round(tzPt.y + (dy / dist) * offsetDist)
-      };
+      if (!sample) {
+        // 픽셀 데이터 없으면 2mm 오프셋 폴백
+        const d = 2.0 * pxPerMm;
+        return { x: Math.round(tzPt.x + nx * d), y: Math.round(tzPt.y + ny * d) };
+      }
+
+      // 설측 방향으로 1px씩 이동하면서 치아 픽셀이 끝나는 지점(경계) 탐색
+      const maxSearch = Math.round(6 * pxPerMm); // 최대 6mm까지 탐색
+      let lastToothX = tzPt.x;
+      let lastToothY = tzPt.y;
+      let foundEdge = false;
+
+      for (let d = 1; d <= maxSearch; d++) {
+        const px = Math.round(tzPt.x + nx * d);
+        const py = Math.round(tzPt.y + ny * d);
+        // 축소 이미지 좌표로 변환
+        const sx = Math.max(0, Math.min(sample.width - 1, Math.round(px * scale)));
+        const sy = Math.max(0, Math.min(sample.height - 1, Math.round(py * scale)));
+
+        if (editor._isToothPixel(sample.data, sample.width, sx, sy, sample.threshold)) {
+          lastToothX = px;
+          lastToothY = py;
+        } else {
+          // 치아 픽셀이 아닌 곳 도달 → 마지막 치아 픽셀이 설측 경계
+          foundEdge = true;
+          break;
+        }
+      }
+
+      if (foundEdge) {
+        return { x: Math.round(lastToothX), y: Math.round(lastToothY) };
+      }
+      // 경계를 못 찾으면 2mm 오프셋 폴백
+      const d = 2.0 * pxPerMm;
+      return { x: Math.round(tzPt.x + nx * d), y: Math.round(tzPt.y + ny * d) };
     }
 
     // 9개 anchor point: 양끝 + 균등 분배
@@ -553,8 +573,7 @@
     const ezAnchors = [];
     for (let i = 0; i < 9; i++) {
       const idx = Math.round(i * step);
-      const posRatio = idx / (n - 1);
-      ezAnchors.push(toEzPoint(tzPoints[idx], posRatio));
+      ezAnchors.push(findLingualEdge(idx));
     }
 
     // CurveEditor에 EZ 포인트 설정
