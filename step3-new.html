@@ -336,7 +336,11 @@
       const tooth = teeth.find(t => t.index === i);
       const hasPoints = tooth && tooth.distalPoint && tooth.mesialPoint;
       let widthMm = '-';
-      if (hasPoints && pxPerMm) {
+      if (tooth && tooth.widthMm > 0) {
+        widthMm = tooth.widthMm.toFixed(2);
+        totalMm += tooth.widthMm;
+        count++;
+      } else if (hasPoints && pxPerMm) {
         const w = ToothWidthEngine.calculateToothWidth(tooth, pxPerMm);
         widthMm = w.widthMm.toFixed(2);
         totalMm += w.widthMm;
@@ -598,7 +602,7 @@
   };
 
   function fallbackLocalTTL() {
-    // 이미지 분석으로 치아 위치만 내부 계산 (화면에 TZ 곡선 표시하지 않음)
+    // 이미지에서 치아 영역 검출 → 표준 폭경 비율로 TTL 추정
     if (!editor.image) {
       if (window.toast) window.toast('이미지에서 치아를 검출할 수 없습니다.', 'error');
       return;
@@ -611,12 +615,11 @@
     }
     const centers = curve.tz;
 
-    // 하악 표준 근원심 폭경 비율 (Bolton 분석 기반, 단위: mm 평균값)
-    // 7번(#37) ~ 7번(#47): 좌측 제2대구치 → 우측 제2대구치
+    // 하악 표준 근원심 폭경 (Bolton 분석 기반, mm)
     const STANDARD_WIDTHS = [10.7, 11.3, 7.1, 7.0, 6.9, 5.9, 5.4, 5.4, 5.9, 6.9, 7.0, 7.1, 11.3, 10.7];
-    const STANDARD_TOTAL = STANDARD_WIDTHS.reduce((s, v) => s + v, 0); // ≈108.6mm
+    const STANDARD_TOTAL = STANDARD_WIDTHS.reduce((s, v) => s + v, 0); // 108.6mm
 
-    // 양끝 어금니 간 실제 거리 → pxPerMm 계산
+    // 양끝 어금니 간 실측 거리로 스케일 계산
     const molarMm = Number(document.getElementById('molarMm').value) || 54;
     const first = centers[0];
     const last = centers[centers.length - 1];
@@ -629,49 +632,42 @@
     document.getElementById('knownMm').value = molarMm.toFixed(1);
     document.getElementById('knownPx').value = molarPx.toFixed(1);
 
-    // 표준 비율로 각 치아의 원심점/근심점을 악궁 위에 배치
-    // TZ 곡선을 따라 각 치아 경계를 누적 배치
-    const ezEngine = window.EquilibriumZoneEngine;
-    const curveSamples = ezEngine.sampleCurve(centers);
-    const totalCurveLen = ezEngine.curveLength(curveSamples);
-
-    // 곡선 위의 특정 거리 위치에 해당하는 점 찾기
-    function pointAtLength(samples, targetLen) {
-      let acc = 0;
-      for (let i = 1; i < samples.length; i++) {
-        const seg = Math.hypot(samples[i].x - samples[i-1].x, samples[i].y - samples[i-1].y);
-        if (acc + seg >= targetLen) {
-          const t = (targetLen - acc) / seg;
-          return { x: Math.round(samples[i-1].x + (samples[i].x - samples[i-1].x) * t), y: Math.round(samples[i-1].y + (samples[i].y - samples[i-1].y) * t) };
-        }
-        acc += seg;
-      }
-      return samples[samples.length - 1];
-    }
-
-    // 곡선 전체 길이를 표준 비율로 분할
+    // TTL = 표준 폭경 합 그대로 사용 (이미지 기반 측정이 아닌 표준값 추정)
+    // 각 치아 위치만 시각화용으로 배치
     const teeth = [];
-    let cumLen = 0;
-    for (let i = 0; i < 14; i++) {
-      const ratio = STANDARD_WIDTHS[i] / STANDARD_TOTAL;
-      const toothLenOnCurve = totalCurveLen * ratio;
-      const distal = pointAtLength(curveSamples, cumLen);
-      cumLen += toothLenOnCurve;
-      const mesial = pointAtLength(curveSamples, cumLen);
-      teeth.push({ index: i + 1, distalPoint: distal, mesialPoint: mesial });
+    const n = Math.min(centers.length, 14);
+    for (let i = 0; i < n; i++) {
+      const widthMm = STANDARD_WIDTHS[i];
+      const widthPx = widthMm * pxPerMm;
+      const cx = centers[i].x;
+      const cy = centers[i].y;
+      // 악궁 접선 방향으로 폭경 표시 (인접 포인트로 방향 추정)
+      const prev = i > 0 ? centers[i - 1] : centers[i];
+      const next = i < n - 1 ? centers[i + 1] : centers[i];
+      const dx = next.x - prev.x;
+      const dy = next.y - prev.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len;
+      const uy = dy / len;
+      teeth.push({
+        index: i + 1,
+        distalPoint: { x: Math.round(cx - ux * widthPx / 2), y: Math.round(cy - uy * widthPx / 2) },
+        mesialPoint: { x: Math.round(cx + ux * widthPx / 2), y: Math.round(cy + uy * widthPx / 2) },
+        widthMm: widthMm
+      });
     }
 
     state.teeth[state.activeArch] = teeth;
     state.currentToothIndex = 15;
     state.currentPointStep = 'distal';
 
-    const ttlResult = ToothWidthEngine.calculateTTL(teeth, pxPerMm);
-    document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
+    // TTL = 표준 합계 (실제 환자 치아 크기와 다를 수 있음)
+    document.getElementById('ttlMetric').textContent = STANDARD_TOTAL.toFixed(2) + ' mm';
 
     renderToothOverlay();
     renderToothTable();
     updateGuide();
-    if (window.toast) window.toast('TTL = ' + ttlResult.totalWidthMm.toFixed(2) + ' mm (표준 비율 기반 추정, 점을 드래그하여 보정 가능)', 'warning');
+    if (window.toast) window.toast('TTL = ' + STANDARD_TOTAL.toFixed(1) + ' mm (Bolton 표준값 기반 추정)', 'warning');
   }
   document.getElementById('calcEzlBtn').onclick = () => {
     const ezPts = editor.points.ez || [];
