@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="환자 사진 기반 Class I/II/III 부정교합 분류 진단">
+<title>부정교합 분류 진단 · Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .class-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 20px; border-radius:999px; font-size:14px; font-weight:700; }
+  .class-badge.class1 { background:rgba(5,150,105,.1); color:var(--color-success); border:1.5px solid rgba(5,150,105,.3); }
+  .class-badge.class2 { background:rgba(217,119,6,.1); color:var(--color-warning); border:1.5px solid rgba(217,119,6,.3); }
+  .class-badge.class3 { background:rgba(220,38,38,.1); color:var(--color-danger); border:1.5px solid rgba(220,38,38,.3); }
+  .class-display { text-align:center; padding:40px 20px; border-radius:16px; background:var(--bg-surface); border:1px solid var(--border-subtle); margin-bottom:24px; }
+  .class-display .class-name { font-size:42px; font-weight:900; margin-bottom:8px; background:var(--gradient-primary); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .class-display .class-sub { font-size:15px; color:var(--text-muted); }
+  .confidence-bar { height:8px; border-radius:4px; background:#E2E8F0; overflow:hidden; margin-top:12px; }
+  .confidence-bar .fill { height:100%; border-radius:4px; transition:width .8s ease; }
+  .confidence-bar .fill.high { background:var(--color-success); }
+  .confidence-bar .fill.mid { background:var(--color-warning); }
+  .confidence-bar .fill.low { background:var(--color-danger); }
+  .evidence-list { list-style:none; padding:0; }
+  .evidence-list li { padding:10px 14px; margin-bottom:8px; border-radius:10px; background:var(--bg-surface); border:1px solid var(--border-subtle); font-size:14px; color:var(--text-secondary); display:flex; align-items:flex-start; gap:8px; }
+  .evidence-list li::before { content:'•'; color:var(--color-primary); font-weight:700; flex-shrink:0; }
+  .phase-card { border:1px solid var(--border-subtle); border-radius:14px; padding:20px; margin-bottom:16px; position:relative; border-left:4px solid var(--color-primary); }
+  .phase-card .phase-num { position:absolute; top:-10px; left:16px; background:var(--color-primary); color:white; padding:2px 12px; border-radius:999px; font-size:12px; font-weight:700; }
+  .phase-card h4 { margin-top:8px; font-size:16px; color:var(--text-primary); }
+  .phase-card .duration { font-size:13px; color:var(--color-primary); font-weight:600; margin:4px 0 12px; }
+  .phase-card ul { padding-left:16px; }
+  .phase-card li { font-size:13px; color:var(--text-secondary); margin-bottom:4px; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:16px 0; }
+  .stat-item { background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:12px; text-align:center; }
+  .stat-item .stat-val { font-size:14px; font-weight:700; color:var(--color-primary); line-height:1.35; overflow-wrap:anywhere; }
+  .stat-item .stat-label { font-size:12px; color:var(--text-muted); margin-top:4px; line-height:1.35; }
+  .risk-chip, .alt-chip { display:inline-block; padding:5px 12px; border-radius:8px; margin:4px; font-size:13px; }
+  .risk-chip { background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.2); color:var(--color-danger); }
+  .alt-chip { background:rgba(14,165,233,.08); border:1px solid rgba(14,165,233,.2); color:var(--color-primary); }
+  #resultPanel { display:none; }
+  #resultPanel.show { display:block; animation:fadeIn .5s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .loading-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(255,255,255,.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+  .criteria-box { margin:18px 0 20px; padding:16px; border:1px solid var(--border-subtle); border-radius:12px; background:var(--bg-surface); }
+  .criteria-box h4 { margin:0 0 12px; font-size:14px; color:var(--text-primary); }
+  .criteria-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-bottom:12px; }
+  .criteria-grid div { padding:10px; border-radius:10px; background:white; border:1px solid var(--border-subtle); }
+  .criteria-grid strong { display:block; font-size:13px; color:var(--color-primary); margin-bottom:4px; }
+  .criteria-grid span, .criteria-box p { display:block; margin:0; font-size:12px; line-height:1.55; color:var(--text-secondary); }  .loading-overlay.show { display:flex; }
+  .spinner { width:48px; height:48px; border:4px solid #E2E8F0; border-top-color:var(--color-primary); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .patient-link-card { margin-bottom:20px; border-left:4px solid #8b5cf6; }
+  .patient-link-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .patient-link-head strong { font-size:15px; color:var(--text-primary); }
+  .patient-link-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+  .patient-link-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:var(--bg-surface); }
+  .patient-link-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
+  .patient-link-item b { display:block; font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+<div class="container">
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+    <div>
+      <span class="badge badge-primary">AI 진단</span>
+      <h2 style="margin-top:8px;">부정교합 분류 진단 <span style="font-size:14px; color:var(--text-muted);">Malocclusion Classification</span></h2>
+      <p style="max-width:680px;">세팔로 측면, 구강 좌측면, 구강 우측면 사진만 사용해 Class I/II/III를 분류하고 치료 계획을 생성합니다.</p>
+    </div>
+  </div>
+
+  
+  <div class="card patient-link-card" id="patientLinkCard">
+    <div class="patient-link-head">
+      <strong>&#49;&#45800;&#44228; &#54872;&#51088; &#51221;&#48372;</strong>
+      <a href="photo-upload.html" style="font-size:12px; color:var(--color-primary);">&#54872;&#51088; &#51221;&#48372; &#49688;&#51221;</a>
+    </div>
+    <div class="patient-link-grid">
+      <div class="patient-link-item"><span>&#54872;&#51088;&#47749; / &#52992;&#51060;&#49828; &#53076;&#46300;</span><b id="linkedPatientName">-</b></div>
+      <div class="patient-link-item"><span>&#52824;&#50676; &#45800;&#44228;</span><b id="linkedDentitionStage">-</b></div>
+      <div class="patient-link-item"><span>&#44264;&#44201; &#48516;&#47448;</span><b id="linkedClassification">-</b></div>
+      <div class="patient-link-item"><span>&#50672;&#46041; &#49324;&#51652;</span><b id="linkedPhotoCount">0&#51109;</b></div>
+    </div>
+  </div>
+
+  <div id="photoPreview" class="card" style="margin-bottom:20px; display:none;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+      <span style="font-size:13px; font-weight:700; color:var(--text-muted);">1단계에서 입력된 사진</span>
+      <a href="photo-upload.html" style="font-size:12px; color:var(--color-primary);">사진 수정</a>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;" id="photoPreviewGrid"></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3 style="margin-bottom:16px;">환자 데이터 입력</h3>
+      <div class="grid grid-2" style="gap:12px;">
+        <div class="field"><label>나이</label><input class="input" type="number" id="age" value="0" min="0" max="120"></div>
+        <div class="field"><label>성별</label><select class="select" id="gender"><option value="male">남성</option><option value="female">여성</option></select></div>
+      </div>
+      <div class="field" style="margin-top:12px;"><label>주소 (Chief Complaint)</label><input class="input" type="text" id="chiefComplaint" placeholder="예: 앞니가 돌출돼요, 주걱턱이 걱정돼요"></div>
+      <hr style="border:none; border-top:1px solid var(--border-subtle); margin:20px 0;">
+      <h4 style="margin-bottom:12px; font-size:14px; color:var(--text-muted);">두부 계측 (분류에는 사용하지 않음)</h4>
+      <div class="grid grid-3" style="gap:12px;">
+        <div class="field"><label>ANB (°)</label><input class="input" type="number" id="anb" step="0.5" value="0"><small style="color:var(--text-muted);">기본값: 0</small></div>
+        <div class="field"><label>FMA (°)</label><input class="input" type="number" id="fma" step="0.5" value="0"><small style="color:var(--text-muted);">기본값: 0</small></div>
+        <div class="field"><label>IMPA (°)</label><input class="input" type="number" id="impa" step="0.5" value="0"><small style="color:var(--text-muted);">기본값: 0</small></div>
+      </div>
+      <hr style="border:none; border-top:1px solid var(--border-subtle); margin:20px 0;">
+      <h4 style="margin-bottom:12px; font-size:14px; color:var(--text-muted);">치아 & 교합 관계 (분류에는 사용하지 않음)</h4>
+      <div class="grid grid-2" style="gap:12px;">
+        <div class="field"><label>Crowding (mm)</label><input class="input" type="number" id="crowding" step="0.5" value="0"></div>
+        <div class="field"><label>Overjet (mm)</label><input class="input" type="number" id="overjet" step="0.5" value="0"><small style="color:var(--text-muted);">기본값: 0</small></div>
+        <div class="field"><label>Overbite (mm)</label><input class="input" type="number" id="overbite" step="0.5" value="0"><small style="color:var(--text-muted);">기본값: 0</small></div>
+        <div class="field"><label>구치 관계 (Molar)</label><select class="select" id="molarRelation"><option value="class1">Class I</option><option value="class2">Class II</option><option value="class3">Class III</option></select></div>
+      </div>
+      <hr style="border:none; border-top:1px solid var(--border-subtle); margin:20px 0;">
+      <h4 style="margin-bottom:12px; font-size:14px; color:var(--text-muted);">안면 분석 (분류에는 사용하지 않음)</h4>
+      <div class="grid grid-2" style="gap:12px;">
+        <div class="field"><label>Profile</label><select class="select" id="profile"><option value="straight">직선형</option><option value="convex">볼록형</option><option value="concave">오목형</option></select></div>
+        <div class="field"><label>Lip Strain</label><select class="select" id="lipStrain"><option value="none">없음</option><option value="mild">경도</option><option value="severe">중증</option></select></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%; margin-top:24px; padding:14px;" onclick="runDiagnosis()">AI 분류 진단 실행</button>
+    </div>
+
+    <div id="resultPanel">
+      <div class="card" id="classificationCard">
+        <div class="class-display" id="classDisplay">
+          <div class="class-name" id="className">-</div>
+          <div class="class-sub" id="classSub"></div>
+          <div style="margin-top:12px;"><span class="class-badge" id="classBadge"></span><span class="class-badge" id="severityBadge" style="margin-left:8px;"></span></div>
+          <div style="max-width:300px; margin:12px auto 0;"><div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);"><span>신뢰도</span><span id="confText">-</span></div><div class="confidence-bar"><div class="fill" id="confFill" style="width:0%;"></div></div></div>
+        </div>
+        <div class="criteria-box">
+          <h4>분류 기준</h4>
+          <div class="criteria-grid">
+            <div><strong>Class I</strong><span>상하악 전후방 관계가 비교적 균형적이고 좌우 구치/견치 관계가 정상에 가까운 경우</span></div>
+            <div><strong>Class II</strong><span>상악 전방 또는 하악 후방 경향, convex profile, overjet 증가, 구치/견치 Class II 경향이 보이는 경우</span></div>
+            <div><strong>Class III</strong><span>하악 전방 또는 상악 후방 경향, concave profile, anterior crossbite 또는 Class III 구치/견치 경향이 보이는 경우</span></div>
+          </div>
+          <p><strong>신뢰도 기준:</strong> 세팔로 측면과 좌우 구강 측면 사진이 같은 결론을 지지하면 높아지고, 한쪽 사진만 보이거나 소견이 충돌하면 낮아집니다. 좌우 구강 측면 중 하나가 불명확하면 70%를 넘지 않도록 제한합니다.</p>
+        </div>
+
+        <h4 style="margin-bottom:10px;">진단 근거</h4>
+        <ul class="evidence-list" id="evidenceList"></ul>
+      </div>
+      <div class="card" style="margin-top:16px;" id="measureCard"><h3 style="margin-bottom:12px;">계측 요약</h3><div class="stat-grid" id="statGrid"></div></div>
+      <div class="card" style="margin-top:16px;" id="planCard">
+        <h3 style="margin-bottom:4px;">맞춤 교정 치료 계획</h3>
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;" id="planSummary"></p>
+        <div class="stat-grid" id="planStats"></div>
+        <h4 style="margin:20px 0 12px;">단계별 계획</h4><div id="phasesContainer"></div>
+        <h4 style="margin:20px 0 10px;">위험 요인</h4><div id="risksContainer"></div>
+        <h4 style="margin:16px 0 10px;">대안적 접근</h4><div id="altsContainer"></div>
+        <h4 style="margin:16px 0 10px;">환자 교육 사항</h4><ul class="evidence-list" id="eduList"></ul>
+      </div>
+    </div>
+
+    <div class="card" id="placeholderCard">
+      <div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+        <div style="font-size:48px; margin-bottom:16px;">AI</div>
+        <p style="font-size:15px;">세팔로 측면, 구강 좌측면, 구강 우측면 사진을 준비한 뒤<br><strong>AI 분류 진단 실행</strong>을 클릭하세요.</p>
+        <p style="font-size:13px; margin-top:12px;">Class I / II / III 분류와 맞춤 교정 계획을 생성합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+      <button class="btn btn-ghost" type="button" onclick="resetClassificationPage()">전체 초기화</button>
+      <button class="btn btn-ghost" type="button" onclick="saveClassificationResult()">저장</button>
+      <button class="btn btn-primary" type="button" onclick="goToEquilibriumAnalysis()">3단계: EZ/TZ 분석</button>
+    </div>
+  </div>
+</div>
+</main>
+
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div style="font-size:15px; font-weight:600; color:var(--text-secondary);">AI가 분석 중입니다...</div><div style="font-size:13px; color:var(--text-muted);">Class 분류와 치료 계획 생성 중</div></div>
+
+<script src="js/api-config.js?v=7"></script>
+<script src="js/common.js"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script>
+function getPatientFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const patient = {
+    name: params.get('patientName') || '',
+    stage: params.get('dentitionStage') || '',
+    dentitionStage: params.get('dentitionStage') || '',
+    classification: params.get('classification') || ''
+  };
+  return patient.name || patient.stage || patient.classification ? patient : null;
+}
+function buildEquilibriumUrl() {
+  const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
+  const patient = getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || {};
+  const url = new URL('equilibrium-analysis.html', window.location.href);
+  if (patient.name) url.searchParams.set('patientName', patient.name);
+  if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
+  if (patient.classification) url.searchParams.set('classification', patient.classification);
+  return url.pathname.split('/').pop() + url.search;
+}
+const IMAGE_LABELS = { ceph: '세팔로 측면', frontal: '구강 정면', rightLateral: '구강 우측', leftLateral: '구강 좌측', faceFront: '안면 정면', faceLateral: '안면 측면' };
+const REQUIRED_IMAGES = [
+  { key: 'ceph', label: '세팔로 측면 사진' },
+  { key: 'leftLateral', label: '구강 좌측면 사진' },
+  { key: 'rightLateral', label: '구강 우측면 사진' }
+];
+
+
+const STAGE_LABELS = { permanent_dentition: '\uC601\uAD6C\uCE58\uC5F4', mixed_dentition: '\uD63C\uD569\uCE58\uC5F4', adult: '\uC131\uC778' };
+const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+function renderLinkedPatientInfo(data) {
+  const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
+  const patient = data?.patient || getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || {};
+  const photos = data?.photos || {};
+  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || '-'; };
+  const stage = patient.stage || patient.dentitionStage || '';
+  const cls = patient.classification || '';
+  const count = Object.values(photos).filter(entry => entry?.base64).length;
+  setText('linkedPatientName', patient.name || '-');
+  setText('linkedDentitionStage', STAGE_LABELS[stage] || stage || '-');
+  setText('linkedClassification', CLASS_LABELS[cls] || cls || '-');
+  setText('linkedPhotoCount', count + '\uC7A5');
+}
+
+(async function loadPhotos() {
+  const data = await PhotoStore.loadCase();
+  renderLinkedPatientInfo(data);
+  if (!data || !data.photos) return;
+  const grid = document.getElementById('photoPreviewGrid');
+  let count = 0;
+  for (const key of ['ceph', 'frontal', 'rightLateral', 'leftLateral', 'faceFront', 'faceLateral']) {
+    const entry = data.photos[key];
+    if (!entry || !entry.base64) continue;
+    count++;
+    const div = document.createElement('div');
+    div.style.cssText = 'width:100px; text-align:center;';
+    div.innerHTML = `<div style="width:100px;height:70px;border-radius:10px;background:url(${entry.base64}) center/cover;border:1px solid #e2e8f0;"></div><div style="font-size:11px;color:#64748b;margin-top:4px;">${IMAGE_LABELS[key] || key}</div>`;
+    grid.appendChild(div);
+  }
+  if (count > 0) document.getElementById('photoPreview').style.display = 'block';
+  if (data.patient && data.patient.name) {
+    const chief = document.getElementById('chiefComplaint');
+    if (!chief.value) chief.placeholder = `환자: ${data.patient.name}`;
+  }
+})();
+
+function normalizeImageForAi(dataUrl, maxDim = 1200) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const width = Math.max(1, Math.round(img.width * scale));
+      const height = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const jpeg = canvas.toDataURL('image/jpeg', 0.86);
+      resolve({ base64: jpeg.split(',')[1], contentType: 'image/jpeg' });
+    };
+    img.onerror = () => reject(new Error('이미지 변환 실패'));
+    img.src = dataUrl;
+  });
+}
+
+async function getClassificationImages() {
+  const caseData = await PhotoStore.loadCase();
+  const photos = (caseData && caseData.photos) || {};
+  const images = [];
+  const missing = [];
+  for (const item of REQUIRED_IMAGES) {
+    const entry = photos[item.key];
+    if (!entry || !entry.base64) {
+      missing.push(item.label);
+      continue;
+    }
+    const normalized = await normalizeImageForAi(entry.base64);
+    images.push({ key: item.key, label: item.label, base64: normalized.base64, contentType: normalized.contentType });
+  }
+  return { images, missing };
+}
+
+async function runDiagnosis() {
+  document.getElementById('loadingOverlay').classList.add('show');
+  try {
+    const { images, missing } = await getClassificationImages();
+    if (missing.length) throw new Error('Class 분류에는 세팔로 측면, 구강 좌측면, 구강 우측면 사진이 모두 필요합니다. 부족한 사진: ' + missing.join(', '));
+    const resp = await apiFetch('/api/classify-diagnosis', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images }) });
+    const result = await resp.json();
+    if (!resp.ok || (!result.success && result.error)) throw new Error(result.error || '이미지 기반 분류 실패');
+    renderResult(result);
+    await persistClassificationResult(true);
+  } catch (err) {
+    alert('진단 오류: ' + (err.message || '이미지 기반 분류에 실패했습니다.'));
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('show');
+  }
+}
+
+function resetClassificationPage() {
+  ['age','anb','fma','impa','crowding','overjet','overbite'].forEach(id => { const el = document.getElementById(id); if (el) el.value = '0'; });
+  ['gender','molarRelation','profile','lipStrain'].forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
+  const chief = document.getElementById('chiefComplaint');
+  if (chief) chief.value = '';
+  window.lastClassificationResult = null;
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('placeholderCard').style.display = '';
+}
+
+async function buildStep3TransferPayload() {
+  const caseData = await PhotoStore.loadCase();
+  const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
+  const patient = caseData?.patient || getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || null;
+  const photos = caseData?.photos || {};
+  const record = window.lastClassificationResult ? {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    patientName: patient?.name || '',
+    patient,
+    result: window.lastClassificationResult
+  } : null;
+  return {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    source: 'classification-step',
+    patient,
+    photoKeys: Object.keys(photos).filter(key => photos[key]?.base64),
+    classificationRecord: record
+  };
+}
+
+async function persistClassificationResult(silent = false) {
+  const payload = await buildStep3TransferPayload();
+  if (payload.classificationRecord) {
+    const records = JSON.parse(localStorage.getItem('oa_classification_records') || '[]');
+    records.unshift(payload.classificationRecord);
+    localStorage.setItem('oa_classification_records', JSON.stringify(records.slice(0, 30)));
+    localStorage.setItem('oa_latest_classification_result', JSON.stringify(payload.classificationRecord));
+  } else if (!silent) {
+    alert('\uC800\uC7A5\uD560 \uBD84\uB958 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. \uBA3C\uC800 AI \uBD84\uB958 \uC9C4\uB2E8\uC744 \uC2E4\uD589\uD558\uC138\uC694.');
+  }
+  // \uD658\uC790 \uC815\uBCF4\uB97C 3\uB2E8\uACC4\uC5D0\uC11C \uD655\uC2E4\uD788 \uC77D\uC744 \uC218 \uC788\uB3C4\uB85D localStorage \uAC31\uC2E0
+  if (payload.patient) {
+    try { localStorage.setItem('oa_step1_patient_info', JSON.stringify({ ...payload.patient, savedAt: Date.now(), source: 'step2-transfer' })); } catch {}
+  }
+  localStorage.setItem('oa_step2_to_step3_payload', JSON.stringify(payload));
+  localStorage.setItem('oa_workflow_to_equilibrium', '1');
+  if (!silent && payload.classificationRecord) alert('\uBD84\uB958 \uACB0\uACFC\uB97C \uC800\uC7A5\uD588\uC2B5\uB2C8\uB2E4.');
+  return !!payload.classificationRecord;
+}
+
+async function saveClassificationResult() {
+  await persistClassificationResult(false);
+}
+
+async function goToEquilibriumAnalysis() {
+  await persistClassificationResult(true);
+  location.href = buildEquilibriumUrl();
+}
+
+document.addEventListener('click', async (event) => {
+  const link = event.target.closest?.('a[href="equilibrium-analysis.html"]');
+  if (!link) return;
+  event.preventDefault();
+  await persistClassificationResult(true);
+  location.href = buildEquilibriumUrl();
+});
+
+function getSeverityLabel(severity) {
+  if (severity === 'severe') return '중증 (Severe)';
+  if (severity === 'moderate') return '중등도 (Moderate)';
+  return '경도 (Mild)';
+}
+
+function renderResult(r) {
+  window.lastClassificationResult = r;
+  document.getElementById('placeholderCard').style.display = 'none';
+  document.getElementById('resultPanel').classList.add('show');
+
+  const cls = r.classification || {};
+  const angleClass = cls.angleClass || cls.class || 'Unknown';
+  const severity = cls.severity || 'mild';
+  const confidence = Number(cls.confidence || 0.5);
+  document.getElementById('className').textContent = angleClass;
+  document.getElementById('classSub').textContent = `${cls.skeletalPattern || '이미지 기반'} | ${getSeverityLabel(severity)}`;
+
+  const badge = document.getElementById('classBadge');
+  badge.textContent = angleClass;
+  badge.className = 'class-badge ' + (angleClass.includes('III') ? 'class3' : angleClass.includes('II') ? 'class2' : 'class1');
+  const sevBadge = document.getElementById('severityBadge');
+  sevBadge.textContent = getSeverityLabel(severity);
+  sevBadge.className = 'class-badge ' + (severity === 'severe' ? 'class3' : severity === 'moderate' ? 'class2' : 'class1');
+
+  const confPct = Math.round(confidence * 100);
+  document.getElementById('confText').textContent = confPct + '%';
+  const fill = document.getElementById('confFill');
+  fill.style.width = confPct + '%';
+  fill.className = 'fill ' + (confPct >= 80 ? 'high' : confPct >= 60 ? 'mid' : 'low');
+
+  const evidence = cls.evidence || cls.keyFindings || [];
+  document.getElementById('evidenceList').innerHTML = evidence.length ? evidence.map(e => `<li>${e}</li>`).join('') : '<li>이미지 기반 분류 결과입니다.</li>';
+
+  const meas = r.measurements || {};
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-item"><div class="stat-val">${meas.skeletalRelation || angleClass}</div><div class="stat-label">골격 관계</div></div>
+    <div class="stat-item"><div class="stat-val">${meas.dentalRelation || '-'}</div><div class="stat-label">치아 관계</div></div>
+    <div class="stat-item"><div class="stat-val">${meas.verticalPattern || '-'}</div><div class="stat-label">수직 패턴</div></div>
+    <div class="stat-item"><div class="stat-val">${meas.profileType || '-'}</div><div class="stat-label">프로파일</div></div>`;
+
+  const plan = r.treatmentPlan || r.plan || {};
+  document.getElementById('planSummary').textContent = plan.summary || '이미지 기반 분류 결과를 바탕으로 치료 계획을 검토하세요.';
+  const cost = plan.estimated_cost_krw || {};
+  const totalDur = plan.total_duration_months || plan.totalDuration || '-';
+  const approach = plan.approach || plan.extractionRecommendation || '-';
+  document.getElementById('planStats').innerHTML = `
+    <div class="stat-item"><div class="stat-val">${totalDur}${typeof totalDur === 'number' ? '개월' : ''}</div><div class="stat-label">예상 기간</div></div>
+    <div class="stat-item"><div class="stat-val">${approach === 'extraction' ? '발치' : approach}</div><div class="stat-label">접근법</div></div>
+    <div class="stat-item"><div class="stat-val">${cost.min ? (cost.min/10000).toFixed(0)+'~'+(cost.max/10000).toFixed(0)+'만' : '-'}</div><div class="stat-label">예상 비용</div></div>`;
+
+  const phases = plan.phases || [];
+  document.getElementById('phasesContainer').innerHTML = phases.length ? phases.map((p, i) => `
+    <div class="phase-card"><div class="phase-num">Phase ${p.phase || (i + 1)}</div><h4>${p.name || ('단계 ' + (i + 1))}</h4><div class="duration">${p.duration_months || p.duration || ''}${p.duration_months ? '개월' : ''}</div><ul>${(p.objectives || p.key_actions || []).map(o => `<li><strong>${o}</strong></li>`).join('')}</ul></div>`).join('') : '<p style="font-size:13px; color:var(--text-muted);">단계별 계획이 없습니다.</p>';
+
+  const risks = r.risks || plan.risks || [];
+  document.getElementById('risksContainer').innerHTML = risks.length ? risks.map(x => `<span class="risk-chip">${x}</span>`).join('') : '<span style="font-size:13px; color:var(--text-muted);">확인된 위험 요인 없음</span>';
+  const alts = r.alternatives || plan.alternatives || [];
+  document.getElementById('altsContainer').innerHTML = alts.length ? alts.map(x => `<span class="alt-chip">${x}</span>`).join('') : '<span style="font-size:13px; color:var(--text-muted);">-</span>';
+  const edu = r.patientEducation || plan.education || [];
+  document.getElementById('eduList').innerHTML = edu.length ? edu.map(x => `<li>${x}</li>`).join('') : '<li>교정 장치 관리와 정기 내원을 안내하세요.</li>';
+}
+</script>
+</body>
+</html>
+
+
+
+

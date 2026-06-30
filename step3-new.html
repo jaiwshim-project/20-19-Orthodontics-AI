@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3단계 EZ/TZ 평형 영역 분석 | Orthodontics AI</title>
+<meta name="description" content="5방향 구강사진과 PM 기준값을 기반으로 EZ/TZ 곡선 길이를 비교하는 발치 판단 보조 도구">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-compact { padding: 34px 24px 22px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(135deg, rgba(14,165,233,.08), rgba(124,58,237,.06)); }
+  .hero-compact h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 10px; }
+  .step-indicator { display: flex; gap: 4px; margin-bottom: 18px; }
+  .step-indicator .step { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; background: #e2e8f0; color: #64748b; }
+  .step-indicator .step.done { background: #22c55e; color: #fff; }
+  .step-indicator .step.active { background: var(--gradient-primary); color: #fff; }
+  .step-indicator .arrow { color: #cbd5e1; font-size: 18px; }
+  .layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; margin-top: 24px; align-items: start; }
+  .card { border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; background: #fff; margin-bottom: 16px; }
+  .patient-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+  .patient-info-item { padding: 12px; border: 1px solid var(--border-subtle); border-radius: 12px; background: #f8fafc; }
+  .patient-info-item .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .patient-info-item .value { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .photo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+  .photo-slot { border: 1px solid var(--border-subtle); border-radius: 10px; overflow: hidden; background: #f8fafc; text-align: center; }
+  .photo-slot.has-image { border-color: #22c55e; }
+  .photo-slot .thumb { width: 100%; height: 56px; background: #e2e8f0; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 16px; }
+  .photo-slot .thumb.loaded { background-color: transparent; }
+  .photo-slot .slot-label { font-size: 10px; font-weight: 600; padding: 4px; color: var(--text-secondary); }
+  .canvas-frame { border: 1px solid var(--border-subtle); border-radius: 18px; overflow: hidden; background: #f8fafc; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); background: #fff; }
+  .toolbar .active { box-shadow: 0 0 0 3px rgba(14,165,233,.16); }
+  canvas { display: block; width: 100%; min-height: 480px; }
+  .arch-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .arch-tabs .btn.active { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+  .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+  .metric { padding: 14px; border: 1px solid var(--border-subtle); border-radius: 14px; background: #fff; }
+  .metric .label { font-size: 12px; color: var(--text-muted); }
+  .metric .value { font-size: 20px; font-weight: 800; color: var(--text-primary); margin-top: 4px; }
+  .decision { padding: 16px; border-radius: 16px; background: linear-gradient(135deg, rgba(14,165,233,.12), rgba(124,58,237,.10)); border: 1px solid rgba(14,165,233,.22); margin-top: 14px; }
+  .decision .status { font-size: 20px; font-weight: 800; color: var(--color-primary-dark); }
+  @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .patient-info-grid { grid-template-columns: 1fr; } .photo-grid { grid-template-columns: repeat(3, 1fr); } .metric-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <section class="hero-compact">
+    <div class="container">
+      <div class="step-indicator">
+        <div class="step done">1 사진 입력</div><span class="arrow">→</span>
+        <div class="step done">2 Class 분류</div><span class="arrow">→</span>
+        <div class="step active">3 EZ/TZ 분석</div><span class="arrow">→</span>
+        <div class="step">4 발치 판단</div>
+      </div>
+      <h1>3단계: EZ/TZ 평형 영역 분석</h1>
+      <p>교합면 사진에서 현재 치열선(TZ)과 안정 평형선(EZ)의 곡선 길이를 비교하여 발치 여부를 판단합니다.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- 환자 정보 -->
+    <div class="card">
+      <h3>환자 정보 (1단계에서 불러옴)</h3>
+      <div class="patient-info-grid">
+        <div class="patient-info-item"><div class="label">환자명</div><div class="value" id="disp-name">-</div></div>
+        <div class="patient-info-item"><div class="label">치열 단계</div><div class="value" id="disp-stage">-</div></div>
+        <div class="patient-info-item"><div class="label">골격 분류</div><div class="value" id="disp-class">-</div></div>
+      </div>
+      <div class="photo-grid" style="margin-top:14px;">
+        <div class="photo-slot" data-key="frontal"><div class="thumb" id="img-frontal">—</div><div class="slot-label">정면</div></div>
+        <div class="photo-slot" data-key="rightLateral"><div class="thumb" id="img-rightLateral">—</div><div class="slot-label">우측</div></div>
+        <div class="photo-slot" data-key="leftLateral"><div class="thumb" id="img-leftLateral">—</div><div class="slot-label">좌측</div></div>
+        <div class="photo-slot" data-key="upperOcclusal"><div class="thumb" id="img-upperOcclusal">—</div><div class="slot-label">상악</div></div>
+        <div class="photo-slot" data-key="lowerOcclusal"><div class="thumb" id="img-lowerOcclusal">—</div><div class="slot-label">하악</div></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- 메인: 캔버스 -->
+      <section>
+        <div class="card" style="padding:0;">
+          <div style="padding:16px 20px 0;">
+            <div class="arch-tabs">
+              <button class="btn btn-primary active" id="upperTab" type="button">상악 분석</button>
+              <button class="btn btn-ghost" id="lowerTab" type="button">하악 분석</button>
+            </div>
+          </div>
+          <div class="canvas-frame">
+            <div class="toolbar">
+              <button class="btn btn-primary active" id="toothWidthMode" type="button">치아 폭경 측정</button>
+              <button class="btn btn-ghost" id="tzMode" type="button">TZ 곡선</button>
+              <button class="btn btn-ghost" id="ezMode" type="button">EZ 곡선</button>
+              <button class="btn btn-ghost" id="autoBothBtn" type="button">곡선 자동</button>
+              <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
+              <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
+            </div>
+            <canvas id="curveCanvas" width="900" height="520"></canvas>
+            <div style="padding:10px 14px; background:#f1f5f9; border-top:1px solid var(--border-subtle); font-size:12px; color:#475569;" id="canvasGuide">
+              <strong>치아 폭경 모드:</strong> 각 치아의 원심점(D) → 근심점(M) 순서로 클릭. 14개 치아 × 2점 = 28클릭.
+            </div>
+          </div>
+          <!-- 치아별 폭경 테이블 -->
+          <div id="toothTable" style="margin-top:14px; border:1px solid var(--border-subtle); border-radius:14px; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px;">
+              <thead style="background:#f1f5f9;">
+                <tr><th style="padding:8px 6px; text-align:left;">번호</th><th>치아</th><th>폭경(mm)</th><th>상태</th></tr>
+              </thead>
+              <tbody id="toothTableBody"></tbody>
+              <tfoot style="background:#f8fafc; font-weight:700;">
+                <tr><td colspan="2" style="padding:8px 6px;">합계 (TTL)</td><td id="ttlTotal">-</td><td id="ttlCount">0/14</td></tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 사이드바: 스케일 + 보정 + 결과 -->
+      <aside>
+        <div class="card">
+          <h4>스케일 설정</h4>
+          <div class="field" style="margin-top:8px;">
+            <label for="molarMm">양쪽 어금니 간 거리(mm)</label>
+            <input class="input" type="number" id="molarMm" value="54" min="0" step="0.1" placeholder="예: 54">
+            <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">TZ 양 끝점(좌·우 제2대구치) 사이 실측 거리. PM 모델 또는 캘리퍼로 측정.</p>
+          </div>
+          <button class="btn btn-ghost" id="applyMolarScaleBtn" type="button" style="width:100%; justify-content:center; margin-top:6px; color:#6d28d9; border-color:#8b5cf6;">어금니 거리로 스케일 적용</button>
+          <hr style="border:0; border-top:1px solid var(--border-subtle); margin:14px 0;">
+          <details style="font-size:12px; color:var(--text-muted);">
+            <summary style="cursor:pointer; font-weight:600; color:var(--text-secondary);">수동 스케일 (고급)</summary>
+            <div class="field" style="margin-top:8px;"><label for="knownMm">기준 거리(mm)</label><input class="input" type="number" id="knownMm" value="10" min="0" step="0.1"></div>
+            <div class="field"><label for="knownPx">같은 거리(px)</label><input class="input" type="number" id="knownPx" value="100" min="0" step="0.1"></div>
+          </details>
+
+          <h4 style="margin-top:18px;">보정 인자</h4>
+          <div class="field"><label for="profile">안모 돌출</label>
+            <select class="select" id="profile"><option value="balanced">균형</option><option value="protrusive">돌출</option><option value="retrusive">후퇴</option></select>
+          </div>
+          <div class="field"><label for="incisorInclination">전치 경사</label>
+            <select class="select" id="incisorInclination"><option value="normal">정상</option><option value="proclined">순측 경사</option><option value="retroclined">설측 경사</option></select>
+          </div>
+          <label style="display:flex; gap:8px; align-items:center; margin:8px 0;"><input type="checkbox" id="periodontalRisk"> 치주 한계 있음</label>
+          <label style="display:flex; gap:8px; align-items:center; margin:8px 0 14px;"><input type="checkbox" id="growthPotential"> 성장 가능성 있음</label>
+
+          <h4 style="margin-top:18px;">EZL (평형 영역 길이)</h4>
+          <div class="field" style="margin-top:8px;">
+            <label for="ezlMm">EZL 길이(mm)</label>
+            <input class="input" type="number" id="ezlMm" value="" min="0" step="0.1" placeholder="EZ 곡선 측정값 또는 직접 입력">
+            <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">EZ 곡선 길이 또는 PM/STL에서 측정한 EZL. EZ 곡선 모드에서 자동 계산 가능.</p>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;">
+            <button class="btn btn-primary" id="calcTtlBtn" type="button" style="justify-content:center;">TTL 계산</button>
+            <button class="btn btn-ghost" id="calcEzlBtn" type="button" style="justify-content:center; color:#2563eb; border-color:#3b82f6;">EZL 계산</button>
+          </div>
+          <button class="btn btn-primary" id="analyzeBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">공간 부족도 판정</button>
+          <button class="btn btn-ghost" id="saveBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">분석 저장</button>
+        </div>
+
+        <div class="card">
+          <h4>분석 결과</h4>
+          <div class="metric-grid">
+            <div class="metric"><div class="label">TTL (치아 폭경 합)</div><div class="value" id="ttlMetric">-</div></div>
+            <div class="metric"><div class="label">EZL (평형 영역)</div><div class="value" id="ezlMetric">-</div></div>
+            <div class="metric"><div class="label">차이 (TTL−EZL)</div><div class="value" id="diffMetric">-</div></div>
+            <div class="metric"><div class="label">px/mm</div><div class="value" id="scaleMetric">-</div></div>
+          </div>
+          <div class="decision" id="decisionBox">
+            <div class="status" id="decisionLabel">분석 대기</div>
+            <p id="decisionDesc" style="margin-top:6px; font-size:13px; color:var(--text-secondary);">치아 폭경을 측정하고 계산 버튼을 누르세요.</p>
+          </div>
+          <p style="margin-top:10px; font-size:11px; color:var(--text-muted);">본 측정값은 사진 기반 예비 계측값입니다. 정확한 임상 판단은 PM, STL, 세팔로, 치주 상태, 안모 분석과 함께 종합해야 합니다.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script src="js/equilibrium-zone-engine.js"></script>
+<script src="js/curve-editor.js?v=16"></script>
+<script src="js/tooth-width-engine.js"></script>
+<script>
+(async function() {
+  const STAGE_LABELS = { permanent_dentition: '영구치열', mixed_dentition: '혼합치열', adult: '성인' };
+  const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+  const localKey = 'oa_equilibrium_analyses';
+
+  // =========================================================
+  // 1단계 데이터 로드 (PhotoStore.loadCase 한번)
+  // =========================================================
+  let psData = null;
+  try { psData = await PhotoStore.loadCase(); } catch (e) { console.warn(e); }
+  const patient = psData?.patient || {};
+
+  document.getElementById('disp-name').textContent = patient.name || '-';
+  document.getElementById('disp-stage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || '-';
+  document.getElementById('disp-class').textContent = CLASS_LABELS[patient.classification] || patient.classification || '-';
+
+  const photoFiles = {};
+  if (psData && psData.photos) {
+    for (const [key, entry] of Object.entries(psData.photos)) {
+      if (!entry || !entry.base64) continue;
+      const thumb = document.getElementById('img-' + key);
+      if (thumb) {
+        thumb.style.backgroundImage = 'url(' + entry.base64 + ')';
+        thumb.textContent = '';
+        thumb.classList.add('loaded');
+        thumb.closest('.photo-slot')?.classList.add('has-image');
+      }
+      const blob = PhotoStore.base64ToBlob(entry.base64);
+      if (blob) photoFiles[key] = new File([blob], entry.name || key + '.jpg', { type: blob.type });
+    }
+  }
+
+  // =========================================================
+  // 상태 관리
+  // =========================================================
+  const state = {
+    activeArch: 'lower',
+    mode: 'toothWidth',
+    archData: { upper: { ezPoints: [], tzPoints: [] }, lower: { ezPoints: [], tzPoints: [] } },
+    teeth: { upper: [], lower: [] },
+    currentToothIndex: 1,
+    currentPointStep: 'distal'
+  };
+
+  const canvas = document.getElementById('curveCanvas');
+  const editor = new CurveEditor({ canvas, onChange() { updateEzlFromCurve(); } });
+  const TOOTH_NAMES = ToothWidthEngine.LOWER_TOOTH_NAMES;
+
+  // =========================================================
+  // 캔버스 — 치아 폭경 측정 모드
+  // =========================================================
+  canvas.addEventListener('click', function(e) {
+    if (state.mode !== 'toothWidth' || !editor.image) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left - editor.offset.x) / editor.scale;
+    const y = (e.clientY - rect.top - editor.offset.y) / editor.scale;
+    const point = { x: Math.round(x), y: Math.round(y) };
+
+    const arch = state.activeArch;
+    if (!state.teeth[arch]) state.teeth[arch] = [];
+    let tooth = state.teeth[arch].find(t => t.index === state.currentToothIndex);
+    if (!tooth) {
+      tooth = { index: state.currentToothIndex };
+      state.teeth[arch].push(tooth);
+    }
+
+    if (state.currentPointStep === 'distal') {
+      tooth.distalPoint = point;
+      state.currentPointStep = 'mesial';
+    } else {
+      tooth.mesialPoint = point;
+      state.currentPointStep = 'distal';
+      if (state.currentToothIndex < 14) state.currentToothIndex++;
+    }
+
+    renderToothOverlay();
+    renderToothTable();
+    updateGuide();
+  });
+
+  function updateGuide() {
+    const guide = document.getElementById('canvasGuide');
+    if (state.mode === 'toothWidth') {
+      const name = TOOTH_NAMES[state.currentToothIndex - 1] || state.currentToothIndex + '번';
+      const step = state.currentPointStep === 'distal' ? '원심점(D)' : '근심점(M)';
+      guide.innerHTML = '<strong>' + state.currentToothIndex + '번 ' + name + '</strong>의 <strong>' + step + '</strong>을 클릭하세요. (완료: ' + getMeasuredCount() + '/14)';
+    } else if (state.mode === 'ez') {
+      const count = (editor.points.ez || []).length;
+      guide.innerHTML = '<strong>EZ 모드:</strong> 치조골 중심선을 따라 anchor point를 찍으세요. 양끝=어금니 최상단, 가운데=전치부 치조골 중심. (' + count + '개 / 7~9개 권장)';
+    } else {
+      guide.innerHTML = '클릭=포인트 추가 | 드래그=이동 | 더블클릭=삭제';
+    }
+  }
+
+  function getMeasuredCount() {
+    const teeth = state.teeth[state.activeArch] || [];
+    return teeth.filter(t => t.distalPoint && t.mesialPoint).length;
+  }
+
+  function renderToothOverlay() {
+    editor.render();
+    const ctx = editor.ctx;
+    ctx.save();
+    ctx.translate(editor.offset.x, editor.offset.y);
+    ctx.scale(editor.scale, editor.scale);
+
+    const teeth = state.teeth[state.activeArch] || [];
+    teeth.forEach(tooth => {
+      const d = tooth.distalPoint;
+      const m = tooth.mesialPoint;
+      if (d) {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, 5 / editor.scale, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5 / editor.scale;
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold ' + (10 / editor.scale) + 'px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(tooth.index), d.x, d.y - 8 / editor.scale);
+      }
+      if (m) {
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 5 / editor.scale, 0, Math.PI * 2);
+        ctx.fillStyle = '#3b82f6';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5 / editor.scale;
+        ctx.stroke();
+      }
+      if (d && m) {
+        ctx.beginPath();
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(m.x, m.y);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2 / editor.scale;
+        ctx.setLineDash([4 / editor.scale, 3 / editor.scale]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+    ctx.restore();
+  }
+
+  function renderToothTable() {
+    const tbody = document.getElementById('toothTableBody');
+    const pxPerMm = getScale();
+    const teeth = state.teeth[state.activeArch] || [];
+    let totalMm = 0;
+    let count = 0;
+
+    let html = '';
+    for (let i = 1; i <= 14; i++) {
+      const tooth = teeth.find(t => t.index === i);
+      const hasPoints = tooth && tooth.distalPoint && tooth.mesialPoint;
+      let widthMm = '-';
+      if (hasPoints && pxPerMm) {
+        const w = ToothWidthEngine.calculateToothWidth(tooth, pxPerMm);
+        widthMm = w.widthMm.toFixed(2);
+        totalMm += w.widthMm;
+        count++;
+      }
+      const status = hasPoints ? '<span style="color:#16a34a;">&#10003;</span>' : (tooth && tooth.distalPoint ? '<span style="color:#d97706;">D</span>' : '<span style="color:#94a3b8;">-</span>');
+      const active = i === state.currentToothIndex ? ' style="background:#eff6ff;"' : '';
+      html += '<tr' + active + '><td style="padding:4px 6px;">' + i + '</td><td style="font-size:11px;">' + TOOTH_NAMES[i - 1] + '</td><td style="font-weight:600;">' + widthMm + '</td><td style="text-align:center;">' + status + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+    document.getElementById('ttlTotal').textContent = count > 0 ? totalMm.toFixed(2) + ' mm' : '-';
+    document.getElementById('ttlCount').textContent = count + '/14';
+
+    // 사이드바 업데이트
+    document.getElementById('ttlMetric').textContent = count > 0 ? totalMm.toFixed(2) + ' mm' : '-';
+  }
+
+  // =========================================================
+  // 스케일 + EZL
+  // =========================================================
+  function getScale() {
+    const mm = Number(document.getElementById('knownMm').value);
+    const px = Number(document.getElementById('knownPx').value);
+    return mm > 0 && px > 0 ? px / mm : null;
+  }
+
+  function applyMolarScale() {
+    const molarMm = Number(document.getElementById('molarMm').value);
+    if (!molarMm || molarMm <= 0) return;
+    const teeth = state.teeth[state.activeArch] || [];
+    const first = teeth.find(t => t.index === 1);
+    const last = teeth.find(t => t.index === 14);
+    let px = 0;
+    if (first?.distalPoint && last?.mesialPoint) {
+      px = Math.hypot(last.mesialPoint.x - first.distalPoint.x, last.mesialPoint.y - first.distalPoint.y);
+    } else {
+      const tz = editor.points?.tz || [];
+      if (tz.length >= 2) px = Math.hypot(tz[tz.length - 1].x - tz[0].x, tz[tz.length - 1].y - tz[0].y);
+    }
+    if (px <= 0) {
+      if (window.toast) window.toast('양 끝점 거리를 계산할 수 없습니다.', 'warning');
+      return;
+    }
+    document.getElementById('knownMm').value = molarMm.toFixed(1);
+    document.getElementById('knownPx').value = px.toFixed(1);
+    renderToothTable();
+    if (window.toast) window.toast('어금니 간격 ' + molarMm.toFixed(1) + 'mm = ' + px.toFixed(1) + 'px', 'success');
+  }
+
+  function updateEzlFromCurve() {
+    state.archData[state.activeArch] = editor.getData();
+    const ezPts = editor.points.ez || [];
+    if (ezPts.length < 3) return;
+    const pxPerMm = getScale();
+    const result = EquilibriumZoneEngine.buildEZCurve({ anchorPoints: ezPts, pxPerMm: pxPerMm });
+    if (result.lengthMm) {
+      document.getElementById('ezlMm').value = result.lengthMm.toFixed(2);
+      document.getElementById('ezlMetric').textContent = result.lengthMm.toFixed(2) + ' mm';
+    }
+  }
+
+  function recalcResults() {
+    const pxPerMm = getScale();
+    const teeth = state.teeth[state.activeArch] || [];
+    const ttlResult = ToothWidthEngine.calculateTTL(teeth, pxPerMm);
+    const ezlMm = Number(document.getElementById('ezlMm').value);
+    const modifiers = {
+      profile: document.getElementById('profile').value,
+      incisorInclination: document.getElementById('incisorInclination').value,
+      periodontalRisk: document.getElementById('periodontalRisk').checked,
+      growthPotential: document.getElementById('growthPotential').checked
+    };
+
+    document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
+    document.getElementById('ezlMetric').textContent = ezlMm > 0 ? ezlMm.toFixed(2) + ' mm' : '-';
+    document.getElementById('scaleMetric').textContent = pxPerMm ? pxPerMm.toFixed(2) : '-';
+
+    if (ttlResult.totalWidthMm > 0 && ezlMm > 0) {
+      const diagnosis = EquilibriumZoneEngine.classifyDiscrepancy(ttlResult.totalWidthMm, ezlMm, modifiers);
+      document.getElementById('diffMetric').textContent = diagnosis.adjustedDiscrepancy + ' mm';
+      document.getElementById('decisionLabel').textContent = diagnosis.label;
+      const desc = diagnosis.strategy + (diagnosis.reasons.length ? ' (' + diagnosis.reasons.join(', ') + ')' : '');
+      document.getElementById('decisionDesc').textContent = desc;
+
+      // EZ vs TTL 경고
+      const warnings = EquilibriumZoneEngine.validateEZvsTTL(ezlMm, ttlResult.totalWidthMm);
+      if (warnings.length) console.warn('[EZ vs TTL]', warnings);
+    } else {
+      document.getElementById('diffMetric').textContent = '-';
+      document.getElementById('decisionLabel').textContent = '분석 대기';
+      document.getElementById('decisionDesc').textContent = 'TTL 계산 + EZL 계산을 모두 완료하세요.';
+    }
+    renderToothTable();
+  }
+
+  // =========================================================
+  // 모드 전환
+  // =========================================================
+  function setActiveMode(mode) {
+    state.mode = mode;
+    editor.disabled = (mode === 'toothWidth');
+    const twBtn = document.getElementById('toothWidthMode');
+    const tzBtn = document.getElementById('tzMode');
+    const ezBtn = document.getElementById('ezMode');
+    twBtn.classList.toggle('active', mode === 'toothWidth');
+    twBtn.classList.toggle('btn-primary', mode === 'toothWidth');
+    twBtn.classList.toggle('btn-ghost', mode !== 'toothWidth');
+    tzBtn.classList.toggle('active', mode === 'tz');
+    tzBtn.classList.toggle('btn-primary', mode === 'tz');
+    tzBtn.classList.toggle('btn-ghost', mode !== 'tz');
+    ezBtn.classList.toggle('active', mode === 'ez');
+    ezBtn.classList.toggle('btn-primary', mode === 'ez');
+    ezBtn.classList.toggle('btn-ghost', mode !== 'ez');
+    if (mode === 'tz' || mode === 'ez') {
+      editor.setMode(mode);
+      editor.render();
+    }
+    updateGuide();
+    if (mode === 'toothWidth') renderToothOverlay();
+  }
+
+  function setArch(arch) {
+    state.archData[state.activeArch] = editor.getData();
+    state.activeArch = arch;
+    state.currentToothIndex = 1;
+    state.currentPointStep = 'distal';
+    document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
+    document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
+    document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
+    document.getElementById('upperTab').classList.toggle('btn-ghost', arch !== 'upper');
+    document.getElementById('lowerTab').classList.toggle('btn-primary', arch === 'lower');
+    document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
+    editor.setData(state.archData[arch] || {});
+    loadArchImage(arch);
+    renderToothTable();
+    updateGuide();
+  }
+
+  async function loadArchImage(arch) {
+    const key = arch === 'upper' ? 'upperOcclusal' : 'lowerOcclusal';
+    const file = photoFiles[key];
+    if (file) {
+      await editor.setImage(file);
+      const pts = state.archData[arch];
+      editor.points.ez = pts.ezPoints || [];
+      editor.points.tz = pts.tzPoints || [];
+      editor.render();
+      if (state.mode === 'toothWidth') renderToothOverlay();
+    }
+  }
+
+  function saveAnalysis() {
+    recalcResults();
+    const record = {
+      id: 'local_' + Date.now(),
+      patient: { name: patient.name || 'Unnamed', stage: patient.stage || patient.dentitionStage },
+      analysis: { teeth: state.teeth, archData: state.archData, scale: getScale(), ezlMm: Number(document.getElementById('ezlMm').value) },
+      createdAt: new Date().toISOString()
+    };
+    const records = JSON.parse(localStorage.getItem(localKey) || '[]');
+    records.unshift(record);
+    localStorage.setItem(localKey, JSON.stringify(records.slice(0, 50)));
+    if (window.toast) window.toast('분석을 저장했습니다.', 'success');
+  }
+
+  // =========================================================
+  // 이벤트 바인딩
+  // =========================================================
+  document.getElementById('upperTab').onclick = () => setArch('upper');
+  document.getElementById('lowerTab').onclick = () => setArch('lower');
+  document.getElementById('toothWidthMode').onclick = () => setActiveMode('toothWidth');
+  document.getElementById('tzMode').onclick = () => setActiveMode('tz');
+  document.getElementById('ezMode').onclick = () => setActiveMode('ez');
+  document.getElementById('autoBothBtn').onclick = () => { editor.autoTrace('both', { arch: state.activeArch }); updateEzlFromCurve(); };
+  document.getElementById('undoBtn').onclick = () => {
+    if (state.mode === 'toothWidth') {
+      if (state.currentPointStep === 'mesial') { state.currentPointStep = 'distal'; const t = (state.teeth[state.activeArch] || []).find(t => t.index === state.currentToothIndex); if (t) delete t.distalPoint; }
+      else if (state.currentToothIndex > 1) { state.currentToothIndex--; state.currentPointStep = 'mesial'; const t = (state.teeth[state.activeArch] || []).find(t => t.index === state.currentToothIndex); if (t) delete t.mesialPoint; }
+      renderToothOverlay(); renderToothTable(); updateGuide();
+    } else { editor.undo(); }
+  };
+  document.getElementById('clearAllBtn').onclick = () => {
+    if (state.mode === 'toothWidth') { state.teeth[state.activeArch] = []; state.currentToothIndex = 1; state.currentPointStep = 'distal'; renderToothOverlay(); renderToothTable(); updateGuide(); }
+    else { editor.clear('all'); }
+  };
+  document.getElementById('calcTtlBtn').onclick = async () => {
+    const btn = document.getElementById('calcTtlBtn');
+
+    // 수동 측정 데이터가 있으면 그걸로 계산
+    const manualTeeth = state.teeth[state.activeArch] || [];
+    const manualCount = manualTeeth.filter(t => t.distalPoint && t.mesialPoint).length;
+    if (manualCount >= 2) {
+      const pxPerMm = getScale();
+      if (!pxPerMm) { if (window.toast) window.toast('먼저 스케일을 설정하세요.', 'warning'); return; }
+      const ttlResult = ToothWidthEngine.calculateTTL(manualTeeth, pxPerMm);
+      document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
+      renderToothTable();
+      if (window.toast) window.toast('TTL = ' + ttlResult.totalWidthMm.toFixed(2) + ' mm (' + ttlResult.measuredCount + '개 치아, 수동)', 'success');
+      return;
+    }
+
+    // 수동 데이터 없으면 → 이미지 자동 분석
+    if (!editor.image) { if (window.toast) window.toast('교합면 사진을 먼저 업로드하세요.', 'warning'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'AI 분석 중...';
+    try {
+      // 이미지를 base64로 변환
+      const tempCanvas = document.createElement('canvas');
+      const maxDim = 1200;
+      let w = editor.image.width, h = editor.image.height;
+      if (w > maxDim || h > maxDim) { const s = maxDim / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+      tempCanvas.width = w; tempCanvas.height = h;
+      tempCanvas.getContext('2d').drawImage(editor.image, 0, 0, w, h);
+      const base64 = tempCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+
+      const res = await apiFetch('/api/measure-tooth-widths', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          base64,
+          contentType: 'image/jpeg',
+          arch: state.activeArch,
+          imageWidth: editor.image.width,
+          imageHeight: editor.image.height,
+          molarDistanceMm: Number(document.getElementById('molarMm').value) || 54
+        })
+      });
+      const data = await res.json();
+
+      if (!data.success || !data.teeth || data.teeth.length < 5) {
+        throw new Error(data.error || 'AI가 치아를 충분히 검출하지 못했습니다.');
+      }
+
+      // 결과를 state에 적용
+      state.teeth[state.activeArch] = data.teeth.map(t => ({
+        index: t.index,
+        distalPoint: t.distalPoint,
+        mesialPoint: t.mesialPoint,
+        note: t.note || ''
+      }));
+      state.currentToothIndex = Math.min(15, data.teeth.length + 1);
+      state.currentPointStep = 'distal';
+
+      // 스케일 적용
+      if (data.pxPerMm && data.pxPerMm > 0) {
+        const molarMm = Number(document.getElementById('molarMm').value) || 54;
+        document.getElementById('knownMm').value = molarMm.toFixed(1);
+        document.getElementById('knownPx').value = (data.pxPerMm * molarMm).toFixed(1);
+      }
+
+      const pxPerMm = getScale();
+      const ttlResult = ToothWidthEngine.calculateTTL(state.teeth[state.activeArch], pxPerMm);
+      document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
+
+      renderToothOverlay();
+      renderToothTable();
+      updateGuide();
+      if (window.toast) window.toast('AI TTL = ' + ttlResult.totalWidthMm.toFixed(2) + ' mm (' + ttlResult.measuredCount + '개 치아 검출, 신뢰도 ' + Math.round((data.confidence || 0.7) * 100) + '%)', 'success');
+
+    } catch (e) {
+      console.error('[TTL AI]', e);
+      // AI 실패 시 → 이미지 픽셀 분석 폴백 (CurveEditor의 치아 검출 재활용)
+      if (window.toast) window.toast('AI 서버 연결 불가. 로컬 이미지 분석으로 추정합니다.', 'warning');
+      fallbackLocalTTL();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'TTL 계산';
+    }
+  };
+
+  function fallbackLocalTTL() {
+    // 이미지 분석으로 치아 영역 경계를 검출 → 표준 비율로 14개 치아 폭경 배분
+    const traceData = editor.autoTrace('tz', { arch: state.activeArch });
+    if (!traceData || !traceData.tzPoints || traceData.tzPoints.length < 5) {
+      if (window.toast) window.toast('이미지에서 치아를 검출할 수 없습니다.', 'error');
+      return;
+    }
+    const centers = traceData.tzPoints;
+
+    // 하악 표준 근원심 폭경 비율 (Bolton 분석 기반, 단위: mm 평균값)
+    // 7번(#37) ~ 7번(#47): 좌측 제2대구치 → 우측 제2대구치
+    const STANDARD_WIDTHS = [10.7, 11.3, 7.1, 7.0, 6.9, 5.9, 5.4, 5.4, 5.9, 6.9, 7.0, 7.1, 11.3, 10.7];
+    const STANDARD_TOTAL = STANDARD_WIDTHS.reduce((s, v) => s + v, 0); // ≈108.6mm
+
+    // 양끝 어금니 간 실제 거리 → pxPerMm 계산
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    const first = centers[0];
+    const last = centers[centers.length - 1];
+    const molarPx = Math.hypot(last.x - first.x, last.y - first.y);
+    if (molarPx <= 0) {
+      if (window.toast) window.toast('치아 양끝 거리를 계산할 수 없습니다.', 'error');
+      return;
+    }
+    const pxPerMm = molarPx / molarMm;
+    document.getElementById('knownMm').value = molarMm.toFixed(1);
+    document.getElementById('knownPx').value = molarPx.toFixed(1);
+
+    // 표준 비율로 각 치아의 원심점/근심점을 악궁 위에 배치
+    // TZ 곡선을 따라 각 치아 경계를 누적 배치
+    const ezEngine = window.EquilibriumZoneEngine;
+    const curveSamples = ezEngine.sampleCurve(centers);
+    const totalCurveLen = ezEngine.curveLength(curveSamples);
+
+    // 곡선 위의 특정 거리 위치에 해당하는 점 찾기
+    function pointAtLength(samples, targetLen) {
+      let acc = 0;
+      for (let i = 1; i < samples.length; i++) {
+        const seg = Math.hypot(samples[i].x - samples[i-1].x, samples[i].y - samples[i-1].y);
+        if (acc + seg >= targetLen) {
+          const t = (targetLen - acc) / seg;
+          return { x: Math.round(samples[i-1].x + (samples[i].x - samples[i-1].x) * t), y: Math.round(samples[i-1].y + (samples[i].y - samples[i-1].y) * t) };
+        }
+        acc += seg;
+      }
+      return samples[samples.length - 1];
+    }
+
+    // 곡선 전체 길이를 표준 비율로 분할
+    const teeth = [];
+    let cumLen = 0;
+    for (let i = 0; i < 14; i++) {
+      const ratio = STANDARD_WIDTHS[i] / STANDARD_TOTAL;
+      const toothLenOnCurve = totalCurveLen * ratio;
+      const distal = pointAtLength(curveSamples, cumLen);
+      cumLen += toothLenOnCurve;
+      const mesial = pointAtLength(curveSamples, cumLen);
+      teeth.push({ index: i + 1, distalPoint: distal, mesialPoint: mesial });
+    }
+
+    state.teeth[state.activeArch] = teeth;
+    state.currentToothIndex = 15;
+    state.currentPointStep = 'distal';
+
+    const ttlResult = ToothWidthEngine.calculateTTL(teeth, pxPerMm);
+    document.getElementById('ttlMetric').textContent = ttlResult.totalWidthMm > 0 ? ttlResult.totalWidthMm.toFixed(2) + ' mm' : '-';
+
+    renderToothOverlay();
+    renderToothTable();
+    updateGuide();
+    if (window.toast) window.toast('TTL = ' + ttlResult.totalWidthMm.toFixed(2) + ' mm (표준 비율 기반 추정, 점을 드래그하여 보정 가능)', 'warning');
+  }
+  document.getElementById('calcEzlBtn').onclick = () => {
+    const ezPts = editor.points.ez || [];
+    if (ezPts.length < 3) { if (window.toast) window.toast('EZ 곡선 모드에서 치조골 중심을 따라 7~9개 anchor point를 찍으세요.', 'warning'); return; }
+    const pxPerMm = getScale();
+    const result = EquilibriumZoneEngine.buildEZCurve({
+      anchorPoints: ezPts,
+      pxPerMm: pxPerMm
+    });
+    if (result.qualityCheck.warnings.length > 0) {
+      console.warn('[EZL]', result.qualityCheck.warnings);
+    }
+    const ezlMm = result.lengthMm;
+    if (ezlMm) {
+      document.getElementById('ezlMm').value = ezlMm.toFixed(2);
+      document.getElementById('ezlMetric').textContent = ezlMm.toFixed(2) + ' mm';
+      if (window.toast) window.toast('EZL = ' + ezlMm.toFixed(2) + ' mm (anchor ' + ezPts.length + '개, ' + (result.qualityCheck.isValid ? '품질 양호' : '경고 있음') + ')', 'success');
+    } else {
+      const ezlPx = result.lengthPx;
+      document.getElementById('ezlMetric').textContent = ezlPx + ' px (스케일 미설정)';
+      if (window.toast) window.toast('EZL = ' + ezlPx + ' px — 스케일을 설정하면 mm로 변환됩니다.', 'warning');
+    }
+  };
+  document.getElementById('analyzeBtn').onclick = () => recalcResults();
+  document.getElementById('saveBtn').onclick = () => saveAnalysis();
+  document.getElementById('applyMolarScaleBtn').onclick = () => applyMolarScale();
+  ['knownMm','knownPx','ezlMm','profile','incisorInclination','periodontalRisk','growthPotential'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', recalcResults);
+  });
+
+  // =========================================================
+  // 초기 로드
+  // =========================================================
+  if (photoFiles.lowerOcclusal) {
+    setArch('lower');
+  } else if (photoFiles.upperOcclusal) {
+    setArch('upper');
+  }
+  setActiveMode('toothWidth');
+  renderToothTable();
+  updateGuide();
+})();
+</script>
+</body>
+</html>

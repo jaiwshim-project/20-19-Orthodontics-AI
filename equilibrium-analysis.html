@@ -148,6 +148,23 @@
   .drop-thumb.loaded { display: block; border: 2px solid #22c55e; }
   .arch-tabs { display:flex; gap:8px; margin-bottom:12px; }
   .arch-tabs .btn.active { background: var(--gradient-primary); color:#fff; border-color:transparent; }
+  .molar-distance-input {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, .10);
+  }
+  .molar-distance-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+    color: #6d28d9;
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, .08);
+  }
+  .molar-distance-btn:hover {
+    color: #fff;
+    border-color: #7c3aed;
+    background: #7c3aed;
+  }
   .saved-list {
     display: grid;
     gap: 8px;
@@ -164,6 +181,36 @@
     color: var(--text-secondary);
   }
   .saved-item strong { display:block; color: var(--text-primary); font-size: 13px; margin-bottom: 4px; }
+  .saved-item .meta { margin: 3px 0 8px; }
+  .load-analysis-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .tooth-map-panel {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background: #fff;
+  }
+  .tooth-map-panel h4 { margin: 0 0 8px; font-size: 14px; }
+  .tooth-map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; }
+  .tooth-map-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .tooth-map-item strong { color: var(--color-primary); white-space: nowrap; }
+  .tooth-map-item span { color: var(--text-secondary); }
+  .tooth-map-item small { color: var(--text-muted); white-space: nowrap; }
   .ai-result-panel {
     margin-top: 14px;
     padding: 16px;
@@ -192,6 +239,15 @@
     .toolbar .btn { flex: 1 1 140px; justify-content: center; }
     canvas { min-height: 420px; }
   }
+
+  .patient-link-card { margin-bottom:20px; border-left:4px solid #8b5cf6; grid-column:1 / -1; }
+  .patient-link-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .patient-link-head strong { font-size:15px; color:var(--text-primary); }
+  .patient-link-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+  .patient-link-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:var(--bg-surface); }
+  .patient-link-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
+  .patient-link-item b { display:block; font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+
 </style>
 </head>
 <body>
@@ -224,6 +280,20 @@
     </div>
 
     <div class="analysis-layout">
+    <div class="card patient-link-card" id="patientLinkCard">
+        <div class="patient-link-head">
+          <strong>&#49;&#45800;&#44228; &#54872;&#51088; &#51221;&#48372;</strong>
+          <a href="photo-upload.html" style="font-size:12px; color:var(--color-primary);">&#54872;&#51088; &#51221;&#48372; &#49688;&#51221;</a>
+        </div>
+        <div class="patient-link-grid">
+          <div class="patient-link-item"><span>&#54872;&#51088;&#47749; / &#52992;&#51060;&#49828; &#53076;&#46300;</span><b id="linkedPatientName">-</b></div>
+          <div class="patient-link-item"><span>&#52824;&#50676; &#45800;&#44228;</span><b id="linkedDentitionStage">-</b></div>
+          <div class="patient-link-item"><span>&#44264;&#44201; &#48516;&#47448;</span><b id="linkedClassification">-</b></div>
+          <div class="patient-link-item"><span>&#50672;&#46041; &#49324;&#51652;</span><b id="linkedPhotoCount">0&#51109;</b></div>
+        </div>
+      </div>
+
+
       <section>
         <div class="card" style="margin-bottom:16px;">
           <h3>환자 및 자료</h3>
@@ -288,20 +358,27 @@
             <div class="toolbar">
               <button class="btn btn-primary active" id="tzMode" type="button">TZ 점 찍기</button>
               <button class="btn btn-ghost" id="ezMode" type="button">EZ 점 찍기</button>
-              <button class="btn btn-ghost" id="aiDetectBtn" type="button" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;border:none;">AI 치아 검출</button>
+              <button class="btn btn-ghost" id="moveMode" type="button">점 이동</button>
+              <button class="btn btn-ghost" id="aiDetectBtn" type="button" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;border:none;">AI EZ/TZ 분할</button>
               <button class="btn btn-ghost" id="autoTzBtn" type="button">TZ 자동</button>
               <button class="btn btn-ghost" id="autoEzBtn" type="button">EZ 자동</button>
               <button class="btn btn-ghost" id="autoBothBtn" type="button">둘 다 자동</button>
               <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
               <button class="btn btn-ghost" id="clearBtn" type="button">현재 삭제</button>
               <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
+              <button class="btn btn-ghost" id="saveTzLearningBtn" type="button">TZ 위치 학습 저장</button>
+              <button class="btn btn-ghost" id="loadTzLearningBtn" type="button">이전 TZ 위치 불러오기</button>
+              <button class="btn btn-ghost" id="saveEzLearningBtn" type="button">EZ 위치 학습 저장</button>
             </div>
             <canvas id="curveCanvas" width="900" height="580"></canvas>
             <div style="padding:10px 14px; background:#f1f5f9; border-top:1px solid var(--border-subtle); font-size:12px; color:#475569;">
-              <strong>사용법:</strong> 클릭=포인트 추가 | 드래그=포인트 이동 | 더블클릭=포인트 삭제 | 좌측 구치부→전치부→우측 구치부 순서로 14개 포인트 권장
+              <strong>사용법:</strong> TZ/EZ 점 찍기=포인트 추가 | 점 이동=선택한 점 드래그 | 더블클릭=포인트 삭제 | 좌측 구치부→전치부→우측 구치부 순서로 14개 포인트 권장
             </div>
           </div>
-        </div>
+          <div class="tooth-map-panel">
+            <h4>TZ 치아 번호/이름</h4>
+            <div class="tooth-map-grid" id="tzToothMap"></div>
+          </div>        </div>
       </section>
 
       <aside class="card">
@@ -315,12 +392,18 @@
           <input class="input" type="number" id="knownPx" value="100" min="0" step="0.1">
         </div>
         <div class="field">
+          <label for="molarDistanceMm">양쪽 어금니 사이 실제 길이(mm)</label>
+          <input class="input molar-distance-input" type="number" id="molarDistanceMm" value="50" min="0" step="0.1" placeholder="예: 50">
+          <button class="btn btn-ghost molar-distance-btn" id="molarDistanceScaleBtn" type="button">입력한 어금니 간 거리 기준 적용</button>
+        </div>
+        <div class="field">
           <label for="scaleSource">스케일 출처</label>
           <select class="select" id="scaleSource">
             <option value="plastic_model">PM 1:1 모델</option>
             <option value="known_tooth_width">알려진 치아 폭경</option>
             <option value="ruler">사진 내 ruler</option>
             <option value="manual">수동 입력</option>
+            <option value="molar_distance">양쪽 어금니 간 거리 입력</option>
           </select>
         </div>
 
@@ -361,9 +444,9 @@
         </div>
 
         <div class="metric-grid" style="margin-top:14px;">
-          <div class="metric"><div class="label">상악 차이</div><div class="value" id="upperMetric">-</div></div>
-          <div class="metric"><div class="label">하악 차이</div><div class="value" id="lowerMetric">-</div></div>
-          <div class="metric"><div class="label">총 차이</div><div class="value" id="totalMetric">-</div></div>
+          <div class="metric"><div class="label">EZ 길이</div><div class="value" id="upperMetric">-</div></div>
+          <div class="metric"><div class="label">TZ 길이</div><div class="value" id="lowerMetric">-</div></div>
+          <div class="metric"><div class="label">현재 차이</div><div class="value" id="totalMetric">-</div></div>
           <div class="metric"><div class="label">px/mm</div><div class="value" id="scaleMetric">-</div></div>
         </div>
 
@@ -383,11 +466,13 @@
 
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/photo-store.js"></script>
+<script src="js/photo-store.js?v=5"></script>
 <script src="js/equilibrium-zone-engine.js"></script>
-<script src="js/curve-editor.js"></script>
+<script src="js/curve-editor.js?v=16"></script>
 <script>
 (function () {
+  const CURVE_ALGORITHM_VERSION = 16;
+
   const state = {
     activeArch: 'upper',
     archData: {
@@ -437,11 +522,13 @@
         },
         files: state.files,
         imageData,
+        lastAiDiagnosis: state.lastAiDiagnosis,
         formValues: {
           patientName: document.getElementById('patientName').value,
           dentitionStage: document.getElementById('dentitionStage').value,
           knownMm: document.getElementById('knownMm').value,
           knownPx: document.getElementById('knownPx').value,
+          molarDistanceMm: document.getElementById('molarDistanceMm').value,
           scaleSource: document.getElementById('scaleSource').value,
           profile: document.getElementById('profile').value,
           incisorInclination: document.getElementById('incisorInclination').value,
@@ -472,70 +559,7 @@
     } catch (e) { console.warn('[session] load failed:', e); return false; }
   }
 
-  async function restoreSession() {
-    const data = await loadSession();
-    if (!data) return;
-    _restoring = true;
-
-    // 폼 값 복원
-    if (data.formValues) {
-      const fv = data.formValues;
-      if (fv.patientName) document.getElementById('patientName').value = fv.patientName;
-      if (fv.dentitionStage) document.getElementById('dentitionStage').value = fv.dentitionStage;
-      if (fv.knownMm) document.getElementById('knownMm').value = fv.knownMm;
-      if (fv.knownPx) document.getElementById('knownPx').value = fv.knownPx;
-      if (fv.scaleSource) document.getElementById('scaleSource').value = fv.scaleSource;
-      if (fv.profile) document.getElementById('profile').value = fv.profile;
-      if (fv.incisorInclination) document.getElementById('incisorInclination').value = fv.incisorInclination;
-      document.getElementById('periodontalRisk').checked = !!fv.periodontalRisk;
-      document.getElementById('growthPotential').checked = !!fv.growthPotential;
-    }
-
-    // 이미지 복원
-    if (data.imageData) {
-      for (const [key, base64] of Object.entries(data.imageData)) {
-        if (!base64) continue;
-        const blob = base64ToBlob(base64);
-        const file = new File([blob], data.files?.[key]?.name || `${key}.jpg`, { type: blob.type });
-        state.uploadedFiles[key] = file;
-        state.files[key] = data.files?.[key] || { name: file.name, size: file.size, type: file.type };
-      }
-    }
-
-    // 곡선 포인트 복원
-    if (data.archData) {
-      state.archData.upper = { ezPoints: data.archData.upper?.ezPoints || [], tzPoints: data.archData.upper?.tzPoints || [] };
-      state.archData.lower = { ezPoints: data.archData.lower?.ezPoints || [], tzPoints: data.archData.lower?.tzPoints || [] };
-    }
-
-    // 활성 탭 복원 + 이미지 로드
-    const arch = data.activeArch || 'lower';
-    state.activeArch = arch;
-    document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
-    document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
-    document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
-    document.getElementById('upperTab').classList.toggle('btn-ghost', arch !== 'upper');
-    document.getElementById('lowerTab').classList.toggle('btn-primary', arch === 'lower');
-    document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
-    document.getElementById('occlusalLabel').textContent = arch === 'upper' ? '분석할 상악 교합면 사진' : '분석할 하악 교합면 사진';
-
-    const occlusalFile = state.uploadedFiles[arch === 'lower' ? 'lowerOcclusal' : 'upperOcclusal'];
-    if (occlusalFile) {
-      await editor.setImage(occlusalFile);
-      // setImage가 points를 초기화하므로 이후에 포인트 복원
-      const archPoints = state.archData[arch];
-      editor.points.ez = archPoints.ezPoints || [];
-      editor.points.tz = archPoints.tzPoints || [];
-      // state.archData도 업데이트
-      state.archData[arch] = editor.getData();
-      editor.render();
-    }
-
-    renderPhotoSetStatus();
-    syncScale();
-    recalc(false);
-    _restoring = false;
-  }
+  // restoreSession 제거됨 — initFromStep1()에서 세션 곡선만 복원
 
   function fileToBase64(file) {
     return new Promise((resolve) => {
@@ -563,6 +587,36 @@
     clearTimeout(_saveTimer);
     _saveTimer = setTimeout(saveSession, 800);
   }
+  function saveCurveBackup() {
+    try {
+      localStorage.setItem('oa_eq_curve_points_backup', JSON.stringify({
+        activeArch: state.activeArch,
+        archData: {
+          upper: { ezPoints: state.archData.upper?.ezPoints || [], tzPoints: state.archData.upper?.tzPoints || [] },
+          lower: { ezPoints: state.archData.lower?.ezPoints || [], tzPoints: state.archData.lower?.tzPoints || [] }
+        },
+        savedAt: Date.now()
+      }));
+    } catch (e) { console.warn('[curve backup] save failed:', e); }
+  }
+
+  function restoreCurveBackup() {
+    try {
+      const data = safeParse(localStorage.getItem('oa_eq_curve_points_backup'), null);
+      if (!data || !data.savedAt) return false;
+      if (Date.now() - data.savedAt > 7 * 24 * 60 * 60 * 1000) return false;
+      if (data.archData?.upper) state.archData.upper = {
+        ezPoints: data.archData.upper.ezPoints || [],
+        tzPoints: data.archData.upper.tzPoints || []
+      };
+      if (data.archData?.lower) state.archData.lower = {
+        ezPoints: data.archData.lower.ezPoints || [],
+        tzPoints: data.archData.lower.tzPoints || []
+      };
+      if (data.activeArch === 'upper' || data.activeArch === 'lower') state.activeArch = data.activeArch;
+      return true;
+    } catch (e) { console.warn('[curve backup] restore failed:', e); return false; }
+  }
 
   const localKey = 'oa_equilibrium_analyses';
   const canvas = document.getElementById('curveCanvas');
@@ -571,11 +625,128 @@
     onChange(data) {
       if (_restoring) return;
       state.archData[state.activeArch] = data;
+      renderTzToothMap();
       recalc(false);
+      saveCurveBackup();
       scheduleSave();
     }
   });
 
+  const tzToothNames = [
+    '좌측 제2대구치', '좌측 제1대구치', '좌측 제2소구치', '좌측 제1소구치',
+    '좌측 견치', '좌측 측절치', '좌측 중절치', '우측 중절치',
+    '우측 측절치', '우측 견치', '우측 제1소구치', '우측 제2소구치',
+    '우측 제1대구치', '우측 제2대구치'
+  ];
+
+
+  function saveCurrentTzLearning() {
+    const tzPoints = editor.points?.tz || [];
+    if (tzPoints.length < 2) {
+      notify('저장할 TZ 점이 없습니다. 먼저 TZ 점을 찍거나 자동 생성하세요.', 'warning');
+      return;
+    }
+
+    const record = {
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      arch: state.activeArch,
+      image: editor.image ? { width: editor.image.width, height: editor.image.height } : null,
+      toothBounds: editor.getToothBounds ? editor.getToothBounds() : null,
+      curveAlgorithmVersion: CURVE_ALGORITHM_VERSION,
+      tzPoints: tzPoints.map((point, index) => ({
+        index: index + 1,
+        toothName: tzToothNames[index] || `${index + 1}번 치아`,
+        x: Math.round(point.x),
+        y: Math.round(point.y)
+      }))
+    };
+
+    const key = 'oa_eq_tz_learning_records';
+    const records = safeParse(localStorage.getItem(key), []);
+    records.unshift(record);
+    localStorage.setItem(key, JSON.stringify(records.slice(0, 50)));
+    localStorage.setItem('oa_eq_latest_tz_learning', JSON.stringify(record));
+    saveCurveBackup();
+    notify(`현재 ${state.activeArch === 'upper' ? '상악' : '하악'} TZ 위치를 학습 데이터로 저장했습니다.`, 'success');
+  }
+
+
+
+  function saveCurrentEzLearning() {
+    const ezPoints = editor.points?.ez || [];
+    if (ezPoints.length < 2) {
+      notify('저장할 EZ 점이 없습니다. 먼저 EZ 점을 찍거나 자동 생성하세요.', 'warning');
+      return;
+    }
+
+    const record = {
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      arch: state.activeArch,
+      image: editor.image ? { width: editor.image.width, height: editor.image.height } : null,
+      alveolarBounds: editor.getAlveolarBounds ? editor.getAlveolarBounds(state.activeArch) : null,
+      curveAlgorithmVersion: CURVE_ALGORITHM_VERSION,
+      ezPoints: ezPoints.map((point, index) => ({
+        index: index + 1,
+        label: `${index + 1}번 EZ 기준점`,
+        x: Math.round(point.x),
+        y: Math.round(point.y)
+      }))
+    };
+
+    const key = 'oa_eq_ez_learning_records';
+    const records = safeParse(localStorage.getItem(key), []);
+    records.unshift(record);
+    localStorage.setItem(key, JSON.stringify(records.slice(0, 50)));
+    localStorage.setItem('oa_eq_latest_ez_learning', JSON.stringify(record));
+    saveCurveBackup();
+    notify(`현재 ${state.activeArch === 'upper' ? '상악' : '하악'} EZ 위치를 학습 데이터로 저장했습니다.`, 'success');
+  }
+
+  function loadLatestTzLearning() {
+    const record = safeParse(localStorage.getItem('oa_eq_latest_tz_learning'), null);
+    if (!record || !Array.isArray(record.tzPoints) || !record.tzPoints.length) {
+      notify('저장된 TZ 학습 위치가 없습니다.', 'warning');
+      return;
+    }
+
+    const targetArch = record.arch === 'upper' ? 'upper' : 'lower';
+    if (state.activeArch !== targetArch) {
+      setArch(targetArch);
+    }
+
+    const points = record.tzPoints
+      .slice()
+      .sort((a, b) => Number(a.index) - Number(b.index))
+      .map(point => ({ x: Number(point.x), y: Number(point.y) }))
+      .filter(point => Number.isFinite(point.x) && Number.isFinite(point.y));
+
+    if (!points.length) {
+      notify('불러올 TZ 좌표가 올바르지 않습니다.', 'warning');
+      return;
+    }
+
+    editor.points.tz = points;
+    state.archData[state.activeArch] = editor.getData();
+    renderTzToothMap();
+    recalc(false);
+    saveCurveBackup();
+    scheduleSave();
+    editor.render();
+    notify(`이전에 저장한 ${targetArch === 'upper' ? '상악' : '하악'} TZ 위치를 불러왔습니다.`, 'success');
+  }
+
+  function renderTzToothMap() {
+    const el = document.getElementById('tzToothMap');
+    if (!el || typeof editor === 'undefined') return;
+    const tzPoints = editor.points?.tz || [];
+    el.innerHTML = tzToothNames.map((name, index) => {
+      const point = tzPoints[index];
+      const coord = point ? `x ${Math.round(point.x)}, y ${Math.round(point.y)}` : '미지정';
+      return `<div class="tooth-map-item"><strong>${index + 1}</strong><span>${name}</span><small>${coord}</small></div>`;
+    }).join('');
+  }
   const photoSlots = [
     { key: 'frontal', label: '정면', hints: ['front', 'frontal', 'center', 'facial', '정면', '전면'] },
     { key: 'rightLateral', label: '우측 측면', hints: ['right', 'rt', 'r-lat', 'rightlateral', '우측', '오른쪽'] },
@@ -585,9 +756,12 @@
   ];
 
   function setArch(arch) {
-    state.archData[state.activeArch] = editor.getData();
+    if (!_restoring && editor.image) {
+      state.archData[state.activeArch] = editor.getData();
+      saveCurveBackup();
+      scheduleSave();
+    }
     state.activeArch = arch;
-    scheduleSave();
     document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
     document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
     document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
@@ -596,6 +770,7 @@
     document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
     document.getElementById('occlusalLabel').textContent = arch === 'upper' ? '분석할 상악 교합면 사진' : '분석할 하악 교합면 사진';
     editor.setData(state.archData[arch] || {});
+    renderTzToothMap();
     recalc(false);
   }
 
@@ -607,12 +782,25 @@
     document.getElementById('ezMode').classList.toggle('active', mode === 'ez');
     document.getElementById('ezMode').classList.toggle('btn-primary', mode === 'ez');
     document.getElementById('ezMode').classList.toggle('btn-ghost', mode !== 'ez');
+    document.getElementById('moveMode').classList.remove('active', 'btn-primary');
+    document.getElementById('moveMode').classList.add('btn-ghost');
+  }
+
+  function setMoveMode() {
+    editor.setTool('move');
+    ['tzMode', 'ezMode'].forEach(id => {
+      document.getElementById(id).classList.remove('active', 'btn-primary');
+      document.getElementById(id).classList.add('btn-ghost');
+    });
+    document.getElementById('moveMode').classList.add('active', 'btn-primary');
+    document.getElementById('moveMode').classList.remove('btn-ghost');
   }
 
   document.getElementById('upperTab').onclick = () => setArch('upper');
   document.getElementById('lowerTab').onclick = () => setArch('lower');
   document.getElementById('tzMode').onclick = () => setMode('tz');
   document.getElementById('ezMode').onclick = () => setMode('ez');
+  document.getElementById('moveMode').onclick = () => setMoveMode();
   document.getElementById('aiDetectBtn').onclick = () => aiDetectLandmarks();
   document.getElementById('autoTzBtn').onclick = () => autoTraceCurve('tz');
   document.getElementById('autoEzBtn').onclick = () => autoTraceCurve('ez');
@@ -626,10 +814,9 @@
 
     const btn = document.getElementById('aiDetectBtn');
     btn.disabled = true;
-    btn.textContent = 'AI 분석 중...';
+    btn.textContent = 'AI EZ/TZ 분할 중...';
 
     try {
-      // Canvas에서 이미지를 base64로 변환
       const tempCanvas = document.createElement('canvas');
       const maxDim = 1200;
       let w = editor.image.width, h = editor.image.height;
@@ -652,48 +839,68 @@
           base64,
           contentType: 'image/jpeg',
           imageWidth: editor.image.width,
-          imageHeight: editor.image.height
+          imageHeight: editor.image.height,
+          arch: state.activeArch
         })
       });
 
       const data = await res.json();
+      const tzRaw = data.tzPixelPoints || data.pixelPoints || [];
+      const ezRaw = data.ezPixelPoints || [];
 
-      if (!data.success || !data.pixelPoints || data.pixelPoints.length < 5) {
-        notify('AI 검출 실패: ' + (data.error || '포인트를 찾지 못했습니다'), 'error');
+      if (!data.success || !tzRaw || tzRaw.length < 5) {
+        notify('AI EZ/TZ 분할 실패: ' + (data.error || '치아 포인트를 찾지 못했습니다'), 'error');
         return;
       }
 
-      // TZ 포인트로 설정 (실제 치아 위치)
-      const tzPoints = data.pixelPoints.map(p => ({ x: p.x, y: p.y }));
+      const tzPoints = tzRaw
+        .map(p => ({ x: Number(p.x), y: Number(p.y) }))
+        .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+      if (tzPoints.length < 5) {
+        notify('AI TZ 좌표가 올바르지 않습니다.', 'error');
+        return;
+      }
       editor.points.tz = tzPoints;
 
-      // EZ: TZ 곡선의 내부 오프셋 (아치 안쪽으로 수축)
-      // 아치 중심점 계산 (모든 TZ 포인트의 평균)
-      const avgX = tzPoints.reduce((s, p) => s + p.x, 0) / tzPoints.length;
-      const avgY = tzPoints.reduce((s, p) => s + p.y, 0) / tzPoints.length;
-      editor.points.ez = tzPoints.map(p => ({
-        x: Math.round(avgX + (p.x - avgX) * 0.92),
-        y: Math.round(avgY + (p.y - avgY) * 0.92)
-      }));
+      const ezPoints = ezRaw
+        .map(p => ({ x: Number(p.x), y: Number(p.y) }))
+        .filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+      if (ezPoints.length >= 5) {
+        editor.points.ez = ezPoints;
+      } else if (editor._estimateEzFromTz) {
+        editor.points.ez = editor._estimateEzFromTz(tzPoints, state.activeArch);
+      } else {
+        const avgX = tzPoints.reduce((sum, p) => sum + p.x, 0) / tzPoints.length;
+        const avgY = tzPoints.reduce((sum, p) => sum + p.y, 0) / tzPoints.length;
+        editor.points.ez = tzPoints.map(p => ({
+          x: Math.round(avgX + (p.x - avgX) * 0.92),
+          y: Math.round(avgY + (p.y - avgY) * 0.92)
+        }));
+      }
 
       editor._emit();
       state.archData[state.activeArch] = editor.getData();
+      saveCurveBackup();
       recalc(false);
 
       const archLabel = data.arch === 'upper' ? '상악' : '하악';
-      notify(`AI가 ${data.count}개 치아 랜드마크를 검출했습니다 (${archLabel}, 신뢰도 ${Math.round(data.confidence * 100)}%). 점을 드래그하여 보정하세요.`, 'success');
+      const ezNote = ezPoints.length >= 5 ? 'EZ 치조골 중심선 포함' : 'EZ는 TZ 기반 보조 추정';
+      notify(`AI가 이미지 기반 EZ/TZ 분할을 적용했습니다. TZ ${tzPoints.length}점, EZ ${editor.points.ez.length}점 (${archLabel}, 신뢰도 ${Math.round((data.confidence || 0.65) * 100)}%, ${ezNote}).`, 'success');
 
     } catch (e) {
       console.error('[AI Detect]', e);
-      notify('AI 검출 오류: ' + e.message, 'error');
+      notify('AI EZ/TZ 분할 오류: ' + e.message, 'error');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'AI 치아 검출';
+      btn.textContent = 'AI EZ/TZ 분할';
     }
   }
   document.getElementById('undoBtn').onclick = () => editor.undo();
   document.getElementById('clearBtn').onclick = () => editor.clear();
   document.getElementById('clearAllBtn').onclick = () => editor.clear('all');
+  document.getElementById('saveTzLearningBtn').onclick = saveCurrentTzLearning;
+  document.getElementById('loadTzLearningBtn').onclick = loadLatestTzLearning;
+  document.getElementById('saveEzLearningBtn').onclick = saveCurrentEzLearning;
 
   function autoTraceCurve(mode) {
     const data = editor.autoTrace(mode, { arch: state.activeArch });
@@ -711,7 +918,7 @@
     const file = event.target.files?.[0];
     if (!file) return;
     state.files[state.activeArch + 'Occlusal'] = fileMeta(file);
-    state.uploadedFiles[state.activeArch] = file;
+    state.uploadedFiles[state.activeArch + 'Occlusal'] = file;
     await editor.setImage(file);
     state.archData[state.activeArch] = editor.getData();
     recalc(false);
@@ -902,21 +1109,53 @@
     });
   });
 
-  ['knownMm','knownPx','scaleSource','profile','incisorInclination','periodontalRisk','growthPotential'].forEach(id => {
+  ['knownMm','knownPx','molarDistanceMm','scaleSource','profile','incisorInclination','periodontalRisk','growthPotential'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => { syncScale(); recalc(false); scheduleSave(); });
     document.getElementById(id).addEventListener('change', () => { syncScale(); recalc(false); scheduleSave(); });
   });
   document.getElementById('patientName').addEventListener('input', scheduleSave);
   document.getElementById('dentitionStage').addEventListener('change', scheduleSave);
 
+
+  function applyMolarDistanceScale() {
+    const molarMm = Number(document.getElementById('molarDistanceMm').value);
+    if (!Number.isFinite(molarMm) || molarMm <= 0) {
+      notify('양쪽 어금니 사이 실제 길이를 mm 단위로 입력하세요.', 'warning');
+      return;
+    }
+    const tz = editor.points?.tz || [];
+    if (tz.length < 2) {
+      notify('양쪽 어금니 기준을 적용하려면 TZ 첫 점과 마지막 점이 필요합니다.', 'warning');
+      return;
+    }
+    const first = tz[0];
+    const last = tz[tz.length - 1];
+    const dx = Number(last.x) - Number(first.x);
+    const dy = Number(last.y) - Number(first.y);
+    const px = Math.hypot(dx, dy);
+    if (!Number.isFinite(px) || px <= 0) {
+      notify('TZ 양 끝점의 픽셀 거리를 계산할 수 없습니다.', 'warning');
+      return;
+    }
+    document.getElementById('knownMm').value = molarMm.toFixed(1);
+    document.getElementById('knownPx').value = px.toFixed(1);
+    document.getElementById('scaleSource').value = 'molar_distance';
+    syncScale();
+    recalc(false);
+    scheduleSave();
+    notify(`양쪽 어금니 간격 ${molarMm.toFixed(1)}mm 기준을 적용했습니다. 기준 픽셀: ${px.toFixed(1)}px`, 'success');
+  }
+
   function syncScale() {
     const s = getScale();
     editor.setPxPerMm(s.pxPerMm);
   }
 
+  document.getElementById('molarDistanceScaleBtn').onclick = applyMolarDistanceScale;
   document.getElementById('analyzeBtn').onclick = () => recalc(true);
   document.getElementById('aiDiagnosisBtn').onclick = runAiDiagnosis;
   document.getElementById('saveBtn').onclick = saveAnalysis;
+  document.getElementById('loadYoonSoheeSampleBtn').onclick = loadYoonSoheeSample;
 
   function fileMeta(file) {
     return { name: file.name, size: file.size, type: file.type };
@@ -1098,8 +1337,8 @@
       <div class="ai-result-grid">
         <div class="ai-result-card"><div class="label">1. 클래스 분류</div><div class="value">${escapeHtml(cls.class || '-')}</div><p class="text-muted">신뢰도 ${Math.round((cls.confidence || 0) * 100)}%</p></div>
         <div class="ai-result-card"><div class="label">4. 발치 여부</div><div class="value">${escapeHtml(extraction.label || extraction.recommendation || '-')}</div></div>
-        <div class="ai-result-card"><div class="label">2. 상악 EZ/TZ</div><div class="value">${fmt(ez.upper?.differenceMm)}</div><p class="text-muted">EZ ${fmt(ez.upper?.ezMm)} / TZ ${fmt(ez.upper?.tzMm)}</p></div>
-        <div class="ai-result-card"><div class="label">2. 하악 EZ/TZ</div><div class="value">${fmt(ez.lower?.differenceMm)}</div><p class="text-muted">EZ ${fmt(ez.lower?.ezMm)} / TZ ${fmt(ez.lower?.tzMm)}</p></div>
+        <div class="ai-result-card"><div class="label">2. EZ 길이</div><div class="value">${fmt(state.activeArch === 'upper' ? ez.upper?.ezMm : ez.lower?.ezMm)}</div><p class="text-muted">현재 사진의 파란색 EZ 곡선 길이</p></div>
+        <div class="ai-result-card"><div class="label">2. TZ 길이</div><div class="value">${fmt(state.activeArch === 'upper' ? ez.upper?.tzMm : ez.lower?.tzMm)}</div><p class="text-muted">현재 사진의 빨간색 TZ 곡선 길이</p></div>
       </div>
       <h4 style="margin-top:14px;">3. EZ/TZ 곡선 해석</h4>
       <p>${escapeHtml(data.curveAnnotation?.ezDescription || '')}</p>
@@ -1113,10 +1352,16 @@
     `;
   }
 
+  function sumFinite(values) {
+    const nums = values.filter(v => Number.isFinite(Number(v))).map(Number);
+    return nums.length ? nums.reduce((a, b) => a + b, 0) : null;
+  }
+
   function renderResult(result) {
-    document.getElementById('upperMetric').textContent = fmt(result.upper.discrepancyMm);
-    document.getElementById('lowerMetric').textContent = fmt(result.lower.discrepancyMm);
-    document.getElementById('totalMetric').textContent = fmt(result.totalDiscrepancyMm);
+    const activeResult = state.activeArch === 'upper' ? result.upper : result.lower;
+    document.getElementById('upperMetric').textContent = fmt(activeResult.ezLengthMm);
+    document.getElementById('lowerMetric').textContent = fmt(activeResult.tzLengthMm);
+    document.getElementById('totalMetric').textContent = fmt(activeResult.discrepancyMm);
     document.getElementById('scaleMetric').textContent = result.scale.pxPerMm ? result.scale.pxPerMm.toFixed(2) : '-';
 
     const box = document.getElementById('decisionBox');
@@ -1139,6 +1384,13 @@
       },
       analysis: {
         ...state.lastResult,
+        scale: {
+          ...(state.lastResult?.scale || {}),
+          knownMm: document.getElementById('knownMm').value,
+          knownPx: document.getElementById('knownPx').value,
+          molarDistanceMm: document.getElementById('molarDistanceMm').value,
+          source: document.getElementById('scaleSource').value
+        },
         curves: state.archData,
         files: state.files,
         modifiers: getModifiers(),
@@ -1161,28 +1413,269 @@
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'save failed');
-      notify(data.fallback ? '브라우저에 임시 저장했습니다. Supabase 설정을 확인하세요.' : '분석을 저장했습니다.', data.fallback ? 'warning' : 'success');
+      if (data.source === 'supabase' && data.record) {
+        localRecord.supabaseId = data.record.id;
+        localRecord.source = 'supabase';
+        const latest = safeParse(localStorage.getItem(localKey), []);
+        const idx = latest.findIndex(item => item.id === localRecord.id);
+        if (idx >= 0) { latest[idx] = localRecord; localStorage.setItem(localKey, JSON.stringify(latest.slice(0, 100))); }
+      }
+      notify(data.fallback ? '브라우저에 임시 저장했습니다. Supabase 설정을 확인하세요.' : 'Supabase에 분석을 저장했습니다.', data.fallback ? 'warning' : 'success');
+      renderSavedList();
     } catch (e) {
       notify('서버 저장은 실패했지만 브라우저에 임시 저장했습니다.', 'warning');
       console.warn('[equilibrium] save fallback:', e);
     }
   }
 
-  function renderSavedList() {
-    const records = safeParse(localStorage.getItem(localKey), []);
+  async function fetchSupabaseAnalyses() {
+    try {
+      const res = await (window.apiFetch || fetch)('/api/get-equilibrium-analyses?limit=20');
+      const data = await res.json();
+      if (!res.ok || data.fallback) return [];
+      return (data.records || []).map(normalizeEquilibriumRecord);
+    } catch (e) {
+      console.warn('[equilibrium] supabase list failed:', e);
+      return [];
+    }
+  }
+
+  function normalizeEquilibriumRecord(record) {
+    if (!record) return null;
+    if (record.analysis) {
+      return {
+        ...record,
+        source: record.source || (record.supabaseId ? 'supabase' : 'local'),
+        createdAt: record.createdAt || record.created_at || new Date().toISOString()
+      };
+    }
+    const stage = record.patients?.metadata?.stage || null;
+    const scale = record.scale || {};
+    const discrepancy = record.discrepancy || {};
+    return {
+      id: record.id,
+      supabaseId: record.id,
+      source: 'supabase',
+      createdAt: record.created_at || record.updated_at || new Date().toISOString(),
+      patient: {
+        id: record.patient_id,
+        supabaseId: record.patient_id,
+        name: record.patients?.name || 'Unnamed case',
+        stage
+      },
+      analysis: {
+        scale,
+        upper: { ...(record.upper_curves || {}), discrepancyMm: discrepancy.upper ?? null },
+        lower: { ...(record.lower_curves || {}), discrepancyMm: discrepancy.lower ?? null },
+        curves: {
+          upper: record.upper_curves || {},
+          lower: record.lower_curves || {}
+        },
+        cephAnalysis: record.ceph_analysis || {},
+        plasticModel: record.plastic_model || {},
+        modifiers: record.ceph_analysis?.modifiers || {},
+        totalDiscrepancyMm: discrepancy.total ?? null,
+        decision: record.decision || {},
+        expertLabel: record.expert_label || {},
+        files: record.assets_meta || {}
+      },
+      notes: record.notes || ''
+    };
+  }
+
+  function mergeAnalysisRecords(localRecords, remoteRecords) {
+    const map = new Map();
+    [...remoteRecords, ...localRecords.map(normalizeEquilibriumRecord)].filter(Boolean).forEach(record => {
+      const key = record.supabaseId || record.id;
+      if (!map.has(key)) map.set(key, record);
+    });
+    return Array.from(map.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }
+
+  async function renderSavedList() {
     const box = document.getElementById('savedList');
+    box.innerHTML = '<div class="saved-item">저장 기록을 불러오는 중입니다.</div>';
+    const localRecords = safeParse(localStorage.getItem(localKey), []);
+    const remoteRecords = await fetchSupabaseAnalyses();
+    const records = mergeAnalysisRecords(localRecords, remoteRecords);
+    window._equilibriumSavedRecords = records;
     if (!records.length) {
       box.innerHTML = '<div class="saved-item">저장된 분석이 없습니다.</div>';
       return;
     }
-    box.innerHTML = records.slice(0, 5).map(record => {
+    box.innerHTML = records.slice(0, 10).map((record, index) => {
       const decision = record.analysis?.decision?.label || '분석 결과 없음';
-      const total = record.analysis?.totalDiscrepancyMm;
+      const total = record.analysis?.totalDiscrepancyMm ?? record.analysis?.discrepancy?.total;
       const date = record.createdAt ? new Date(record.createdAt).toLocaleString('ko-KR') : '-';
-      return `<div class="saved-item"><strong>${escapeHtml(record.patient?.name || 'Unnamed case')}</strong>${escapeHtml(decision)} · 총 차이 ${fmt(total)}<br>${escapeHtml(date)}</div>`;
+      const source = record.source === 'supabase' ? 'Supabase' : '로컬';
+      return `<div class="saved-item"><strong>${escapeHtml(record.patient?.name || 'Unnamed case')}</strong><div class="meta">${escapeHtml(source)} · ${escapeHtml(decision)} · 총 차이 ${fmt(total)}<br>${escapeHtml(date)}</div><button class="btn btn-ghost load-analysis-btn" type="button" data-load-index="${index}">불러오기</button></div>`;
     }).join('');
+    box.querySelectorAll('[data-load-index]').forEach(button => {
+      button.addEventListener('click', () => {
+        const index = Number(button.dataset.loadIndex);
+        loadSavedAnalysis(window._equilibriumSavedRecords?.[index]);
+      });
+    });
   }
 
+
+
+  async function loadYoonSoheeSample() {
+    const btn = document.getElementById('loadYoonSoheeSampleBtn');
+    const prevText = btn?.textContent || '윤소희 샘플';
+    if (btn) { btn.disabled = true; btn.textContent = '윤소희 DB 이미지 로드 중...'; }
+    try {
+      const sampleRes = await (window.apiFetch || fetch)('/api/get-yoon-sohee-sample?name=' + encodeURIComponent('윤소희'));
+      const sampleData = await sampleRes.json();
+      if (!sampleRes.ok || !sampleData.success) throw new Error(sampleData.error || '윤소희 DB 샘플을 불러오지 못했습니다.');
+
+      const patient = sampleData.patient || { name: '2960 윤소희' };
+      if (window.PatientStore) {
+        window.PatientStore.set({
+          id: patient.id,
+          supabaseId: patient.supabaseId || patient.id,
+          name: patient.name,
+          chartNumber: patient.chartNumber || '2960',
+          dentitionStage: patient.dentitionStage || 'permanent_dentition',
+          classification: patient.classification || 'class1'
+        });
+      }
+      if (window.PhotoStore) {
+        await window.PhotoStore.saveCase({
+          patient: {
+            name: patient.name,
+            id: patient.id,
+            supabaseId: patient.supabaseId || patient.id,
+            chartNumber: patient.chartNumber || '2960',
+            dentitionStage: patient.dentitionStage || 'permanent_dentition',
+            classification: patient.classification || 'class1'
+          },
+          photos: sampleData.photos || {},
+          source: 'supabase-yoon-sohee',
+          trainingCase: sampleData.trainingCase || null
+        });
+      }
+
+      const classRecords = safeParse(localStorage.getItem('oa_classification_records'), []);
+      classRecords.unshift({
+        id: Date.now(),
+        savedAt: new Date().toISOString(),
+        patientName: patient.name,
+        source: 'supabase-yoon-sohee',
+        result: {
+          success: true,
+          classification: {
+            class: 'Class I',
+            category: 'class1',
+            confidence: 0.9,
+            severity: '샘플',
+            evidence: ['윤소희 DB 샘플의 기존 classification=class1 값을 사용했습니다.']
+          }
+        }
+      });
+      localStorage.setItem('oa_classification_records', JSON.stringify(classRecords.slice(0, 30)));
+
+      if (btn) btn.textContent = '윤소희 EZ/TZ 분석 로드 중...';
+      const localRecords = safeParse(localStorage.getItem(localKey), []);
+      let remoteRecords = [];
+      try {
+        const res = await (window.apiFetch || fetch)('/api/get-equilibrium-analyses?patientName=' + encodeURIComponent('윤소희') + '&limit=20');
+        const data = await res.json();
+        if (res.ok && !data.fallback) remoteRecords = (data.records || []).map(normalizeEquilibriumRecord);
+      } catch (e) {
+        console.warn('[equilibrium] 윤소희 Supabase EZ/TZ 검색 실패:', e);
+      }
+      const records = mergeAnalysisRecords(localRecords, remoteRecords);
+      const localYoon = localRecords.map(normalizeEquilibriumRecord).find(record => String(record?.patient?.name || '').includes('윤소희'));
+      const sample = localYoon
+        || records.find(record => String(record.patient?.name || '').includes('윤소희'))
+        || remoteRecords.find(record => String(record.patient?.name || '').includes('윤소희'));
+      if (sample) {
+        loadSavedAnalysis(sample);
+      } else {
+        document.getElementById('patientName').value = patient.name || '2960 윤소희';
+        state.files = Object.fromEntries(Object.entries(sampleData.photos || {}).map(([key, entry]) => [key, { name: entry.name, type: entry.type }]));
+        notify('윤소희 DB 이미지와 1/2단계 샘플은 연결했습니다. 저장된 EZ/TZ 분석은 아직 없어 현재 사진에서 새로 분석하세요.', 'warning');
+      }
+
+      // PhotoStore에서 사진 재로드
+      const reloaded = await PhotoStore.loadCase().catch(() => null);
+      if (reloaded && reloaded.photos) {
+        for (const key of ['frontal','rightLateral','leftLateral','upperOcclusal','lowerOcclusal','ceph','pm','other']) {
+          const entry = reloaded.photos[key];
+          if (!entry || !entry.base64) continue;
+          const blob = PhotoStore.base64ToBlob(entry.base64);
+          if (!blob) continue;
+          const file = new File([blob], entry.name || key + '.jpg', { type: blob.type });
+          state.uploadedFiles[key] = file;
+          state.files[key] = { name: file.name, size: file.size, type: file.type };
+        }
+      }
+      if (state.uploadedFiles.lowerOcclusal) {
+        setArch('lower');
+        await loadActiveOcclusalImage();
+      } else if (state.uploadedFiles.upperOcclusal) {
+        setArch('upper');
+        await loadActiveOcclusalImage();
+      }
+      renderPhotoSetStatus();
+      renderSavedList();
+    } catch (e) {
+      console.warn('[equilibrium] 윤소희 샘플 재현 실패:', e);
+      notify(e.message || '윤소희 샘플 재현에 실패했습니다.', 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = prevText; }
+    }
+  }
+
+  function loadSavedAnalysis(record) {
+    const normalized = normalizeEquilibriumRecord(record);
+    if (!normalized?.analysis) {
+      notify('불러올 분석 데이터가 올바르지 않습니다.', 'warning');
+      return;
+    }
+    const analysis = normalized.analysis;
+    const scale = analysis.scale || {};
+    _restoring = true;
+    try {
+      document.getElementById('patientName').value = normalized.patient?.name || '';
+      if (normalized.patient?.stage) document.getElementById('dentitionStage').value = normalized.patient.stage;
+      if (scale.knownMm != null) document.getElementById('knownMm').value = scale.knownMm;
+      if (scale.knownPx != null) document.getElementById('knownPx').value = scale.knownPx;
+      if (scale.molarDistanceMm != null) document.getElementById('molarDistanceMm').value = scale.molarDistanceMm;
+      if (scale.source) document.getElementById('scaleSource').value = scale.source;
+      const modifiers = analysis.modifiers || analysis.cephAnalysis?.modifiers || {};
+      if (modifiers.profile) document.getElementById('profile').value = modifiers.profile;
+      if (modifiers.incisorInclination) document.getElementById('incisorInclination').value = modifiers.incisorInclination;
+      document.getElementById('periodontalRisk').checked = !!modifiers.periodontalRisk;
+      document.getElementById('growthPotential').checked = !!modifiers.growthPotential;
+
+      const curves = analysis.curves || {};
+      state.archData.upper = {
+        ezPoints: curves.upper?.ezPoints || analysis.upper?.ezPoints || [],
+        tzPoints: curves.upper?.tzPoints || analysis.upper?.tzPoints || []
+      };
+      state.archData.lower = {
+        ezPoints: curves.lower?.ezPoints || analysis.lower?.ezPoints || [],
+        tzPoints: curves.lower?.tzPoints || analysis.lower?.tzPoints || []
+      };
+      state.files = analysis.files || {};
+      state.lastAiDiagnosis = analysis.aiDiagnosis || null;
+      const preferredArch = state.archData[state.activeArch]?.tzPoints?.length || state.archData[state.activeArch]?.ezPoints?.length
+        ? state.activeArch
+        : (state.archData.lower.tzPoints.length || state.archData.lower.ezPoints.length ? 'lower' : 'upper');
+      state.activeArch = preferredArch;
+      editor.setData(state.archData[preferredArch] || {});
+    } finally {
+      _restoring = false;
+    }
+    setArch(state.activeArch);
+    syncScale();
+    recalc(false);
+    saveCurveBackup();
+    scheduleSave();
+    notify(`${normalized.patient?.name || '저장된'} 분석 데이터를 불러왔습니다.`, 'success');
+  }
   function safeParse(text, fallback) {
     try { return text ? JSON.parse(text) : fallback; } catch { return fallback; }
   }
@@ -1200,48 +1693,223 @@
   renderSavedList();
   recalc(false);
 
-  // 페이지 로드 시 이전 세션 복원, 없으면 PhotoStore에서 가져옴
-  restoreSession().then(async () => {
-    // 세션에 이미지 없으면 PhotoStore(1단계)에서 로드
-    if (!state.uploadedFiles.lowerOcclusal && window.PhotoStore) {
-      const psData = await PhotoStore.loadCase();
-      if (psData && psData.photos) {
-        const mapping = { lowerOcclusal: 'lowerOcclusal', upperOcclusal: 'upperOcclusal', frontal: 'frontal', rightLateral: 'rightLateral', leftLateral: 'leftLateral', ceph: 'ceph' };
-        for (const [psKey, stateKey] of Object.entries(mapping)) {
-          const entry = psData.photos[psKey];
-          if (!entry || !entry.base64 || state.uploadedFiles[stateKey]) continue;
-          const blob = PhotoStore.base64ToBlob(entry.base64);
-          if (!blob) continue;
-          const file = new File([blob], entry.name || `${psKey}.jpg`, { type: blob.type });
-          state.uploadedFiles[stateKey] = file;
-          state.files[stateKey] = { name: file.name, size: file.size, type: file.type };
-        }
-        // 하악 교합면이 있으면 자동 로드
-        if (state.uploadedFiles.lowerOcclusal) {
-          _restoring = true;
-          setArch('lower');
-          await editor.setImage(state.uploadedFiles.lowerOcclusal);
-          editor.points.ez = [];
-          editor.points.tz = [];
-          state.archData.lower = editor.getData();
-          editor.render();
-          _restoring = false;
-          autoTraceCurve('both');
-          renderPhotoSetStatus();
-          if (psData.patient?.name) {
-            document.getElementById('patientName').value = psData.patient.name;
-          }
-          const notice = document.getElementById('fromStep1Notice');
-          if (notice) notice.style.display = 'block';
-        }
+  // mergePhotoStoreImages 제거됨 — initFromStep1()에서 직접 로드
+
+
+
+  function getPatientFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const patient = {
+      name: params.get('patientName') || '',
+      stage: params.get('dentitionStage') || '',
+      dentitionStage: params.get('dentitionStage') || '',
+      classification: params.get('classification') || ''
+    };
+    return patient.name || patient.stage || patient.classification ? patient : null;
+  }
+
+  const STAGE_LABELS = { permanent_dentition: '\uC601\uAD6C\uCE58\uC5F4', mixed_dentition: '\uD63C\uD569\uCE58\uC5F4', adult: '\uC131\uC778' };
+  const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+  function renderLinkedPatientInfo(data = {}) {
+    const step1Patient = safeParse(localStorage.getItem('oa_step1_patient_info'), null);
+    const urlPatient = getPatientFromUrl();
+    const patient = data.patient || step1Patient || urlPatient || window.PatientStore?.get?.() || {};
+    const photos = data.photos || {};
+    const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || '-'; };
+    const stage = patient.stage || patient.dentitionStage || document.getElementById('dentitionStage')?.value || '';
+    const cls = patient.classification || '';
+    const count = Object.values(photos).filter(entry => entry?.base64).length || Object.keys(state.uploadedFiles || {}).length;
+    setText('linkedPatientName', patient.name || document.getElementById('patientName')?.value || '-');
+    setText('linkedDentitionStage', STAGE_LABELS[stage] || stage || '-');
+    setText('linkedClassification', CLASS_LABELS[cls] || cls || '-');
+    setText('linkedPhotoCount', count + '\uC7A5');
+  }
+
+  function normalizeClassificationForStep3(record) {
+    const result = record?.result || record;
+    if (!result) return null;
+    const cls = result.classification || {};
+    return {
+      source: 'step2-classification',
+      classification: {
+        class: cls.angleClass || cls.class || cls.category || '-',
+        confidence: Number(cls.confidence || result.confidence || 0),
+        evidence: cls.evidence || cls.keyFindings || result.evidence || []
+      },
+      treatmentPlan: result.treatmentPlan || result.plan || {},
+      measurements: result.measurements || {},
+      risks: result.risks || [],
+      alternatives: result.alternatives || [],
+      patientEducation: result.patientEducation || []
+    };
+  }
+
+  // applyWorkflowContext \uC81C\uAC70\uB428 \u2014 initFromStep1()\uC5D0\uC11C \uB2E8\uC21C\uD654
+
+
+  function applyLatestLearningToState() {
+    const tzRecord = safeParse(localStorage.getItem('oa_eq_latest_tz_learning'), null);
+    if (tzRecord && Array.isArray(tzRecord.tzPoints) && tzRecord.tzPoints.length) {
+      const arch = tzRecord.arch === 'upper' ? 'upper' : 'lower';
+      state.archData[arch] = state.archData[arch] || { ezPoints: [], tzPoints: [] };
+      state.archData[arch].tzPoints = tzRecord.tzPoints
+        .slice()
+        .sort((a, b) => Number(a.index) - Number(b.index))
+        .map(point => ({ x: Number(point.x), y: Number(point.y) }))
+        .filter(point => Number.isFinite(point.x) && Number.isFinite(point.y));
+      state.activeArch = arch;
+    }
+
+    const ezRecord = safeParse(localStorage.getItem('oa_eq_latest_ez_learning'), null);
+    if (ezRecord && Array.isArray(ezRecord.ezPoints) && ezRecord.ezPoints.length) {
+      const arch = ezRecord.arch === 'upper' ? 'upper' : 'lower';
+      state.archData[arch] = state.archData[arch] || { ezPoints: [], tzPoints: [] };
+      state.archData[arch].ezPoints = ezRecord.ezPoints
+        .slice()
+        .sort((a, b) => Number(a.index) - Number(b.index))
+        .map(point => ({ x: Number(point.x), y: Number(point.y) }))
+        .filter(point => Number.isFinite(point.x) && Number.isFinite(point.y));
+      if (!tzRecord) state.activeArch = arch;
+    }
+  }
+
+  async function loadActiveOcclusalImage() {
+    const key = state.activeArch === 'upper' ? 'upperOcclusal' : 'lowerOcclusal';
+    const file = state.uploadedFiles[key];
+    if (!file) return false;
+    const arch = state.activeArch;
+    const archPoints = {
+      ezPoints: state.archData[arch]?.ezPoints || [],
+      tzPoints: state.archData[arch]?.tzPoints || []
+    };
+    const wasRestoring = _restoring;
+    _restoring = true;
+    await editor.setImage(file);
+    editor.points.ez = archPoints.ezPoints;
+    editor.points.tz = archPoints.tzPoints;
+    state.archData[arch] = editor.getData();
+    _restoring = wasRestoring;
+    editor.render();
+    renderTzToothMap();
+    recalc(false);
+    saveCurveBackup();
+    return true;
+  }
+
+  // 페이지 로드: 1단계 데이터를 PhotoStore에서 직접 로드 (2.5단계와 동일 패턴)
+  (async function initFromStep1() {
+    // 1) PhotoStore에서 환자 정보 + 사진 로드
+    const psData = await PhotoStore.loadCase().catch(() => null);
+    if (psData && psData.patient && psData.patient.name) {
+      document.getElementById('patientName').value = psData.patient.name;
+      const stage = psData.patient.stage || psData.patient.dentitionStage;
+      if (stage) document.getElementById('dentitionStage').value = stage;
+      renderLinkedPatientInfo({ patient: psData.patient });
+    }
+
+    // 2) 사진을 state.uploadedFiles에 로드
+    if (psData && psData.photos) {
+      for (const key of ['frontal','rightLateral','leftLateral','upperOcclusal','lowerOcclusal','ceph','pm','other']) {
+        const entry = psData.photos[key];
+        if (!entry || !entry.base64) continue;
+        const blob = PhotoStore.base64ToBlob(entry.base64);
+        if (!blob) continue;
+        const file = new File([blob], entry.name || key + '.jpg', { type: blob.type });
+        state.uploadedFiles[key] = file;
+        state.files[key] = { name: file.name, size: file.size, type: file.type };
       }
     }
-  }).catch(() => {});
+
+    // 3) 세션에서 곡선 포인트 + 스케일 설정만 복원
+    const session = await loadSession();
+    if (session && session.formValues) {
+      const fv = session.formValues;
+      if (fv.knownMm) document.getElementById('knownMm').value = fv.knownMm;
+      if (fv.knownPx) document.getElementById('knownPx').value = fv.knownPx;
+      if (fv.molarDistanceMm) document.getElementById('molarDistanceMm').value = fv.molarDistanceMm;
+      if (fv.scaleSource) document.getElementById('scaleSource').value = fv.scaleSource;
+      if (fv.profile) document.getElementById('profile').value = fv.profile;
+      if (fv.incisorInclination) document.getElementById('incisorInclination').value = fv.incisorInclination;
+      document.getElementById('periodontalRisk').checked = !!fv.periodontalRisk;
+      document.getElementById('growthPotential').checked = !!fv.growthPotential;
+    }
+    if (session && session.archData) {
+      state.archData.upper = { ezPoints: session.archData.upper?.ezPoints || [], tzPoints: session.archData.upper?.tzPoints || [] };
+      state.archData.lower = { ezPoints: session.archData.lower?.ezPoints || [], tzPoints: session.archData.lower?.tzPoints || [] };
+    }
+    restoreCurveBackup();
+    applyLatestLearningToState();
+    if (session && session.lastAiDiagnosis) {
+      state.lastAiDiagnosis = session.lastAiDiagnosis;
+      renderAiDiagnosis(session.lastAiDiagnosis);
+    }
+
+    // 4) 교합면 이미지 로드 + 곡선 표시
+    if (state.uploadedFiles.lowerOcclusal) {
+      _restoring = true;
+      setArch('lower');
+      _restoring = false;
+      await loadActiveOcclusalImage();
+      if (!(state.archData.lower?.tzPoints || []).length) autoTraceCurve('both');
+    } else if (state.uploadedFiles.upperOcclusal) {
+      _restoring = true;
+      setArch('upper');
+      _restoring = false;
+      await loadActiveOcclusalImage();
+      if (!(state.archData.upper?.tzPoints || []).length) autoTraceCurve('both');
+    }
+
+    renderPhotoSetStatus();
+    syncScale();
+    recalc(false);
+
+    // 5) 윤소희 샘플 자동 로드 (명시적 플래그만)
+    try {
+      // \uC724\uC18C\uD76C \uC0D8\uD50C \uC790\uB3D9 \uB85C\uB4DC: \uBA85\uC2DC\uC801 \uD50C\uB798\uADF8\uAC00 \uC788\uC744 \uB54C\uB9CC (URL/\uD658\uC790\uBA85 \uAE30\uBC18 \uC790\uB3D9 \uB85C\uB4DC \uC81C\uAC70)
+      const shouldLaunchYoon = localStorage.getItem('oa_launch_yoon_sohee_sample') === '1';
+      if (shouldLaunchYoon) {
+        localStorage.removeItem('oa_launch_yoon_sohee_sample');
+        setTimeout(() => loadYoonSoheeSample(), 150);
+      }
+    } catch (e) {
+      console.warn('[yoon sample autoload]', e);
+    }
+  })().catch(err => console.warn('[equilibrium init]', err));
+
+  renderTzToothMap();
 
   // 페이지 이탈 시 즉시 저장
-  window.addEventListener('beforeunload', () => { saveSession(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) saveSession(); });
+  window.addEventListener('beforeunload', () => { saveCurveBackup(); saveSession(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { saveCurveBackup(); saveSession(); } });
 })();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

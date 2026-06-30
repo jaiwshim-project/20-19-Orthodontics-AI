@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.5단계 연동 테스트 | Orthodontics AI</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .test-container { max-width: 960px; margin: 40px auto; padding: 24px; }
+  .test-card {
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    background: #fff;
+  }
+  .test-card h3 { margin-bottom: 12px; }
+  .result-box {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 60px;
+  }
+  .result-box.success { border-color: #22c55e; background: rgba(34,197,94,.05); }
+  .result-box.fail { border-color: #ef4444; background: rgba(239,68,68,.05); }
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+  .badge-ok { background: #dcfce7; color: #16a34a; }
+  .badge-fail { background: #fee2e2; color: #dc2626; }
+  .badge-empty { background: #fef3c7; color: #d97706; }
+  .patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .patient-info-item {
+    padding: 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    background: #f8fafc;
+  }
+  .patient-info-item .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .patient-info-item .value { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .photo-slot {
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+    text-align: center;
+  }
+  .photo-slot.has-image { border-color: #22c55e; }
+  .photo-slot .thumb {
+    width: 100%; height: 80px;
+    background: #e2e8f0; background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: center;
+    color: #94a3b8; font-size: 20px;
+  }
+  .photo-slot .thumb.loaded { background-color: transparent; }
+  .photo-slot .slot-label { font-size: 11px; font-weight: 600; padding: 6px 4px; color: var(--text-secondary); }
+  .canvas-frame {
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f8fafc;
+    margin-top: 14px;
+  }
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: #fff;
+  }
+  .toolbar .active { box-shadow: 0 0 0 3px rgba(14,165,233,.16); }
+  canvas { display: block; width: 100%; min-height: 480px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .metric { padding: 14px; border: 1px solid var(--border-subtle); border-radius: 14px; background: #f8fafc; }
+  .metric .label { font-size: 12px; color: var(--text-muted); }
+  .metric .value { font-size: 20px; font-weight: 800; color: var(--text-primary); margin-top: 4px; }
+  .arch-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .arch-tabs .btn.active { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+  @media (max-width: 640px) {
+    .patient-info-grid { grid-template-columns: 1fr; }
+    .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <div class="test-container">
+    <h1>2.5단계 — 연동 + EZ/TZ 분석</h1>
+    <p style="color:var(--text-muted); margin-bottom:24px;">1단계 정보를 불러와 EZ/TZ 곡선 분석까지 수행합니다.</p>
+
+    <!-- 환자 정보 -->
+    <div class="test-card">
+      <h3>환자 정보 (1단계에서 불러옴)</h3>
+      <div class="patient-info-grid">
+        <div class="patient-info-item"><div class="label">환자명 / 케이스 코드</div><div class="value" id="disp-name">-</div></div>
+        <div class="patient-info-item"><div class="label">치열 단계</div><div class="value" id="disp-stage">-</div></div>
+        <div class="patient-info-item"><div class="label">골격 분류</div><div class="value" id="disp-class">-</div></div>
+      </div>
+    </div>
+
+    <!-- 사진 -->
+    <div class="test-card">
+      <h3>사진 (1단계에서 불러옴)</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:4px;" id="photo-summary">로딩 중...</p>
+      <div class="photo-grid" id="photoGrid">
+        <div class="photo-slot" data-key="frontal"><div class="thumb" id="img-frontal">—</div><div class="slot-label">정면</div></div>
+        <div class="photo-slot" data-key="rightLateral"><div class="thumb" id="img-rightLateral">—</div><div class="slot-label">우측 측면</div></div>
+        <div class="photo-slot" data-key="leftLateral"><div class="thumb" id="img-leftLateral">—</div><div class="slot-label">좌측 측면</div></div>
+        <div class="photo-slot" data-key="upperOcclusal"><div class="thumb" id="img-upperOcclusal">—</div><div class="slot-label">상악 교합면</div></div>
+        <div class="photo-slot" data-key="lowerOcclusal"><div class="thumb" id="img-lowerOcclusal">—</div><div class="slot-label">하악 교합면</div></div>
+        <div class="photo-slot" data-key="ceph"><div class="thumb" id="img-ceph">—</div><div class="slot-label">세팔로</div></div>
+        <div class="photo-slot" data-key="faceFront"><div class="thumb" id="img-faceFront">—</div><div class="slot-label">안면 정면</div></div>
+        <div class="photo-slot" data-key="faceLateral"><div class="thumb" id="img-faceLateral">—</div><div class="slot-label">안면 측면</div></div>
+        <div class="photo-slot" data-key="faceSmile"><div class="thumb" id="img-faceSmile">—</div><div class="slot-label">스마일</div></div>
+        <div class="photo-slot" data-key="face45"><div class="thumb" id="img-face45">—</div><div class="slot-label">45도</div></div>
+      </div>
+    </div>
+
+    <!-- EZ/TZ 분석 -->
+    <div class="test-card">
+      <h3>EZ/TZ 평형 영역 분석</h3>
+      <div class="arch-tabs">
+        <button class="btn btn-primary active" id="upperTab" type="button">상악 분석</button>
+        <button class="btn btn-ghost" id="lowerTab" type="button">하악 분석</button>
+      </div>
+      <div class="canvas-frame">
+        <div class="toolbar">
+          <button class="btn btn-primary active" id="tzMode" type="button">TZ 점 찍기</button>
+          <button class="btn btn-ghost" id="ezMode" type="button">EZ 점 찍기</button>
+          <button class="btn btn-ghost" id="autoTzBtn" type="button">TZ 자동</button>
+          <button class="btn btn-ghost" id="autoEzBtn" type="button">EZ 자동</button>
+          <button class="btn btn-ghost" id="autoBothBtn" type="button">둘 다 자동</button>
+          <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
+          <button class="btn btn-ghost" id="clearBtn" type="button">현재 삭제</button>
+          <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
+        </div>
+        <canvas id="curveCanvas" width="900" height="520"></canvas>
+        <div style="padding:10px 14px; background:#f1f5f9; border-top:1px solid var(--border-subtle); font-size:12px; color:#475569;">
+          <strong>사용법:</strong> 클릭=포인트 추가 | 드래그=포인트 이동 | 더블클릭=포인트 삭제 | 좌측 구치부→전치부→우측 구치부 순서로 14개 포인트 권장
+        </div>
+      </div>
+
+      <!-- 스케일 -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px;">
+        <div class="field"><label for="knownMm">기준 거리(mm)</label><input class="input" type="number" id="knownMm" value="10" min="0" step="0.1"></div>
+        <div class="field"><label for="knownPx">같은 거리(px)</label><input class="input" type="number" id="knownPx" value="100" min="0" step="0.1"></div>
+        <div style="display:flex; align-items:flex-end;"><button class="btn btn-primary" id="analyzeBtn" type="button" style="width:100%; justify-content:center;">EZ/TZ 계산</button></div>
+      </div>
+
+      <!-- 결과 -->
+      <div class="metric-grid" id="metricGrid">
+        <div class="metric"><div class="label">상악 차이</div><div class="value" id="upperMetric">-</div></div>
+        <div class="metric"><div class="label">하악 차이</div><div class="value" id="lowerMetric">-</div></div>
+        <div class="metric"><div class="label">총 차이</div><div class="value" id="totalMetric">-</div></div>
+        <div class="metric"><div class="label">px/mm</div><div class="value" id="scaleMetric">-</div></div>
+      </div>
+    </div>
+
+    <!-- 디버그 -->
+    <div class="test-card" style="opacity:0.7;">
+      <h3>디버그: 데이터 소스</h3>
+      <h4 style="margin-top:12px; font-size:13px; color:var(--text-muted);">localStorage('oa_step1_patient_info')</h4>
+      <div class="result-box" id="result-localstorage">로딩 중...</div>
+      <h4 style="margin-top:14px; font-size:13px; color:var(--text-muted);">PhotoStore.loadCase()</h4>
+      <div class="result-box" id="result-photostore">로딩 중...</div>
+    </div>
+
+    <!-- 결론 -->
+    <div class="test-card">
+      <h3>결론</h3>
+      <div id="result-verdict" style="font-size: 16px; font-weight: 600;">검사 중...</div>
+    </div>
+  </div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script src="js/equilibrium-zone-engine.js"></script>
+<script src="js/curve-editor.js?v=16"></script>
+<script>
+(async function() {
+  const STAGE_LABELS = { permanent_dentition: '영구치열', mixed_dentition: '혼합치열', adult: '성인' };
+  const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+
+  // =========================================================
+  // 1단계 데이터 로드 (2단계와 동일한 단순 패턴)
+  // =========================================================
+  const raw = localStorage.getItem('oa_step1_patient_info');
+  let psData = null;
+  try { psData = await PhotoStore.loadCase(); } catch (e) { console.warn(e); }
+
+  const lsPatient = raw ? JSON.parse(raw) : null;
+  const psPatient = psData?.patient;
+  const patient = psPatient || lsPatient || {};
+
+  // 환자 정보 표시
+  document.getElementById('disp-name').textContent = patient.name || '-';
+  document.getElementById('disp-stage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || patient.stage || '-';
+  document.getElementById('disp-class').textContent = CLASS_LABELS[patient.classification] || patient.classification || '-';
+
+  // 사진 표시
+  let photoCount = 0;
+  const photoFiles = {};
+  if (psData && psData.photos) {
+    for (const [key, entry] of Object.entries(psData.photos)) {
+      if (!entry || !entry.base64) continue;
+      photoCount++;
+      const thumb = document.getElementById('img-' + key);
+      if (thumb) {
+        thumb.style.backgroundImage = 'url(' + entry.base64 + ')';
+        thumb.textContent = '';
+        thumb.classList.add('loaded');
+        thumb.closest('.photo-slot').classList.add('has-image');
+      }
+      const blob = PhotoStore.base64ToBlob(entry.base64);
+      if (blob) photoFiles[key] = new File([blob], entry.name || key + '.jpg', { type: blob.type });
+    }
+  }
+  document.getElementById('photo-summary').textContent = photoCount > 0
+    ? photoCount + '장의 사진이 1단계에서 전달되었습니다.'
+    : '사진 없음 — 1단계에서 사진을 업로드하고 저장하세요.';
+
+  // 디버그
+  const box1 = document.getElementById('result-localstorage');
+  box1.textContent = raw || '(null)';
+  box1.classList.add(raw ? 'success' : 'fail');
+
+  const box2 = document.getElementById('result-photostore');
+  if (psData) {
+    const keys = psData.photos ? Object.keys(psData.photos).filter(k => psData.photos[k]?.base64) : [];
+    box2.textContent = JSON.stringify({ patient: psData.patient || null, savedAt: psData.savedAt ? new Date(psData.savedAt).toLocaleString('ko-KR') : null, photoCount: keys.length, photoKeys: keys }, null, 2);
+    box2.classList.add(psData.patient?.name ? 'success' : 'fail');
+  } else {
+    box2.textContent = '(null)';
+    box2.classList.add('fail');
+  }
+
+  // 결론
+  const verdict = document.getElementById('result-verdict');
+  const lsOk = !!(lsPatient?.name);
+  const psOk = !!(psPatient?.name);
+  let vHtml = '';
+  vHtml += 'localStorage: <span class="badge ' + (lsOk ? 'badge-ok' : 'badge-fail') + '">' + (lsOk ? lsPatient.name : '없음') + '</span> ';
+  vHtml += 'PhotoStore: <span class="badge ' + (psOk ? 'badge-ok' : 'badge-fail') + '">' + (psOk ? psPatient.name : '없음') + '</span>';
+  vHtml += ' 사진: <span class="badge ' + (photoCount > 0 ? 'badge-ok' : 'badge-empty') + '">' + photoCount + '장</span><br><br>';
+  if (psOk && photoCount > 0) vHtml += '<span style="color:#16a34a; font-size:20px;">1단계 연동 정상</span>';
+  else if (psOk) vHtml += '<span style="color:#d97706; font-size:18px;">환자 정보 있음, 사진 없음</span>';
+  else if (lsOk) vHtml += '<span style="color:#d97706; font-size:18px;">localStorage에만 있음 — PhotoStore 저장 미완료</span>';
+  else vHtml += '<span style="color:#dc2626; font-size:18px;">연동 실패 — 1단계에서 저장 필요</span>';
+  verdict.innerHTML = vHtml;
+
+  // =========================================================
+  // EZ/TZ 분석 (curve-editor + equilibrium-zone-engine)
+  // =========================================================
+  const state = {
+    activeArch: 'lower',
+    archData: { upper: { ezPoints: [], tzPoints: [] }, lower: { ezPoints: [], tzPoints: [] } }
+  };
+
+  const canvas = document.getElementById('curveCanvas');
+  const editor = new CurveEditor({
+    canvas,
+    onChange(data) {
+      state.archData[state.activeArch] = data;
+      recalc();
+    }
+  });
+
+  function setArch(arch) {
+    state.archData[state.activeArch] = editor.getData();
+    state.activeArch = arch;
+    document.getElementById('upperTab').classList.toggle('active', arch === 'upper');
+    document.getElementById('lowerTab').classList.toggle('active', arch === 'lower');
+    document.getElementById('upperTab').classList.toggle('btn-primary', arch === 'upper');
+    document.getElementById('upperTab').classList.toggle('btn-ghost', arch !== 'upper');
+    document.getElementById('lowerTab').classList.toggle('btn-primary', arch === 'lower');
+    document.getElementById('lowerTab').classList.toggle('btn-ghost', arch !== 'lower');
+    editor.setData(state.archData[arch] || {});
+    loadArchImage(arch);
+  }
+
+  async function loadArchImage(arch) {
+    const key = arch === 'upper' ? 'upperOcclusal' : 'lowerOcclusal';
+    const file = photoFiles[key];
+    if (file) {
+      await editor.setImage(file);
+      const pts = state.archData[arch];
+      editor.points.ez = pts.ezPoints || [];
+      editor.points.tz = pts.tzPoints || [];
+      editor.render();
+    }
+  }
+
+  function setMode(mode) {
+    editor.setMode(mode);
+    document.getElementById('tzMode').classList.toggle('active', mode === 'tz');
+    document.getElementById('tzMode').classList.toggle('btn-primary', mode === 'tz');
+    document.getElementById('tzMode').classList.toggle('btn-ghost', mode !== 'tz');
+    document.getElementById('ezMode').classList.toggle('active', mode === 'ez');
+    document.getElementById('ezMode').classList.toggle('btn-primary', mode === 'ez');
+    document.getElementById('ezMode').classList.toggle('btn-ghost', mode !== 'ez');
+  }
+
+  function autoTrace(mode) {
+    const data = editor.autoTrace(mode, { arch: state.activeArch });
+    if (!data) return;
+    state.archData[state.activeArch] = data;
+    recalc();
+  }
+
+  function getScale() {
+    const mm = Number(document.getElementById('knownMm').value);
+    const px = Number(document.getElementById('knownPx').value);
+    return mm > 0 && px > 0 ? px / mm : null;
+  }
+
+  function recalc() {
+    state.archData[state.activeArch] = editor.getData();
+    const pxPerMm = getScale();
+    editor.setPxPerMm(pxPerMm);
+    const result = EquilibriumZoneEngine.analyzeCase({
+      upper: state.archData.upper,
+      lower: state.archData.lower,
+      scale: { pxPerMm, source: 'manual', confidence: 0.7 },
+      modifiers: {}
+    });
+    const fmt = v => Number.isFinite(Number(v)) ? Number(v).toFixed(2) + ' mm' : '-';
+    document.getElementById('upperMetric').textContent = fmt(result.upper.discrepancyMm);
+    document.getElementById('lowerMetric').textContent = fmt(result.lower.discrepancyMm);
+    document.getElementById('totalMetric').textContent = fmt(result.totalDiscrepancyMm);
+    document.getElementById('scaleMetric').textContent = pxPerMm ? pxPerMm.toFixed(2) : '-';
+  }
+
+  // 이벤트 바인딩
+  document.getElementById('upperTab').onclick = () => setArch('upper');
+  document.getElementById('lowerTab').onclick = () => setArch('lower');
+  document.getElementById('tzMode').onclick = () => setMode('tz');
+  document.getElementById('ezMode').onclick = () => setMode('ez');
+  document.getElementById('autoTzBtn').onclick = () => autoTrace('tz');
+  document.getElementById('autoEzBtn').onclick = () => autoTrace('ez');
+  document.getElementById('autoBothBtn').onclick = () => autoTrace('both');
+  document.getElementById('undoBtn').onclick = () => editor.undo();
+  document.getElementById('clearBtn').onclick = () => editor.clear();
+  document.getElementById('clearAllBtn').onclick = () => editor.clear('all');
+  document.getElementById('analyzeBtn').onclick = () => recalc();
+  document.getElementById('knownMm').addEventListener('input', recalc);
+  document.getElementById('knownPx').addEventListener('input', recalc);
+
+  // 초기 로드: 하악 교합면 우선
+  if (photoFiles.lowerOcclusal) {
+    setArch('lower');
+    autoTrace('both');
+  } else if (photoFiles.upperOcclusal) {
+    setArch('upper');
+    autoTrace('both');
+  }
+  setMode('tz');
+})();
+</script>
+</body>
+</html>

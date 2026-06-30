@@ -138,7 +138,10 @@
 
   <div class="container" style="margin-top:24px;">
     <div class="upload-section" style="margin-bottom:20px;">
-      <h3>환자 정보</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <h3 style="margin:0;">환자 정보</h3>
+        <button class="btn btn-ghost" id="clearAllBtn" type="button" style="font-size:12px; padding:5px 12px; color:#ef4444; border-color:#fca5a5;">전체 초기화</button>
+      </div>
       <div class="patient-form">
         <div class="field">
           <label for="patientName">환자명 / 케이스 코드</label>
@@ -264,7 +267,6 @@
         <span class="status-badge incomplete" id="statusBadge">사진 미입력</span>
       </div>
       <div style="display:flex; gap:10px;">
-        <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 초기화</button>
         <button class="btn btn-ghost" id="saveToDbBtn" type="button" style="border-color:#22c55e; color:#16a34a;">💾 저장</button>
         <a class="btn btn-primary" id="nextStepBtn" href="classification.html" style="pointer-events:none; opacity:0.5;">2단계: Class 분류 →</a>
       </div>
@@ -278,7 +280,7 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/photo-store.js"></script>
+<script src="js/photo-store.js?v=5"></script>
 <script>
 (function () {
   const photos = {};
@@ -735,6 +737,30 @@
 
   // PhotoStore에 저장
   let _timer = null;
+  function getStep1PatientInfo() {
+    return {
+      name: document.getElementById('patientName').value.trim(),
+      stage: document.getElementById('dentitionStage').value,
+      dentitionStage: document.getElementById('dentitionStage').value,
+      classification: document.getElementById('classification').value,
+      savedAt: Date.now(),
+      source: 'photo-upload-step1'
+    };
+  }
+
+  function persistStep1PatientInfo() {
+    const patient = getStep1PatientInfo();
+    if (!patient.name) return patient;
+    try {
+      localStorage.setItem('oa_step1_patient_info', JSON.stringify(patient));
+      if (window.PatientStore) {
+        const existing = window.PatientStore.get?.() || {};
+        window.PatientStore.set({ ...existing, ...patient });
+      }
+    } catch (e) { console.warn('[step1 patient] save failed:', e); }
+    return patient;
+  }
+
   function scheduleSave() {
     clearTimeout(_timer);
     _timer = setTimeout(doSave, 600);
@@ -749,12 +775,9 @@
         type: file.type
       };
     }
+    const patient = persistStep1PatientInfo();
     await PhotoStore.saveCase({
-      patient: {
-        name: document.getElementById('patientName').value.trim(),
-        stage: document.getElementById('dentitionStage').value,
-        classification: document.getElementById('classification').value
-      },
+      patient,
       photos: photoData
     });
   }
@@ -762,12 +785,20 @@
   // 페이지 로드 시 이전 데이터 복원
   async function restore() {
     const data = await PhotoStore.loadCase();
-    if (!data) return;
+    if (!data) {
+      const patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
+      if (patient?.name) document.getElementById('patientName').value = patient.name;
+      if (patient?.stage || patient?.dentitionStage) document.getElementById('dentitionStage').value = patient.stage || patient.dentitionStage;
+      if (patient?.classification) document.getElementById('classification').value = patient.classification;
+      updateStatus();
+      return;
+    }
 
     if (data.patient) {
       if (data.patient.name) document.getElementById('patientName').value = data.patient.name;
       if (data.patient.stage) document.getElementById('dentitionStage').value = data.patient.stage;
       if (data.patient.classification) document.getElementById('classification').value = data.patient.classification;
+      persistStep1PatientInfo();
     }
 
     if (data.photos) {
@@ -788,7 +819,47 @@
   }
 
   // 초기화
+  function buildPatientQuery(targetPath) {
+    const patient = persistStep1PatientInfo();
+    const url = new URL(targetPath, window.location.href);
+    if (patient.name) url.searchParams.set('patientName', patient.name);
+    if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
+    if (patient.classification) url.searchParams.set('classification', patient.classification);
+    return url.pathname.split('/').pop() + url.search;
+  }
+
+  const nextStepBtn = document.getElementById('nextStepBtn');
+  if (nextStepBtn) {
+    nextStepBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await doSave();
+      window.location.href = buildPatientQuery(nextStepBtn.getAttribute('href') || 'classification.html');
+    });
+  }
+
+
+  document.addEventListener('click', async (event) => {
+    const link = event.target.closest?.('a[href="classification.html"], a[href="equilibrium-analysis.html"]');
+    if (!link) return;
+    event.preventDefault();
+    await doSave();
+    window.location.href = buildPatientQuery(link.getAttribute('href') || 'classification.html');
+  });
+
   document.getElementById('clearAllBtn').addEventListener('click', async () => {
+    document.getElementById('patientName').value = '';
+    document.getElementById('dentitionStage').value = 'permanent_dentition';
+    document.getElementById('classification').value = '';
+    try {
+      localStorage.removeItem('oa_step1_patient_info');
+      localStorage.removeItem('oa_yoon_sohee_sample_ready');
+      localStorage.removeItem('oa_yoon_sohee_sample_saved_at');
+      localStorage.removeItem('oa_launch_yoon_sohee_sample');
+      localStorage.removeItem('oa_step2_to_step3_payload');
+      localStorage.removeItem('oa_workflow_to_equilibrium');
+      localStorage.removeItem('oa_latest_classification_result');
+    } catch {}
+    if (window.PatientStore) window.PatientStore.set(null);
     await PhotoStore.clearCase();
     Object.keys(photos).forEach(k => delete photos[k]);
     ALL_SLOTS.forEach(slot => {
@@ -801,7 +872,7 @@
     document.getElementById('dropFace').classList.remove('has-files');
     document.getElementById('dropPly').classList.remove('has-files');
     updateStatus();
-    if (window.toast) window.toast('초기화 완료', 'success');
+    if (window.toast) window.toast('환자 정보와 사진을 모두 초기화했습니다.', 'success');
   });
 
   // Supabase 저장
@@ -860,111 +931,126 @@
       let uploadResults = null;
       if (imagePayloads.length > 0) {
         btn.textContent = `AI 분류 중... (${imagePayloads.length}장)`;
-        const uploadRes = await apiFetch('/api/classify-and-upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            patientName,
-            phase: 'initial',
-            images: imagePayloads
-          })
-        });
-        if (uploadRes.ok) {
-          uploadResults = await uploadRes.json();
-        } else {
-          console.warn('[upload] API 실패, 기존 방식 폴백');
+        try {
+          const uploadRes = await apiFetch('/api/classify-and-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              patientName,
+              phase: 'initial',
+              images: imagePayloads
+            })
+          });
+          if (uploadRes.ok) {
+            uploadResults = await uploadRes.json();
+          } else {
+            console.warn('[upload] API 실패 (' + uploadRes.status + '), 로컬 저장으로 진행');
+          }
+        } catch (uploadErr) {
+          console.warn('[upload] API 호출 불가, 로컬 저장으로 진행:', uploadErr.message);
         }
       }
 
       btn.textContent = 'DB 등록 중...';
 
-      // 1. 기존 환자 검색 (같은 이름)
-      const searchRes = await fetch(SUPABASE_URL + '/rest/v1/patients?name=eq.' + encodeURIComponent(patientName) + '&select=id&limit=1', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-      });
-      const existing = await searchRes.json();
+      let dbSaved = false;
+      let patientId = null;
+      try {
+        // 1. 기존 환자 검색 (같은 이름)
+        const searchRes = await fetch(SUPABASE_URL + '/rest/v1/patients?name=eq.' + encodeURIComponent(patientName) + '&select=id&limit=1', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        const existing = await searchRes.json();
 
-      const patientPayload = {
-        name: patientName,
-        gender: null,
-        age_group: document.getElementById('dentitionStage').value === 'adult' ? 'adult' : 'child',
-        metadata: {
-          stage: document.getElementById('dentitionStage').value,
-          classification: document.getElementById('classification').value || null,
-          photos: Object.keys(photos),
-          uploadedAt: new Date().toISOString(),
-          initial_urls: uploadResults?.photoUrls || null,
-          initial: {
-            intraoral: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'intraoral').length,
-            face: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'face').length,
-            xray: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'xray').length,
-            model: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'model').length
+        const patientPayload = {
+          name: patientName,
+          gender: null,
+          age_group: document.getElementById('dentitionStage').value === 'adult' ? 'adult' : 'child',
+          metadata: {
+            stage: document.getElementById('dentitionStage').value,
+            classification: document.getElementById('classification').value || null,
+            photos: Object.keys(photos),
+            uploadedAt: new Date().toISOString(),
+            initial_urls: uploadResults?.photoUrls || null,
+            initial: {
+              intraoral: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'intraoral').length,
+              face: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'face').length,
+              xray: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'xray').length,
+              model: Object.keys(photos).filter(k => SLOT_MAP[k]?.category === 'model').length
+            }
           }
+        };
+
+        if (existing.length > 0) {
+          patientId = existing[0].id;
+          const updateRes = await fetch(SUPABASE_URL + '/rest/v1/patients?id=eq.' + patientId, {
+            method: 'PATCH', headers, body: JSON.stringify(patientPayload)
+          });
+          if (!updateRes.ok) throw new Error('환자 업데이트 실패');
+        } else {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/patients', {
+            method: 'POST', headers, body: JSON.stringify(patientPayload)
+          });
+          const result = await res.json();
+          if (!res.ok) throw new Error(result.message || JSON.stringify(result));
+          patientId = Array.isArray(result) ? result[0]?.id : result.id;
         }
-      };
 
-      let patientId;
-      if (existing.length > 0) {
-        patientId = existing[0].id;
-        const updateRes = await fetch(SUPABASE_URL + '/rest/v1/patients?id=eq.' + patientId, {
-          method: 'PATCH', headers, body: JSON.stringify(patientPayload)
+        // 2. training_cases
+        const fileList = {};
+        for (const [key, file] of Object.entries(photos)) {
+          fileList[key] = { name: file.name, size: file.size, type: file.type };
+        }
+
+        await fetch(SUPABASE_URL + '/rest/v1/training_cases?case_code=eq.' + encodeURIComponent(patientName) + '&phase=eq.initial', {
+          method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
-        if (!updateRes.ok) throw new Error('환자 업데이트 실패');
-      } else {
-        const res = await fetch(SUPABASE_URL + '/rest/v1/patients', {
-          method: 'POST', headers, body: JSON.stringify(patientPayload)
+
+        const casePayload = {
+          patient_id: patientId || null,
+          case_code: patientName,
+          classification: document.getElementById('classification').value || null,
+          phase: 'initial',
+          has_intraoral: !!(photos.frontal || photos.lowerOcclusal),
+          has_ceph: !!photos.ceph,
+          has_face: !!(photos.faceFront || photos.faceLateral),
+          has_model: !!(photos.modelUpper || photos.modelLower),
+          files: fileList
+        };
+
+        const res2 = await fetch(SUPABASE_URL + '/rest/v1/training_cases', {
+          method: 'POST', headers, body: JSON.stringify(casePayload)
         });
-        const result = await res.json();
-        if (!res.ok) throw new Error(result.message || JSON.stringify(result));
-        patientId = Array.isArray(result) ? result[0]?.id : result.id;
+        if (!res2.ok) {
+          const err2 = await res2.json();
+          console.warn('training_cases insert warning:', err2);
+        }
+        dbSaved = true;
+      } catch (dbErr) {
+        console.warn('[saveToDb] Supabase 저장 실패, 로컬 저장으로 폴백:', dbErr.message);
       }
 
-      // 2. training_cases
-      const fileList = {};
-      for (const [key, file] of Object.entries(photos)) {
-        fileList[key] = { name: file.name, size: file.size, type: file.type };
-      }
-
-      await fetch(SUPABASE_URL + '/rest/v1/training_cases?case_code=eq.' + encodeURIComponent(patientName) + '&phase=eq.initial', {
-        method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-      });
-
-      const casePayload = {
-        patient_id: patientId || null,
-        case_code: patientName,
-        classification: document.getElementById('classification').value || null,
-        phase: 'initial',
-        has_intraoral: !!(photos.frontal || photos.lowerOcclusal),
-        has_ceph: !!photos.ceph,
-        has_face: !!(photos.faceFront || photos.faceLateral),
-        has_model: !!(photos.modelUpper || photos.modelLower),
-        files: fileList
-      };
-
-      const res2 = await fetch(SUPABASE_URL + '/rest/v1/training_cases', {
-        method: 'POST', headers, body: JSON.stringify(casePayload)
-      });
-      if (!res2.ok) {
-        const err2 = await res2.json();
-        console.warn('training_cases insert warning:', err2);
-      }
-
-      // 3. PhotoStore에도 patientId 저장
+      // 3. PhotoStore에 항상 저장 (로컬 IndexedDB — DB 실패 시에도 동작 보장)
+      await doSave();
       const psData = await PhotoStore.loadCase();
-      if (psData) {
+      if (psData && patientId) {
         psData.patient.id = patientId;
         psData.patient.savedToDb = true;
         await PhotoStore.saveCase(psData);
       }
 
       const uploadCount = uploadResults?.results?.length || 0;
-      if (window.toast) window.toast(`"${patientName}" 저장 완료 — ${uploadCount}장 AI 분류 업로드`, 'success');
-      else alert('저장 완료');
+      if (dbSaved) {
+        if (window.toast) window.toast(`"${patientName}" 저장 완료 — ${uploadCount}장 업로드`, 'success');
+      } else {
+        if (window.toast) window.toast(`"${patientName}" 브라우저에 저장 완료 (서버 연결 불가)`, 'warning');
+      }
 
     } catch (e) {
       console.error('[saveToDb]', e);
-      if (window.toast) window.toast('저장 실패: ' + e.message, 'error');
-      else alert('저장 실패: ' + e.message);
+      // 최소한 로컬 저장은 보장
+      try { await doSave(); } catch {}
+      if (window.toast) window.toast('서버 저장 실패, 브라우저에 저장했습니다.', 'warning');
     } finally {
       btn.disabled = false;
       btn.textContent = '💾 저장';
@@ -986,10 +1072,16 @@
   }
 
   // 폼 변경 시 저장
-  ['patientName', 'dentitionStage', 'classification'].forEach(id => {
-    document.getElementById(id).addEventListener('change', scheduleSave);
-    document.getElementById(id).addEventListener('input', scheduleSave);
+['patientName', 'dentitionStage', 'classification'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', () => { persistStep1PatientInfo(); scheduleSave(); });
+    el.addEventListener('input', () => { persistStep1PatientInfo(); scheduleSave(); });
   });
+
+  // 페이지 이탈 시 즉시 저장 (사이드바 네비게이션으로 이동해도 데이터 유실 방지)
+  window.addEventListener('beforeunload', () => { persistStep1PatientInfo(); doSave(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { persistStep1PatientInfo(); doSave(); } });
 
   restore();
 })();

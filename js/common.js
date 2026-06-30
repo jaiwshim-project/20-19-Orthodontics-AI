@@ -1,4 +1,4 @@
-﻿/* ==============================================================
+/* ==============================================================
    20-19 Orthodontics AI — Common Scripts
    사이드바, 라우팅, 토스트, 환자 스토어, i18n 골격
    ============================================================== */
@@ -14,7 +14,7 @@
     { group: '진단 워크플로우(신규환자용)', items: [
       { path: 'photo-upload.html',         label: '1단계 사진 입력',    icon: '📷' },
       { path: 'classification.html',       label: '2단계 Class 분류',   icon: '🎯' },
-      { path: 'equilibrium-analysis.html', label: '3단계 EZ/TZ 분석',   icon: 'EZ' },
+      { path: 'step3-new.html',            label: '3단계 EZ/TZ 분석',   icon: 'EZ' },
       { path: 'extraction-ai.html',        label: '4단계 발치 판단',    icon: '🦷' }
     ]},
     { group: 'AI 보조', items: [
@@ -85,6 +85,7 @@
           <span class="title" aria-current="page">${title}</span>
         </div>
         <div class="actions">
+          ${['index.html','equilibrium-analysis.html'].includes(current) ? '<button class="btn btn-ghost btn-sm" id="loadYoonSoheeSampleBtn" type="button" onclick="window.launchYoonSoheeSample()" style="border-color:#8b5cf6;color:#6d28d9;">윤소희 샘플</button>' : ''}
           <button class="btn btn-ghost btn-sm" onclick="window.openPatientModal()">환자 변경</button>
           <select class="select btn-sm" id="langSelect" style="width:auto; padding:6px 10px;" onchange="window.setLang(this.value)">
             <option value="ko">한국어</option>
@@ -99,6 +100,16 @@
     document.getElementById('patientChip').onclick = () => window.openPatientModal();
     refreshPatientChip();
   }
+
+  window.launchYoonSoheeSample = function () {
+    try { localStorage.setItem('oa_launch_yoon_sohee_sample', '1'); } catch {}
+    if (getCurrentPath() === 'equilibrium-analysis.html') {
+      const btn = document.getElementById('loadYoonSoheeSampleBtn');
+      if (btn) btn.click();
+      return;
+    }
+    window.location.href = 'equilibrium-analysis.html';
+  };
 
   // -------- Sidebar Toggle --------
   window.toggleSidebar = function () {
