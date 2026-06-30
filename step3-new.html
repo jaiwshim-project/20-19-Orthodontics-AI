@@ -225,6 +225,7 @@
 
   const canvas = document.getElementById('curveCanvas');
   const editor = new CurveEditor({ canvas, onChange() { updateEzlFromCurve(); } });
+  editor.showTz = false;
   const TOOTH_NAMES = ToothWidthEngine.LOWER_TOOTH_NAMES;
 
   // =========================================================

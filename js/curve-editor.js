@@ -674,11 +674,11 @@
       ctx.drawImage(this.image, 0, 0);
       ctx.restore();
 
-      if (this.showDiffArea) this._drawDiffArea();
+      if (this.showDiffArea && this.showTz !== false) this._drawDiffArea();
       this._drawCurve('ez');
-      this._drawCurve('tz');
+      if (this.showTz !== false) this._drawCurve('tz');
       if (this.showLengths) this._drawLengthLabels();
-      this._drawLegend();
+      if (this.showTz !== false) this._drawLegend();
       this._drawInstructions();
     }
 
