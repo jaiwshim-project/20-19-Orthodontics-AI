@@ -441,7 +441,7 @@
   // =========================================================
   function setActiveMode(mode) {
     state.mode = mode;
-    editor.disabled = (mode === 'toothWidth');
+    editor.disabled = (mode !== 'ez');
     const ezBtn = document.getElementById('ezMode');
     ezBtn.classList.toggle('active', mode === 'ez');
     ezBtn.classList.toggle('btn-primary', mode === 'ez');
@@ -449,9 +449,12 @@
     if (mode === 'ez') {
       editor.setMode('ez');
       editor.render();
+      canvas.style.cursor = 'crosshair';
+    } else {
+      canvas.style.cursor = 'default';
+      renderToothOverlay();
     }
     updateGuide();
-    if (mode === 'toothWidth') renderToothOverlay();
   }
 
   function setArch(arch) {
