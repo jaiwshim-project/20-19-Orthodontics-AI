@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3단계 EZ/TZ 평형 영역 분석 | Orthodontics AI</title>
-<meta name="description" content="5방향 구강사진과 PM 기준값을 기반으로 EZ/TZ 곡선 길이를 비교하는 발치 판단 보조 도구">
+<title>3단계 TTL/EZL 분석 | Orthodontics AI</title>
+<meta name="description" content="치아 폭경 합산(TTL)과 평형 영역 길이(EZL)를 비교하여 공간 부족도를 판단하는 보조 도구">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="css/global.css">
 <style>
@@ -51,11 +51,11 @@
       <div class="step-indicator">
         <div class="step done">1 사진 입력</div><span class="arrow">→</span>
         <div class="step done">2 Class 분류</div><span class="arrow">→</span>
-        <div class="step active">3 EZ/TZ 분석</div><span class="arrow">→</span>
+        <div class="step active">3 TTL/EZL 분석</div><span class="arrow">→</span>
         <div class="step">4 발치 판단</div>
       </div>
-      <h1>3단계: EZ/TZ 평형 영역 분석</h1>
-      <p>교합면 사진에서 현재 치열선(TZ)과 안정 평형선(EZ)의 곡선 길이를 비교하여 발치 여부를 판단합니다.</p>
+      <h1>3단계: TTL / EZL 분석</h1>
+      <p>교합면 사진에서 치아 폭경 합산(TTL)과 평형 영역 곡선 길이(EZL)를 비교하여 공간 부족도를 판단합니다.</p>
     </div>
   </section>
 
@@ -120,7 +120,7 @@
           <div class="field" style="margin-top:8px;">
             <label for="molarMm">양쪽 어금니 간 거리(mm)</label>
             <input class="input" type="number" id="molarMm" value="54" min="0" step="0.1" placeholder="예: 54">
-            <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">TZ 양 끝점(좌·우 제2대구치) 사이 실측 거리. PM 모델 또는 캘리퍼로 측정.</p>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">좌·우 제2대구치 사이 실측 거리. PM 모델 또는 캘리퍼로 측정.</p>
           </div>
           <button class="btn btn-ghost" id="applyMolarScaleBtn" type="button" style="width:100%; justify-content:center; margin-top:6px; color:#6d28d9; border-color:#8b5cf6;">어금니 거리로 스케일 적용</button>
           <hr style="border:0; border-top:1px solid var(--border-subtle); margin:14px 0;">
@@ -217,7 +217,7 @@
   const state = {
     activeArch: 'lower',
     mode: 'toothWidth',
-    archData: { upper: { ezPoints: [], tzPoints: [] }, lower: { ezPoints: [], tzPoints: [] } },
+    archData: { upper: { ezPoints: [] }, lower: { ezPoints: [] } },
     teeth: { upper: [], lower: [] },
     currentToothIndex: 1,
     currentPointStep: 'distal'
@@ -473,7 +473,7 @@
       await editor.setImage(file);
       const pts = state.archData[arch];
       editor.points.ez = pts.ezPoints || [];
-      editor.points.tz = pts.tzPoints || [];
+      editor.points.tz = [];
       editor.render();
       if (state.mode === 'toothWidth') renderToothOverlay();
     }
