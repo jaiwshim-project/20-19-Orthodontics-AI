@@ -89,7 +89,8 @@
           </div>
           <div class="canvas-frame">
             <div class="toolbar">
-              <button class="btn btn-ghost" id="ezMode" type="button">EZ 곡선</button>
+              <button class="btn btn-ghost" id="ezAutoBtn" type="button">EZ 곡선 자동 생성</button>
+              <button class="btn btn-ghost" id="ezMode" type="button">EZ 수동 편집</button>
               <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
               <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
             </div>
@@ -487,6 +488,71 @@
     }
   }
 
+  function autoGenerateEZ() {
+    if (!editor.image) {
+      if (window.toast) window.toast('교합면 사진을 먼저 업로드하세요.', 'warning');
+      return;
+    }
+    const arch = state.activeArch;
+    const w = editor.image.width;
+    const h = editor.image.height;
+
+    // 이미지 분석으로 치아 영역 검출
+    const curve = editor._estimateArchCurves(w, h, arch);
+    if (!curve || !curve.tz || curve.tz.length < 5) {
+      if (window.toast) window.toast('이미지에서 치아 영역을 검출할 수 없습니다.', 'error');
+      return;
+    }
+    const tzPoints = curve.tz;
+    const isLower = (arch === 'lower');
+
+    // EZ anchor points: 치아 위치에서 치조골 중심(안쪽)으로 오프셋
+    // 하악: 치아보다 위쪽(y 감소), 상악: 치아보다 아래쪽(y 증가)
+    const n = tzPoints.length;
+    const first = tzPoints[0];
+    const last = tzPoints[n - 1];
+    const midIdx = Math.floor(n / 2);
+    const mid = tzPoints[midIdx];
+
+    // 악궁 중심점 계산
+    const centerX = (first.x + last.x) / 2;
+    const centerY = tzPoints.reduce((s, p) => s + p.y, 0) / n;
+
+    // 치조골은 치아보다 악궁 중심쪽으로 이동 (안쪽)
+    // 오프셋 비율: 전치부 크게, 구치부 작게
+    function toEzPoint(tzPt, index) {
+      const t = index / (n - 1); // 0 ~ 1
+      const centerWeight = Math.sin(Math.PI * t); // 가운데가 1, 양끝이 0
+      const offsetRatio = 0.06 + centerWeight * 0.12; // 양끝 6%, 가운데 18%
+      const dx = centerX - tzPt.x;
+      const dy = centerY - tzPt.y;
+      return {
+        x: Math.round(tzPt.x + dx * offsetRatio),
+        y: Math.round(tzPt.y + dy * offsetRatio)
+      };
+    }
+
+    // 9개 anchor point 선택 (균등 배치)
+    const indices = [0, 1, 3, 5, midIdx, n - 6, n - 4, n - 2, n - 1].map(i => Math.max(0, Math.min(n - 1, i)));
+    const ezAnchors = indices.map(i => toEzPoint(tzPoints[i], i));
+
+    // CurveEditor에 EZ 포인트 설정
+    editor.points.ez = ezAnchors;
+    editor.points.tz = [];
+    editor.render();
+
+    // EZL 자동 계산
+    const pxPerMm = getScale();
+    const result = EquilibriumZoneEngine.buildEZCurve({ anchorPoints: ezAnchors, pxPerMm: pxPerMm });
+    if (result.lengthMm) {
+      document.getElementById('ezlMm').value = result.lengthMm.toFixed(2);
+      document.getElementById('ezlMetric').textContent = result.lengthMm.toFixed(2) + ' mm';
+    }
+
+    setActiveMode('ez');
+    if (window.toast) window.toast('EZ 곡선 자동 생성 완료 (EZL = ' + (result.lengthMm ? result.lengthMm.toFixed(1) + 'mm' : result.lengthPx + 'px') + '). 점을 드래그하여 보정 가능.', 'success');
+  }
+
   function saveAnalysis() {
     recalcResults();
     const record = {
@@ -506,6 +572,7 @@
   // =========================================================
   document.getElementById('upperTab').onclick = () => setArch('upper');
   document.getElementById('lowerTab').onclick = () => setArch('lower');
+  document.getElementById('ezAutoBtn').onclick = () => autoGenerateEZ();
   document.getElementById('ezMode').onclick = () => setActiveMode('ez');
   document.getElementById('undoBtn').onclick = () => {
     if (state.mode === 'toothWidth') {
