@@ -89,10 +89,7 @@
           </div>
           <div class="canvas-frame">
             <div class="toolbar">
-              <button class="btn btn-primary active" id="toothWidthMode" type="button">치아 폭경 측정</button>
-              <button class="btn btn-ghost" id="tzMode" type="button">TZ 곡선</button>
               <button class="btn btn-ghost" id="ezMode" type="button">EZ 곡선</button>
-              <button class="btn btn-ghost" id="autoBothBtn" type="button">곡선 자동</button>
               <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
               <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
             </div>
@@ -150,10 +147,8 @@
             <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">EZ 곡선 길이 또는 PM/STL에서 측정한 EZL. EZ 곡선 모드에서 자동 계산 가능.</p>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;">
-            <button class="btn btn-primary" id="calcTtlBtn" type="button" style="justify-content:center;">TTL 계산</button>
-            <button class="btn btn-ghost" id="calcEzlBtn" type="button" style="justify-content:center; color:#2563eb; border-color:#3b82f6;">EZL 계산</button>
-          </div>
+          <button class="btn btn-primary" id="calcTtlBtn" type="button" style="width:100%; justify-content:center; margin-top:14px;">TTL 계산 (치아 폭경 합산)</button>
+          <button class="btn btn-ghost" id="calcEzlBtn" type="button" style="width:100%; justify-content:center; margin-top:8px; color:#2563eb; border-color:#3b82f6;">EZL 계산 (EZ 곡선 길이)</button>
           <button class="btn btn-primary" id="analyzeBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">공간 부족도 판정</button>
           <button class="btn btn-ghost" id="saveBtn" type="button" style="width:100%; justify-content:center; margin-top:8px;">분석 저장</button>
         </div>
@@ -273,8 +268,6 @@
     } else if (state.mode === 'ez') {
       const count = (editor.points.ez || []).length;
       guide.innerHTML = '<strong>EZ 모드:</strong> 치조골 중심선을 따라 anchor point를 찍으세요. 양끝=어금니 최상단, 가운데=전치부 치조골 중심. (' + count + '개 / 7~9개 권장)';
-    } else {
-      guide.innerHTML = '클릭=포인트 추가 | 드래그=이동 | 더블클릭=삭제';
     }
   }
 
@@ -444,20 +437,12 @@
   function setActiveMode(mode) {
     state.mode = mode;
     editor.disabled = (mode === 'toothWidth');
-    const twBtn = document.getElementById('toothWidthMode');
-    const tzBtn = document.getElementById('tzMode');
     const ezBtn = document.getElementById('ezMode');
-    twBtn.classList.toggle('active', mode === 'toothWidth');
-    twBtn.classList.toggle('btn-primary', mode === 'toothWidth');
-    twBtn.classList.toggle('btn-ghost', mode !== 'toothWidth');
-    tzBtn.classList.toggle('active', mode === 'tz');
-    tzBtn.classList.toggle('btn-primary', mode === 'tz');
-    tzBtn.classList.toggle('btn-ghost', mode !== 'tz');
     ezBtn.classList.toggle('active', mode === 'ez');
     ezBtn.classList.toggle('btn-primary', mode === 'ez');
     ezBtn.classList.toggle('btn-ghost', mode !== 'ez');
-    if (mode === 'tz' || mode === 'ez') {
-      editor.setMode(mode);
+    if (mode === 'ez') {
+      editor.setMode('ez');
       editor.render();
     }
     updateGuide();
@@ -513,10 +498,7 @@
   // =========================================================
   document.getElementById('upperTab').onclick = () => setArch('upper');
   document.getElementById('lowerTab').onclick = () => setArch('lower');
-  document.getElementById('toothWidthMode').onclick = () => setActiveMode('toothWidth');
-  document.getElementById('tzMode').onclick = () => setActiveMode('tz');
   document.getElementById('ezMode').onclick = () => setActiveMode('ez');
-  document.getElementById('autoBothBtn').onclick = () => { editor.autoTrace('both', { arch: state.activeArch }); updateEzlFromCurve(); };
   document.getElementById('undoBtn').onclick = () => {
     if (state.mode === 'toothWidth') {
       if (state.currentPointStep === 'mesial') { state.currentPointStep = 'distal'; const t = (state.teeth[state.activeArch] || []).find(t => t.index === state.currentToothIndex); if (t) delete t.distalPoint; }
