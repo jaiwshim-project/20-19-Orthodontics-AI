@@ -24,6 +24,13 @@ Classification logic:
 - Use right and left intraoral lateral photos for dental/Angle relationship: canine and molar relationship if visible, overjet, overbite, anterior crossbite, edge-to-edge, Class II/III asymmetry.
 - Final class should integrate skeletal and dental evidence from the three images only.
 
+CRITICAL — Crowding vs. skeletal Class II differentiation:
+- Severe crowding can cause labial displacement/tipping of upper incisors, mimicking increased overjet. Do NOT classify as Class II based on apparent overjet alone when crowding is present.
+- When significant crowding is visible, prioritize MOLAR RELATIONSHIP (first molar key) over incisor position for Angle classification.
+- If upper canines are ectopic/high or teeth are severely displaced, evaluate the skeletal jaw relationship from ceph (SNA-SNB, Wits, profile convexity) INDEPENDENTLY from the dental crowding.
+- Class II diagnosis requires BOTH: (1) skeletal evidence from cephalometric (convex profile, mandibular retrusion, or maxillary protrusion) AND (2) Class II molar/canine relationship visible in intraoral photos.
+- If molar relationship appears Class I but incisors look protruded due to crowding → classify as Class I with crowding, NOT Class II.
+
 Return Korean JSON only with this shape:
 {
   "classification": {
@@ -250,13 +257,21 @@ export default async function handler(req, res) {
     const prompt = `Classify Angle malocclusion using only these 3 images: lateral cephalometric, left intraoral lateral, and right intraoral lateral.
 Do not use any manual numeric values or default form values.
 For every conclusion, state which image supports it in evidence.
+
+IMPORTANT — Before classifying:
+1. First assess if CROWDING is present (displaced/rotated teeth, ectopic canines, lack of space).
+2. If crowding is significant, do NOT interpret labially displaced incisors as "increased overjet" — that is dental displacement, not skeletal Class II.
+3. Always verify molar relationship (Class I/II/III key) separately from incisor position.
+4. For Class II diagnosis, you MUST confirm BOTH skeletal (ceph: convex profile, mandibular retrusion) AND dental (molar/canine Class II relationship) evidence. Apparent incisor protrusion from crowding alone is NOT sufficient.
+
 Calibrate confidence with this rubric:
 - 0.40-0.59: limited visibility, unilateral evidence, or conflicting findings.
 - 0.60-0.74: likely classification with at least two supporting visual findings.
 - 0.75-0.88: consistent cephalometric tendency plus matching left and right intraoral lateral findings.
 - 0.89-0.95: very clear bilateral dental relationship and cephalometric profile with no meaningful conflict.
 - Do not exceed 0.70 if either left or right intraoral lateral relationship is not visible.
-- For Class II Division 1, use 0.75 or higher only when increased overjet/proclined upper incisors or convex/retrusive mandibular pattern is visible AND at least one side supports Class II canine/molar tendency.`;
+- For Class II Division 1, use 0.75 or higher only when increased overjet/proclined upper incisors or convex/retrusive mandibular pattern is visible AND at least one side supports Class II canine/molar tendency.
+- If crowding is severe and molar relationship is Class I, classify as Class I regardless of apparent incisor protrusion.`;
 
     let text;
     if (ANTHROPIC_API_KEY) {
