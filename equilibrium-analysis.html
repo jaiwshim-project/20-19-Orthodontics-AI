@@ -1713,7 +1713,7 @@
   function renderLinkedPatientInfo(data = {}) {
     const step1Patient = safeParse(localStorage.getItem('oa_step1_patient_info'), null);
     const urlPatient = getPatientFromUrl();
-    const patient = data.patient || step1Patient || urlPatient || window.PatientStore?.get?.() || {};
+    const patient = (data.patient?.name ? data.patient : null) || urlPatient || step1Patient || window.PatientStore?.get?.() || {};
     const photos = data.photos || {};
     const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || '-'; };
     const stage = patient.stage || patient.dentitionStage || document.getElementById('dentitionStage')?.value || '';
@@ -1800,11 +1800,19 @@
   (async function initFromStep1() {
     // 1) PhotoStore에서 환자 정보 + 사진 로드
     const psData = await PhotoStore.loadCase().catch(() => null);
-    if (psData && psData.patient && psData.patient.name) {
-      document.getElementById('patientName').value = psData.patient.name;
-      const stage = psData.patient.stage || psData.patient.dentitionStage;
+    const urlPatient = getPatientFromUrl();
+    const step1Patient = safeParse(localStorage.getItem('oa_step1_patient_info'), null);
+    const resolvedPatient = (psData?.patient?.name ? psData.patient : null)
+      || urlPatient
+      || step1Patient
+      || window.PatientStore?.get?.()
+      || {};
+
+    if (resolvedPatient.name) {
+      document.getElementById('patientName').value = resolvedPatient.name;
+      const stage = resolvedPatient.stage || resolvedPatient.dentitionStage;
       if (stage) document.getElementById('dentitionStage').value = stage;
-      renderLinkedPatientInfo({ patient: psData.patient });
+      renderLinkedPatientInfo({ patient: resolvedPatient });
     }
 
     // 2) 사진을 state.uploadedFiles에 로드

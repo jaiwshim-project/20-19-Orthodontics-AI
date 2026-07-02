@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -30,6 +30,8 @@
   .canvas-frame { border: 1px solid var(--border-subtle); border-radius: 18px; overflow: hidden; background: #f8fafc; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); background: #fff; }
   .toolbar .active { box-shadow: 0 0 0 3px rgba(14,165,233,.16); }
+  .layer-btn { padding: 4px 9px; border-radius: 7px; border: 1px solid #cbd5e1; background: #fff; color: #475569; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .layer-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
   canvas { display: block; width: 100%; min-height: 480px; }
   .arch-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
   .arch-tabs .btn.active { background: var(--gradient-primary); color: #fff; border-color: transparent; }
@@ -93,6 +95,14 @@
               <button class="btn btn-ghost" id="ezMode" type="button">EZ 수동 편집</button>
               <button class="btn btn-ghost" id="undoBtn" type="button">취소</button>
               <button class="btn btn-ghost" id="clearAllBtn" type="button">전체 삭제</button>
+              <button class="btn btn-ghost" id="saveLocationBtn" type="button">location.md 저장</button>
+              <button class="btn btn-ghost" id="loadLocationBtn" type="button">location.md 불러오기</button>
+              <input type="file" id="loadLocationInput" accept=".md,.json" style="display:none;">
+              <span style="flex:1 1 auto;"></span>
+              <button class="layer-btn active" type="button" data-layer="grid">Grid</button>
+              <button class="layer-btn active" type="button" data-layer="toothNum">Tooth#</button>
+              <button class="layer-btn active" type="button" data-layer="ezCurve">EZ</button>
+              <button class="layer-btn active" type="button" data-layer="legend">Legend</button>
             </div>
             <canvas id="curveCanvas" width="900" height="520"></canvas>
             <div style="padding:10px 14px; background:#f1f5f9; border-top:1px solid var(--border-subtle); font-size:12px; color:#475569;" id="canvasGuide">
@@ -186,11 +196,27 @@
   const localKey = 'oa_equilibrium_analyses';
 
   // =========================================================
-  // 1단계 데이터 로드 (PhotoStore.loadCase 한번)
+  // 1단계 데이터 로드 (URL params → localStorage → PhotoStore)
   // =========================================================
   let psData = null;
   try { psData = await PhotoStore.loadCase(); } catch (e) { console.warn(e); }
-  const patient = psData?.patient || {};
+
+  function getPatientInfo() {
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = {
+      name: params.get('patientName') || '',
+      stage: params.get('dentitionStage') || '',
+      dentitionStage: params.get('dentitionStage') || '',
+      classification: params.get('classification') || ''
+    };
+    if (fromUrl.name) return fromUrl;
+    const step1 = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
+    if (step1?.name) return step1;
+    const storePatient = window.PatientStore?.get?.();
+    if (storePatient?.name) return storePatient;
+    return psData?.patient || {};
+  }
+  const patient = getPatientInfo();
 
   document.getElementById('disp-name').textContent = patient.name || '-';
   document.getElementById('disp-stage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || '-';
@@ -218,7 +244,8 @@
   const state = {
     activeArch: 'lower',
     mode: 'toothWidth',
-    archData: { upper: { ezPoints: [] }, lower: { ezPoints: [] } },
+    layers: { grid: true, toothNum: true, ezCurve: true, legend: true },
+    archData: { upper: { ezPoints: [], alveolarPoints: [], toothCenters: [] }, lower: { ezPoints: [], alveolarPoints: [], toothCenters: [] } },
     teeth: { upper: [], lower: [] },
     currentToothIndex: 1,
     currentPointStep: 'distal'
@@ -281,12 +308,28 @@
   function renderToothOverlay() {
     editor.render();
     const ctx = editor.ctx;
+    if (state.layers.grid && editor.image) {
+      const pxPerMm = getScale();
+      const gridPx = pxPerMm ? pxPerMm * 10 * editor.scale : 0;
+      if (gridPx > 8) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(37,99,235,0.22)';
+        ctx.lineWidth = 1;
+        const left = editor.offset.x;
+        const top = editor.offset.y;
+        const right = editor.offset.x + editor.image.width * editor.scale;
+        const bottom = editor.offset.y + editor.image.height * editor.scale;
+        for (let x = left; x <= right; x += gridPx) { ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke(); }
+        for (let y = top; y <= bottom; y += gridPx) { ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke(); }
+        ctx.restore();
+      }
+    }
     ctx.save();
     ctx.translate(editor.offset.x, editor.offset.y);
     ctx.scale(editor.scale, editor.scale);
 
     const teeth = state.teeth[state.activeArch] || [];
-    teeth.forEach(tooth => {
+    if (state.layers.toothNum) teeth.forEach(tooth => {
       const d = tooth.distalPoint;
       const m = tooth.mesialPoint;
       if (d) {
@@ -322,6 +365,30 @@
         ctx.setLineDash([]);
       }
     });
+
+    if (state.layers.legend) {
+      ctx.restore();
+      const ezCount = (editor.points.ez || []).length;
+      const lx = 12, ly = 12;
+      ctx.fillStyle = 'rgba(15,23,42,0.88)';
+      ctx.fillRect(lx, ly, 190, 78);
+      ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+      ctx.strokeRect(lx, ly, 190, 78);
+      ctx.beginPath(); ctx.moveTo(lx + 12, ly + 18); ctx.lineTo(lx + 42, ly + 18);
+      ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.font = '12px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('EZ/치조골 추정선', lx + 50, ly + 22);
+      ctx.beginPath(); ctx.arc(lx + 27, ly + 42, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#2563eb'; ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillText('EZ 좌표 ' + ezCount + '개', lx + 50, ly + 46);
+      ctx.beginPath(); ctx.arc(lx + 27, ly + 62, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444'; ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillText('치아 폭경점', lx + 50, ly + 66);
+      return;
+    }
+
     ctx.restore();
   }
 
@@ -488,6 +555,170 @@
     }
   }
 
+  function smoothPointsPreserveCount(points, passes = 2) {
+    if (points.length <= 2) return points.slice();
+    let smoothed = points.map(p => ({ ...p }));
+    for (let pass = 0; pass < passes; pass++) {
+      const copy = smoothed.map(p => ({ ...p }));
+      for (let i = 1; i < smoothed.length - 1; i++) {
+        smoothed[i] = {
+          x: copy[i - 1].x * 0.2 + copy[i].x * 0.6 + copy[i + 1].x * 0.2,
+          y: copy[i - 1].y * 0.2 + copy[i].y * 0.6 + copy[i + 1].y * 0.2
+        };
+      }
+    }
+    return smoothed;
+  }
+
+  function solveQuadraticLeastSquares(samples) {
+    let sx0 = samples.length, sx1 = 0, sx2 = 0, sx3 = 0, sx4 = 0;
+    let sy = 0, sxy = 0, sx2y = 0;
+    samples.forEach(({ t, v }) => {
+      const t2 = t * t;
+      sx1 += t; sx2 += t2; sx3 += t2 * t; sx4 += t2 * t2;
+      sy += v; sxy += t * v; sx2y += t2 * v;
+    });
+    const m = [[sx4, sx3, sx2, sx2y], [sx3, sx2, sx1, sxy], [sx2, sx1, sx0, sy]];
+    for (let col = 0; col < 3; col++) {
+      let pivot = col;
+      for (let row = col + 1; row < 3; row++) if (Math.abs(m[row][col]) > Math.abs(m[pivot][col])) pivot = row;
+      if (Math.abs(m[pivot][col]) < 1e-9) return null;
+      if (pivot !== col) [m[pivot], m[col]] = [m[col], m[pivot]];
+      const div = m[col][col];
+      for (let j = col; j < 4; j++) m[col][j] /= div;
+      for (let row = 0; row < 3; row++) {
+        if (row === col) continue;
+        const factor = m[row][col];
+        for (let j = col; j < 4; j++) m[row][j] -= factor * m[col][j];
+      }
+    }
+    return { a: m[0][3], b: m[1][3], c: m[2][3] };
+  }
+
+  function fitArchCurvePoints(points) {
+    if (points.length < 3) return smoothPointsPreserveCount(points, 2);
+    const mean = points.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    mean.x /= points.length; mean.y /= points.length;
+    let ux = points[points.length - 1].x - points[0].x;
+    let uy = points[points.length - 1].y - points[0].y;
+    const uLen = Math.hypot(ux, uy) || 1;
+    ux /= uLen; uy /= uLen;
+    const vx = -uy, vy = ux;
+    const samples = points.map(p => {
+      const dx = p.x - mean.x, dy = p.y - mean.y;
+      return { t: dx * ux + dy * uy, v: dx * vx + dy * vy };
+    });
+    const coeff = solveQuadraticLeastSquares(samples);
+    if (!coeff) return smoothPointsPreserveCount(points, 4);
+    const fitted = samples.map(({ t }) => {
+      const v = coeff.a * t * t + coeff.b * t + coeff.c;
+      return { x: mean.x + t * ux + v * vx, y: mean.y + t * uy + v * vy };
+    });
+    return smoothPointsPreserveCount(fitted, 2);
+  }
+
+  function resamplePoints(points, count) {
+    if (!points.length) return [];
+    if (points.length === count) return points.map(p => ({ ...p }));
+    const out = [];
+    for (let i = 0; i < count; i++) {
+      const pos = (i / Math.max(1, count - 1)) * (points.length - 1);
+      const lo = Math.floor(pos), hi = Math.min(points.length - 1, Math.ceil(pos));
+      const r = pos - lo;
+      out.push({ x: points[lo].x * (1 - r) + points[hi].x * r, y: points[lo].y * (1 - r) + points[hi].y * r });
+    }
+    return out;
+  }
+
+  function buildAlveolarEZFromToothCenters(centers) {
+    if (!centers || centers.length < 2) return [];
+    const sampledCenters = resamplePoints(centers, 14).map(p => ({ x: Number(p.x), y: Number(p.y) }));
+    const archCenter = sampledCenters.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    archCenter.x /= sampledCenters.length; archCenter.y /= sampledCenters.length;
+    let spacingTotal = 0;
+    for (let i = 1; i < sampledCenters.length; i++) spacingTotal += Math.hypot(sampledCenters[i].x - sampledCenters[i - 1].x, sampledCenters[i].y - sampledCenters[i - 1].y);
+    const avgSpacing = spacingTotal / Math.max(1, sampledCenters.length - 1);
+    const offset = Math.max(6, Math.min(24, avgSpacing * 0.35));
+    const candidates = sampledCenters.map((p, i) => {
+      const prev = sampledCenters[Math.max(0, i - 1)];
+      const next = sampledCenters[Math.min(sampledCenters.length - 1, i + 1)];
+      let tx = next.x - prev.x, ty = next.y - prev.y;
+      const tLen = Math.hypot(tx, ty) || 1;
+      tx /= tLen; ty /= tLen;
+      let nx = -ty, ny = tx;
+      const inwardX = archCenter.x - p.x, inwardY = archCenter.y - p.y;
+      if (nx * inwardX + ny * inwardY < 0) { nx = -nx; ny = -ny; }
+      return { x: p.x + nx * offset, y: p.y + ny * offset };
+    });
+    return fitArchCurvePoints(candidates).map(p => ({ x: Math.round(p.x), y: Math.round(p.y) }));
+  }
+
+  function getManualToothCenters(arch) {
+    return (state.teeth[arch] || [])
+      .filter(t => t.distalPoint && t.mesialPoint)
+      .sort((a, b) => a.index - b.index)
+      .map(t => ({
+        x: Math.round((t.distalPoint.x + t.mesialPoint.x) / 2),
+        y: Math.round((t.distalPoint.y + t.mesialPoint.y) / 2)
+      }));
+  }
+
+  function applySmoothEZPoints(centers) {
+    const arch = state.activeArch;
+    const toothCenters = resamplePoints(centers, 14).map(p => ({ x: Math.round(p.x), y: Math.round(p.y) }));
+    const alveolarPoints = buildAlveolarEZFromToothCenters(centers);
+    editor.points.ez = alveolarPoints.map(p => ({ ...p }));
+    if (!state.archData[arch]) state.archData[arch] = {};
+    state.archData[arch].toothCenters = toothCenters;
+    state.archData[arch].alveolarPoints = alveolarPoints;
+    state.archData[arch].ezPoints = editor.points.ez;
+    editor.points.tz = [];
+    editor.render();
+    return alveolarPoints;
+  }
+
+  function saveLocationMd() {
+    const arch = state.activeArch;
+    const data = {
+      arch,
+      toothCenters: state.archData[arch]?.toothCenters || getManualToothCenters(arch),
+      ezPoints: editor.points.ez || [],
+      alveolarPoints: state.archData[arch]?.alveolarPoints || editor.points.ez || [],
+      molarMm: Number(document.getElementById('molarMm').value) || 54,
+      savedAt: new Date().toISOString()
+    };
+    let md = '# EZ-Curve Location Data\n\n';
+    md += '저장 시간: ' + data.savedAt + '\n\n';
+    md += '## 치아 좌표 (' + data.toothCenters.length + '개)\n\n| 번호 | X (px) | Y (px) |\n|------|--------|--------|\n';
+    data.toothCenters.forEach((p, i) => { md += '| ' + (i + 1) + ' | ' + Math.round(p.x) + ' | ' + Math.round(p.y) + ' |\n'; });
+    md += '\n## EZ/치조골 중심 추정 포인트 (' + data.ezPoints.length + '개)\n\n| 번호 | X (px) | Y (px) |\n|------|--------|--------|\n';
+    data.ezPoints.forEach((p, i) => { md += '| ' + (i + 1) + ' | ' + Math.round(p.x) + ' | ' + Math.round(p.y) + ' |\n'; });
+    md += '\n## JSON (프로그램용)\n```json\n' + JSON.stringify(data, null, 2) + '\n```\n';
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'location.md';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function loadLocationText(text) {
+    const jsonMatch = text.match(/```json\s*([\s\S]*?)```/);
+    if (!jsonMatch) { if (window.toast) window.toast('location.md에서 JSON 데이터를 찾을 수 없습니다.', 'error'); return; }
+    const data = JSON.parse(jsonMatch[1]);
+    const arch = data.arch || state.activeArch;
+    if (!state.archData[arch]) state.archData[arch] = {};
+    state.archData[arch].toothCenters = Array.isArray(data.toothCenters) ? data.toothCenters : [];
+    state.archData[arch].alveolarPoints = Array.isArray(data.alveolarPoints) ? data.alveolarPoints : [];
+    state.archData[arch].ezPoints = Array.isArray(data.ezPoints) ? data.ezPoints : state.archData[arch].alveolarPoints;
+    if (arch !== state.activeArch) setArch(arch);
+    editor.points.ez = state.archData[arch].ezPoints || [];
+    editor.points.tz = [];
+    editor.render();
+    updateEzlFromCurve();
+    if (data.molarMm) document.getElementById('molarMm').value = data.molarMm;
+    if (window.toast) window.toast('치아 좌표와 EZ 좌표를 동시에 불러왔습니다.', 'success');
+  }
   function autoGenerateEZ() {
     if (!editor.image) {
       if (window.toast) window.toast('교합면 사진을 먼저 업로드하세요.', 'warning');
@@ -516,70 +747,60 @@
     const sample = analysis.sample;
     const scale = analysis.scale;
 
-    // 각 TZ 포인트에서 설측 방향으로 이동하면서 치아 픽셀의 안쪽 경계를 찾음
-    function findLingualEdge(idx) {
+    // EZ 알고리즘: 각 치아 중심(TZ)에서 설측 방향 치아 폭의 35% 이동
+    // → 설측 교두/cingulum = 치아 위 + 치조골 중심
+    function findEzPoint(idx) {
       const tzPt = tzPoints[idx];
       const prev = tzPoints[Math.max(0, idx - 1)];
       const next = tzPoints[Math.min(n - 1, idx + 1)];
 
-      // 악궁 접선 → 법선(안쪽 방향)
-      const tx = next.x - prev.x;
-      const ty = next.y - prev.y;
+      const tx = next.x - prev.x, ty = next.y - prev.y;
       const tLen = Math.hypot(tx, ty) || 1;
-      let nx = -ty / tLen;
-      let ny = tx / tLen;
+      let nx = -ty / tLen, ny = tx / tLen;
       if (isLower && ny > 0) { nx = -nx; ny = -ny; }
       if (!isLower && ny < 0) { nx = -nx; ny = -ny; }
 
       if (!sample) {
-        // 픽셀 데이터 없으면 2mm 오프셋 폴백
         const d = 2.0 * pxPerMm;
         return { x: Math.round(tzPt.x + nx * d), y: Math.round(tzPt.y + ny * d) };
       }
 
-      // 설측 방향으로 1px씩 이동하면서 치아 픽셀이 끝나는 지점(경계) 탐색
-      const maxSearch = Math.round(6 * pxPerMm); // 최대 6mm까지 탐색
-      let lastToothX = tzPt.x;
-      let lastToothY = tzPt.y;
-      let foundEdge = false;
-
+      // 치아 폭 탐색 (설측 방향으로 치아 끝까지)
+      const maxSearch = Math.round(8 * pxPerMm);
+      let toothWidth = 0;
       for (let d = 1; d <= maxSearch; d++) {
-        const px = Math.round(tzPt.x + nx * d);
-        const py = Math.round(tzPt.y + ny * d);
-        // 축소 이미지 좌표로 변환
+        const px = tzPt.x + nx * d, py = tzPt.y + ny * d;
         const sx = Math.max(0, Math.min(sample.width - 1, Math.round(px * scale)));
         const sy = Math.max(0, Math.min(sample.height - 1, Math.round(py * scale)));
-
         if (editor._isToothPixel(sample.data, sample.width, sx, sy, sample.threshold)) {
-          lastToothX = px;
-          lastToothY = py;
-        } else {
-          // 치아 픽셀이 아닌 곳 도달 → 마지막 치아 픽셀이 설측 경계
-          foundEdge = true;
-          break;
-        }
+          toothWidth = d;
+        } else { break; }
       }
 
-      if (foundEdge) {
-        return { x: Math.round(lastToothX), y: Math.round(lastToothY) };
+      // 치아 폭의 35% = 설측 교두/치조골 중심 (치아 위에 위치)
+      let targetDist = toothWidth > 0 ? toothWidth * 0.35 : 2.0 * pxPerMm;
+      const targetX = tzPt.x + nx * targetDist;
+      const targetY = tzPt.y + ny * targetDist;
+      const checkSx = Math.max(0, Math.min(sample.width - 1, Math.round(targetX * scale)));
+      const checkSy = Math.max(0, Math.min(sample.height - 1, Math.round(targetY * scale)));
+
+      if (editor._isToothPixel(sample.data, sample.width, checkSx, checkSy, sample.threshold)) {
+        return { x: Math.round(targetX), y: Math.round(targetY) };
       }
-      // 경계를 못 찾으면 2mm 오프셋 폴백
-      const d = 2.0 * pxPerMm;
-      return { x: Math.round(tzPt.x + nx * d), y: Math.round(tzPt.y + ny * d) };
+      // 치아 밖이면 경계까지 후퇴
+      let lastX = tzPt.x, lastY = tzPt.y;
+      for (let d = 1; d <= Math.round(targetDist); d++) {
+        const px = tzPt.x + nx * d, py = tzPt.y + ny * d;
+        const sx = Math.max(0, Math.min(sample.width - 1, Math.round(px * scale)));
+        const sy = Math.max(0, Math.min(sample.height - 1, Math.round(py * scale)));
+        if (editor._isToothPixel(sample.data, sample.width, sx, sy, sample.threshold)) { lastX = px; lastY = py; }
+        else break;
+      }
+      return { x: Math.round(lastX), y: Math.round(lastY) };
     }
 
-    // 9개 anchor point: 양끝 + 균등 분배
-    const step = (n - 1) / 8;
-    const ezAnchors = [];
-    for (let i = 0; i < 9; i++) {
-      const idx = Math.round(i * step);
-      ezAnchors.push(findLingualEdge(idx));
-    }
-
-    // CurveEditor에 EZ 포인트 설정
-    editor.points.ez = ezAnchors;
-    editor.points.tz = [];
-    editor.render();
+    // EZ-Curve 방식: 치아 중심 좌표 기반으로 14개 부드러운 치조골/EZ 추정 좌표 생성
+    const ezAnchors = applySmoothEZPoints(tzPoints);
 
     // EZL 자동 계산 — 양끝 어금니 픽셀 거리로 스케일 직접 산출
     const molarMm = Number(document.getElementById('molarMm').value) || 54;
@@ -595,7 +816,7 @@
     }
 
     setActiveMode('ez');
-    if (window.toast) window.toast('EZ 곡선 자동 생성 완료 (EZL = ' + (result.lengthMm ? result.lengthMm.toFixed(1) + 'mm' : result.lengthPx + 'px') + '). 점을 드래그하여 보정 가능.', 'success');
+    if (window.toast) window.toast('EZ 곡선 자동 생성 완료 (14개 EZ/치조골 중심 좌표, EZL = ' + (result.lengthMm ? result.lengthMm.toFixed(1) + 'mm' : result.lengthPx + 'px') + ').', 'success');
   }
 
   function saveAnalysis() {
@@ -802,6 +1023,34 @@
   };
   document.getElementById('analyzeBtn').onclick = () => recalcResults();
   document.getElementById('saveBtn').onclick = () => saveAnalysis();
+  document.getElementById('saveLocationBtn').onclick = () => saveLocationMd();
+  document.getElementById('loadLocationBtn').onclick = () => document.getElementById('loadLocationInput').click();
+  document.getElementById('loadLocationInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try { loadLocationText(ev.target.result); }
+      catch (err) { console.error(err); if (window.toast) window.toast('location.md 파싱 실패: ' + err.message, 'error'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+  function applyLayerOptions() {
+    editor.showLengths = state.layers.legend;
+    editor.showDiffArea = state.layers.ezCurve;
+    editor.showTz = false;
+    renderToothOverlay();
+  }
+
+  document.querySelectorAll('.layer-btn[data-layer]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const layer = btn.dataset.layer;
+      state.layers[layer] = !state.layers[layer];
+      btn.classList.toggle('active', state.layers[layer]);
+      applyLayerOptions();
+    });
+  });
   document.getElementById('applyMolarScaleBtn').onclick = () => applyMolarScale();
   ['knownMm','knownPx','ezlMm','profile','incisorInclination','periodontalRisk','growthPotential'].forEach(id => {
     const el = document.getElementById(id);
@@ -817,9 +1066,15 @@
     setArch('upper');
   }
   setActiveMode('toothWidth');
+  applyLayerOptions();
   renderToothTable();
   updateGuide();
 })();
 </script>
 </body>
 </html>
+
+
+
+
+
