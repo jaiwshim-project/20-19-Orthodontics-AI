@@ -279,7 +279,7 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="js/api-config.js"></script>
-<script src="js/common.js"></script>
+<script src="js/common.js?v=2"></script>
 <script src="js/photo-store.js?v=5"></script>
 <script>
 (function () {
@@ -847,6 +847,7 @@
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', async () => {
+    clearTimeout(_timer);
     document.getElementById('patientName').value = '';
     document.getElementById('dentitionStage').value = 'permanent_dentition';
     document.getElementById('classification').value = '';
@@ -859,7 +860,7 @@
       localStorage.removeItem('oa_workflow_to_equilibrium');
       localStorage.removeItem('oa_latest_classification_result');
     } catch {}
-    if (window.PatientStore) window.PatientStore.set(null);
+    if (window.PatientStore) window.PatientStore.clear();
     await PhotoStore.clearCase();
     Object.keys(photos).forEach(k => delete photos[k]);
     ALL_SLOTS.forEach(slot => {
@@ -1033,7 +1034,7 @@
       // 3. PhotoStore에 항상 저장 (로컬 IndexedDB — DB 실패 시에도 동작 보장)
       await doSave();
       const psData = await PhotoStore.loadCase();
-      if (psData && patientId) {
+      if (psData && psData.patient && patientId) {
         psData.patient.id = patientId;
         psData.patient.savedToDb = true;
         await PhotoStore.saveCase(psData);
