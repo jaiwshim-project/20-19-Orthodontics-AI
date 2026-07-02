@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -45,7 +45,7 @@
   }
   /* ===== Visual Measurements Panel ===== */
   .visual-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
-  .visual-card { background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+  .visual-card { background:#F8FAFC; border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
   .visual-card .vc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .visual-card .vc-name { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
   .visual-card .vc-val { font-size:16px; font-weight:700; font-family:'Inter',monospace; }
@@ -56,20 +56,20 @@
   .visual-card .vc-note { font-size:10px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
 
   /* Linear gauge */
-  .gauge-track { fill:rgba(255,255,255,0.06); }
-  .gauge-zone-ok { fill:rgba(16,185,129,0.18); }
-  .gauge-zone-warn { fill:rgba(245,158,11,0.18); }
-  .gauge-zone-danger { fill:rgba(239,68,68,0.18); }
-  .gauge-pin { fill:#fff; stroke:var(--color-primary); stroke-width:2; }
+  .gauge-track { fill:#E2E8F0; }
+  .gauge-zone-ok { fill:rgba(5,150,105,0.18); }
+  .gauge-zone-warn { fill:rgba(217,119,6,0.18); }
+  .gauge-zone-danger { fill:rgba(220,38,38,0.18); }
+  .gauge-pin { fill:#FFFFFF; stroke:var(--color-primary); stroke-width:2; filter: drop-shadow(0 1px 3px rgba(14,165,233,0.4)); }
 
   /* Arch teeth chart */
   .arch-chart svg { width:100%; height:auto; max-width:340px; display:block; margin: 8px auto; }
-  .tooth-mark { fill:rgba(255,255,255,0.08); stroke:rgba(255,255,255,0.18); stroke-width:0.5; cursor:pointer; transition: all .2s; }
-  .tooth-mark:hover { fill:rgba(14,165,233,0.2); }
-  .tooth-mark.extract { fill:rgba(239,68,68,0.4); stroke:#EF4444; stroke-width:1.2; animation: pulseExtract 1.6s infinite; }
-  @keyframes pulseExtract { 0%,100% { fill-opacity:0.4; } 50% { fill-opacity:0.85; } }
-  .tooth-num { fill:var(--text-muted); font-size:6px; font-family:'Inter',sans-serif; pointer-events:none; }
-  .tooth-num.extract-num { fill:#fff; font-weight:700; }
+  .tooth-mark { fill:#F1F5F9; stroke:#CBD5E1; stroke-width:0.8; cursor:pointer; transition: all .2s; }
+  .tooth-mark:hover { fill:rgba(14,165,233,0.15); stroke:rgba(14,165,233,0.5); }
+  .tooth-mark.extract { fill:rgba(220,38,38,0.3); stroke:#DC2626; stroke-width:1.2; animation: pulseExtract 1.6s infinite; }
+  @keyframes pulseExtract { 0%,100% { fill-opacity:0.3; } 50% { fill-opacity:0.75; } }
+  .tooth-num { fill:#64748B; font-size:6px; font-family:'Inter',sans-serif; pointer-events:none; }
+  .tooth-num.extract-num { fill:#DC2626; font-weight:700; }
 </style>
 </head>
 <body>
@@ -91,11 +91,11 @@
 
   <div class="card" id="inputCard">
     <div class="tabs" id="inputTabs">
-      <button type="button" class="tab-btn active" data-tab="data"><span class="tab-icon">📋</span>데이터 직접 입력</button>
-      <button type="button" class="tab-btn" data-tab="scan"><span class="tab-icon">📷</span>구강 스캐너 사진</button>
+      <button type="button" class="tab-btn" data-tab="data"><span class="tab-icon">📋</span>데이터 직접 입력</button>
+      <button type="button" class="tab-btn active" data-tab="scan"><span class="tab-icon">📷</span>구강 스캐너 사진</button>
     </div>
 
-    <div class="tab-panel active" data-tab="data">
+    <div class="tab-panel" data-tab="data">
     <div class="grid grid-2" style="gap:12px;">
       <div class="field">
         <label>ANB 각 (도)</label>
@@ -162,6 +162,7 @@
     <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="computeRuleScore()">룰베이스 계산</button>
       <button class="btn btn-primary" onclick="callGemini()">🧠 Gemini AI 분석</button>
+      <a class="btn btn-ghost" href="step3-new.html">EZ/TZ 사진 계측 열기</a>
       <label style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; cursor:pointer;">
         <input type="checkbox" id="naturalHealing" style="accent-color:var(--color-success);">
         <span style="font-size:12px;">🌱 자연 치유 옵션</span>
@@ -169,7 +170,8 @@
     </div>
     </div>
 
-    <div class="tab-panel" data-tab="scan">
+    <div class="tab-panel active" data-tab="scan">
+      <div id="photoFromStep1" style="margin-bottom:12px;"></div>
       <div id="scannerMount"></div>
     </div>
   </div>
@@ -247,9 +249,30 @@
 
 <script src="js/api-config.js"></script>
 <script src="js/common.js"></script>
+<script src="js/photo-store.js"></script>
 <script src="js/scanner-input.js"></script>
 <script src="js/diagnosis-store.js"></script>
 <script src="js/visual-helpers.js"></script>
+<script>
+// 1단계 사진 자동 표시
+(async function loadStep1Photos() {
+  const data = await PhotoStore.loadCase();
+  if (!data || !data.photos) return;
+  const container = document.getElementById('photoFromStep1');
+  const relevant = ['frontal', 'rightLateral', 'leftLateral', 'upperOcclusal', 'lowerOcclusal', 'ceph'];
+  const labels = { frontal:'정면', rightLateral:'우측', leftLateral:'좌측', upperOcclusal:'상악 교합면', lowerOcclusal:'하악 교합면', ceph:'세팔로' };
+  let html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;font-weight:700;color:#64748b;">1단계 입력 사진</span><a href="photo-upload.html" style="font-size:11px;color:var(--color-primary);">← 수정</a></div><div style="display:flex;gap:6px;flex-wrap:wrap;">';
+  let count = 0;
+  for (const key of relevant) {
+    const entry = data.photos[key];
+    if (!entry || !entry.base64) continue;
+    count++;
+    html += '<div style="text-align:center;"><div style="width:80px;height:56px;border-radius:8px;background:url(' + entry.base64 + ') center/cover;border:1px solid #e2e8f0;"></div><div style="font-size:10px;color:#94a3b8;margin-top:3px;">' + (labels[key]||key) + '</div></div>';
+  }
+  html += '</div>';
+  if (count > 0) container.innerHTML = html;
+})();
+</script>
 <script>
 function getInputs() {
   return {
@@ -823,3 +846,4 @@ window.ScannerInput.mount(document.getElementById('scannerMount'), {
 </script>
 </body>
 </html>
+

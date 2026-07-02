@@ -85,7 +85,7 @@
           <span class="title" aria-current="page">${title}</span>
         </div>
         <div class="actions">
-          ${['index.html','equilibrium-analysis.html'].includes(current) ? '<button class="btn btn-ghost btn-sm" id="loadYoonSoheeSampleBtn" type="button" onclick="window.launchYoonSoheeSample()" style="border-color:#8b5cf6;color:#6d28d9;">윤소희 샘플</button>' : ''}
+          ${['index.html','step3-new.html'].includes(current) ? '<button class="btn btn-ghost btn-sm" id="loadYoonSoheeSampleBtn" type="button" onclick="window.launchYoonSoheeSample()" style="border-color:#8b5cf6;color:#6d28d9;">윤소희 샘플</button>' : ''}
           <button class="btn btn-ghost btn-sm" onclick="window.openPatientModal()">환자 변경</button>
           <select class="select btn-sm" id="langSelect" style="width:auto; padding:6px 10px;" onchange="window.setLang(this.value)">
             <option value="ko">한국어</option>
@@ -103,12 +103,12 @@
 
   window.launchYoonSoheeSample = function () {
     try { localStorage.setItem('oa_launch_yoon_sohee_sample', '1'); } catch {}
-    if (getCurrentPath() === 'equilibrium-analysis.html') {
+    if (getCurrentPath() === 'step3-new.html') {
       const btn = document.getElementById('loadYoonSoheeSampleBtn');
       if (btn) btn.click();
       return;
     }
-    window.location.href = 'equilibrium-analysis.html';
+    window.location.href = 'step3-new.html';
   };
 
   // -------- Sidebar Toggle --------
@@ -691,7 +691,7 @@
           <h5>제품</h5>
           <ul>
             <li><a href="3d-viewer.html">3D 뷰어 + EZL-STL</a></li>
-            <li><a href="equilibrium-analysis.html">EZ/TZ 평형존 분석</a></li>
+            <li><a href="step3-new.html">EZ/TZ 평형존 분석</a></li>
             <li><a href="extraction-ai.html">발치 판단 AI</a></li>
             <li><a href="growth-prediction.html">성장 예측 AI</a></li>
             <li><a href="facial-simulation.html">안모 시뮬레이션</a></li>
