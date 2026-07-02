@@ -198,7 +198,7 @@ function getPatientFromUrl() {
 function buildEquilibriumUrl() {
   const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
   const patient = getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || {};
-  const url = new URL('equilibrium-analysis.html', window.location.href);
+  const url = new URL('step3-new.html', window.location.href);
   if (patient.name) url.searchParams.set('patientName', patient.name);
   if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
   if (patient.classification) url.searchParams.set('classification', patient.classification);
@@ -366,7 +366,7 @@ async function goToEquilibriumAnalysis() {
 }
 
 document.addEventListener('click', async (event) => {
-  const link = event.target.closest?.('a[href="equilibrium-analysis.html"]');
+  const link = event.target.closest?.('a[href="step3-new.html"]');
   if (!link) return;
   event.preventDefault();
   await persistClassificationResult(true);
