@@ -1155,7 +1155,10 @@
   document.getElementById('analyzeBtn').onclick = () => recalc(true);
   document.getElementById('aiDiagnosisBtn').onclick = runAiDiagnosis;
   document.getElementById('saveBtn').onclick = saveAnalysis;
-  document.getElementById('loadYoonSoheeSampleBtn').onclick = loadYoonSoheeSample;
+  document.addEventListener('DOMContentLoaded', () => {
+    const _sampleBtn = document.getElementById('loadYoonSoheeSampleBtn');
+    if (_sampleBtn) _sampleBtn.onclick = loadYoonSoheeSample;
+  });
 
   function fileMeta(file) {
     return { name: file.name, size: file.size, type: file.type };
