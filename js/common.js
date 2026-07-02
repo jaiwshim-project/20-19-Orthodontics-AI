@@ -172,6 +172,7 @@
   const PATIENT_KEY = 'oa_patient';
   window.PatientStore = {
     set(p) {
+      if (p == null) { localStorage.removeItem(PATIENT_KEY); refreshPatientChip(); return null; }
       const enriched = { ...p };
       if (p.dob && !p.ageGroup) {
         const age = computeAge(p.dob);
