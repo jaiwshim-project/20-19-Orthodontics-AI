@@ -170,6 +170,7 @@
       <button class="btn" id="cancelAutoBtn" type="button" disabled>초안 취소</button>
       <button class="btn" id="restoreAutoBtn" type="button" disabled>이전 상태 복원</button>
       <button class="btn" id="reviewAutoBtn" type="button" disabled>수동 보정 시작</button>
+      <button class="btn" id="truthCheckBtn" type="button" disabled title="학습 데이터에 있는 사진이면 전문가 정답을 표시합니다">✔ 정답 확인</button>
     </div>
     <p class="auto-disclaimer">하악 교합면 정답 데이터에서 학습한 보조 추정입니다. 모든 점과 폭선을 치과의사가 확인·보정해야 하며, EZL−TZL만으로 발치 또는 IPR을 결정하지 마세요. 이미지는 브라우저 안에서만 처리됩니다.</p>
   </div>
@@ -48987,7 +48988,7 @@ window.EZ_RESIDUAL_MODEL={
         toothCenters, ezPoints, toothWidths,
         analysisMeta:{engineVersion:'expert-truth-lookup-v1',source:'expert-ground-truth',analyzedAt:new Date().toISOString(),
           confidence:{overall:1,imageQuality:1,templateQuality:1,pathEvidence:1,boundaryQuality:1,widthQuality:1,widths:toothWidths.map(()=>1)},
-          warnings:['학습된 사진: 전문가 정답 좌표를 표시합니다.'], truthMatch:true}
+          warnings:['학습된 사진: 전문가 정답 좌표를 표시합니다.'], truthMatch:true, truthId:(rec.id||null)}
       };
       draft.metrics=calculateMetricsFor(draft.ezPoints,draft.toothWidths);
       return draft;
@@ -49080,6 +49081,7 @@ window.EZ_RESIDUAL_MODEL={
     const running=analysisState==='running'; analyze.disabled=!image||running; analyze.textContent=running?'분석 중…':(analysisState==='preview'||analysisState==='applied'?'↻ 다시 자동 분석':'⚡ 치아 자동 분석 실행');
     apply.disabled=analysisState!=='preview'||!autoDraft||(autoDraft.analysisMeta.confidence.overall<.35);
     cancel.disabled=analysisState!=='preview'; restore.disabled=!preAutoSnapshot; review.disabled=analysisState!=='applied';
+    const truthBtn=document.getElementById('truthCheckBtn'); if(truthBtn) truthBtn.disabled=!image||running;
     badge.className='confidence-badge';
     const meta=autoDraft?autoDraft.analysisMeta:autoMeta;
     if(meta&&meta.confidence){const item=confidenceLabel(meta.confidence.overall);badge.textContent=item[0]+' '+Math.round(meta.confidence.overall*100)+'%';badge.classList.add(item[1]);}
@@ -49130,11 +49132,32 @@ window.EZ_RESIDUAL_MODEL={
   function cancelAutoDraft(){if(analysisState!=='preview')return;autoDraft=null;analysisState=autoMeta?'applied':'idle';render();updateAutoPanel();updateGuide('자동 초안을 취소했습니다. 기존 측정값은 유지됩니다.');}
   function restoreBeforeAuto(){if(!preAutoSnapshot)return;const s=preAutoSnapshot;toothCenters=cloneData(s.toothCenters)||[];ezPoints=cloneData(s.ezPoints)||[];toothWidths=cloneData(s.toothWidths)||[];customOrigin=cloneData(s.customOrigin);autoMeta=cloneData(s.analysisMeta);preAutoSnapshot=null;analysisState=autoMeta?'applied':'idle';saveToLocalStorage();calculateEZL();updateCoordBar();updateModeIndicator();render();updateAutoPanel();updateGuide('자동 분석 적용 전 측정 상태를 복원했습니다.');}
 
+  // 정답 확인: 업로드 이미지가 학습 데이터(SHA 매칭)에 있으면 전문가 정답 좌표를 캔버스에 표시.
+  // 자동분석(KRR) 결과와 별개로, 현재 사진의 "정답이 무엇인지" 즉시 확인·비교하는 용도.
+  function showTruth() {
+    const truth = tryTruthLookup();
+    if (!truth) {
+      updateGuide('이 사진은 학습 데이터에 없어 정답이 없습니다. (동일 이미지 SHA-256 매칭 실패) — 자동 분석 결과를 사용하세요.');
+      return;
+    }
+    preAutoSnapshot = snapshotMeasurements();
+    toothCenters = cloneData(truth.toothCenters);
+    ezPoints = cloneData(truth.ezPoints);
+    toothWidths = cloneData(truth.toothWidths);
+    customOrigin = null; autoDraft = null; analysisState = 'applied';
+    autoMeta = cloneData(truth.analysisMeta); autoMeta.autoApplied = false;
+    clickMode = 'none'; widthTemp = null; originMode = false;
+    saveToLocalStorage(); calculateEZL(); updateCoordBar(); updateModeIndicator(); render(); updateAutoPanel();
+    const m = calculateMetricsFor(ezPoints, toothWidths);
+    updateGuide('✔ 전문가 정답을 표시했습니다 (파일 ' + (truth.analysisMeta.truthId || '') + '). EZL ' + (m ? m.ezl.toFixed(1) : '-') + ' / TZL ' + (m ? m.tzl.toFixed(1) : '-') + ' mm. 이전 상태 복원으로 되돌릴 수 있습니다.');
+  }
+
   document.getElementById('autoAnalyzeBtn').addEventListener('click',()=>runAutoAnalysis());
   document.getElementById('applyAutoBtn').addEventListener('click',()=>applyAutoDraft());
   document.getElementById('cancelAutoBtn').addEventListener('click',cancelAutoDraft);
   document.getElementById('restoreAutoBtn').addEventListener('click',restoreBeforeAuto);
   document.getElementById('reviewAutoBtn').addEventListener('click',()=>{clickMode='none';widthTemp=null;updateModeIndicator();updateGuide('수동 보정 모드: 노란 EZ점 또는 녹색 폭선 끝점을 드래그해 확인·보정하세요.');});
+  document.getElementById('truthCheckBtn').addEventListener('click',showTruth);
 
   function calculateEZL() {
     document.getElementById('toothCount').textContent = toothCenters.length;
