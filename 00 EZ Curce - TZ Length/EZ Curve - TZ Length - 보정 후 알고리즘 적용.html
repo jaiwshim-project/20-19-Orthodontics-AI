@@ -132,6 +132,20 @@
     .coord-hint { text-align: left; }
     .btn, .mode-btn { min-height: 42px; }
   }
+  /* 커스텀 툴팁: 버튼에 마우스를 올리면 data-tip 설명이 나타남 (disabled 버튼 포함) */
+  [data-tip] { position: relative; }
+  [data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+    width: max-content; max-width: 260px; white-space: normal; text-align: left;
+    background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px;
+    padding: 8px 10px; font-size: 11px; font-weight: 500; line-height: 1.5;
+    box-shadow: 0 6px 18px rgba(0,0,0,.45); z-index: 9999; pointer-events: none;
+  }
+  [data-tip]:hover::before {
+    content: ''; position: absolute; left: 50%; bottom: calc(100% + 2px); transform: translateX(-50%);
+    border: 6px solid transparent; border-top-color: #475569; z-index: 9999; pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -155,7 +169,7 @@
 <section class="top-controls" aria-label="분석 및 입력 설정">
   <div class="card auto-card">
     <h3>치아 자동 분석</h3>
-    <button class="btn btn-auto" id="autoAnalyzeBtn" type="button">⚡ 치아 자동 분석 실행</button>
+    <button class="btn btn-auto" id="autoAnalyzeBtn" type="button" data-tip="업로드한 하악 사진을 규칙 엔진 + 학습모델(KRR)로 분석해 EZ 곡선과 치아 폭을 청록색 초안으로 그립니다.">⚡ 치아 자동 분석 실행</button>
     <p class="guide" style="color:#c4b5fd;">새 하악 사진을 업로드하면 EZ 곡선·치아 폭을 즉시 분석하고 TZL·EZL을 자동 계산합니다.</p>
     <div class="auto-progress" id="autoProgress" aria-live="polite">
       <div class="auto-progress-track"><div class="auto-progress-bar" id="autoProgressBar"></div></div>
@@ -166,11 +180,11 @@
       <span class="confidence-badge" id="autoConfidence">대기</span>
     </div>
     <div class="auto-actions">
-      <button class="btn btn-success" id="applyAutoBtn" type="button" disabled>초안 적용</button>
-      <button class="btn" id="cancelAutoBtn" type="button" disabled>초안 취소</button>
-      <button class="btn" id="restoreAutoBtn" type="button" disabled>이전 상태 복원</button>
-      <button class="btn" id="reviewAutoBtn" type="button" disabled>수동 보정 시작</button>
-      <button class="btn" id="truthCheckBtn" type="button" disabled title="학습 데이터에 있는 사진이면 전문가 정답을 표시합니다">✔ 정답 확인</button>
+      <button class="btn btn-success" id="applyAutoBtn" type="button" disabled data-tip="미리보기 중인 청록색 자동 분석 초안을 실제 측정값으로 확정합니다. (신뢰도 35% 이상일 때) 적용 직전 상태는 자동 저장되어 되돌릴 수 있습니다.">초안 적용</button>
+      <button class="btn" id="cancelAutoBtn" type="button" disabled data-tip="자동 분석 초안을 적용하지 않고 버립니다. 기존 측정값은 그대로 유지됩니다.">초안 취소</button>
+      <button class="btn" id="restoreAutoBtn" type="button" disabled data-tip="초안 적용 또는 정답 확인을 한 뒤, 그 직전 상태로 되돌립니다. (실행 취소)">이전 상태 복원</button>
+      <button class="btn" id="reviewAutoBtn" type="button" disabled data-tip="드래그 편집 모드로 전환합니다. 노란 EZ점과 녹색 치아폭 끝점을 마우스로 끌어 의료진이 직접 미세 보정합니다.">수동 보정 시작</button>
+      <button class="btn" id="truthCheckBtn" type="button" disabled data-tip="업로드한 사진이 학습 데이터(113건)에 있으면 전문가 정답 좌표를 표시합니다. 학습에 없는 신규 사진은 정답이 없습니다.">✔ 정답 확인</button>
     </div>
     <p class="auto-disclaimer">하악 교합면 정답 데이터에서 학습한 보조 추정입니다. 모든 점과 폭선을 치과의사가 확인·보정해야 하며, EZL−TZL만으로 발치 또는 IPR을 결정하지 마세요. 이미지는 브라우저 안에서만 처리됩니다.</p>
   </div>
