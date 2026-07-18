@@ -226,6 +226,7 @@
         <output class="canvas-width-total" id="canvasWidthTotal">
           <span id="canvasWidthTzl">TZL -</span>
           <span id="canvasWidthEzl">EZL -</span>
+          <span id="canvasWidthDiff">TZL−EZL -</span>
         </output>
       </section>
     </div>
@@ -48472,8 +48473,8 @@ window.EZ_RESIDUAL_MODEL={
       updateModeIndicator();
       updateAutoPanel();
       if (options.autoAnalyze) {
-        updateGuide('새 하악 사진을 불러왔습니다. TZL·EZL 자동 분석을 시작합니다…');
-        setTimeout(() => { if (loadedRevision === imageRevision) analyzeUploadedImageAutomatically(); }, 60);
+        // 업로드 즉시 자동 실행하지 않는다. 사용자가 "⚡ 치아 자동 분석 실행" 버튼을 눌러야 분석한다.
+        updateGuide('새 하악 사진을 불러왔습니다. “⚡ 치아 자동 분석 실행” 버튼을 누르면 TZL·EZL을 분석합니다.');
       } else {
         updateGuide('저장된 이미지와 측정 데이터를 불러왔습니다.');
       }
@@ -49234,6 +49235,7 @@ window.EZ_RESIDUAL_MODEL={
     const total = document.getElementById('canvasWidthTotal');
     const tzlOutput = document.getElementById('canvasWidthTzl');
     const ezlOutput = document.getElementById('canvasWidthEzl');
+    const diffOutput = document.getElementById('canvasWidthDiff');
     if (!strip || !list || !total || !tzlOutput || !ezlOutput) return;
 
     const preview = analysisState === 'preview' && autoDraft;
@@ -49247,6 +49249,7 @@ window.EZ_RESIDUAL_MODEL={
       list.replaceChildren();
       tzlOutput.textContent = 'TZL -';
       ezlOutput.textContent = 'EZL -';
+      if (diffOutput) diffOutput.textContent = 'TZL−EZL -';
       canvasWidthStripSignature = '';
     };
 
@@ -49291,6 +49294,10 @@ window.EZ_RESIDUAL_MODEL={
       const prefix = preview ? '예상 ' : '';
       tzlOutput.textContent = prefix + 'TZL ' + metrics.tzl.toFixed(1) + ' mm';
       ezlOutput.textContent = prefix + 'EZL ' + metrics.ezl.toFixed(1) + ' mm';
+      if (diffOutput) {
+        const diff = metrics.tzl - metrics.ezl;   // TZL−EZL
+        diffOutput.textContent = prefix + 'TZL−EZL ' + (diff >= 0 ? '+' : '') + diff.toFixed(1) + ' mm';
+      }
       canvasWidthStripSignature = signature;
     }
     strip.dataset.source = source;
