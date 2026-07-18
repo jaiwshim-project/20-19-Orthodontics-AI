@@ -11,7 +11,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const PROJECT = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
 const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
-const TS_DIR = path.join(PROJECT, 'TS');
+const TS_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
 // 아래 상수·계산 로직은 파이프라인 공식 정답 계산기(evaluate_baseline.mjs)와 동일하게 맞춘다.
 const SCALE_CHORD_MM = 54;
 const SAMPLES_PER_SEGMENT = 50;   // CURVE_DENSE_SAMPLES_PER_SEGMENT

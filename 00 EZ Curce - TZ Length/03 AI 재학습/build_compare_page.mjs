@@ -11,7 +11,7 @@ const sharp = require('sharp');
 
 const PROJECT = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
 const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
-const TS_DIR = path.join(PROJECT, 'TS');
+const TS_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
 const XLSX_PATH = path.join(PROJECT, 'EZL_TZL_114_분석표.xlsx');
 const TARGET_W = 720;                 // 축소 후 이미지 폭(px)
 const SCALE_CHORD_MM = 54;

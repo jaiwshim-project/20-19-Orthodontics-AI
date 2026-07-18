@@ -30,3 +30,7 @@ ezl_gt_tzl_compare.html
 
 # 이미지 임베드된 무거운 케이스 md (수 MB~수십 MB)
 EZ-Case-*.md
+
+# 수정본 수집 폴더: README만 커밋, 실제 수정본 md(이미지 임베드)는 제외
+04 수정본 수집/*.md
+!04 수정본 수집/README_수정본_학습반영.md

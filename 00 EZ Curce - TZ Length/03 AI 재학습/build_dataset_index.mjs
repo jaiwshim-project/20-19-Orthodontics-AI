@@ -9,7 +9,7 @@ const WIDTH_DIR = path.join(PROJECT, '01 치아 좌우폭 찍기');
 const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
 // TS 폴더: EZ(02)와 동일 이미지 SHA-256를 공유하는 동일 환자 치아 좌우폭 정답.
 // 파일명이 EZ 폴더와 1:1 대응하며, 검증 결과 112/112 임베디드 이미지 해시가 일치한다.
-const TS_WIDTH_DIR = path.join(PROJECT, 'TS');
+const TS_WIDTH_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
 
 function sha256Buffer(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
