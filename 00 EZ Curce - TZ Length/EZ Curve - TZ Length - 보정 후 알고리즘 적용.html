@@ -49065,10 +49065,21 @@ window.EZ_RESIDUAL_MODEL={
       const ok=(pts)=>Array.isArray(pts)&&pts.every(p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.y>=0&&p.x<img.width&&p.y<img.height);
       const wok=(ws)=>Array.isArray(ws)&&ws.every(w=>w&&ok([w.p1,w.p2])&&Math.hypot(w.p2.x-w.p1.x,w.p2.y-w.p1.y)>2);
       if(c && c.ezPoints.length===draft.ezPoints.length && c.toothWidths.length===draft.toothWidths.length && ok(c.ezPoints) && wok(c.toothWidths)){
+        // 치아폭 과소평가 편향 보정: 규칙+KRR 예측이 정답 대비 평균 5% 짧음(104건 측정, 81% 과소).
+        // 각 폭선을 중점 기준으로 WIDTH_BIAS배 확대해 길이·위치 편향을 함께 완화. 이미지 범위로 클램프.
+        const WIDTH_BIAS = 1.051;
+        const expandWidth = (w) => {
+          const mx=(w.p1.x+w.p2.x)/2, my=(w.p1.y+w.p2.y)/2;
+          const cl=(v,max)=>Math.max(0,Math.min(max-1,v));
+          return {
+            p1:{x:cl(mx+(w.p1.x-mx)*WIDTH_BIAS,img.width), y:cl(my+(w.p1.y-my)*WIDTH_BIAS,img.height)},
+            p2:{x:cl(mx+(w.p2.x-mx)*WIDTH_BIAS,img.width), y:cl(my+(w.p2.y-my)*WIDTH_BIAS,img.height)},
+          };
+        };
         const corrected={
           toothCenters:(c.toothCenters&&c.toothCenters.length?c.toothCenters:draft.toothCenters).map(p=>({x:Math.round(p.x),y:Math.round(p.y)})),
           ezPoints:c.ezPoints.map(p=>({x:Math.round(p.x),y:Math.round(p.y)})),
-          toothWidths:c.toothWidths.map(w=>({p1:{x:Math.round(w.p1.x),y:Math.round(w.p1.y)},p2:{x:Math.round(w.p2.x),y:Math.round(w.p2.y)}})),
+          toothWidths:c.toothWidths.map(w=>{const e=expandWidth(w);return {p1:{x:Math.round(e.p1.x),y:Math.round(e.p1.y)},p2:{x:Math.round(e.p2.x),y:Math.round(e.p2.y)}};}),
         };
         corrected.analysisMeta=Object.assign({}, draft.analysisMeta, {
           engineVersion:'rule+krr-residual/v1', source:'rule-based-auto-draft+krr-residual', krrApplied:true,
