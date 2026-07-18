@@ -1,0 +1,6 @@
+{
+  "name": "ez-tzl-training-research",
+  "private": true,
+  "type": "commonjs",
+  "description": "Isolated Node module mode for the EZ/TZL offline research harness"
+}

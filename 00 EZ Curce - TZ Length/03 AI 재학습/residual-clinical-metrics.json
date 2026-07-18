@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "ez-tzl-residual-clinical-metrics/v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "protocol": {
+    "validation": "nested grouped five-fold out-of-fold predictions",
+    "group": "exact image SHA-256",
+    "expertEz": "arc-length-resampled 12-point consensus",
+    "curve": "production Catmull-Rom with 25 samples per segment",
+    "calibrationMm": 54,
+    "referenceScale": "expert EZ endpoint chord is used for expert and prediction",
+    "appScale": "each predicted EZ endpoint chord is treated as 54 mm, matching the app"
+  },
+  "inputSummary": {
+    "datasetCases": 174,
+    "baselineRecords": 174,
+    "matchedUsableBaselines": 174,
+    "taskSamples": {
+      "width": 110,
+      "ez": 113
+    },
+    "taskGroups": {
+      "width": 110,
+      "ez": 113
+    }
+  },
+  "pairedCompleteCases": 104,
+  "pairedBothCorrectionsAccepted": 95,
+  "pairedAnyFallback": 9,
+  "referenceScale": {
+    "ezlMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 7.908040172044466,
+        "rmseMm": 9.378948277075823,
+        "medianAbsoluteErrorMm": 7.758748059380125,
+        "p90AbsoluteErrorMm": 15.070544542583265,
+        "p95AbsoluteErrorMm": 16.110730300521382,
+        "maximumAbsoluteErrorMm": 20.85727631667136,
+        "signedBiasMm": -1.7122351590007094
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 5.682567450161711,
+        "rmseMm": 6.966718735561911,
+        "medianAbsoluteErrorMm": 5.200517528415169,
+        "p90AbsoluteErrorMm": 12.075988943585177,
+        "p95AbsoluteErrorMm": 12.79518248646862,
+        "maximumAbsoluteErrorMm": 14.690338874207427,
+        "signedBiasMm": -2.173147128043045
+      },
+      "maeRelativeImprovement": 0.28141899553696925
+    },
+    "tzlMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 8.454050430580448,
+        "rmseMm": 9.997513508995619,
+        "medianAbsoluteErrorMm": 7.751897999171639,
+        "p90AbsoluteErrorMm": 15.987891334234911,
+        "p95AbsoluteErrorMm": 17.713701139838115,
+        "maximumAbsoluteErrorMm": 23.014312464640355,
+        "signedBiasMm": -6.390433386814484
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 6.872421947497473,
+        "rmseMm": 8.351706110189706,
+        "medianAbsoluteErrorMm": 6.063342646741262,
+        "p90AbsoluteErrorMm": 13.532776271769565,
+        "p95AbsoluteErrorMm": 16.33668733553161,
+        "maximumAbsoluteErrorMm": 20.465379280072582,
+        "signedBiasMm": -3.9038228475484353
+      },
+      "maeRelativeImprovement": 0.18708529078107028
+    },
+    "differenceMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 6.518174626051339,
+        "rmseMm": 8.7578038370527,
+        "medianAbsoluteErrorMm": 4.981964083952725,
+        "p90AbsoluteErrorMm": 13.06035641711992,
+        "p95AbsoluteErrorMm": 19.160688918341897,
+        "maximumAbsoluteErrorMm": 28.864544423960467,
+        "signedBiasMm": 4.678198227813776
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 5.28039362705709,
+        "rmseMm": 6.965880936403663,
+        "medianAbsoluteErrorMm": 4.407724071202466,
+        "p90AbsoluteErrorMm": 12.02813122244353,
+        "p95AbsoluteErrorMm": 13.618950349037373,
+        "maximumAbsoluteErrorMm": 22.802224826219344,
+        "signedBiasMm": 1.7306757195053903
+      },
+      "maeRelativeImprovement": 0.18989687604366737
+    }
+  },
+  "appScale": {
+    "ezlMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 4.4654644985315395,
+        "rmseMm": 5.3827611751359745,
+        "medianAbsoluteErrorMm": 3.697649225146634,
+        "p90AbsoluteErrorMm": 8.584688498846278,
+        "p95AbsoluteErrorMm": 9.70144815619509,
+        "maximumAbsoluteErrorMm": 15.269654959472874,
+        "signedBiasMm": -1.088690720157343
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 3.9798315668367903,
+        "rmseMm": 5.084192664902142,
+        "medianAbsoluteErrorMm": 3.6467408569894886,
+        "p90AbsoluteErrorMm": 8.439540991693317,
+        "p95AbsoluteErrorMm": 10.342996239207242,
+        "maximumAbsoluteErrorMm": 13.8776099641332,
+        "signedBiasMm": -1.5129829141063356
+      },
+      "maeRelativeImprovement": 0.1087530607072229
+    },
+    "tzlMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 6.885532122025388,
+        "rmseMm": 8.752971874757412,
+        "medianAbsoluteErrorMm": 5.045820258820463,
+        "p90AbsoluteErrorMm": 14.90840560477837,
+        "p95AbsoluteErrorMm": 17.577292169797623,
+        "maximumAbsoluteErrorMm": 25.26951393760889,
+        "signedBiasMm": -5.65374688879577
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 5.413831926315901,
+        "rmseMm": 7.471870184864101,
+        "medianAbsoluteErrorMm": 3.4377943174346086,
+        "p90AbsoluteErrorMm": 11.660094950230409,
+        "p95AbsoluteErrorMm": 17.562641919920452,
+        "maximumAbsoluteErrorMm": 22.51446460694197,
+        "signedBiasMm": -3.2161557802547978
+      },
+      "maeRelativeImprovement": 0.21373804807355742
+    },
+    "differenceMm": {
+      "baseline": {
+        "count": 104,
+        "maeMm": 6.386987284759335,
+        "rmseMm": 8.582086559560587,
+        "medianAbsoluteErrorMm": 4.848274743170499,
+        "p90AbsoluteErrorMm": 13.121777635260713,
+        "p95AbsoluteErrorMm": 19.104452362623046,
+        "maximumAbsoluteErrorMm": 27.3983989874811,
+        "signedBiasMm": 4.565056168638427
+      },
+      "corrected": {
+        "count": 104,
+        "maeMm": 5.267350900881414,
+        "rmseMm": 6.938697961057428,
+        "medianAbsoluteErrorMm": 4.417647499982294,
+        "p90AbsoluteErrorMm": 12.120307326758455,
+        "p95AbsoluteErrorMm": 13.572163633169813,
+        "maximumAbsoluteErrorMm": 22.218087757874414,
+        "signedBiasMm": 1.703172866148463
+      },
+      "maeRelativeImprovement": 0.1752996105925564
+    }
+  }
+}

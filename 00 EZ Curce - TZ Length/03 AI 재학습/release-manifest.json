@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "ez-tzl-training-release/v1",
+  "createdAt": "2026-07-11T07:48:59.739Z",
+  "releaseMode": "research_only",
+  "productionHtmlModified": false,
+  "productionHtmlSha256": "6ee351135a8e31f9960fd1a223f65d33e50c6df9204d31e349f9a30cdf712197",
+  "promotionPass": false,
+  "decision": "do_not_promote_research_only",
+  "policyStatus": "candidate_rejected_nested_validation",
+  "humanApprovalRequired": true,
+  "privacy": {
+    "containsOriginalImages": false,
+    "containsMdImageData": false,
+    "generatedReportsContainPhi": false
+  },
+  "files": [
+    {
+      "group": "docs",
+      "file": "BASELINE_AUDIT.md",
+      "bytes": 4666,
+      "sha256": "9a632c2a5066f1611535880cb1e7bdd89e543a9f6e0c702b891cfb24d9036f14"
+    },
+    {
+      "group": "reports",
+      "file": "baseline_metrics.json",
+      "bytes": 355572,
+      "sha256": "dc4baf710f54a16457c560ca6cb945d70a9f9b8ab6a7471091d6002e6b47c603"
+    },
+    {
+      "group": "docs",
+      "file": "BASELINE_METRICS.md",
+      "bytes": 2679,
+      "sha256": "9f45416d334ecd815e985a8e3eca82ac2424ba508ae3f9b5ba4fea1a4182afb3"
+    },
+    {
+      "group": "data",
+      "file": "baseline_predictions_all.csv",
+      "bytes": 49177,
+      "sha256": "206110d5bc71b9c4d3902b5a8420fa5d70f023018a7627491164f6a078205774"
+    },
+    {
+      "group": "data",
+      "file": "baseline_predictions_all.json",
+      "bytes": 980427,
+      "sha256": "e20b953213dfe039c92c153626956378e9463dff409b8181b7d532c85d79a474"
+    },
+    {
+      "group": "reports",
+      "file": "benchmark.html",
+      "bytes": 33264,
+      "sha256": "c13a8e6b70cb2e63e30db2461c81c42518216958c33677fa8f41c0290e2fa2e5"
+    },
+    {
+      "group": "scripts",
+      "file": "build_dataset_index.mjs",
+      "bytes": 28232,
+      "sha256": "6d258437fd0d08c5be988833a18d7b8a79db29805c899a77e7e7b8699a0930e4"
+    },
+    {
+      "group": "scripts",
+      "file": "build_release.mjs",
+      "bytes": 4929,
+      "sha256": "2de5395a9165f2b27fd52531a15f2bb411a28d3898c28500dd0500a43392d2f5"
+    },
+    {
+      "group": "data",
+      "file": "dataset-index.json",
+      "bytes": 763326,
+      "sha256": "49a89da37af2c7c6c4f766ee9d8f91c847864662286518fa9c92817d43120e26"
+    },
+    {
+      "group": "scripts",
+      "file": "evaluate_baseline.mjs",
+      "bytes": 49195,
+      "sha256": "29e7e99047b1010d078c2b0dbd8c03989883bee17b28861ec1c7f6bfd0194a71"
+    },
+    {
+      "group": "scripts",
+      "file": "evaluate_residual_clinical.py",
+      "bytes": 11605,
+      "sha256": "2d726cd064f32af80f604127056efbe0e54537f46ec0642a160b77784ba572fe"
+    },
+    {
+      "group": "scripts",
+      "file": "generate_benchmark_report.mjs",
+      "bytes": 54338,
+      "sha256": "fe25f8fcabaa6b1b3dcf0b696b128056c46ab704e8e59655ec32bb167355b3e0"
+    },
+    {
+      "group": "scripts",
+      "file": "generate_residual_parity_fixture.py",
+      "bytes": 20634,
+      "sha256": "cbe757422885a3d8fdd403fd3e7830e2889fd27c7d5dd706306e93a5384198e5"
+    },
+    {
+      "group": "reports",
+      "file": "harness-run.json",
+      "bytes": 7060,
+      "sha256": "34d8552673bc0dac3a169d2b300cffdfcb1931e75fef5bee4c83d499d69672b9"
+    },
+    {
+      "group": "docs",
+      "file": "HARNESS.md",
+      "bytes": 6457,
+      "sha256": "2c9d47b0e548ec14214d9e60e581f191578859793af3ff8eb2a6f6fe8b4fb43e"
+    },
+    {
+      "group": "scripts",
+      "file": "merge_baselines.js",
+      "bytes": 2255,
+      "sha256": "d7e9abdc851e1828f823c9cd0f1d965acbbe0678ea1eb5a369877f1ec1bdb2d2"
+    },
+    {
+      "group": "docs",
+      "file": "NESTED_POLICY_AUDIT.md",
+      "bytes": 3249,
+      "sha256": "1c5abf8dd5d16c03a7c940cbf006c38ee80264831ff68edfdc99953587a59b49"
+    },
+    {
+      "group": "reports",
+      "file": "nested-policy-metrics.json",
+      "bytes": 47315,
+      "sha256": "121ca28a1ad164590725d63321f7ee00cae80f9b39b0708c9792d32fa3931efd"
+    },
+    {
+      "group": "scripts",
+      "file": "package.json",
+      "bytes": 168,
+      "sha256": "9911cbf047c87e3410fedd439d3e3e426fe10b8400d82d8848b652e867b01536"
+    },
+    {
+      "group": "data",
+      "file": "pipeline_config.json",
+      "bytes": 1151,
+      "sha256": "0c262356cc44fe047b230ec92056055f0dfed54674f397ce98dd677350d37bf7"
+    },
+    {
+      "group": "docs",
+      "file": "README_재학습.md",
+      "bytes": 7307,
+      "sha256": "0ca7c0982819580c78abcd628ffb8346094d48741ba215253d06f904b9919b10"
+    },
+    {
+      "group": "docs",
+      "file": "README.md",
+      "bytes": 2830,
+      "sha256": "45fe433c5334ebbbe34a785e3abef1f7361a29042a5fc0b536ef47669b546a22"
+    },
+    {
+      "group": "docs",
+      "file": "RESIDUAL_INFERENCE_AUDIT.md",
+      "bytes": 6739,
+      "sha256": "0e1322b9fe90204aee647318138bf41c68b96a87d75e21fc5b4b8f62f7146044"
+    },
+    {
+      "group": "scripts",
+      "file": "residual_inference.js",
+      "bytes": 30237,
+      "sha256": "059c5ed0f2f657b766ff179597569617548ca86455c6344976c59abe5bc73b03"
+    },
+    {
+      "group": "reports",
+      "file": "residual-blend-tuning.json",
+      "bytes": 881823,
+      "sha256": "ee9682aca3308e4323840a92130a9ba278c1d81f1a1583cb74b33df23aec6517"
+    },
+    {
+      "group": "reports",
+      "file": "residual-clinical-metrics.json",
+      "bytes": 6150,
+      "sha256": "7c6b9d087131030549dc965d07ee5d4edf305eec575948a033e02eff09c8a5f0"
+    },
+    {
+      "group": "model",
+      "file": "residual-deployment-policy.json",
+      "bytes": 6901,
+      "sha256": "f59a88ee2e0aea5782f26f22f7c0774a3a81de2fbb2719be52600e3cd1d89c0b"
+    },
+    {
+      "group": "reports",
+      "file": "residual-gate-fine-tuning.json",
+      "bytes": 6386317,
+      "sha256": "e67e6ec71404317fc6ac4db7fa926a970d8b91df2a2774572cd93251c5cc0cd7"
+    },
+    {
+      "group": "reports",
+      "file": "residual-gate-tuning.json",
+      "bytes": 3726630,
+      "sha256": "a51e64f8dfa17e498fbfa1e740c28dd30f699bf75703125fc1a6ae29ff81a81a"
+    },
+    {
+      "group": "reports",
+      "file": "residual-metrics.json",
+      "bytes": 22382,
+      "sha256": "94799f477fa3c6c940df3e0d701d99ae31797edfd6eeb2ee5eb7ff3ce454e539"
+    },
+    {
+      "group": "model",
+      "file": "residual-model.json",
+      "bytes": 1123452,
+      "sha256": "4505ef7c472fa7a9121dd8aec68cda7461e8d56a2d71d60a811e82dbe3896cf9"
+    },
+    {
+      "group": "data",
+      "file": "residual-parity-fixture.json",
+      "bytes": 444179,
+      "sha256": "8eddbd5755b0c3e0b3bfaf0f06ee6e2ccb022e810b00df9395f700633a0e776e"
+    },
+    {
+      "group": "scripts",
+      "file": "run_harness.mjs",
+      "bytes": 36253,
+      "sha256": "6f15c06eb8c999493a97216a788fa64e1dbf114297e34204f94ba59fccc0ae8c"
+    },
+    {
+      "group": "scripts",
+      "file": "run_rule_baseline.js",
+      "bytes": 15949,
+      "sha256": "00f81b1f422242f16d6cc454760b241aea29bed5314ee5d64ea070187e8f3f10"
+    },
+    {
+      "group": "scripts",
+      "file": "test_residual_inference.js",
+      "bytes": 13439,
+      "sha256": "69f990523dcd6a1acd1bcf1973e5d7684afa3e345d6280a66acde455644c4809"
+    },
+    {
+      "group": "scripts",
+      "file": "train_residual.py",
+      "bytes": 40643,
+      "sha256": "ed0a4451785d0d8a2d1010e88b2ebc48006c06c87d684f923f7258dc965099c5"
+    },
+    {
+      "group": "scripts",
+      "file": "tune_residual_blend.py",
+      "bytes": 20747,
+      "sha256": "df5fdf87b5a3bcab906d6b7d0b3d8999fa30bd4b629c942ffb167862ddaad1b6"
+    },
+    {
+      "group": "scripts",
+      "file": "tune_residual_gate.py",
+      "bytes": 32129,
+      "sha256": "6c7476eacb4c672eaac73af8db7f88a0aef1706032bc074d4981a3e06c9e7809"
+    },
+    {
+      "group": "scripts",
+      "file": "validate_deployment_policy_nested.py",
+      "bytes": 34679,
+      "sha256": "d030e3968a0bc8fc32e1bfef80fff49c5b24fd3ca4d35718d6b711df1ab38ee6"
+    },
+    {
+      "group": "scripts",
+      "file": "verify_pipeline.mjs",
+      "bytes": 20597,
+      "sha256": "14068ed3b22ab50b6f12790ce8d55b8725049883ed64d5e5bb2bf27e46cd408e"
+    }
+  ],
+  "totals": {
+    "files": 40,
+    "bytes": 15285082
+  }
+}

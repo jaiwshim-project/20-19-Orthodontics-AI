@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZ-Curve | 하악 교합면 EZ 곡선 생성기</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 16px 24px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  header .subtitle { font-size: 12px; color: #cbd5e1; }
+  .layer-btn { padding: 3px 8px; border-radius: 6px; border: 1px solid #475569; background: #334155; color: #e2e8f0; font-size: 10px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .layer-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+  .layer-btn:hover { color: #ffffff; border-color: #94a3b8; }
+  .main { flex: 1; display: flex; gap: 16px; padding: 16px; overflow: auto; }
+  .canvas-area { flex: 1; aspect-ratio: 1; min-height: 0; position: relative; background: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .canvas-area.drag-over { border-color: #3b82f6; background: rgba(59,130,246,.08); }
+  .dropzone-msg { text-align: center; color: #cbd5e1; pointer-events: none; }
+  .dropzone-msg h2 { font-size: 22px; color: #e2e8f0; margin-bottom: 8px; }
+  .dropzone-msg p { font-size: 14px; }
+  canvas { display: block; max-width: 100%; max-height: 100%; touch-action: none; }
+  .panel { width: 300px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 9px 10px; }
+  .card h3 { font-size: 12px; font-weight: 800; color: #facc15; margin-bottom: 6px; }
+  .field { margin-bottom: 6px; }
+  .field label { display: block; font-size: 10px; color: #e2e8f0; margin-bottom: 3px; }
+  .field input { width: 100%; padding: 5px 7px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 5px 9px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #475569; background: #334155; color: #e2e8f0; transition: all .15s; width: 100%; }
+  .btn:hover { background: #475569; }
+  .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); border-color: transparent; color: #fff; }
+  .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+  .btn-warning { background: #f59e0b; border-color: transparent; color: #000; }
+  .btn-warning:hover { background: #d97706; }
+  .btn-danger { background: #dc2626; border-color: transparent; color: #fff; }
+  .btn-success { background: #16a34a; border-color: transparent; color: #fff; }
+  .btn-success:hover { background: #15803d; }
+  .mode-btn { min-height: 36px; font-size: 13px; font-weight: 700; }
+  .mode-btn.active-mode { box-shadow: 0 0 0 3px rgba(59,130,246,0.5); }
+  .metric { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: center; padding: 3px 8px; border-bottom: 1px solid #334155; overflow: visible; }
+  .metric:last-child { border-bottom: none; }
+  .metric .label { min-width: 0; padding-left: 0; font-size: 9px; color: #e2e8f0; white-space: nowrap; overflow: visible; line-height: 1.15; }
+  .metric .value { flex-shrink: 0; font-size: 13px; font-weight: 800; color: #3b82f6; text-align: right; white-space: nowrap; overflow: visible; }
+  .guide { font-size: 9px; color: #cbd5e1; margin-top: 4px; line-height: 1.25; }
+  .coord-bar { position: absolute; bottom: 0; left: 0; right: 332px; background: rgba(15,23,42,0.95); border-top: 1px solid #334155; padding: 6px 10px; z-index: 10; }
+  .coord-title { font-size: 8px; font-weight: 800; color: #facc15; margin-bottom: 4px; }
+  .coord-grid { display: flex; flex-wrap: wrap; gap: 3px; }
+  .coord-item { display: flex; align-items: center; gap: 4px; padding: 3px 7px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; font-size: 10px; font-family: monospace; }
+  .coord-item .num { font-weight: 700; color: #3b82f6; min-width: 14px; font-size: 10px; }
+  .coord-item .xy { color: #e2e8f0; }
+  .mode-indicator { padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .mode-indicator.tooth-mode { background: rgba(59,130,246,0.2); border: 1px solid #3b82f6; color: #93c5fd; }
+  .mode-indicator.ez-mode { background: rgba(250,204,21,0.2); border: 1px solid #facc15; color: #fde047; }
+  .mode-indicator.width-mode { background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #6ee7b7; }
+  .mode-indicator.idle-mode { background: rgba(100,116,139,0.2); border: 1px solid #64748b; color: #94a3b8; }
+  .auto-card { border-color: rgba(139,92,246,.65); background: linear-gradient(145deg, rgba(30,41,59,.98), rgba(49,46,129,.28)); }
+  .auto-card h3 { color: #c4b5fd; }
+  .btn-auto { min-height: 38px; border: 1px solid rgba(167,139,250,.7); background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-size: 13px; font-weight: 800; }
+  .btn-auto:hover { background: linear-gradient(135deg, #6d28d9, #4338ca); }
+  .btn-auto:disabled, .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .auto-progress { display: none; margin-top: 7px; }
+  .auto-progress.active { display: block; }
+  .auto-progress-track { height: 5px; overflow: hidden; border-radius: 999px; background: #0f172a; border: 1px solid #475569; }
+  .auto-progress-bar { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8b5cf6, #22d3ee); transition: width .2s ease; }
+  .auto-status { margin-top: 5px; font-size: 10px; line-height: 1.35; color: #cbd5e1; }
+  .auto-status.success { color: #86efac; }
+  .auto-status.warning { color: #fde047; }
+  .confidence-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; padding: 5px 7px; border-radius: 6px; background: rgba(15,23,42,.68); font-size: 10px; }
+  .confidence-badge { padding: 2px 7px; border-radius: 999px; background: #334155; color: #e2e8f0; font-weight: 800; }
+  .confidence-badge.high { background: rgba(22,163,74,.25); color: #86efac; }
+  .confidence-badge.medium { background: rgba(245,158,11,.22); color: #fde047; }
+  .confidence-badge.low { background: rgba(220,38,38,.22); color: #fca5a5; }
+  .auto-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
+  .auto-disclaimer { margin-top: 6px; font-size: 9px; line-height: 1.35; color: #a5b4fc; }
+  @media (max-width: 768px) {
+    header { padding: 12px; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+    #layerToggles { flex-wrap: wrap; justify-content: flex-end; }
+    .main { flex-direction: column; padding: 8px; }
+    .canvas-area { width: 100%; min-height: 360px; }
+    .panel { width: 100%; }
+    .coord-bar { position: static; right: auto; width: 100%; order: 3; border: 1px solid #334155; border-radius: 10px; }
+    .btn, .mode-btn { min-height: 42px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>EZ-Curve</h1>
+    <div class="subtitle">교합면 EZ 곡선 생성기 — 자동 초안 + 수동 보정</div>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <div style="display:flex; gap:4px;" id="layerToggles">
+      <button class="layer-btn active" type="button" data-layer="grid" title="격자 표시">Grid</button>
+      <button class="layer-btn active" type="button" data-layer="toothNum" title="치아 번호">Tooth#</button>
+      <button class="layer-btn active" type="button" data-layer="ezCurve" title="EZ 곡선">EZ</button>
+      <button class="layer-btn active" type="button" data-layer="toothWidth" title="치아 폭">Width</button>
+      <button class="layer-btn active" type="button" data-layer="legend" title="범례">Legend</button>
+    </div>
+    <div style="font-size:11px; color:#cbd5e1;">v6.0</div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="canvas-area" id="canvasArea">
+    <div class="dropzone-msg" id="dropMsg">
+      <h2>교합면 사진을 여기에 드롭</h2>
+      <p>또는 클릭하여 파일 선택</p>
+      <p style="margin-top:12px; font-size:12px; color:#cbd5e1;">JPG, PNG 지원 · 상악/하악 모두 가능</p>
+    </div>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+  </div>
+
+  <div class="coord-bar" id="coordBar">
+    <div class="coord-title">치아 좌표 (XY) mm</div>
+    <div class="coord-grid" id="coordGrid"></div>
+    <div class="coord-title" style="margin-top:8px;">EZ/치조골 중심 추정 좌표</div>
+    <div class="coord-grid" id="ezCoordGrid"></div>
+    <div class="coord-title" style="margin-top:8px;">치아 좌우폭 (mm)</div>
+    <div class="coord-grid" id="widthCoordGrid"></div>
+  </div>
+
+  <div class="panel">
+    <div class="card auto-card">
+      <h3>치아 자동 분석</h3>
+      <button class="btn btn-auto" id="autoAnalyzeBtn" type="button">⚡ 치아 자동 분석 실행</button>
+      <div class="auto-progress" id="autoProgress" aria-live="polite">
+        <div class="auto-progress-track"><div class="auto-progress-bar" id="autoProgressBar"></div></div>
+        <div class="auto-status" id="autoStatus">분석 대기</div>
+      </div>
+      <div class="confidence-row">
+        <span>자동 분석 신뢰도</span>
+        <span class="confidence-badge" id="autoConfidence">대기</span>
+      </div>
+      <div class="auto-actions">
+        <button class="btn btn-success" id="applyAutoBtn" type="button" disabled>초안 적용</button>
+        <button class="btn" id="cancelAutoBtn" type="button" disabled>초안 취소</button>
+        <button class="btn" id="restoreAutoBtn" type="button" disabled>이전 상태 복원</button>
+        <button class="btn" id="reviewAutoBtn" type="button" disabled>수동 보정 시작</button>
+      </div>
+      <p class="auto-disclaimer">하악 교합면 정답 데이터에서 학습한 보조 추정입니다. 모든 점과 폭선을 치과의사가 확인·보정해야 하며, EZL−TZL만으로 발치 또는 IPR을 결정하지 마세요. 이미지는 브라우저 안에서만 처리됩니다.</p>
+    </div>
+
+    <div class="card">
+      <h3>입력 모드</h3>
+      <div id="modeIndicator" class="mode-indicator idle-mode">대기 중 — 이미지를 먼저 업로드하세요</div>
+      <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+        <button class="btn btn-primary mode-btn" id="toothModeBtn" style="flex:1;">1.치아좌표 찍기</button>
+        <button class="btn btn-warning mode-btn" id="ezModeBtn" style="flex:1;">2.EZ좌표 찍기</button>
+        <button class="btn mode-btn" id="widthModeBtn" style="flex:1; background:#10b981; border-color:transparent; color:#fff;">3.치아 좌우폭 찍기</button>
+      </div>
+      <p class="guide" id="guideText">교합면 사진을 업로드한 후, 모드를 선택하고 클릭하세요.</p>
+    </div>
+
+    <div class="card">
+      <h3>스케일 설정</h3>
+      <div class="field">
+        <label>양쪽 어금니 간 거리 (mm)</label>
+        <input type="number" id="molarMm" value="54" min="30" max="80" step="0.1">
+      </div>
+      <button class="btn" id="saveScaleBtn" style="margin-top:4px;">스케일 저장 + 반영</button>
+      <p class="guide">좌우 제2대구치 사이 실측 거리. 저장 시 좌표계에 즉시 반영.</p>
+    </div>
+
+    <div class="card">
+      <h3>조작</h3>
+      <button class="btn" id="moveOriginBtn">원점(=1번) 이동</button>
+      <button class="btn" id="undoToothBtn" style="margin-top:4px;">1.치아좌표 마지막 취소</button>
+      <button class="btn" id="undoEzBtn" style="margin-top:4px;">2.EZ좌표 마지막 취소</button>
+      <button class="btn" id="undoWidthBtn" style="margin-top:4px;">3.치아 좌우폭 마지막 취소</button>
+      <button class="btn btn-success" id="saveLearnBtn" style="margin-top:8px;">위치 저장 (파일 다운로드)</button>
+      <button class="btn" id="loadFileBtn" style="margin-top:4px;">md 저장 파일 불러오기</button>
+      <input type="file" id="loadFileInput" accept=".md,.json" style="display:none;">
+      <button class="btn btn-danger" id="clearBtn" style="margin-top:8px;">전체 초기화</button>
+    </div>
+
+    <div class="card">
+      <h3>측정 결과</h3>
+      <div class="metric"><span class="label">EZL (곡선 길이)</span><span class="value" id="ezlValue">-</span></div>
+      <div class="metric"><span class="label">px/mm</span><span class="value" id="scaleValue" style="font-size:14px;">-</span></div>
+      <div class="metric"><span class="label">치아 좌표 수</span><span class="value" id="toothCount" style="font-size:14px;">0</span></div>
+      <div class="metric"><span class="label">EZ 좌표 수</span><span class="value" id="ezCount" style="font-size:14px;">0</span></div>
+      <div class="metric"><span class="label">치아 폭 수</span><span class="value" id="widthCount" style="font-size:14px;">0</span></div>
+      <div class="metric"><span class="label">치아 폭 총합 (TZL)</span><span class="value" id="widthTotalValue">-</span></div>
+      <div class="metric"><span class="label">공간 차이 (EZL−TZL)</span><span class="value" id="differenceValue">-</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const canvasArea = document.getElementById('canvasArea');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const fileInput = document.getElementById('fileInput');
+  const dropMsg = document.getElementById('dropMsg');
+
+  let image = null;
+  let imageData = '';
+  let imageName = '';
+  let displayScale = 1;
+  let offset = { x: 0, y: 0 };
+
+  let toothCenters = [];
+  let ezPoints = [];
+  let toothWidths = []; // [{p1:{x,y}, p2:{x,y}}, ...] 각 치아의 좌우 2점
+  let widthTemp = null; // 현재 찍는 중인 첫 번째 점
+  let customOrigin = null;
+  let clickMode = 'none'; // 'none' | 'tooth' | 'ez' | 'width'
+  let originMode = false;
+  let dragging = null;
+  let dragType = null; // 'tooth' | 'ez' | 'widthP1' | 'widthP2'
+  let dragWidthIdx = -1;
+  const layers = { grid: true, toothNum: true, ezCurve: true, toothWidth: true, legend: true };
+  const AUTO_ENGINE_VERSION = 'tzl-ezl-rule-v1.0';
+  const AUTO_TOOTH_WIDTHS_MM = [12.19, 7.92, 8.13, 7.30, 6.49, 5.91, 5.91, 6.46, 7.21, 8.15, 8.04, 12.31];
+  let analysisState = 'idle'; // idle | running | preview | applied | error
+  let autoDraft = null;
+  let autoMeta = null;
+  let preAutoSnapshot = null;
+  let analysisRunId = 0;
+  let imageRevision = 0;
+
+  function cloneData(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
+
+  function snapshotMeasurements() {
+    return {
+      toothCenters: cloneData(toothCenters), ezPoints: cloneData(ezPoints), toothWidths: cloneData(toothWidths),
+      customOrigin: cloneData(customOrigin), analysisMeta: cloneData(autoMeta)
+    };
+  }
+
+  function markManualAdjustment() {
+    if (!autoMeta) return;
+    autoMeta.manualAdjusted = true;
+    autoMeta.lastManualAdjustmentAt = new Date().toISOString();
+  }
+
+  function clearAutoSession(clearBackup) {
+    analysisRunId += 1;
+    autoDraft = null;
+    if (clearBackup) preAutoSnapshot = null;
+    if (analysisState === 'running' || analysisState === 'preview') analysisState = 'idle';
+    updateAutoPanel();
+  }
+
+  function resetMeasurementState() {
+    toothCenters = [];
+    ezPoints = [];
+    toothWidths = [];
+    widthTemp = null;
+    customOrigin = null;
+    clickMode = 'none';
+    originMode = false;
+    autoMeta = null;
+    analysisState = 'idle';
+    clearAutoSession(true);
+    ['ez_curve_toothCenters', 'ez_curve_ezPoints', 'ez_curve_toothWidths', 'ez_curve_origin', 'ez_curve_analysisMeta_v1'].forEach(k => localStorage.removeItem(k));
+  }
+
+  // =========================================================
+  // 이미지 로드
+  // =========================================================
+  canvasArea.addEventListener('click', (e) => { if (!image && e.target !== canvas) fileInput.click(); });
+  canvasArea.addEventListener('dragover', (e) => { e.preventDefault(); canvasArea.classList.add('drag-over'); });
+  canvasArea.addEventListener('dragleave', () => canvasArea.classList.remove('drag-over'));
+  canvasArea.addEventListener('drop', (e) => {
+    e.preventDefault(); canvasArea.classList.remove('drag-over');
+    const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+    if (file) loadImage(file);
+  });
+  fileInput.addEventListener('change', (e) => { if (e.target.files[0]) loadImage(e.target.files[0]); });
+
+  function loadImage(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      imageData = dataUrl;
+      imageName = file.name || 'oral-photo';
+      try {
+        localStorage.setItem('ez_curve_image', dataUrl);
+        localStorage.setItem('ez_curve_imageName', imageName);
+      } catch (err) { console.warn('이미지 저장 실패:', err); }
+      imageRevision += 1;
+      resetMeasurementState();
+      loadImageFromDataUrl(dataUrl);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadImageFromDataUrl(dataUrl) {
+    const img = new Image();
+    img.onload = () => {
+      image = img;
+      dropMsg.style.display = 'none';
+      canvas.style.display = 'block';
+      fitCanvas();
+      render();
+      calculateEZL();
+      updateCoordBar();
+      updateModeIndicator();
+      updateAutoPanel();
+      updateGuide('이미지 로드 완료. "치아 좌표 찍기" 또는 "EZ 좌표 찍기" 모드를 선택하세요.');
+    };
+    img.src = dataUrl;
+  }
+
+  // 페이지 로드 시 저장된 데이터 복원
+  (function restoreAll() {
+    const savedTeeth = localStorage.getItem('ez_curve_toothCenters');
+    const savedEz = localStorage.getItem('ez_curve_ezPoints');
+    const savedWidths = localStorage.getItem('ez_curve_toothWidths');
+    const savedOrigin = localStorage.getItem('ez_curve_origin');
+    const savedAnalysisMeta = localStorage.getItem('ez_curve_analysisMeta_v1');
+    if (savedTeeth) try { toothCenters = JSON.parse(savedTeeth); } catch {}
+    if (savedEz) try { ezPoints = JSON.parse(savedEz); } catch {}
+    if (savedWidths) try { toothWidths = JSON.parse(savedWidths); } catch {}
+    if (savedOrigin) try { customOrigin = JSON.parse(savedOrigin); } catch {}
+    if (savedAnalysisMeta) try { autoMeta = JSON.parse(savedAnalysisMeta); analysisState = 'applied'; } catch {}
+    const savedImg = localStorage.getItem('ez_curve_image');
+    const savedImageName = localStorage.getItem('ez_curve_imageName');
+    if (savedImg) {
+      imageData = savedImg;
+      imageName = savedImageName || 'oral-photo';
+      loadImageFromDataUrl(savedImg);
+    }
+    updateAutoPanel();
+  })();
+
+  function fitCanvas() {
+    const w = canvasArea.clientWidth;
+    const h = canvasArea.clientHeight;
+    canvas.width = w; canvas.height = h;
+    if (!image) return;
+    displayScale = Math.min(w / image.width, h / image.height) * 0.60;
+    offset = { x: (w - image.width * displayScale) / 2, y: 10 };
+  }
+
+  window.addEventListener('resize', () => { if (image) { fitCanvas(); render(); } });
+
+  // =========================================================
+  // 좌표 변환
+  // =========================================================
+  function screenToImage(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left - offset.x) / displayScale,
+      y: (e.clientY - rect.top - offset.y) / displayScale
+    };
+  }
+
+  function imageToScreen(p) {
+    return { x: offset.x + p.x * displayScale, y: offset.y + p.y * displayScale };
+  }
+
+  // =========================================================
+  // 마우스 — 점 찍기 + 드래그
+  // =========================================================
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!image) return;
+    if (e.pointerType === 'touch') e.preventDefault();
+    if (canvas.setPointerCapture) try { canvas.setPointerCapture(e.pointerId); } catch {}
+    const p = screenToImage(e);
+
+    // 원점 이동 모드
+    if (originMode) {
+      customOrigin = { x: Math.round(p.x), y: Math.round(p.y) };
+      markManualAdjustment();
+      originMode = false;
+      canvas.style.cursor = clickMode !== 'none' ? 'crosshair' : 'default';
+      localStorage.setItem('ez_curve_origin', JSON.stringify(customOrigin));
+      render(); calculateEZL(); updateCoordBar();
+      updateGuide('원점이 (' + Math.round(p.x) + ', ' + Math.round(p.y) + ')로 설정됨.');
+      return;
+    }
+
+    // 기존 점 드래그: 모드가 none이거나 해당 모드가 이미 최대 개수일 때만 드래그 허용
+    if (clickMode === 'tooth' && toothCenters.length >= 14) {
+      const nearTooth = findNear(p, toothCenters, 12);
+      if (nearTooth >= 0) { dragging = nearTooth; dragType = 'tooth'; canvas.style.cursor = 'grabbing'; return; }
+    } else if (clickMode === 'ez' && ezPoints.length >= 14) {
+      const nearEz = findNear(p, ezPoints, 12);
+      if (nearEz >= 0) { dragging = nearEz; dragType = 'ez'; canvas.style.cursor = 'grabbing'; return; }
+    } else if (clickMode === 'width' && toothWidths.length >= 14 && !widthTemp) {
+      const nearW = findNearWidth(p, 12);
+      if (nearW) { dragging = nearW.idx; dragType = nearW.which; dragWidthIdx = nearW.idx; canvas.style.cursor = 'grabbing'; return; }
+    } else if (clickMode === 'none') {
+      const nearTooth = findNear(p, toothCenters, 12);
+      if (nearTooth >= 0) { dragging = nearTooth; dragType = 'tooth'; canvas.style.cursor = 'grabbing'; return; }
+      const nearEz = findNear(p, ezPoints, 12);
+      if (nearEz >= 0) { dragging = nearEz; dragType = 'ez'; canvas.style.cursor = 'grabbing'; return; }
+      const nearW = findNearWidth(p, 12);
+      if (nearW) { dragging = nearW.idx; dragType = nearW.which; dragWidthIdx = nearW.idx; canvas.style.cursor = 'grabbing'; return; }
+    }
+
+    // 클릭 모드에 따라 점 추가
+    if (clickMode === 'tooth') {
+      if (toothCenters.length >= 14) {
+        updateGuide('치아 좌표가 이미 14개입니다. 추가 불가.');
+        return;
+      }
+      toothCenters.push({ x: Math.round(p.x), y: Math.round(p.y) });
+      markManualAdjustment();
+      saveToLocalStorage();
+      render(); calculateEZL(); updateCoordBar();
+      const count = toothCenters.length;
+      if (count < 14) updateGuide('치아 ' + count + '번 찍힘. 다음: ' + (count + 1) + '번 위치를 클릭하세요.');
+      else updateGuide('치아 좌표 14개 완료! EZ 좌표 찍기로 전환하세요.');
+    } else if (clickMode === 'ez') {
+      if (ezPoints.length >= 14) {
+        updateGuide('EZ 좌표가 이미 14개입니다. 추가 불가.');
+        return;
+      }
+      ezPoints.push({ x: Math.round(p.x), y: Math.round(p.y) });
+      markManualAdjustment();
+      saveToLocalStorage();
+      render(); calculateEZL(); updateCoordBar();
+      const count = ezPoints.length;
+      if (count < 14) updateGuide('EZ ' + count + '번 찍힘. 다음: ' + (count + 1) + '번 위치를 클릭하세요.');
+      else updateGuide('EZ 좌표 14개 완료! EZL: ' + document.getElementById('ezlValue').textContent);
+    } else if (clickMode === 'width') {
+      if (!widthTemp) {
+        if (toothWidths.length >= 14) { updateGuide('치아 폭이 이미 14개입니다.'); return; }
+        widthTemp = { x: Math.round(p.x), y: Math.round(p.y) };
+        render(); renderWidthTemp();
+        updateGuide((toothWidths.length + 1) + '번 치아 폭: 첫 점(좌) 찍힘. 두 번째 점(우)을 클릭하세요.');
+      } else {
+        toothWidths.push({ p1: widthTemp, p2: { x: Math.round(p.x), y: Math.round(p.y) } });
+        markManualAdjustment();
+        widthTemp = null;
+        saveToLocalStorage();
+        render(); calculateEZL(); updateCoordBar(); updateModeIndicator();
+        const count = toothWidths.length;
+        if (count < 14) updateGuide(count + '번 치아 폭 완료. 다음: ' + (count + 1) + '번 치아의 좌측 점을 클릭하세요.');
+        else updateGuide('치아 폭 14개 완료!');
+      }
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!image) return;
+    const p = screenToImage(e);
+    if (dragging !== null) {
+      if (dragType === 'tooth') {
+        toothCenters[dragging] = { x: Math.round(p.x), y: Math.round(p.y) };
+      } else if (dragType === 'ez') {
+        ezPoints[dragging] = { x: Math.round(p.x), y: Math.round(p.y) };
+      } else if (dragType === 'widthP1') {
+        toothWidths[dragWidthIdx].p1 = { x: Math.round(p.x), y: Math.round(p.y) };
+      } else if (dragType === 'widthP2') {
+        toothWidths[dragWidthIdx].p2 = { x: Math.round(p.x), y: Math.round(p.y) };
+      }
+      render(); calculateEZL(); updateCoordBar();
+    } else {
+      const nearT = findNear(p, toothCenters, 12);
+      const nearE = findNear(p, ezPoints, 12);
+      const nearW = findNearWidth(p, 12);
+      canvas.style.cursor = (nearT >= 0 || nearE >= 0 || nearW) ? 'grab' : (clickMode !== 'none' ? 'crosshair' : 'default');
+    }
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    if (dragging !== null) { markManualAdjustment(); saveToLocalStorage(); }
+    dragging = null; dragType = null; dragWidthIdx = -1;
+    if (canvas.releasePointerCapture) try { canvas.releasePointerCapture(e.pointerId); } catch {}
+    canvas.style.cursor = clickMode !== 'none' ? 'crosshair' : 'default';
+  });
+  canvas.addEventListener('pointercancel', () => { dragging = null; dragType = null; dragWidthIdx = -1; });
+
+  function findNear(imgPt, arr, threshold) {
+    const t = threshold / displayScale;
+    for (let i = 0; i < arr.length; i++) {
+      if (Math.hypot(arr[i].x - imgPt.x, arr[i].y - imgPt.y) < t) return i;
+    }
+    return -1;
+  }
+
+  function findNearWidth(imgPt, threshold) {
+    const t = threshold / displayScale;
+    for (let i = 0; i < toothWidths.length; i++) {
+      if (Math.hypot(toothWidths[i].p1.x - imgPt.x, toothWidths[i].p1.y - imgPt.y) < t) return { idx: i, which: 'widthP1' };
+      if (Math.hypot(toothWidths[i].p2.x - imgPt.x, toothWidths[i].p2.y - imgPt.y) < t) return { idx: i, which: 'widthP2' };
+    }
+    return null;
+  }
+
+  // =========================================================
+  // Catmull-Rom Spline
+  // =========================================================
+  function catmullRom(p0, p1, p2, p3, t) {
+    const t2 = t * t, t3 = t2 * t;
+    return {
+      x: 0.5 * ((2*p1.x) + (-p0.x+p2.x)*t + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+      y: 0.5 * ((2*p1.y) + (-p0.y+p2.y)*t + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3)
+    };
+  }
+
+  function generateCurve(pts) {
+    if (pts.length < 2) return [];
+    if (pts.length === 2) return pts;
+    const out = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(pts.length-1, i+2)];
+      for (let j = 0; j < 25; j++) out.push(catmullRom(p0, p1, p2, p3, j / 25));
+    }
+    out.push(pts[pts.length - 1]);
+    return out;
+  }
+
+  function curveLength(pts) {
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
+    return total;
+  }
+
+  // =========================================================
+  // 치아 자동 분석 엔진 — 하악 교합면 규칙 기반 초안
+  // =========================================================
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function smoothstep(a, b, v) {
+    const t = clamp((v - a) / Math.max(1e-6, b - a), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+  function mean(values) { return values.length ? values.reduce((s, v) => s + v, 0) / values.length : 0; }
+  function percentile(values, q) {
+    if (!values.length) return 0;
+    const sorted = values.slice().sort((a, b) => a - b);
+    return sorted[Math.round((sorted.length - 1) * q)];
+  }
+  function sampleArray(arr, w, h, x, y) {
+    const ix = clamp(Math.round(x), 0, w - 1), iy = clamp(Math.round(y), 0, h - 1);
+    return arr[iy * w + ix] || 0;
+  }
+  function blurArray(src, w, h, radius) {
+    const tmp = new Float32Array(src.length), out = new Float32Array(src.length);
+    for (let y = 0; y < h; y++) {
+      let sum = 0;
+      for (let x = -radius; x <= radius; x++) sum += src[y*w + clamp(x, 0, w-1)];
+      for (let x = 0; x < w; x++) {
+        tmp[y*w+x] = sum / (radius*2+1);
+        sum += src[y*w + clamp(x+radius+1, 0, w-1)] - src[y*w + clamp(x-radius, 0, w-1)];
+      }
+    }
+    for (let x = 0; x < w; x++) {
+      let sum = 0;
+      for (let y = -radius; y <= radius; y++) sum += tmp[clamp(y, 0, h-1)*w+x];
+      for (let y = 0; y < h; y++) {
+        out[y*w+x] = sum / (radius*2+1);
+        sum += tmp[clamp(y+radius+1, 0, h-1)*w+x] - tmp[clamp(y-radius, 0, h-1)*w+x];
+      }
+    }
+    return out;
+  }
+
+  function buildDentalFeatureMap(img) {
+    const maxSide = 720;
+    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const w = Math.max(64, Math.round(img.width * scale));
+    const h = Math.max(64, Math.round(img.height * scale));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const cctx = c.getContext('2d', { willReadFrequently: true });
+    cctx.drawImage(img, 0, 0, w, h);
+    const pixels = cctx.getImageData(0, 0, w, h).data;
+    const gray = new Float32Array(w*h), saturation = new Float32Array(w*h), redness = new Float32Array(w*h);
+    const samples = [];
+    let graySum = 0, graySqSum = 0;
+    for (let i = 0, p = 0; i < gray.length; i++, p += 4) {
+      const r = pixels[p], g = pixels[p+1], b = pixels[p+2];
+      const y = 0.2126*r + 0.7152*g + 0.0722*b;
+      const hi = Math.max(r,g,b), lo = Math.min(r,g,b);
+      gray[i] = y; saturation[i] = (hi-lo) / Math.max(1,hi); redness[i] = (r - (g+b)*0.5) / 255;
+      graySum += y; graySqSum += y*y;
+      if (i % 19 === 0) samples.push(y);
+    }
+    const q55 = percentile(samples, .55), q90 = Math.max(q55 + 18, percentile(samples, .90));
+    const enamel = new Float32Array(w*h);
+    for (let i = 0; i < enamel.length; i++) {
+      const bright = smoothstep(q55, q90, gray[i]);
+      const nonRed = 1 - smoothstep(.06, .34, redness[i]);
+      const lowSat = 1 - smoothstep(.28, .78, saturation[i]);
+      enamel[i] = bright * (.55 + .25*nonRed + .20*lowSat);
+    }
+    const enamelSmooth = blurArray(enamel, w, h, 2);
+    const graySmooth = blurArray(gray, w, h, 1);
+    const edge = new Float32Array(w*h), gxMap = new Float32Array(w*h), gyMap = new Float32Array(w*h);
+    let edgeSum = 0;
+    for (let y = 1; y < h-1; y++) for (let x = 1; x < w-1; x++) {
+      const i = y*w+x;
+      const gx = graySmooth[i+1]-graySmooth[i-1], gy = graySmooth[i+w]-graySmooth[i-w];
+      const e = clamp(Math.hypot(gx,gy)/95, 0, 1);
+      gxMap[i] = gx/95; gyMap[i] = gy/95; edge[i] = e; edgeSum += e;
+    }
+    const feature = new Float32Array(w*h);
+    for (let i = 0; i < feature.length; i++) feature[i] = clamp(.68*enamelSmooth[i] + .20*edge[i] + .12*enamel[i], 0, 1);
+    const grayMean = graySum/gray.length;
+    const grayStd = Math.sqrt(Math.max(0, graySqSum/gray.length - grayMean*grayMean));
+    return { w, h, scale, feature, enamel: enamelSmooth, edge, gx: gxMap, gy: gyMap, grayStd, edgeMean: edgeSum/(w*h) };
+  }
+
+  function templatePoint(template, u, h) {
+    return {
+      x: template.cx + template.halfSpan*u,
+      y: template.yEnd + template.depth*Math.pow(Math.max(0, 1-u*u), template.power) + template.tilt*u*h
+    };
+  }
+
+  function scoreArchTemplate(map, template) {
+    let total = 0;
+    const normalBand = map.h*.018;
+    for (let i = 0; i < 72; i++) {
+      const u = -1 + 2*i/71, p = templatePoint(template,u,map.h);
+      let best = 0;
+      for (let d = -normalBand; d <= normalBand; d += Math.max(1, normalBand/3)) {
+        best = Math.max(best, sampleArray(map.feature,map.w,map.h,p.x,p.y+d));
+      }
+      total += best;
+    }
+    return total/72;
+  }
+
+  function searchArchTemplate(map) {
+    let best = null, second = null;
+    const spanFractions = [.62,.66,.70,.74,.80,.84], centers = [.47,.50,.53];
+    const endFractions = [.12,.18,.24,.30,.36], depthRatios = [.61,.65,.69,.74], tilts = [-.04,0,.04], powers = [.48,.64,.82];
+    for (const sf of spanFractions) for (const cf of centers) for (const ef of endFractions) {
+      const span = map.w*sf, halfSpan = span/2, cx = map.w*cf, yEnd = map.h*ef;
+      if (cx-halfSpan < 2 || cx+halfSpan > map.w-3) continue;
+      for (const dr of depthRatios) for (const tilt of tilts) for (const power of powers) {
+        const depth = span*dr;
+        if (yEnd+depth > map.h*.96) continue;
+        const item = { cx, halfSpan, yEnd, depth, tilt, power };
+        item.rawScore = scoreArchTemplate(map,item);
+        const learnedPrior = .055*Math.abs(sf-.69)/.15 + .035*Math.abs(ef-.24)/.14 + .04*Math.abs(dr-.65)/.12;
+        item.score = item.rawScore - learnedPrior;
+        if (!best || item.score > best.score) { second = best; best = item; }
+        else if (!second || item.score > second.score) second = item;
+      }
+    }
+    if (!best) throw new Error('치열궁 후보를 찾지 못했습니다.');
+    best.margin = best.score - (second ? second.score : 0);
+    return best;
+  }
+
+  function refineArchPath(map, template) {
+    const path = [], count = 151, search = map.h*.06;
+    for (let i = 0; i < count; i++) {
+      const u = -1+2*i/(count-1), prior = templatePoint(template,u,map.h);
+      let bestY = prior.y, bestScore = -Infinity;
+      for (let dy = -search; dy <= search; dy += Math.max(1,search/18)) {
+        const y = prior.y+dy;
+        const score = sampleArray(map.feature,map.w,map.h,prior.x,y) - .24*Math.pow(dy/search,2);
+        if (score > bestScore) { bestScore=score; bestY=y; }
+      }
+      path.push({ x: prior.x, y: clamp(bestY,1,map.h-2), evidence: Math.max(0,bestScore) });
+    }
+    for (let pass=0; pass<4; pass++) {
+      const ys = path.map(p=>p.y);
+      for (let i=1; i<path.length-1; i++) path[i].y = .25*ys[i-1]+.5*ys[i]+.25*ys[i+1];
+    }
+    return path;
+  }
+
+  function preparePolyline(path) {
+    const cumulative=[0]; let total=0;
+    for (let i=1;i<path.length;i++) { total += Math.hypot(path[i].x-path[i-1].x,path[i].y-path[i-1].y); cumulative.push(total); }
+    return { path, cumulative, total };
+  }
+  function pointAtPrepared(prepared,t) {
+    const target=clamp(t,0,1)*prepared.total, a=prepared.cumulative;
+    let lo=0,hi=a.length-1;
+    while (lo+1<hi) { const m=(lo+hi)>>1; if (a[m]<target) lo=m; else hi=m; }
+    const span=Math.max(1e-6,a[hi]-a[lo]), f=(target-a[lo])/span, p=prepared.path[lo],q=prepared.path[hi];
+    return { x:p.x+(q.x-p.x)*f, y:p.y+(q.y-p.y)*f };
+  }
+  function tangentAtPrepared(prepared,t) {
+    const a=pointAtPrepared(prepared,clamp(t-.008,0,1)), b=pointAtPrepared(prepared,clamp(t+.008,0,1));
+    const n=Math.max(1e-6,Math.hypot(b.x-a.x,b.y-a.y)); return { x:(b.x-a.x)/n, y:(b.y-a.y)/n };
+  }
+
+  function findToothBoundaries(map, prepared) {
+    const totalPrior=AUTO_TOOTH_WIDTHS_MM.reduce((s,v)=>s+v,0), expected=[0]; let acc=0;
+    AUTO_TOOTH_WIDTHS_MM.forEach(v=>{acc+=v;expected.push(acc/totalPrior);});
+    const boundaries=[0]; const qualities=[];
+    for (let i=1;i<12;i++) {
+      const left=(expected[i-1]+expected[i])*.5, right=(expected[i]+expected[i+1])*.5;
+      let bestT=expected[i], bestScore=-Infinity;
+      for (let s=0;s<=24;s++) {
+        const t=left+(right-left)*s/24, p=pointAtPrepared(prepared,t), tan=tangentAtPrepared(prepared,t);
+        const gx=sampleArray(map.gx,map.w,map.h,p.x,p.y), gy=sampleArray(map.gy,map.w,map.h,p.x,p.y);
+        const directional=clamp(Math.abs(gx*tan.x+gy*tan.y),0,1);
+        const darkGap=1-sampleArray(map.enamel,map.w,map.h,p.x,p.y);
+        const priorPenalty=Math.abs(t-expected[i])/Math.max(.001,right-left);
+        const score=.68*directional+.32*darkGap-.12*priorPenalty;
+        if(score>bestScore){bestScore=score;bestT=t;}
+      }
+      boundaries.push(bestT); qualities.push(clamp((bestScore+.08)/.78,0,1));
+    }
+    boundaries.push(1);
+    return { boundaries, qualities, expected };
+  }
+
+  function refineToothCenter(map, prepared, t) {
+    const base=pointAtPrepared(prepared,t), tan=tangentAtPrepared(prepared,t), normal={x:-tan.y,y:tan.x};
+    const limit=map.h*.022; let best=base,bestScore=sampleArray(map.feature,map.w,map.h,base.x,base.y);
+    for(let d=-limit;d<=limit;d+=Math.max(1,limit/8)){
+      const p={x:base.x+normal.x*d,y:base.y+normal.y*d};
+      const score=sampleArray(map.feature,map.w,map.h,p.x,p.y)-.18*Math.pow(d/Math.max(1,limit),2);
+      if(score>bestScore){best=p;bestScore=score;}
+    }
+    return { point:best,tangent:tan,score:clamp(bestScore,0,1) };
+  }
+
+  function findWidthBoundary(map, center, direction, expectedHalf) {
+    let bestDistance=expectedHalf,bestScore=-Infinity;
+    for(let k=0;k<=24;k++){
+      const ratio=.74+.46*k/24, d=expectedHalf*ratio;
+      const at={x:center.x+direction.x*d,y:center.y+direction.y*d};
+      const inside={x:center.x+direction.x*d*.78,y:center.y+direction.y*d*.78};
+      const outside={x:center.x+direction.x*d*1.12,y:center.y+direction.y*d*1.12};
+      const edge=sampleArray(map.edge,map.w,map.h,at.x,at.y);
+      const inScore=sampleArray(map.enamel,map.w,map.h,inside.x,inside.y);
+      const outScore=sampleArray(map.enamel,map.w,map.h,outside.x,outside.y);
+      const score=.43*edge+.25*Math.max(0,inScore-outScore)+.14*(1-outScore)-.30*Math.abs(ratio-1);
+      if(score>bestScore){bestScore=score;bestDistance=d;}
+    }
+    return { distance:bestDistance,quality:clamp((bestScore+.12)/.64,0,1) };
+  }
+
+  function validateAutoDraft(draft,img) {
+    const pointOk=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.y>=0&&p.x<img.width&&p.y<img.height;
+    if(!draft||draft.ezPoints.length!==12||draft.toothWidths.length!==12) throw new Error('자동 분석 결과 개수가 올바르지 않습니다.');
+    if(!draft.ezPoints.every(pointOk)||!draft.toothWidths.every(w=>pointOk(w.p1)&&pointOk(w.p2)&&Math.hypot(w.p2.x-w.p1.x,w.p2.y-w.p1.y)>2)) throw new Error('자동 분석 좌표가 이미지 범위를 벗어났습니다.');
+    for(let i=1;i<draft.ezPoints.length;i++) if(draft.ezPoints[i].x<=draft.ezPoints[i-1].x) throw new Error('EZ 좌표 진행 방향을 검증하지 못했습니다.');
+    const chord=Math.hypot(draft.ezPoints[11].x-draft.ezPoints[0].x,draft.ezPoints[11].y-draft.ezPoints[0].y);
+    if(chord<img.width*.3) throw new Error('양쪽 후방 기준점 간 거리가 너무 짧습니다.');
+    return true;
+  }
+
+  function calculateMetricsFor(ez,widths) {
+    if(!ez||ez.length<2) return null;
+    const molarMm=Number(document.getElementById('molarMm').value)||54;
+    const chord=Math.hypot(ez[ez.length-1].x-ez[0].x,ez[ez.length-1].y-ez[0].y);
+    if(chord<=0) return null;
+    const pxPerMm=chord/molarMm, ezl=curveLength(generateCurve(ez))/pxPerMm;
+    const tzl=(widths||[]).reduce((s,w)=>s+Math.hypot(w.p2.x-w.p1.x,w.p2.y-w.p1.y)/pxPerMm,0);
+    return {pxPerMm,ezl,tzl,difference:ezl-tzl};
+  }
+
+  function runAutoEngine(img) {
+    const map=buildDentalFeatureMap(img);
+    if(map.grayStd<14||map.edgeMean<.012) throw new Error('치아 경계를 식별할 영상 정보가 부족합니다. 다른 교합면 사진을 사용하세요.');
+    const template=searchArchTemplate(map), path=refineArchPath(map,template), prepared=preparePolyline(path);
+    const boundaryResult=findToothBoundaries(map,prepared), boundaries=boundaryResult.boundaries;
+    const pxPerMmAnalysis=Math.hypot(path[path.length-1].x-path[0].x,path[path.length-1].y-path[0].y)/54;
+    const widths=[], toothCenters=[], widthQualities=[], centerQualities=[];
+    for(let i=0;i<12;i++){
+      const t=(boundaries[i]+boundaries[i+1])*.5, refined=refineToothCenter(map,prepared,t), expectedHalf=AUTO_TOOTH_WIDTHS_MM[i]*pxPerMmAnalysis*.5;
+      const left=findWidthBoundary(map,refined.point,{x:-refined.tangent.x,y:-refined.tangent.y},expectedHalf);
+      const right=findWidthBoundary(map,refined.point,refined.tangent,expectedHalf);
+      const p1={x:refined.point.x-refined.tangent.x*left.distance,y:refined.point.y-refined.tangent.y*left.distance};
+      const p2={x:refined.point.x+refined.tangent.x*right.distance,y:refined.point.y+refined.tangent.y*right.distance};
+      widths.push({p1,p2}); toothCenters.push(refined.point); centerQualities.push(refined.score); widthQualities.push((left.quality+right.quality)*.5);
+    }
+    const ezAnalysis=[pointAtPrepared(prepared,0)];
+    for(let i=1;i<=10;i++) ezAnalysis.push(pointAtPrepared(prepared,boundaries[i]+.62*(boundaries[i+1]-boundaries[i])));
+    ezAnalysis.push(pointAtPrepared(prepared,1));
+    const toOriginal=p=>({x:Math.round(clamp(p.x/map.scale,0,img.width-1)),y:Math.round(clamp(p.y/map.scale,0,img.height-1))});
+    const draft={
+      toothCenters: toothCenters.map(toOriginal), ezPoints: ezAnalysis.map(toOriginal),
+      toothWidths: widths.map(w=>({p1:toOriginal(w.p1),p2:toOriginal(w.p2)}))
+    };
+    const pathEvidence=mean(path.map(p=>p.evidence)), boundaryQuality=mean(boundaryResult.qualities), widthQuality=mean(widthQualities);
+    const imageQuality=clamp(.55*clamp((map.grayStd-14)/42,0,1)+.45*clamp((map.edgeMean-.012)/.10,0,1),0,1);
+    const templateQuality=clamp((template.score-.22)/.48,0,1), marginQuality=clamp(template.margin/.08,0,1);
+    const overall=clamp(.28*templateQuality+.24*pathEvidence+.20*boundaryQuality+.16*widthQuality+.08*imageQuality+.04*marginQuality,0,1);
+    const warnings=[];
+    if(overall<.55) warnings.push('영상 또는 치아 경계 신뢰도가 낮습니다. 모든 점을 세밀하게 보정하세요.');
+    if(boundaryQuality<.45) warnings.push('치간 경계가 불명확하여 학습된 12치 폭 비율을 일부 사용했습니다.');
+    if(img.width/img.height<1.15) warnings.push('세로형 사진은 하악 치열궁 탐지 정확도가 낮을 수 있습니다.');
+    draft.analysisMeta={engineVersion:AUTO_ENGINE_VERSION,source:'rule-based-auto-draft',analyzedAt:new Date().toISOString(),confidence:{overall,imageQuality,templateQuality,pathEvidence,boundaryQuality,widthQuality,widths:widthQualities},warnings};
+    validateAutoDraft(draft,img); draft.metrics=calculateMetricsFor(draft.ezPoints,draft.toothWidths);
+    return draft;
+  }
+
+  function setAutoProgress(percent,text,kind) {
+    const wrap=document.getElementById('autoProgress'),bar=document.getElementById('autoProgressBar'),status=document.getElementById('autoStatus');
+    if(!wrap||!bar||!status)return;
+    wrap.classList.toggle('active',analysisState==='running'||analysisState==='preview'||analysisState==='error');
+    bar.style.width=clamp(percent,0,100)+'%'; status.textContent=text||''; status.className='auto-status'+(kind?' '+kind:'');
+  }
+  function confidenceLabel(score) { return score>=.75?['높음','high']:score>=.5?['검토 필요','medium']:['낮음','low']; }
+  function updateAutoPanel() {
+    const analyze=document.getElementById('autoAnalyzeBtn'),apply=document.getElementById('applyAutoBtn'),cancel=document.getElementById('cancelAutoBtn');
+    const restore=document.getElementById('restoreAutoBtn'),review=document.getElementById('reviewAutoBtn'),badge=document.getElementById('autoConfidence');
+    if(!analyze||!apply||!cancel||!restore||!review||!badge)return;
+    document.documentElement.dataset.analysisState=analysisState;
+    const running=analysisState==='running'; analyze.disabled=!image||running; analyze.textContent=running?'분석 중…':(analysisState==='preview'||analysisState==='applied'?'↻ 다시 자동 분석':'⚡ 치아 자동 분석 실행');
+    apply.disabled=analysisState!=='preview'||!autoDraft||(autoDraft.analysisMeta.confidence.overall<.35);
+    cancel.disabled=analysisState!=='preview'; restore.disabled=!preAutoSnapshot; review.disabled=analysisState!=='applied';
+    badge.className='confidence-badge';
+    const meta=autoDraft?autoDraft.analysisMeta:autoMeta;
+    if(meta&&meta.confidence){const item=confidenceLabel(meta.confidence.overall);badge.textContent=item[0]+' '+Math.round(meta.confidence.overall*100)+'%';badge.classList.add(item[1]);}
+    else badge.textContent='대기';
+    if(analysisState==='idle') setAutoProgress(0,'분석 대기');
+  }
+
+  async function runAutoAnalysis() {
+    if(!image){updateGuide('먼저 하악 교합면 이미지를 업로드하세요.');return;}
+    const runId=++analysisRunId,revision=imageRevision;
+    analysisState='running';autoDraft=null;clickMode='none';originMode=false;widthTemp=null;updateModeIndicator();updateAutoPanel();setAutoProgress(12,'이미지 특징을 분석하고 있습니다…');render();
+    await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,20)));
+    try{
+      setAutoProgress(45,'하악 U자 치열궁을 찾고 있습니다…');
+      const result=runAutoEngine(image);
+      if(runId!==analysisRunId||revision!==imageRevision)return;
+      autoDraft=result;analysisState='preview';
+      const m=result.metrics,c=result.analysisMeta.confidence.overall,warnings=result.analysisMeta.warnings;
+      setAutoProgress(100,'미리보기 완료 · EZL '+m.ezl.toFixed(1)+' / TZL '+m.tzl.toFixed(1)+' / 차이 '+(m.difference>=0?'+':'')+m.difference.toFixed(1)+' mm'+(warnings.length?' · '+warnings[0]:''),c<.5?'warning':'success');
+      updateGuide('자동 초안이 청록색 점선으로 표시되었습니다. 확인 후 “초안 적용”을 누르세요.');render();
+    }catch(err){
+      if(runId!==analysisRunId)return;
+      console.warn('자동 분석 실패:',err);analysisState='error';autoDraft=null;setAutoProgress(100,'자동 분석 중단: '+err.message,'warning');updateGuide('자동 분석을 적용하지 않았습니다. 수동 모드로 입력하거나 다른 하악 교합면 사진을 사용하세요.');render();
+    }finally{updateAutoPanel();}
+  }
+
+  function applyAutoDraft() {
+    if(analysisState!=='preview'||!autoDraft)return;
+    preAutoSnapshot=snapshotMeasurements();toothCenters=cloneData(autoDraft.toothCenters);ezPoints=cloneData(autoDraft.ezPoints);toothWidths=cloneData(autoDraft.toothWidths);customOrigin=null;
+    autoMeta=cloneData(autoDraft.analysisMeta);autoDraft=null;analysisState='applied';clickMode='none';widthTemp=null;originMode=false;
+    saveToLocalStorage();calculateEZL();updateCoordBar();updateModeIndicator();render();updateAutoPanel();
+    updateGuide('자동 분석을 적용했습니다. 점 또는 폭선 끝점을 드래그해 의료진이 수동 보정하세요.');
+  }
+  function cancelAutoDraft(){if(analysisState!=='preview')return;autoDraft=null;analysisState=autoMeta?'applied':'idle';render();updateAutoPanel();updateGuide('자동 초안을 취소했습니다. 기존 측정값은 유지됩니다.');}
+  function restoreBeforeAuto(){if(!preAutoSnapshot)return;const s=preAutoSnapshot;toothCenters=cloneData(s.toothCenters)||[];ezPoints=cloneData(s.ezPoints)||[];toothWidths=cloneData(s.toothWidths)||[];customOrigin=cloneData(s.customOrigin);autoMeta=cloneData(s.analysisMeta);preAutoSnapshot=null;analysisState=autoMeta?'applied':'idle';saveToLocalStorage();calculateEZL();updateCoordBar();updateModeIndicator();render();updateAutoPanel();updateGuide('자동 분석 적용 전 측정 상태를 복원했습니다.');}
+
+  document.getElementById('autoAnalyzeBtn').addEventListener('click',runAutoAnalysis);
+  document.getElementById('applyAutoBtn').addEventListener('click',applyAutoDraft);
+  document.getElementById('cancelAutoBtn').addEventListener('click',cancelAutoDraft);
+  document.getElementById('restoreAutoBtn').addEventListener('click',restoreBeforeAuto);
+  document.getElementById('reviewAutoBtn').addEventListener('click',()=>{clickMode='none';widthTemp=null;updateModeIndicator();updateGuide('수동 보정 모드: 노란 EZ점 또는 녹색 폭선 끝점을 드래그해 확인·보정하세요.');});
+
+  function calculateEZL() {
+    document.getElementById('toothCount').textContent = toothCenters.length;
+    document.getElementById('ezCount').textContent = ezPoints.length;
+    document.getElementById('widthCount').textContent = toothWidths.length;
+
+    if (ezPoints.length < 2) {
+      document.getElementById('ezlValue').textContent = '-';
+      document.getElementById('scaleValue').textContent = '-';
+      updateWidthTotal(0);
+      updateDifference();
+      return;
+    }
+    const curve = generateCurve(ezPoints);
+    const lenPx = curveLength(curve);
+
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    const first = ezPoints[0], last = ezPoints[ezPoints.length - 1];
+    const molarPx = Math.hypot(last.x - first.x, last.y - first.y);
+    const pxPerMm = molarPx > 0 ? molarPx / molarMm : 1;
+    const lenMm = lenPx / pxPerMm;
+
+    document.getElementById('ezlValue').textContent = lenMm.toFixed(1) + ' mm';
+    document.getElementById('scaleValue').textContent = pxPerMm.toFixed(2);
+    updateWidthTotal(pxPerMm);
+    updateDifference();
+  }
+
+  function updateWidthTotal(pxPerMm) {
+    if (toothWidths.length === 0 || pxPerMm <= 0) {
+      document.getElementById('widthTotalValue').textContent = '-';
+      updateDifference();
+      return;
+    }
+    let totalMm = 0;
+    toothWidths.forEach(w => {
+      totalMm += Math.hypot(w.p2.x - w.p1.x, w.p2.y - w.p1.y) / pxPerMm;
+    });
+    document.getElementById('widthTotalValue').textContent = totalMm.toFixed(1) + ' mm';
+  }
+
+  function updateDifference() {
+    const ezl=parseFloat(document.getElementById('ezlValue').textContent),tzl=parseFloat(document.getElementById('widthTotalValue').textContent);
+    const el=document.getElementById('differenceValue');
+    if(!Number.isFinite(ezl)||!Number.isFinite(tzl)){el.textContent='-';return;}
+    const diff=ezl-tzl;el.textContent=(diff>=0?'+':'')+diff.toFixed(1)+' mm';el.style.color=diff<0?'#f87171':diff>0?'#22c55e':'#3b82f6';
+  }
+
+  // =========================================================
+  // 렌더링
+  // =========================================================
+  function renderAutoDraft() {
+    if (!autoDraft || analysisState !== 'preview') return;
+    ctx.save();
+    ctx.setLineDash([7,5]);
+    if (layers.ezCurve && autoDraft.ezPoints.length >= 2) {
+      const curve=generateCurve(autoDraft.ezPoints),first=imageToScreen(curve[0]);
+      ctx.beginPath();ctx.moveTo(first.x,first.y);
+      for(let i=1;i<curve.length;i++){const p=imageToScreen(curve[i]);ctx.lineTo(p.x,p.y);}
+      ctx.strokeStyle='rgba(34,211,238,.95)';ctx.lineWidth=4;ctx.stroke();
+      autoDraft.ezPoints.forEach((p,i)=>{const s=imageToScreen(p);ctx.beginPath();ctx.arc(s.x,s.y,9,0,Math.PI*2);ctx.fillStyle='rgba(8,145,178,.82)';ctx.fill();ctx.strokeStyle='#cffafe';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),s.x,s.y);});
+    }
+    if (layers.toothWidth) autoDraft.toothWidths.forEach((w,i)=>{const a=imageToScreen(w.p1),b=imageToScreen(w.p2);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(244,114,182,.95)';ctx.lineWidth=3;ctx.stroke();[a,b].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fillStyle='#f472b6';ctx.fill();});const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;ctx.fillStyle='#fce7f3';ctx.font='bold 9px sans-serif';ctx.fillText(String(i+1),mx,my-7);});
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!image) return;
+
+    ctx.save();
+    ctx.translate(offset.x, offset.y);
+    ctx.scale(displayScale, displayScale);
+    ctx.drawImage(image, 0, 0);
+    ctx.restore();
+
+    // 격자
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    let screenPxPerMm = 0;
+    let originScreen = null;
+
+    const originPt = customOrigin || ezPoints[0] || toothCenters[0];
+    if (originPt) {
+      originScreen = imageToScreen(originPt);
+      if (ezPoints.length >= 2) {
+        const sp0 = imageToScreen(ezPoints[0]);
+        const sp1 = imageToScreen(ezPoints[ezPoints.length - 1]);
+        screenPxPerMm = Math.hypot(sp1.x - sp0.x, sp1.y - sp0.y) / molarMm;
+      } else if (toothCenters.length >= 2) {
+        const sp0 = imageToScreen(toothCenters[0]);
+        const sp1 = imageToScreen(toothCenters[toothCenters.length - 1]);
+        screenPxPerMm = Math.hypot(sp1.x - sp0.x, sp1.y - sp0.y) / molarMm;
+      }
+    }
+    if (!screenPxPerMm) screenPxPerMm = (image.width * displayScale) / 90;
+    if (!originScreen) originScreen = { x: offset.x, y: offset.y };
+
+    const gridPx = screenPxPerMm * 10;
+    const imgLeft = offset.x;
+    const imgTop = offset.y;
+    const imgRight = offset.x + image.width * displayScale;
+    const imgBottom = offset.y + image.height * displayScale;
+
+    if (layers.grid && gridPx > 8) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 0.5;
+      for (let gx = originScreen.x; gx <= imgRight; gx += gridPx) { ctx.beginPath(); ctx.moveTo(gx, imgTop); ctx.lineTo(gx, imgBottom); ctx.stroke(); }
+      for (let gx = originScreen.x - gridPx; gx >= imgLeft; gx -= gridPx) { ctx.beginPath(); ctx.moveTo(gx, imgTop); ctx.lineTo(gx, imgBottom); ctx.stroke(); }
+      for (let gy = originScreen.y; gy <= imgBottom; gy += gridPx) { ctx.beginPath(); ctx.moveTo(imgLeft, gy); ctx.lineTo(imgRight, gy); ctx.stroke(); }
+      for (let gy = originScreen.y - gridPx; gy >= imgTop; gy -= gridPx) { ctx.beginPath(); ctx.moveTo(imgLeft, gy); ctx.lineTo(imgRight, gy); ctx.stroke(); }
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(imgLeft, originScreen.y); ctx.lineTo(imgRight, originScreen.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originScreen.x, imgTop); ctx.lineTo(originScreen.x, imgBottom); ctx.stroke();
+      ctx.beginPath(); ctx.arc(originScreen.x, originScreen.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      let mm = 0;
+      for (let gx = originScreen.x; gx <= imgRight; gx += gridPx) { if (mm > 0) ctx.fillText(mm + '', gx, originScreen.y + 4); mm += 10; }
+      mm = -10;
+      for (let gx = originScreen.x - gridPx; gx >= imgLeft; gx -= gridPx) { ctx.fillText(mm + '', gx, originScreen.y + 4); mm -= 10; }
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      mm = 0;
+      for (let gy = originScreen.y; gy <= imgBottom; gy += gridPx) { if (mm > 0) ctx.fillText(mm + '', originScreen.x - 5, gy); mm += 10; }
+      mm = -10;
+      for (let gy = originScreen.y - gridPx; gy >= imgTop; gy -= gridPx) { ctx.fillText(mm + '', originScreen.x - 5, gy); mm -= 10; }
+      ctx.restore();
+    }
+
+    // 자동 분석 미리보기 (기존 측정값을 덮어쓰기 전)
+    renderAutoDraft();
+
+    // EZ 곡선 (ezPoints로 스플라인)
+    if (layers.ezCurve && ezPoints.length >= 2) {
+      const curve = generateCurve(ezPoints);
+      if (curve.length > 1) {
+        ctx.beginPath();
+        const s0 = imageToScreen(curve[0]);
+        ctx.moveTo(s0.x, s0.y);
+        for (let i = 1; i < curve.length; i++) {
+          const si = imageToScreen(curve[i]);
+          ctx.lineTo(si.x, si.y);
+        }
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+      }
+    }
+
+    // EZ 포인트 번호 (노란 원 + 번호)
+    if (layers.ezCurve) ezPoints.forEach((p, idx) => {
+      const sp = imageToScreen(p);
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, 11, 0, Math.PI * 2);
+      ctx.fillStyle = '#b45309';
+      ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = '#facc15'; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(idx + 1), sp.x, sp.y);
+    });
+
+    // 치아 번호 (파란 원 + 번호)
+    if (layers.toothNum) toothCenters.forEach((tc, idx) => {
+      const sp = imageToScreen(tc);
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, 11, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(37,99,235,0.9)';
+      ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = '#93c5fd'; ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(idx + 1), sp.x, sp.y);
+    });
+
+    // 치아 좌우폭 (녹색 선 + 양쪽 점 + 번호)
+    if (layers.toothWidth) toothWidths.forEach((w, idx) => {
+      const sp1 = imageToScreen(w.p1);
+      const sp2 = imageToScreen(w.p2);
+      ctx.beginPath(); ctx.moveTo(sp1.x, sp1.y); ctx.lineTo(sp2.x, sp2.y);
+      ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.stroke();
+      // 양쪽 점
+      [sp1, sp2].forEach(sp => {
+        ctx.beginPath(); ctx.arc(sp.x, sp.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#10b981'; ctx.fill();
+        ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff'; ctx.stroke();
+      });
+      // 중앙에 번호
+      const mid = { x: (sp1.x + sp2.x) / 2, y: (sp1.y + sp2.y) / 2 };
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(mid.x - 8, mid.y - 16, 16, 12);
+      ctx.fillStyle = '#6ee7b7'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(idx + 1), mid.x, mid.y - 10);
+    });
+
+    // 범례 (70% 축소)
+    if (layers.legend) {
+      const lx = 10, ly = 10;
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.scale(0.7, 0.7);
+
+      ctx.fillStyle = 'rgba(15,23,42,0.88)';
+      ctx.fillRect(0, 0, 220, 118);
+      ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, 220, 118);
+
+      ctx.beginPath(); ctx.arc(20, 16, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(37,99,235,0.9)'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = '#93c5fd'; ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.font = '12px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('치아 좌표 (' + toothCenters.length + '개)', 35, 20);
+
+      ctx.beginPath(); ctx.arc(20, 36, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#b45309'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = '#facc15'; ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.textAlign = 'left';
+      ctx.fillText('EZ 좌표 (' + ezPoints.length + '개)', 35, 40);
+
+      ctx.beginPath(); ctx.moveTo(12, 56); ctx.lineTo(28, 56);
+      ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.font = '12px sans-serif';
+      ctx.fillText('치아 폭 (' + toothWidths.length + '개)', 35, 60);
+
+      ctx.beginPath(); ctx.moveTo(12, 76); ctx.lineTo(28, 76);
+      ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.font = '12px sans-serif';
+      ctx.fillText('EZ 곡선', 35, 80);
+
+      if (ezPoints.length >= 2) {
+        const ezlText = document.getElementById('ezlValue').textContent;
+        ctx.fillStyle = '#facc15'; ctx.font = 'bold 11px sans-serif';
+        ctx.fillText('EZL: ' + ezlText, 110, 80);
+      }
+
+      // 치아 폭 총합 (TZL)
+      const tzText = document.getElementById('widthTotalValue').textContent;
+      ctx.fillStyle = '#10b981'; ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('TZL: ' + tzText, 12, 100);
+      if (ezPoints.length >= 2 && toothWidths.length > 0) {
+        const ezlVal = parseFloat(document.getElementById('ezlValue').textContent);
+        const tzVal = parseFloat(tzText);
+        if (!isNaN(ezlVal) && !isNaN(tzVal) && tzVal > 0) {
+          ctx.fillStyle = '#94a3b8'; ctx.font = '11px sans-serif';
+          ctx.fillText('EZL-TZL: ' + (ezlVal - tzVal).toFixed(1) + ' mm', 80, 100);
+        }
+      }
+
+      ctx.restore();
+    }
+  }
+
+  // =========================================================
+  // 모드 전환
+  // =========================================================
+  document.getElementById('toothModeBtn').onclick = () => {
+    if (!image) { updateGuide('먼저 이미지를 업로드하세요.'); return; }
+    clickMode = 'tooth';
+    widthTemp = null;
+    canvas.style.cursor = 'crosshair';
+    updateModeIndicator();
+    const next = toothCenters.length + 1;
+    updateGuide('치아 좌표 모드: ' + next + '번 치아 위치를 클릭하세요. (현재 ' + toothCenters.length + '개)');
+  };
+
+  document.getElementById('ezModeBtn').onclick = () => {
+    if (!image) { updateGuide('먼저 이미지를 업로드하세요.'); return; }
+    clickMode = 'ez';
+    widthTemp = null;
+    canvas.style.cursor = 'crosshair';
+    updateModeIndicator();
+    const next = ezPoints.length + 1;
+    updateGuide('EZ 좌표 모드: ' + next + '번 EZ 위치를 클릭하세요. (현재 ' + ezPoints.length + '개)');
+  };
+
+  document.getElementById('widthModeBtn').onclick = () => {
+    if (!image) { updateGuide('먼저 이미지를 업로드하세요.'); return; }
+    clickMode = 'width';
+    widthTemp = null;
+    canvas.style.cursor = 'crosshair';
+    updateModeIndicator();
+    const next = toothWidths.length + 1;
+    updateGuide('치아 폭 모드: ' + next + '번 치아의 좌측 점을 클릭하세요. (현재 ' + toothWidths.length + '개)');
+  };
+
+  function updateModeIndicator() {
+    const el = document.getElementById('modeIndicator');
+    el.classList.remove('tooth-mode', 'ez-mode', 'width-mode', 'idle-mode');
+    document.getElementById('toothModeBtn').classList.remove('active-mode');
+    document.getElementById('ezModeBtn').classList.remove('active-mode');
+    document.getElementById('widthModeBtn').classList.remove('active-mode');
+    if (clickMode === 'tooth') {
+      el.classList.add('tooth-mode');
+      el.textContent = '치아 좌표 찍기 모드 — ' + toothCenters.length + '/14';
+      document.getElementById('toothModeBtn').classList.add('active-mode');
+    } else if (clickMode === 'ez') {
+      el.classList.add('ez-mode');
+      el.textContent = 'EZ 좌표 찍기 모드 — ' + ezPoints.length + '/14';
+      document.getElementById('ezModeBtn').classList.add('active-mode');
+    } else if (clickMode === 'width') {
+      el.classList.add('width-mode');
+      el.textContent = '치아 좌우폭 찍기 모드 — ' + toothWidths.length + '/14' + (widthTemp ? ' (2점째 대기)' : '');
+      document.getElementById('widthModeBtn').classList.add('active-mode');
+    } else if (analysisState === 'applied') {
+      el.classList.add('idle-mode');
+      el.textContent = '자동 분석 적용됨 — 치아 ' + toothCenters.length + ' / EZ ' + ezPoints.length + ' / 폭 ' + toothWidths.length + ' · 드래그 보정';
+    } else {
+      el.classList.add('idle-mode');
+      el.textContent = image ? '모드를 선택하세요' : '대기 중 — 이미지를 먼저 업로드하세요';
+    }
+  }
+
+  // =========================================================
+  // 레이어 토글
+  // =========================================================
+  document.querySelectorAll('.layer-btn[data-layer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const layer = btn.dataset.layer;
+      layers[layer] = !layers[layer];
+      btn.classList.toggle('active', layers[layer]);
+      render();
+    });
+  });
+
+  // =========================================================
+  // 버튼
+  // =========================================================
+  document.getElementById('moveOriginBtn').onclick = () => {
+    if (!image) { updateGuide('먼저 이미지를 업로드하세요.'); return; }
+    originMode = true;
+    canvas.style.cursor = 'crosshair';
+    updateGuide('원점으로 설정할 위치를 클릭하세요.');
+  };
+
+  document.getElementById('undoToothBtn').onclick = () => {
+    if (toothCenters.length > 0) {
+      toothCenters.pop();
+      markManualAdjustment();
+      saveToLocalStorage(); render(); calculateEZL(); updateCoordBar(); updateModeIndicator();
+      updateGuide('치아 좌표 마지막 삭제. 현재 ' + toothCenters.length + '개.');
+    }
+  };
+
+  document.getElementById('undoEzBtn').onclick = () => {
+    if (ezPoints.length > 0) {
+      ezPoints.pop();
+      markManualAdjustment();
+      saveToLocalStorage(); render(); calculateEZL(); updateCoordBar(); updateModeIndicator();
+      updateGuide('EZ 좌표 마지막 삭제. 현재 ' + ezPoints.length + '개.');
+    }
+  };
+
+  document.getElementById('undoWidthBtn').onclick = () => {
+    if (widthTemp) {
+      widthTemp = null;
+      render(); updateModeIndicator();
+      updateGuide('폭 첫 점 취소됨. 다시 좌측 점을 클릭하세요.');
+    } else if (toothWidths.length > 0) {
+      toothWidths.pop();
+      markManualAdjustment();
+      saveToLocalStorage(); render(); calculateEZL(); updateCoordBar(); updateModeIndicator();
+      updateGuide('치아 폭 마지막 삭제. 현재 ' + toothWidths.length + '개.');
+    }
+  };
+
+  document.getElementById('clearBtn').onclick = () => {
+    resetMeasurementState();
+    updateModeIndicator(); updateCoordBar();
+    updateGuide('전체 초기화됨. 모드를 선택하고 다시 시작하세요.');
+    render(); calculateEZL(); updateAutoPanel();
+  };
+
+  document.getElementById('saveScaleBtn').onclick = () => {
+    const val = document.getElementById('molarMm').value;
+    localStorage.setItem('ez_curve_molarMm', val);
+    calculateEZL(); render(); updateCoordBar();
+    updateGuide('스케일 저장됨: ' + val + 'mm.');
+  };
+
+  document.getElementById('molarMm').addEventListener('input', () => {
+    if (ezPoints.length >= 2 || toothCenters.length >= 2) { calculateEZL(); render(); updateCoordBar(); }
+  });
+
+  const savedMolarMm = localStorage.getItem('ez_curve_molarMm');
+  if (savedMolarMm) document.getElementById('molarMm').value = savedMolarMm;
+
+
+  function fallbackDownload(blob, fileName) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    updateGuide('저장 완료: ' + fileName + ' (다운로드 폴더)');
+  }
+
+  // 위치 저장 (파일 다운로드)
+  document.getElementById('saveLearnBtn').onclick = async () => {
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    const origin = customOrigin || ezPoints[0] || toothCenters[0] || null;
+    const data = {
+      schemaVersion: 2,
+      origin: origin,
+      customOrigin: customOrigin,
+      toothCenters: toothCenters,
+      ezPoints: ezPoints,
+      toothWidths: toothWidths,
+      imageName: imageName || 'oral-photo',
+      imageData: imageData || '',
+      molarMm: molarMm,
+      savedAt: new Date().toISOString(),
+      analysisMeta: autoMeta
+    };
+
+    const baseName = (imageName || 'oral-photo').replace(/\.[^.]+$/, '').replace(/\D/g, '') || 'data';
+    const caseFileName = baseName + '.md';
+
+    let md = '# EZ-Curve Location Data\n\n';
+    md += '저장 시간: ' + data.savedAt + '\n\n';
+    md += '## 이미지\n- 파일명: ' + (data.imageName || '-') + '\n\n';
+    md += '## 스케일\n- 양쪽 어금니 간 거리: ' + molarMm + ' mm\n\n';
+    md += '## 원점 (= 1번 치아)\n- x: ' + (origin ? Math.round(origin.x) : '-') + ' px\n- y: ' + (origin ? Math.round(origin.y) : '-') + ' px\n\n';
+
+    let pxPerMm = 1;
+    if (ezPoints.length >= 2) pxPerMm = Math.hypot(ezPoints[ezPoints.length-1].x - ezPoints[0].x, ezPoints[ezPoints.length-1].y - ezPoints[0].y) / molarMm;
+    else if (toothCenters.length >= 2) pxPerMm = Math.hypot(toothCenters[toothCenters.length-1].x - toothCenters[0].x, toothCenters[toothCenters.length-1].y - toothCenters[0].y) / molarMm;
+
+    md += '## 치아 좌표 (' + toothCenters.length + '개)\n\n';
+    md += '| 번호 | X (px) | Y (px) | X (mm) | Y (mm) |\n';
+    md += '|------|--------|--------|--------|--------|\n';
+    toothCenters.forEach((tc, i) => {
+      const mmX = origin ? ((tc.x - origin.x) / pxPerMm).toFixed(1) : '-';
+      const mmY = origin ? ((tc.y - origin.y) / pxPerMm).toFixed(1) : '-';
+      md += '| ' + (i+1) + ' | ' + Math.round(tc.x) + ' | ' + Math.round(tc.y) + ' | ' + mmX + ' | ' + mmY + ' |\n';
+    });
+
+    md += '\n## EZ 곡선 포인트 (' + ezPoints.length + '개)\n\n';
+    md += '| 번호 | X (px) | Y (px) | X (mm) | Y (mm) |\n';
+    md += '|------|--------|--------|--------|--------|\n';
+    ezPoints.forEach((ep, i) => {
+      const mmX = origin ? ((ep.x - origin.x) / pxPerMm).toFixed(1) : '-';
+      const mmY = origin ? ((ep.y - origin.y) / pxPerMm).toFixed(1) : '-';
+      md += '| ' + (i+1) + ' | ' + Math.round(ep.x) + ' | ' + Math.round(ep.y) + ' | ' + mmX + ' | ' + mmY + ' |\n';
+    });
+
+    md += '\n## 치아 좌우폭 (' + toothWidths.length + '개)\n\n';
+    md += '| 번호 | 폭 (mm) |\n';
+    md += '|------|--------|\n';
+    toothWidths.forEach((w, i) => {
+      const distPx = Math.hypot(w.p2.x - w.p1.x, w.p2.y - w.p1.y);
+      const distMm = (distPx / pxPerMm).toFixed(1);
+      md += '| ' + (i+1) + ' | ' + distMm + ' |\n';
+    });
+
+    md += '\n## EZL\n- ' + (document.getElementById('ezlValue').textContent || '-') + '\n';
+    md += '\n## TZL\n- ' + (document.getElementById('widthTotalValue').textContent || '-') + '\n';
+    md += '\n## EZL-TZL\n- ' + (document.getElementById('differenceValue').textContent || '-') + '\n';
+    if (autoMeta) md += '\n## 자동 분석\n- 엔진: ' + autoMeta.engineVersion + '\n- 신뢰도: ' + Math.round((autoMeta.confidence?.overall || 0) * 100) + '%\n- 의료진 확인 필요\n';
+    md += '\n## JSON (프로그램용)\n```json\n' + JSON.stringify(data, null, 2) + '\n```\n';
+
+    const blob = new Blob([md], { type: 'text/markdown' });
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          id: 'ez-curve-folder',
+          suggestedName: caseFileName,
+          types: [{ description: 'Markdown', accept: { 'text/markdown': ['.md'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        updateGuide('저장 완료: ' + caseFileName);
+      } catch (err) {
+        if (err.name !== 'AbortError') console.warn(err);
+      }
+    } else {
+      fallbackDownload(blob, caseFileName);
+    }
+  };
+
+  // md 저장 파일 불러오기 (저장과 같은 폴더 id 사용)
+  document.getElementById('loadFileBtn').onclick = async () => {
+    if (window.showOpenFilePicker) {
+      try {
+        const [fileHandle] = await window.showOpenFilePicker({
+          id: 'ez-curve-folder',
+          types: [{ description: 'MD/JSON 파일', accept: { 'text/plain': ['.md', '.json'] } }],
+          multiple: false
+        });
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        loadFromText(text, file.name);
+      } catch (err) { if (err.name !== 'AbortError') console.warn(err); }
+    } else {
+      document.getElementById('loadFileInput').click();
+    }
+  };
+  document.getElementById('loadFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => loadFromText(ev.target.result, file.name);
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+  function loadFromText(text, fileName) {
+    const jsonMatch = text.match(/```json\s*([\s\S]*?)```/);
+    if (!jsonMatch) { alert('파일에서 JSON 데이터를 찾을 수 없습니다.'); return; }
+    try {
+      const data = JSON.parse(jsonMatch[1]);
+      clearAutoSession(true);
+      toothCenters = Array.isArray(data.toothCenters) ? data.toothCenters : [];
+      ezPoints = Array.isArray(data.ezPoints) ? data.ezPoints : [];
+      toothWidths = Array.isArray(data.toothWidths) ? data.toothWidths : [];
+      customOrigin = data.customOrigin || data.origin || null;
+      autoMeta = data.analysisMeta || data.analysis || null;
+      analysisState = autoMeta ? 'applied' : 'idle';
+      if (data.molarMm) { document.getElementById('molarMm').value = data.molarMm; localStorage.setItem('ez_curve_molarMm', data.molarMm); }
+      if (data.imageData) {
+        imageRevision += 1;
+        imageData = data.imageData;
+        imageName = data.imageName || 'oral-photo';
+        try {
+          localStorage.setItem('ez_curve_image', imageData);
+          localStorage.setItem('ez_curve_imageName', imageName);
+        } catch (err) { console.warn('이미지 저장 실패:', err); }
+        loadImageFromDataUrl(imageData);
+      }
+      saveToLocalStorage();
+      render(); calculateEZL(); updateCoordBar(); updateModeIndicator(); updateAutoPanel();
+      updateGuide('파일 로드 완료 — 치아 ' + toothCenters.length + '개, EZ ' + ezPoints.length + '개.');
+    } catch (err) { alert('파일 파싱 오류: ' + err.message); }
+  }
+
+  // =========================================================
+  // UI 업데이트
+  // =========================================================
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem('ez_curve_toothCenters', JSON.stringify(toothCenters));
+      localStorage.setItem('ez_curve_ezPoints', JSON.stringify(ezPoints));
+      localStorage.setItem('ez_curve_toothWidths', JSON.stringify(toothWidths));
+      if (autoMeta) localStorage.setItem('ez_curve_analysisMeta_v1', JSON.stringify(autoMeta));
+      else localStorage.removeItem('ez_curve_analysisMeta_v1');
+    } catch (e) { console.warn('저장 실패:', e); }
+  }
+
+  function renderWidthTemp() {
+    if (!widthTemp) return;
+    const sp = imageToScreen(widthTemp);
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#10b981'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+  }
+
+  function updateCoordBar() {
+    const grid = document.getElementById('coordGrid');
+    const origin = customOrigin || ezPoints[0] || toothCenters[0];
+    if (!origin) {
+      grid.innerHTML = '<span style="color:#cbd5e1; font-size:11px;">치아 좌표를 찍으면 표시됩니다</span>';
+      document.getElementById('ezCoordGrid').innerHTML = '<span style="color:#cbd5e1; font-size:11px;">EZ 좌표를 찍으면 표시됩니다</span>';
+      return;
+    }
+    const molarMm = Number(document.getElementById('molarMm').value) || 54;
+    let pxPerMm = 1;
+    if (ezPoints.length >= 2) {
+      pxPerMm = Math.hypot(ezPoints[ezPoints.length-1].x - ezPoints[0].x, ezPoints[ezPoints.length-1].y - ezPoints[0].y) / molarMm;
+    } else if (toothCenters.length >= 2) {
+      pxPerMm = Math.hypot(toothCenters[toothCenters.length-1].x - toothCenters[0].x, toothCenters[toothCenters.length-1].y - toothCenters[0].y) / molarMm;
+    }
+    if (pxPerMm < 0.01) pxPerMm = 1;
+
+    if (toothCenters.length) {
+      grid.innerHTML = toothCenters.map((tc, i) => {
+        const mmX = ((tc.x - origin.x) / pxPerMm).toFixed(1);
+        const mmY = ((tc.y - origin.y) / pxPerMm).toFixed(1);
+        return '<div class="coord-item"><span class="num">' + (i+1) + '</span><span class="xy">(' + mmX + ', ' + mmY + ')</span></div>';
+      }).join('');
+    } else {
+      grid.innerHTML = '<span style="color:#cbd5e1; font-size:11px;">치아 좌표를 찍으면 표시됩니다</span>';
+    }
+
+    const ezGrid = document.getElementById('ezCoordGrid');
+    if (ezPoints.length) {
+      ezGrid.innerHTML = ezPoints.map((ep, i) => {
+        const mmX = ((ep.x - origin.x) / pxPerMm).toFixed(1);
+        const mmY = ((ep.y - origin.y) / pxPerMm).toFixed(1);
+        return '<div class="coord-item" style="border-color:#facc15;"><span class="num" style="color:#facc15;">' + (i+1) + '</span><span class="xy">(' + mmX + ', ' + mmY + ')</span></div>';
+      }).join('');
+    } else {
+      ezGrid.innerHTML = '<span style="color:#cbd5e1; font-size:11px;">EZ 좌표를 찍으면 표시됩니다</span>';
+    }
+
+    const widthGrid = document.getElementById('widthCoordGrid');
+    if (toothWidths.length) {
+      widthGrid.innerHTML = toothWidths.map((w, i) => {
+        const distPx = Math.hypot(w.p2.x - w.p1.x, w.p2.y - w.p1.y);
+        const distMm = (distPx / pxPerMm).toFixed(1);
+        return '<div class="coord-item" style="border-color:#10b981;"><span class="num" style="color:#10b981;">' + (i+1) + '</span><span class="xy">' + distMm + ' mm</span></div>';
+      }).join('');
+    } else {
+      widthGrid.innerHTML = '<span style="color:#cbd5e1; font-size:11px;">치아 폭을 찍으면 표시됩니다</span>';
+    }
+  }
+
+  function updateGuide(text) { document.getElementById('guideText').textContent = text; }
+
+  function runSelfTest() {
+    const ez=[{x:0,y:0},{x:108,y:0}], widths=Array.from({length:12},(_,i)=>({p1:{x:i*10,y:0},p2:{x:i*10+10,y:0}}));
+    const before=document.getElementById('molarMm').value;document.getElementById('molarMm').value='54';
+    const m=calculateMetricsFor(ez,widths);document.getElementById('molarMm').value=before;
+    const tests={scale:Math.abs(m.pxPerMm-2)<1e-9,ezl:Math.abs(m.ezl-54)<1e-9,tzl:Math.abs(m.tzl-60)<1e-9,difference:Math.abs(m.difference+6)<1e-9};
+    return {passed:Object.values(tests).every(Boolean),tests,metrics:m};
+  }
+
+  document.documentElement.dataset.ezEngineReady='true';
+  document.documentElement.dataset.ezSelfTest=runSelfTest().passed?'passed':'failed';
+})();
+</script>
+</body>
+</html>

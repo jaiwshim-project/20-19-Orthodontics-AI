@@ -1,0 +1,32 @@
+# 대용량 정답 데이터 (수 GB) — 원본 보존, 커밋 제외
+02 이퀼리브리엄 찍기/
+02 치아 좌우폭 찍기/
+01 치아 좌우폭 찍기 (유라쌤)/
+TS/
+02 사진 모음/
+*.jpg
+*.jpeg
+*.png
+
+# 대용량/중간 산출물
+03 AI 재학습/residual-gate-tuning.json
+03 AI 재학습/residual-gate-fine-tuning.json
+03 AI 재학습/residual-blend-tuning.json
+03 AI 재학습/*.bak
+03 AI 재학습/x.csv
+03 AI 재학습/y.csv
+
+# 대용량 비교 페이지(이미지 임베드) — 재생성 가능
+tzl_gt_ezl_compare.html
+big_gap_compare.html
+ezl_inflate_compare.html
+ezl_gt_tzl_compare.html
+
+# Python 캐시
+03 AI 재학습/__pycache__/
+
+# 대용량 예측/중간 CSV (스크립트로 재생성 가능)
+03 AI 재학습/*.csv
+
+# 이미지 임베드된 무거운 케이스 md (수 MB~수십 MB)
+EZ-Case-*.md

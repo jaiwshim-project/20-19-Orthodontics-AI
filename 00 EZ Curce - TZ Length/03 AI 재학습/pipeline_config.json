@@ -1,0 +1,36 @@
+{
+  "schema_version": "ez-training-config-v1",
+  "project_root": "C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length",
+  "production_html": "EZ Curve - TZ Length.html",
+  "seed": 20260711,
+  "folds": 5,
+  "rounds": {
+    "maximum": 5,
+    "current": 1
+  },
+  "labels": {
+    "tooth_count": 12,
+    "ez_resample_points": 12,
+    "width_training_policy": "complete_12_only",
+    "ez_training_policy": "deduplicate_by_embedded_image_sha256"
+  },
+  "privacy": {
+    "exclude_image_name": true,
+    "exclude_patient_name": true,
+    "reports_use_case_id_only": true
+  },
+  "validation": {
+    "split_unit": "patient_group_if_available_else_image_sha256",
+    "promotion_requires_human_approval": true,
+    "minimum_coordinate_mae_relative_improvement": 0.10,
+    "minimum_improved_fold_count": 4,
+    "maximum_p95_relative_regression": 0.00,
+    "maximum_correction_fraction_of_image_diagonal": 0.05,
+    "unfamiliar_case_policy": "fall_back_to_rule_engine"
+  },
+  "deployment": {
+    "default_mode": "shadow",
+    "production_promotion": "only_after_all_validation_gates_pass",
+    "rollback": "restore_pre_training_html_backup"
+  }
+}

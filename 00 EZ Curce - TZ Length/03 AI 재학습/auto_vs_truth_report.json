@@ -1,0 +1,805 @@
+{
+  "summary": {
+    "처리건수": 114,
+    "EZ평균이탈_대각선퍼센트": 1.83,
+    "치아폭끝점평균이탈_대각선퍼센트": 4.01
+  },
+  "cases": [
+    {
+      "id": "3207",
+      "ezErrorPx": 80.87354924778728,
+      "ezErrorPct": 1.2636779300807497,
+      "widthEndpointPx": 150.28227551073547,
+      "widthEndpointPct": 2.3482139291719917
+    },
+    {
+      "id": "3235",
+      "ezErrorPx": 77.90652359601542,
+      "ezErrorPct": 1.1891787941991812,
+      "widthEndpointPx": 302.4992053223138,
+      "widthEndpointPct": 4.6174007467815965
+    },
+    {
+      "id": "3247",
+      "ezErrorPx": 104.89655359390855,
+      "ezErrorPct": 1.5537974612563676,
+      "widthEndpointPx": 147.15524730105187,
+      "widthEndpointPct": 2.1797613156301567
+    },
+    {
+      "id": "3254",
+      "ezErrorPx": 138.17500596832403,
+      "ezErrorPct": 2.142874870657363,
+      "widthEndpointPx": 419.5745538985239,
+      "widthEndpointPct": 6.506934894741627
+    },
+    {
+      "id": "3256",
+      "ezErrorPx": 141.3704594542621,
+      "ezErrorPct": 2.223513982477438,
+      "widthEndpointPx": 389.069982946201,
+      "widthEndpointPct": 6.1194011152168954
+    },
+    {
+      "id": "3257",
+      "ezErrorPx": 77.9579946609928,
+      "ezErrorPct": 1.0856758844637926,
+      "widthEndpointPx": 114.05220608258635,
+      "widthEndpointPct": 1.5883390825048422
+    },
+    {
+      "id": "3258",
+      "ezErrorPx": 34.39728838468692,
+      "ezErrorPct": 0.589622341546939,
+      "widthEndpointPx": 141.08069248944102,
+      "widthEndpointPct": 2.418339705222814
+    },
+    {
+      "id": "3261",
+      "ezErrorPx": 64.09009692408208,
+      "ezErrorPct": 1.0290349385519713,
+      "widthEndpointPx": 85.95459700208598,
+      "widthEndpointPct": 1.3800928332043991
+    },
+    {
+      "id": "3272",
+      "ezErrorPx": 89.57274735163125,
+      "ezErrorPct": 1.4415241492817006,
+      "widthEndpointPx": 257.11563809402827,
+      "widthEndpointPct": 4.137847865886251
+    },
+    {
+      "id": "3274",
+      "ezErrorPx": 99.12459890853752,
+      "ezErrorPct": 1.5845655715380658,
+      "widthEndpointPx": 346.424977540293,
+      "widthEndpointPct": 5.537808965438516
+    },
+    {
+      "id": "3276",
+      "ezErrorPx": 73.37911825317548,
+      "ezErrorPct": 1.062325337977006,
+      "widthEndpointPx": 144.58897743887127,
+      "widthEndpointPct": 2.093245844077059
+    },
+    {
+      "id": "3278",
+      "ezErrorPx": 89.53958875258205,
+      "ezErrorPct": 1.2826361271512778,
+      "widthEndpointPx": 129.35895826852365,
+      "widthEndpointPct": 1.8530403764120296
+    },
+    {
+      "id": "3296",
+      "ezErrorPx": 49.73233674337975,
+      "ezErrorPct": 0.8339338545456664,
+      "widthEndpointPx": 97.48564115230528,
+      "widthEndpointPct": 1.6346824181717057
+    },
+    {
+      "id": "3297",
+      "ezErrorPx": 75.4906387227351,
+      "ezErrorPct": 1.2462697825713445,
+      "widthEndpointPx": 175.12955367534505,
+      "widthEndpointPct": 2.8912018029469544
+    },
+    {
+      "id": "3298",
+      "ezErrorPx": 253.27237512982674,
+      "ezErrorPct": 3.5014814545142117,
+      "widthEndpointPx": 99.58080981892891,
+      "widthEndpointPct": 1.3767011053919864
+    },
+    {
+      "id": "3305",
+      "ezErrorPx": 130.4767357610438,
+      "ezErrorPct": 1.803836167598855,
+      "widthEndpointPx": 142.96914064280554,
+      "widthEndpointPct": 1.976543214679491
+    },
+    {
+      "id": "3311",
+      "ezErrorPx": 98.17078793996575,
+      "ezErrorPct": 1.5481094012294387,
+      "widthEndpointPx": 320.5275396672787,
+      "widthEndpointPct": 5.054575886823927
+    },
+    {
+      "id": "3312",
+      "ezErrorPx": 100.29359587974584,
+      "ezErrorPct": 1.4829347309002265,
+      "widthEndpointPx": 205.3656368698785,
+      "widthEndpointPct": 3.0365232473361656
+    },
+    {
+      "id": "3318",
+      "ezErrorPx": 97.95709978124064,
+      "ezErrorPct": 1.4140014836229133,
+      "widthEndpointPx": 153.69985799515447,
+      "widthEndpointPct": 2.218642933724339
+    },
+    {
+      "id": "3330",
+      "ezErrorPx": 266.277910789627,
+      "ezErrorPct": 3.9233317140950206,
+      "widthEndpointPx": 150.7443147383315,
+      "widthEndpointPct": 2.2210627572471413
+    },
+    {
+      "id": "3337",
+      "ezErrorPx": 66.37944577717812,
+      "ezErrorPct": 0.9176934445794958,
+      "widthEndpointPx": 191.13770347980446,
+      "widthEndpointPct": 2.6424718591986527
+    },
+    {
+      "id": "3339",
+      "ezErrorPx": 137.2281329966062,
+      "ezErrorPct": 1.897173990961006,
+      "widthEndpointPx": 102.25379646883664,
+      "widthEndpointPct": 1.4136550494532698
+    },
+    {
+      "id": "3343",
+      "ezErrorPx": 175.4813599075186,
+      "ezErrorPct": 2.56239648200164,
+      "widthEndpointPx": 319.54377795309824,
+      "widthEndpointPct": 4.666010412183103
+    },
+    {
+      "id": "3344",
+      "ezErrorPx": 187.76967729711993,
+      "ezErrorPct": 2.845190511841065,
+      "widthEndpointPx": 184.53395812202015,
+      "widthEndpointPct": 2.796161096503633
+    },
+    {
+      "id": "3349",
+      "ezErrorPx": 87.10430589893195,
+      "ezErrorPct": 1.4547850320201663,
+      "widthEndpointPx": 180.62898711363198,
+      "widthEndpointPct": 3.0168008813109366
+    },
+    {
+      "id": "3355",
+      "ezErrorPx": 65.8870598582605,
+      "ezErrorPct": 1.0254646261927485,
+      "widthEndpointPx": 149.53177729996528,
+      "widthEndpointPct": 2.327309010945667
+    },
+    {
+      "id": "3361",
+      "ezErrorPx": 93.95777029008704,
+      "ezErrorPct": 1.2989627866426652,
+      "widthEndpointPx": 181.6041399032798,
+      "widthEndpointPct": 2.5106706864828285
+    },
+    {
+      "id": "3364",
+      "ezErrorPx": 92.18200805263099,
+      "ezErrorPct": 1.4174032526206346,
+      "widthEndpointPx": 235.33117895028184,
+      "widthEndpointPct": 3.6184846211717763
+    },
+    {
+      "id": "3366",
+      "ezErrorPx": 75.85529651277542,
+      "ezErrorPct": 1.1472801164075008,
+      "widthEndpointPx": 196.09340721292412,
+      "widthEndpointPct": 2.9658320169653187
+    },
+    {
+      "id": "3371",
+      "ezErrorPx": 74.08815141012803,
+      "ezErrorPct": 1.192059301925825,
+      "widthEndpointPx": 110.20437229731179,
+      "widthEndpointPct": 1.773160007498157
+    },
+    {
+      "id": "3372",
+      "ezErrorPx": 149.33915773345274,
+      "ezErrorPct": 2.13804152187735,
+      "widthEndpointPx": 128.62302728080235,
+      "widthEndpointPct": 1.8414552296240578
+    },
+    {
+      "id": "3374",
+      "ezErrorPx": 65.26839843233141,
+      "ezErrorPct": 0.9192879067502556,
+      "widthEndpointPx": 197.18485466480286,
+      "widthEndpointPct": 2.7772958528405702
+    },
+    {
+      "id": "3378",
+      "ezErrorPx": 151.21168519801486,
+      "ezErrorPct": 2.565050023318304,
+      "widthEndpointPx": 320.3444592002956,
+      "widthEndpointPct": 5.434100952354144
+    },
+    {
+      "id": "3381",
+      "ezErrorPx": 184.16771032454528,
+      "ezErrorPct": 2.6111914723853444,
+      "widthEndpointPx": 766.4649493027828,
+      "widthEndpointPct": 10.867196730495234
+    },
+    {
+      "id": "3394",
+      "ezErrorPx": 38.72337191959711,
+      "ezErrorPct": 0.5975309336375868,
+      "widthEndpointPx": 140.1223255607857,
+      "widthEndpointPct": 2.16219352461487
+    },
+    {
+      "id": "3395",
+      "ezErrorPx": 82.25881054181542,
+      "ezErrorPct": 1.2717104587545276,
+      "widthEndpointPx": 252.49834432753036,
+      "widthEndpointPct": 3.903591398714573
+    },
+    {
+      "id": "3406",
+      "ezErrorPx": 160.15607310129468,
+      "ezErrorPct": 2.66364152026931,
+      "widthEndpointPx": 639.1288483107321,
+      "widthEndpointPct": 10.629694548552274
+    },
+    {
+      "id": "3409",
+      "ezErrorPx": 69.96906303247613,
+      "ezErrorPct": 1.1428694423772277,
+      "widthEndpointPx": 121.71578666959608,
+      "widthEndpointPct": 1.988096555973905
+    },
+    {
+      "id": "3411",
+      "ezErrorPx": 147.327773385002,
+      "ezErrorPct": 2.1093504905119933,
+      "widthEndpointPx": 115.37509371138141,
+      "widthEndpointPct": 1.6518712318891553
+    },
+    {
+      "id": "3415",
+      "ezErrorPx": 76.70520391369266,
+      "ezErrorPct": 1.2361529482760722
+    },
+    {
+      "id": "3422",
+      "ezErrorPx": 122.25965764003445,
+      "ezErrorPct": 2.072660251047836,
+      "widthEndpointPx": 303.58637893096346,
+      "widthEndpointPct": 5.1466807000423795
+    },
+    {
+      "id": "3424",
+      "ezErrorPx": 64.6715087295652,
+      "ezErrorPct": 1.121471661827488,
+      "widthEndpointPx": 208.12902251243568,
+      "widthEndpointPct": 3.609175127297531
+    },
+    {
+      "id": "3426",
+      "ezErrorPx": 160.080248355334,
+      "ezErrorPct": 2.3968167687943067,
+      "widthEndpointPx": 273.5578457309572,
+      "widthEndpointPct": 4.0958709061207985
+    },
+    {
+      "id": "3431",
+      "ezErrorPx": 53.6553659613988,
+      "ezErrorPct": 0.8263867298780557,
+      "widthEndpointPx": 338.4122970151605,
+      "widthEndpointPct": 5.212142839209685
+    },
+    {
+      "id": "3441",
+      "ezErrorPx": 97.0299068700458,
+      "ezErrorPct": 1.7348321552452866,
+      "widthEndpointPx": 124.64155900179053,
+      "widthEndpointPct": 2.228510687182387
+    },
+    {
+      "id": "3443",
+      "ezErrorPx": 99.53010093090236,
+      "ezErrorPct": 1.3760000568433124,
+      "widthEndpointPx": 158.99236182865775,
+      "widthEndpointPct": 2.198063669861709
+    },
+    {
+      "id": "3445",
+      "ezErrorPx": 72.1419174549244,
+      "ezErrorPct": 1.127243082187214,
+      "widthEndpointPx": 327.5612729748952,
+      "widthEndpointPct": 5.1182612270334635
+    },
+    {
+      "id": "3447",
+      "ezErrorPx": 146.7054887386043,
+      "ezErrorPct": 2.028198092391056,
+      "widthEndpointPx": 274.7790887669299,
+      "widthEndpointPct": 3.798810995129383
+    },
+    {
+      "id": "3448",
+      "ezErrorPx": 156.30597594398324,
+      "ezErrorPct": 2.1609244818628803,
+      "widthEndpointPx": 126.29266272746649,
+      "widthEndpointPct": 1.7459915087650828
+    },
+    {
+      "id": "3449",
+      "ezErrorPx": 176.87542663747354,
+      "ezErrorPct": 2.970207817564234,
+      "widthEndpointPx": 247.1010468979796,
+      "widthEndpointPct": 4.149482351378196
+    },
+    {
+      "id": "3453",
+      "ezErrorPx": 171.00058068740503,
+      "ezErrorPct": 2.5589410547029465,
+      "widthEndpointPx": 321.7975213772391,
+      "widthEndpointPct": 4.815544400163067
+    },
+    {
+      "id": "3456",
+      "ezErrorPx": 226.93142491821263,
+      "ezErrorPct": 3.1373187675533027,
+      "widthEndpointPx": 382.2281670785783,
+      "widthEndpointPct": 5.284290628745276
+    },
+    {
+      "id": "3459",
+      "ezErrorPx": 133.9467417345739,
+      "ezErrorPct": 1.8518088750729367,
+      "widthEndpointPx": 155.81079526155187,
+      "widthEndpointPct": 2.15407862678185
+    },
+    {
+      "id": "3462",
+      "ezErrorPx": 53.66870894605236,
+      "ezErrorPct": 0.7419679661707916,
+      "widthEndpointPx": 110.63525580080818,
+      "widthEndpointPct": 1.5295284225269024
+    },
+    {
+      "id": "3471",
+      "ezErrorPx": 141.69631693827006,
+      "ezErrorPct": 1.9589464728555452,
+      "widthEndpointPx": 334.05532227279804,
+      "widthEndpointPct": 4.618302786162097
+    },
+    {
+      "id": "3474",
+      "ezErrorPx": 69.59337894285584,
+      "ezErrorPct": 0.9621259547176431,
+      "widthEndpointPx": 85.20875274705075,
+      "widthEndpointPct": 1.178007934553258
+    },
+    {
+      "id": "3479",
+      "ezErrorPx": 108.5503250090741,
+      "ezErrorPct": 1.809950428974871,
+      "widthEndpointPx": 377.40904297996667,
+      "widthEndpointPct": 6.292856877061253
+    },
+    {
+      "id": "3481",
+      "ezErrorPx": 141.08946158170946,
+      "ezErrorPct": 1.9505567194310736,
+      "widthEndpointPx": 204.56942140067397,
+      "widthEndpointPct": 2.8281648751783184
+    },
+    {
+      "id": "3486",
+      "ezErrorPx": 114.74155991142675,
+      "ezErrorPct": 1.776097934597555,
+      "widthEndpointPx": 249.92854843060036,
+      "widthEndpointPct": 3.8686730336175943
+    },
+    {
+      "id": "3491",
+      "ezErrorPx": 78.98605418275125,
+      "ezErrorPct": 1.0919793512592524,
+      "widthEndpointPx": 105.25319731420365,
+      "widthEndpointPct": 1.4551216579980166
+    },
+    {
+      "id": "3492",
+      "ezErrorPx": 298.28840361283983,
+      "ezErrorPct": 4.452284725040253,
+      "widthEndpointPx": 468.091481432844,
+      "widthEndpointPct": 6.98678368807766
+    },
+    {
+      "id": "3501",
+      "ezErrorPx": 82.53783019861407,
+      "ezErrorPct": 1.1410825266203914,
+      "widthEndpointPx": 113.54197028537617,
+      "widthEndpointPct": 1.5697136454753804
+    },
+    {
+      "id": "2960000",
+      "ezErrorPx": 69.65782442346655,
+      "ezErrorPct": 1.5809823599148713,
+      "widthEndpointPx": 109.6857799267807,
+      "widthEndpointPct": 2.4894731443740814
+    },
+    {
+      "id": "2970000",
+      "ezErrorPx": 63.42371939966165,
+      "ezErrorPct": 1.337686296438258,
+      "widthEndpointPx": 390.018939085269,
+      "widthEndpointPct": 8.225991712629444
+    },
+    {
+      "id": "2976000",
+      "ezErrorPx": 188.2896257304052,
+      "ezErrorPct": 3.933529747200536,
+      "widthEndpointPx": 79.40832872717375,
+      "widthEndpointPct": 1.6589072393773285
+    },
+    {
+      "id": "2983000",
+      "ezErrorPx": 57.53798345944686,
+      "ezErrorPct": 1.3210401786158594,
+      "widthEndpointPx": 224.78684995823357,
+      "widthEndpointPct": 5.160981365094507
+    },
+    {
+      "id": "2988000",
+      "ezErrorPx": 90.71309022693052,
+      "ezErrorPct": 1.9109061557067486,
+      "widthEndpointPx": 70.05936615630827,
+      "widthEndpointPct": 1.4758275097683504
+    },
+    {
+      "id": "2993000",
+      "ezErrorPx": 90.69821577919329,
+      "ezErrorPct": 2.0851690806618124,
+      "widthEndpointPx": 223.9482465448572,
+      "widthEndpointPct": 5.148612410420653
+    },
+    {
+      "id": "2998000",
+      "ezErrorPx": 103.08483331579484,
+      "ezErrorPct": 2.4788425464595525,
+      "widthEndpointPx": 143.52223353570463,
+      "widthEndpointPct": 3.4512256304603937
+    },
+    {
+      "id": "3001000",
+      "ezErrorPx": 99.10560818956435,
+      "ezErrorPct": 2.003422022950875,
+      "widthEndpointPx": 315.88112775227836,
+      "widthEndpointPct": 6.385543861080009
+    },
+    {
+      "id": "3011000",
+      "ezErrorPx": 73.73519000058124,
+      "ezErrorPct": 1.6031840310546552,
+      "widthEndpointPx": 84.69200206804335,
+      "widthEndpointPct": 1.841412021484784
+    },
+    {
+      "id": "3013000",
+      "ezErrorPx": 92.70494506928743,
+      "ezErrorPct": 2.086339381344872,
+      "widthEndpointPx": 274.3214985006525,
+      "widthEndpointPct": 6.173648504334837
+    },
+    {
+      "id": "3018000",
+      "ezErrorPx": 46.7095449593635,
+      "ezErrorPct": 0.9304108013235194,
+      "widthEndpointPx": 238.70146469490655,
+      "widthEndpointPct": 4.7547117240619805
+    },
+    {
+      "id": "3022000",
+      "ezErrorPx": 51.502861706341946,
+      "ezErrorPct": 1.2140180983165858,
+      "widthEndpointPx": 243.74274335367218,
+      "widthEndpointPct": 5.74546912464585
+    },
+    {
+      "id": "3023000",
+      "ezErrorPx": 47.121635519847445,
+      "ezErrorPct": 1.0213373774785133,
+      "widthEndpointPx": 222.7592903305248,
+      "widthEndpointPct": 4.828193819786362
+    },
+    {
+      "id": "3026000",
+      "ezErrorPx": 50.66837454917893,
+      "ezErrorPct": 1.0757076026896188,
+      "widthEndpointPx": 164.374887725844,
+      "widthEndpointPct": 3.4897372965126663
+    },
+    {
+      "id": "3034000",
+      "ezErrorPx": 33.17325956729003,
+      "ezErrorPct": 0.7441540976336005,
+      "widthEndpointPx": 157.46224221443143,
+      "widthEndpointPct": 3.532247789179673
+    },
+    {
+      "id": "3041000",
+      "ezErrorPx": 157.22107702802242,
+      "ezErrorPct": 3.497893704362651,
+      "widthEndpointPx": 160.1964407976031,
+      "widthEndpointPct": 3.564090339028561
+    },
+    {
+      "id": "3051000",
+      "ezErrorPx": 98.76545136390811,
+      "ezErrorPct": 2.2227320294814445,
+      "widthEndpointPx": 344.75411376850144,
+      "widthEndpointPct": 7.758745597640895
+    },
+    {
+      "id": "3063000",
+      "ezErrorPx": 39.52201233421971,
+      "ezErrorPct": 0.913745698541765,
+      "widthEndpointPx": 252.38730449840156,
+      "widthEndpointPct": 5.835173874795013
+    },
+    {
+      "id": "3074000",
+      "ezErrorPx": 126.4602160592295,
+      "ezErrorPct": 2.150444312627825,
+      "widthEndpointPx": 155.42148205312094,
+      "widthEndpointPct": 2.6429279702067108
+    },
+    {
+      "id": "3081000",
+      "ezErrorPx": 14.90885660398137,
+      "ezErrorPct": 1.0333455979473227,
+      "widthEndpointPx": 80.64313090441685,
+      "widthEndpointPct": 5.589444350984985
+    },
+    {
+      "id": "3082000",
+      "ezErrorPx": 103.36921106157355,
+      "ezErrorPct": 1.7274759357474503,
+      "widthEndpointPx": 341.76782837503316,
+      "widthEndpointPct": 5.711523702922098
+    },
+    {
+      "id": "3106000",
+      "ezErrorPx": 39.261809839508956,
+      "ezErrorPct": 2.7212696079099103,
+      "widthEndpointPx": 39.08966476178687,
+      "widthEndpointPct": 2.7093380853929583
+    },
+    {
+      "id": "3119000",
+      "ezErrorPx": 44.58989633055608,
+      "ezErrorPct": 0.6727951186343911,
+      "widthEndpointPx": 400.52396608269487,
+      "widthEndpointPct": 6.043310064658384
+    },
+    {
+      "id": "3120000",
+      "ezErrorPx": 120.83581927226078,
+      "ezErrorPct": 1.7962467902906016,
+      "widthEndpointPx": 206.28172240425246,
+      "widthEndpointPct": 3.0664159352401175
+    },
+    {
+      "id": "3121000",
+      "ezErrorPx": 160.23548008625687,
+      "ezErrorPct": 2.4580375733061657,
+      "widthEndpointPx": 184.35840952354943,
+      "widthEndpointPct": 2.8280871210290495
+    },
+    {
+      "id": "3126000",
+      "ezErrorPx": 83.63992590929078,
+      "ezErrorPct": 1.2045855299037176,
+      "widthEndpointPx": 168.9917054108841,
+      "widthEndpointPct": 2.4338252431317686
+    },
+    {
+      "id": "3127000",
+      "ezErrorPx": 129.1088799552369,
+      "ezErrorPct": 2.0586794515016096,
+      "widthEndpointPx": 466.871333220336,
+      "widthEndpointPct": 7.4444021242311225
+    },
+    {
+      "id": "3132000",
+      "ezErrorPx": 98.34341487776771,
+      "ezErrorPct": 1.6706660774151074,
+      "widthEndpointPx": 357.36450106957,
+      "widthEndpointPct": 6.070937743532396
+    },
+    {
+      "id": "3160000",
+      "ezErrorPx": 198.6937773131391,
+      "ezErrorPct": 2.96535652108811,
+      "widthEndpointPx": 303.90952633580656,
+      "widthEndpointPct": 4.535623147978116
+    },
+    {
+      "id": "3166001",
+      "ezErrorPx": 99.47030382798658,
+      "ezErrorPct": 1.566820462348395,
+      "widthEndpointPx": 412.75111085796624,
+      "widthEndpointPct": 6.501507097712689
+    },
+    {
+      "id": "3195000",
+      "ezErrorPx": 129.49529194854068,
+      "ezErrorPct": 2.0460202768875955,
+      "widthEndpointPx": 366.2537052153037,
+      "widthEndpointPct": 5.786793450788219
+    },
+    {
+      "id": "3208000",
+      "ezErrorPx": 134.54768656463062,
+      "ezErrorPct": 2.0979003668889997,
+      "widthEndpointPx": 311.1612975104107,
+      "widthEndpointPct": 4.851702893421205
+    },
+    {
+      "id": "3213000",
+      "ezErrorPx": 86.42969884835068,
+      "ezErrorPct": 1.4125681375060315,
+      "widthEndpointPx": 183.46240488555134,
+      "widthEndpointPct": 2.998427057188642
+    },
+    {
+      "id": "3224000",
+      "ezErrorPx": 51.70697949206104,
+      "ezErrorPct": 0.731996266323491,
+      "widthEndpointPx": 609.5079597792437,
+      "widthEndpointPct": 8.628575005456602
+    },
+    {
+      "id": "3227000",
+      "ezErrorPx": 203.95887218209566,
+      "ezErrorPct": 2.819724054244633,
+      "widthEndpointPx": 163.53687522228162,
+      "widthEndpointPct": 2.2608914036775616
+    },
+    {
+      "id": "3240000",
+      "ezErrorPx": 172.0978245815166,
+      "ezErrorPct": 2.60203557677276,
+      "widthEndpointPx": 314.71438063823695,
+      "widthEndpointPct": 4.7583286827359865
+    },
+    {
+      "id": "3242000",
+      "ezErrorPx": 130.57964755979657,
+      "ezErrorPct": 2.0809349156833057,
+      "widthEndpointPx": 328.1760214801812,
+      "widthEndpointPct": 5.229857442182298
+    },
+    {
+      "id": "3246000",
+      "ezErrorPx": 164.6398432777314,
+      "ezErrorPct": 2.399811156929829,
+      "widthEndpointPx": 447.6399938287211,
+      "widthEndpointPct": 6.5248571068304955
+    },
+    {
+      "id": "3248000",
+      "ezErrorPx": 71.79753783967854,
+      "ezErrorPct": 1.0663604427625273,
+      "widthEndpointPx": 338.15994154194954,
+      "widthEndpointPct": 5.022461714389595
+    },
+    {
+      "id": "26052019061510",
+      "ezErrorPx": 58.390365424826854,
+      "ezErrorPct": 2.642384467417352,
+      "widthEndpointPx": 131.14619282974664,
+      "widthEndpointPct": 5.934860321098444
+    },
+    {
+      "id": "32502023010911",
+      "ezErrorPx": 179.78326688916377,
+      "ezErrorPct": 2.7245193370094265,
+      "widthEndpointPx": 305.4572463084881,
+      "widthEndpointPct": 4.629041337368692
+    },
+    {
+      "id": "32552023011608",
+      "ezErrorPx": 80.74003673576988,
+      "ezErrorPct": 1.1812225137471397,
+      "widthEndpointPx": 181.80426825752974,
+      "widthEndpointPct": 2.6597869340079
+    },
+    {
+      "id": "32602023012708",
+      "ezErrorPx": 68.50651055391391,
+      "ezErrorPct": 0.9966658479355307,
+      "widthEndpointPx": 349.0234872717829,
+      "widthEndpointPct": 5.07776249408274
+    },
+    {
+      "id": "32662023020408",
+      "ezErrorPx": 307.0792369621951,
+      "ezErrorPct": 4.2453593793572635,
+      "widthEndpointPx": 152.26238327450008,
+      "widthEndpointPct": 2.105021958997735
+    },
+    {
+      "id": "32672023020611",
+      "ezErrorPx": 164.45517179284502,
+      "ezErrorPct": 2.348973773830693,
+      "widthEndpointPx": 318.78894636842284,
+      "widthEndpointPct": 4.553379904341347
+    },
+    {
+      "id": "32682023020611",
+      "ezErrorPx": 185.7431061966475,
+      "ezErrorPct": 2.834015312670366,
+      "widthEndpointPx": 400.1675820571439,
+      "widthEndpointPct": 6.105642779461013
+    },
+    {
+      "id": "32772023022208",
+      "ezErrorPx": 94.84437391481656,
+      "ezErrorPct": 1.3713754529376168,
+      "widthEndpointPx": 177.90841693996086,
+      "widthEndpointPct": 2.5724165366053287
+    },
+    {
+      "id": "32782023022211",
+      "ezErrorPx": 135.3210932488596,
+      "ezErrorPct": 1.9384467293701864,
+      "widthEndpointPx": 139.7163238563427,
+      "widthEndpointPct": 2.00140750060956
+    },
+    {
+      "id": "32822023022511",
+      "ezErrorPx": 137.8445432890014,
+      "ezErrorPct": 2.0807396948102523,
+      "widthEndpointPx": 386.9846665366867,
+      "widthEndpointPct": 5.8414670449275645
+    },
+    {
+      "id": "32832023022711",
+      "ezErrorPx": 208.1900199819632,
+      "ezErrorPct": 3.1528883665308336,
+      "widthEndpointPx": 219.20468495439377,
+      "widthEndpointPct": 3.3196975587093043
+    },
+    {
+      "id": "32902023032111",
+      "ezErrorPx": 210.95152287042816,
+      "ezErrorPct": 3.1982020038525376,
+      "widthEndpointPx": 449.88932821965005,
+      "widthEndpointPct": 6.820699521129921
+    },
+    {
+      "id": "33062023050611",
+      "ezErrorPx": 129.51787612260978,
+      "ezErrorPct": 2.1458655460303797,
+      "widthEndpointPx": 507.632206779234,
+      "widthEndpointPct": 8.410502821646935
+    }
+  ]
+}

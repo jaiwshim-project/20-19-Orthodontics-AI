@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZL · TZL 114개 치아 데이터 분석표</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Malgun Gothic', -apple-system, sans-serif; margin: 0; background: #f4f6f9; color: #222; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: #667; font-size: 13px; margin-bottom: 20px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .card { background: #fff; border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card .label { font-size: 12px; color: #789; }
+  .card .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  .card .value small { font-size: 13px; font-weight: 400; color: #789; }
+  .card.hl { background: linear-gradient(135deg,#2b6cb0,#3182ce); color: #fff; }
+  .card.hl .label, .card.hl .value small { color: #cfe3f7; }
+  .defbox { background: #eef4fb; border-left: 4px solid #3182ce; border-radius: 6px; padding: 12px 16px; font-size: 13px; line-height: 1.7; margin-bottom: 20px; }
+  .defbox b { color: #2b6cb0; }
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .toolbar input { padding: 7px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 13px; }
+  .toolbar label { font-size: 13px; color: #556; display: flex; align-items: center; gap: 5px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: 13px; }
+  thead th { background: #2d3748; color: #fff; padding: 10px 8px; text-align: center; cursor: pointer; user-select: none; white-space: nowrap; position: sticky; top: 0; }
+  thead th:hover { background: #3a4a63; }
+  thead th::after { content: ' ⇅'; opacity: .4; font-size: 11px; }
+  tbody td { padding: 7px 8px; border-bottom: 1px solid #edf0f4; text-align: center; }
+  tbody tr:hover { background: #f7fafc; }
+  tr.partial { background: #fffbea; }
+  tr.partial:hover { background: #fff5d6; }
+  tr.nocalc { background: #fde8e8; color: #999; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mono { font-family: 'Consolas', monospace; text-align: left; }
+  .note { text-align: left; color: #a05a00; font-size: 12px; }
+  .pos { color: #2f855a; font-weight: 600; }
+  .neg { color: #c53030; font-weight: 600; }
+  .biggap { color: #b7791f; font-weight: 700; background: #fff7e6; }
+  .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge.ok { background: #c6f6d5; color: #22543d; }
+  .badge.partial { background: #feebc8; color: #7b341e; }
+  .badge.nocalc { background: #fed7d7; color: #742a2a; }
+  .tag { padding: 2px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+  .tag.tzl { background: #bee3f8; color: #2a4365; }
+  .tag.ezl { background: #fbb6ce; color: #702459; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 2px solid #d7dee7; }
+  .tab { padding: 10px 20px; font-size: 14px; font-weight: 600; color: #667; cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tab:hover { color: #2b6cb0; }
+  .tab.active { color: #2b6cb0; border-bottom-color: #3182ce; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .frame-wrap { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .frame-wrap iframe { width: 100%; height: 82vh; border: 0; display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>EZL · TZL 114개 치아 데이터 분석</h1>
+  <div class="sub">전문가 정답 기준 · EZL = EZ점 Catmull-Rom 곡선 호 길이 · TZL = 12개 치아폭 선분 길이 합 · 스케일 = 어금니간 54mm</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('table', this)">📊 분석표</button>
+    <button class="tab" onclick="showTab('compareEzl', this)">🖼️ EZL &gt; TZL 사진 비교 보기</button>
+    <button class="tab" onclick="showTab('compareTzl', this)">🖼️ TZL &gt; EZL 사진 비교 보기</button>
+    <button class="tab" onclick="showTab('compareGap', this)">🦷 치아 간격 큰 사례 보기</button>
+    <button class="tab" onclick="showTab('compareInflate', this)">📈 EZL 증가 원인 보기</button>
+  </div>
+
+  <div class="panel active" id="panel-table">
+
+  <div class="cards">
+    <div class="card"><div class="label">총 파일</div><div class="value">114<small> 개</small></div></div>
+    <div class="card"><div class="label">완전 케이스 (치아 12개)</div><div class="value">104<small> 건</small></div></div>
+    <div class="card"><div class="label">평균 EZL (보정)</div><div class="value">94.12<small> mm</small></div></div>
+    <div class="card"><div class="label">평균 TZL</div><div class="value">101.38<small> mm</small></div></div>
+    <div class="card hl"><div class="label">평균 차이 (TZL−보정EZL)</div><div class="value">+7.26<small> mm</small></div></div>
+    <div class="card"><div class="label">TZL &gt; 보정EZL</div><div class="value">103<small> 건 (99%)</small></div></div>
+  </div>
+
+  <div class="defbox">
+    <b>정의</b> — <b>EZL(곡선원본)</b>: EZ 점을 잇는 Catmull-Rom 곡선의 호 길이 &nbsp;|&nbsp; <b>EZL(보정)</b>: 곡선 위에서 치아가 점유하는 호 구간만(치아 간 간격 제외) &nbsp;|&nbsp; <b>TZL</b>: 12개 치아폭 선분(p1–p2) 길이의 합 &nbsp;|&nbsp; <b>스케일</b>: EZ 곡선 양끝 chord = 54mm 고정<br>
+    ※ EZ 곡선의 <b>위치·표기는 원본 그대로</b>이며, 길이 계산 시에만 치아 간 간격을 제외해 TZL과 동일 기준(치아만)으로 비교합니다. 대소·차이 판정은 <b>보정 EZL 기준</b>.<br>
+    <b>완전 케이스 104건</b>: TZL&gt;보정EZL 103건 / 보정EZL&gt;TZL 1건 &nbsp;·&nbsp;
+    <b>불완전(치아결손) 9건</b>: 치아 10~11개로 TZL 과소평가 → 노란 배경, 참고용 &nbsp;·&nbsp; 계산불가 1건 (빨간 배경)<br>
+    <b>치아 간격 합 ≥ 25mm</b>(주황 강조 = 간격 큼, 완전케이스 평균+1SD): <b>18건</b> — [🦷 치아 간격 큰 사례 보기] 탭에서 사진 확인
+  </div>
+
+  <div class="toolbar">
+    <input id="q" type="text" placeholder="🔍 파일번호 검색..." oninput="filterRows()">
+    <label><input type="checkbox" id="only12" onchange="filterRows()"> 완전(12개)만 보기</label>
+    <label><input type="checkbox" id="onlyEz" onchange="filterRows()"> 보정EZL&gt;TZL만 보기</label>
+    <span id="count" style="margin-left:auto;color:#667;font-size:13px;"></span>
+  </div>
+
+  <table id="tbl">
+    <thead><tr>
+      <th onclick="sortBy(0,'n')">#</th>
+      <th onclick="sortBy(1,'s')">파일번호</th>
+      <th onclick="sortBy(2,'n')">치아개수</th>
+      <th onclick="sortBy(3,'n')">EZ점</th>
+      <th onclick="sortBy(4,'s')">완전성</th>
+      <th onclick="sortBy(5,'n')">EZL 곡선원본(mm)</th>
+      <th onclick="sortBy(6,'n')">EZL 보정(mm)</th>
+      <th onclick="sortBy(7,'n')">TZL(mm)</th>
+      <th onclick="sortBy(8,'n')">치아간격 합(mm)</th>
+      <th onclick="sortBy(9,'n')">차이 TZL−보정EZL</th>
+      <th onclick="sortBy(10,'n')">TZL/보정EZL</th>
+      <th onclick="sortBy(11,'s')">큰값</th>
+      <th onclick="sortBy(12,'s')">비고</th>
+    </tr></thead>
+    <tbody id="tbody">
+<tr class="">
+<td class="num">1</td>
+<td class="mono">3207</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.12</td>
+<td class="num"><b>90.35</b></td>
+<td class="num">95.36</td>
+<td class="num ">17.15</td>
+<td class="num pos">+5.00</td>
+<td class="num">1.055</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">2</td>
+<td class="mono">3235</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.92</td>
+<td class="num"><b>95.60</b></td>
+<td class="num">113.42</td>
+<td class="num biggap">37.70</td>
+<td class="num pos">+17.82</td>
+<td class="num">1.186</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">3</td>
+<td class="mono">3247</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">104.67</td>
+<td class="num"><b>99.51</b></td>
+<td class="num">103.94</td>
+<td class="num ">13.17</td>
+<td class="num pos">+4.42</td>
+<td class="num">1.044</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">4</td>
+<td class="mono">3254</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">104.90</td>
+<td class="num"><b>102.47</b></td>
+<td class="num">107.01</td>
+<td class="num ">13.28</td>
+<td class="num pos">+4.54</td>
+<td class="num">1.044</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">5</td>
+<td class="mono">3256</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.85</td>
+<td class="num"><b>94.35</b></td>
+<td class="num">98.59</td>
+<td class="num ">13.02</td>
+<td class="num pos">+4.24</td>
+<td class="num">1.045</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">6</td>
+<td class="mono">3257</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">92.92</td>
+<td class="num"><b>91.52</b></td>
+<td class="num">92.65</td>
+<td class="num ">10.48</td>
+<td class="num pos">+1.13</td>
+<td class="num">1.012</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">7</td>
+<td class="mono">3258</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.16</td>
+<td class="num"><b>95.63</b></td>
+<td class="num">96.93</td>
+<td class="num ">11.50</td>
+<td class="num pos">+1.30</td>
+<td class="num">1.014</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">8</td>
+<td class="mono">3261</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.75</td>
+<td class="num"><b>97.33</b></td>
+<td class="num">98.88</td>
+<td class="num ">10.84</td>
+<td class="num pos">+1.55</td>
+<td class="num">1.016</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">9</td>
+<td class="mono">3272</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.67</td>
+<td class="num"><b>97.37</b></td>
+<td class="num">101.43</td>
+<td class="num ">11.74</td>
+<td class="num pos">+4.06</td>
+<td class="num">1.042</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">10</td>
+<td class="mono">3274</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">103.74</td>
+<td class="num"><b>99.04</b></td>
+<td class="num">102.77</td>
+<td class="num ">21.75</td>
+<td class="num pos">+3.74</td>
+<td class="num">1.038</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">11</td>
+<td class="mono">3276</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.51</td>
+<td class="num"><b>96.46</b></td>
+<td class="num">99.97</td>
+<td class="num ">14.62</td>
+<td class="num pos">+3.51</td>
+<td class="num">1.036</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">12</td>
+<td class="mono">3278</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">91.00</td>
+<td class="num"><b>89.14</b></td>
+<td class="num">96.71</td>
+<td class="num ">24.15</td>
+<td class="num pos">+7.57</td>
+<td class="num">1.085</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">13</td>
+<td class="mono">3296</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.94</td>
+<td class="num"><b>98.06</b></td>
+<td class="num">104.31</td>
+<td class="num ">17.30</td>
+<td class="num pos">+6.25</td>
+<td class="num">1.064</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">14</td>
+<td class="mono">3297</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.49</td>
+<td class="num"><b>88.08</b></td>
+<td class="num">92.75</td>
+<td class="num ">16.37</td>
+<td class="num pos">+4.67</td>
+<td class="num">1.053</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">15</td>
+<td class="mono">3298</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.61</td>
+<td class="num"><b>94.60</b></td>
+<td class="num">107.43</td>
+<td class="num ">16.82</td>
+<td class="num pos">+12.83</td>
+<td class="num">1.136</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">16</td>
+<td class="mono">3305</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.55</td>
+<td class="num"><b>93.11</b></td>
+<td class="num">96.49</td>
+<td class="num ">13.43</td>
+<td class="num pos">+3.38</td>
+<td class="num">1.036</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">17</td>
+<td class="mono">3311</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.93</td>
+<td class="num"><b>99.14</b></td>
+<td class="num">107.17</td>
+<td class="num ">19.53</td>
+<td class="num pos">+8.03</td>
+<td class="num">1.081</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">18</td>
+<td class="mono">3312</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.12</td>
+<td class="num"><b>91.52</b></td>
+<td class="num">100.29</td>
+<td class="num ">17.58</td>
+<td class="num pos">+8.76</td>
+<td class="num">1.096</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">19</td>
+<td class="mono">3318</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">91.46</td>
+<td class="num"><b>89.67</b></td>
+<td class="num">96.06</td>
+<td class="num ">14.85</td>
+<td class="num pos">+6.39</td>
+<td class="num">1.071</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">20</td>
+<td class="mono">3330</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">91.19</td>
+<td class="num"><b>88.05</b></td>
+<td class="num">106.06</td>
+<td class="num biggap">28.57</td>
+<td class="num pos">+18.00</td>
+<td class="num">1.204</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">21</td>
+<td class="mono">3337</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.43</td>
+<td class="num"><b>89.44</b></td>
+<td class="num">96.86</td>
+<td class="num ">20.72</td>
+<td class="num pos">+7.42</td>
+<td class="num">1.083</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">22</td>
+<td class="mono">3339</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.24</td>
+<td class="num"><b>90.49</b></td>
+<td class="num">96.47</td>
+<td class="num ">17.13</td>
+<td class="num pos">+5.98</td>
+<td class="num">1.066</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">23</td>
+<td class="mono">3343</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.70</td>
+<td class="num"><b>91.12</b></td>
+<td class="num">100.15</td>
+<td class="num ">20.51</td>
+<td class="num pos">+9.03</td>
+<td class="num">1.099</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">24</td>
+<td class="mono">3344</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.33</td>
+<td class="num"><b>88.27</b></td>
+<td class="num">100.17</td>
+<td class="num ">23.33</td>
+<td class="num pos">+11.90</td>
+<td class="num">1.135</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">25</td>
+<td class="mono">3349</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.84</td>
+<td class="num"><b>91.44</b></td>
+<td class="num">95.58</td>
+<td class="num ">11.45</td>
+<td class="num pos">+4.13</td>
+<td class="num">1.045</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">26</td>
+<td class="mono">3355</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">92.57</td>
+<td class="num"><b>80.42</b></td>
+<td class="num">82.83</td>
+<td class="num ">18.40</td>
+<td class="num pos">+2.40</td>
+<td class="num">1.03</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">27</td>
+<td class="mono">3361</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.97</td>
+<td class="num"><b>86.47</b></td>
+<td class="num">92.78</td>
+<td class="num ">17.66</td>
+<td class="num pos">+6.31</td>
+<td class="num">1.073</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">28</td>
+<td class="mono">3364</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.75</td>
+<td class="num"><b>88.56</b></td>
+<td class="num">90.28</td>
+<td class="num ">11.29</td>
+<td class="num pos">+1.72</td>
+<td class="num">1.019</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">29</td>
+<td class="mono">3366</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.56</td>
+<td class="num"><b>86.10</b></td>
+<td class="num">86.05</td>
+<td class="num ">11.28</td>
+<td class="num neg">-0.05</td>
+<td class="num">0.999</td>
+<td><span class="tag ezl">EZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">30</td>
+<td class="mono">3371</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.27</td>
+<td class="num"><b>87.28</b></td>
+<td class="num">93.25</td>
+<td class="num ">20.34</td>
+<td class="num pos">+5.97</td>
+<td class="num">1.068</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">31</td>
+<td class="mono">3372</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.78</td>
+<td class="num"><b>95.33</b></td>
+<td class="num">105.62</td>
+<td class="num ">20.74</td>
+<td class="num pos">+10.28</td>
+<td class="num">1.108</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">32</td>
+<td class="mono">3374</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.19</td>
+<td class="num"><b>96.94</b></td>
+<td class="num">104.75</td>
+<td class="num ">18.79</td>
+<td class="num pos">+7.82</td>
+<td class="num">1.081</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">33</td>
+<td class="mono">3378</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.47</td>
+<td class="num"><b>91.77</b></td>
+<td class="num">99.23</td>
+<td class="num ">18.66</td>
+<td class="num pos">+7.46</td>
+<td class="num">1.081</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="partial">
+<td class="num">34</td>
+<td class="mono">3381</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">93.98</td>
+<td class="num"><b>91.40</b></td>
+<td class="num">97.56</td>
+<td class="num ">20.51</td>
+<td class="num pos">+6.15</td>
+<td class="num">1.067</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">35</td>
+<td class="mono">3394</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.23</td>
+<td class="num"><b>96.70</b></td>
+<td class="num">100.64</td>
+<td class="num ">22.22</td>
+<td class="num pos">+3.95</td>
+<td class="num">1.041</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">36</td>
+<td class="mono">3395</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">105.81</td>
+<td class="num"><b>102.69</b></td>
+<td class="num">105.10</td>
+<td class="num ">12.69</td>
+<td class="num pos">+2.42</td>
+<td class="num">1.024</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="partial">
+<td class="num">37</td>
+<td class="mono">3406</td>
+<td class="num">10</td>
+<td class="num">10</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">91.73</td>
+<td class="num"><b>90.13</b></td>
+<td class="num">97.43</td>
+<td class="num ">12.36</td>
+<td class="num pos">+7.29</td>
+<td class="num">1.081</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 10개(불완전); EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">38</td>
+<td class="mono">3409</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.99</td>
+<td class="num"><b>92.40</b></td>
+<td class="num">95.28</td>
+<td class="num ">9.91</td>
+<td class="num pos">+2.88</td>
+<td class="num">1.031</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">39</td>
+<td class="mono">3411</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.87</td>
+<td class="num"><b>94.19</b></td>
+<td class="num">101.07</td>
+<td class="num ">13.98</td>
+<td class="num pos">+6.88</td>
+<td class="num">1.073</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="nocalc">
+<td class="num">40</td>
+<td class="mono">3415</td>
+<td class="num">0</td>
+<td class="num">12</td>
+<td><span class="badge nocalc">—</span></td>
+<td class="num" style="color:#999">—</td>
+<td class="num"><b>—</b></td>
+<td class="num">—</td>
+<td class="num ">—</td>
+<td class="num ">—</td>
+<td class="num">—</td>
+<td><span class="tag ">—</span></td>
+<td class="note">TS빈파일; EZL/TZL계산불가</td>
+</tr>
+<tr class="partial">
+<td class="num">41</td>
+<td class="mono">3422</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">98.85</td>
+<td class="num"><b>94.18</b></td>
+<td class="num">100.64</td>
+<td class="num ">19.04</td>
+<td class="num pos">+6.46</td>
+<td class="num">1.069</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+<tr class="partial">
+<td class="num">42</td>
+<td class="mono">3424</td>
+<td class="num">10</td>
+<td class="num">10</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">96.31</td>
+<td class="num"><b>94.57</b></td>
+<td class="num">97.72</td>
+<td class="num ">9.63</td>
+<td class="num pos">+3.15</td>
+<td class="num">1.033</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 10개(불완전); EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">43</td>
+<td class="mono">3426</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">105.22</td>
+<td class="num"><b>103.33</b></td>
+<td class="num">110.10</td>
+<td class="num ">11.54</td>
+<td class="num pos">+6.77</td>
+<td class="num">1.066</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">44</td>
+<td class="mono">3431</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.56</td>
+<td class="num"><b>98.93</b></td>
+<td class="num">100.90</td>
+<td class="num ">14.81</td>
+<td class="num pos">+1.98</td>
+<td class="num">1.02</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">45</td>
+<td class="mono">3441</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">102.47</td>
+<td class="num"><b>99.47</b></td>
+<td class="num">104.88</td>
+<td class="num ">20.16</td>
+<td class="num pos">+5.41</td>
+<td class="num">1.054</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="partial">
+<td class="num">46</td>
+<td class="mono">3443</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">95.23</td>
+<td class="num"><b>93.13</b></td>
+<td class="num">94.94</td>
+<td class="num ">7.96</td>
+<td class="num pos">+1.81</td>
+<td class="num">1.019</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">47</td>
+<td class="mono">3445</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">104.93</td>
+<td class="num"><b>97.12</b></td>
+<td class="num">97.76</td>
+<td class="num ">11.87</td>
+<td class="num pos">+0.64</td>
+<td class="num">1.007</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">48</td>
+<td class="mono">3447</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.62</td>
+<td class="num"><b>93.58</b></td>
+<td class="num">99.75</td>
+<td class="num ">12.41</td>
+<td class="num pos">+6.17</td>
+<td class="num">1.066</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">49</td>
+<td class="mono">3448</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.93</td>
+<td class="num"><b>93.45</b></td>
+<td class="num">102.43</td>
+<td class="num ">19.38</td>
+<td class="num pos">+8.98</td>
+<td class="num">1.096</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">50</td>
+<td class="mono">3449</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.43</td>
+<td class="num"><b>97.37</b></td>
+<td class="num">107.99</td>
+<td class="num ">18.64</td>
+<td class="num pos">+10.63</td>
+<td class="num">1.109</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">51</td>
+<td class="mono">3453</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">91.35</td>
+<td class="num"><b>89.60</b></td>
+<td class="num">102.82</td>
+<td class="num ">23.87</td>
+<td class="num pos">+13.21</td>
+<td class="num">1.147</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">52</td>
+<td class="mono">3456</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">92.57</td>
+<td class="num"><b>90.25</b></td>
+<td class="num">103.73</td>
+<td class="num biggap">26.38</td>
+<td class="num pos">+13.48</td>
+<td class="num">1.149</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">53</td>
+<td class="mono">3459</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.86</td>
+<td class="num"><b>94.72</b></td>
+<td class="num">105.85</td>
+<td class="num biggap">26.40</td>
+<td class="num pos">+11.12</td>
+<td class="num">1.117</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">54</td>
+<td class="mono">3462</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.99</td>
+<td class="num"><b>91.68</b></td>
+<td class="num">95.13</td>
+<td class="num ">16.93</td>
+<td class="num pos">+3.45</td>
+<td class="num">1.038</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">55</td>
+<td class="mono">3471</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.13</td>
+<td class="num"><b>93.54</b></td>
+<td class="num">98.07</td>
+<td class="num ">14.80</td>
+<td class="num pos">+4.53</td>
+<td class="num">1.048</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">56</td>
+<td class="mono">3474</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.88</td>
+<td class="num"><b>91.60</b></td>
+<td class="num">95.48</td>
+<td class="num ">11.04</td>
+<td class="num pos">+3.88</td>
+<td class="num">1.042</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">57</td>
+<td class="mono">3479</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.64</td>
+<td class="num"><b>96.82</b></td>
+<td class="num">100.75</td>
+<td class="num ">14.98</td>
+<td class="num pos">+3.93</td>
+<td class="num">1.041</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">58</td>
+<td class="mono">3481</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.39</td>
+<td class="num"><b>98.64</b></td>
+<td class="num">105.56</td>
+<td class="num ">16.32</td>
+<td class="num pos">+6.92</td>
+<td class="num">1.07</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">59</td>
+<td class="mono">3486</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">89.08</td>
+<td class="num"><b>87.48</b></td>
+<td class="num">95.82</td>
+<td class="num ">14.82</td>
+<td class="num pos">+8.34</td>
+<td class="num">1.095</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">60</td>
+<td class="mono">3491</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.48</td>
+<td class="num"><b>98.60</b></td>
+<td class="num">101.41</td>
+<td class="num ">19.81</td>
+<td class="num pos">+2.81</td>
+<td class="num">1.028</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">61</td>
+<td class="mono">3492</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.47</td>
+<td class="num"><b>84.09</b></td>
+<td class="num">103.20</td>
+<td class="num biggap">34.00</td>
+<td class="num pos">+19.11</td>
+<td class="num">1.227</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">62</td>
+<td class="mono">3501</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.57</td>
+<td class="num"><b>92.85</b></td>
+<td class="num">95.23</td>
+<td class="num ">10.87</td>
+<td class="num pos">+2.38</td>
+<td class="num">1.026</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">63</td>
+<td class="mono">2960000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.35</td>
+<td class="num"><b>94.45</b></td>
+<td class="num">98.27</td>
+<td class="num ">13.92</td>
+<td class="num pos">+3.83</td>
+<td class="num">1.041</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">64</td>
+<td class="mono">2970000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">103.10</td>
+<td class="num"><b>89.85</b></td>
+<td class="num">91.94</td>
+<td class="num ">20.63</td>
+<td class="num pos">+2.09</td>
+<td class="num">1.023</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">65</td>
+<td class="mono">2976000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.02</td>
+<td class="num"><b>90.27</b></td>
+<td class="num">101.17</td>
+<td class="num ">15.09</td>
+<td class="num pos">+10.90</td>
+<td class="num">1.121</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">66</td>
+<td class="mono">2983000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">104.69</td>
+<td class="num"><b>100.83</b></td>
+<td class="num">103.15</td>
+<td class="num ">20.92</td>
+<td class="num pos">+2.32</td>
+<td class="num">1.023</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">67</td>
+<td class="mono">2988000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.84</td>
+<td class="num"><b>93.20</b></td>
+<td class="num">101.16</td>
+<td class="num ">19.29</td>
+<td class="num pos">+7.96</td>
+<td class="num">1.085</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">68</td>
+<td class="mono">2993000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">93.11</td>
+<td class="num"><b>89.50</b></td>
+<td class="num">92.62</td>
+<td class="num ">10.99</td>
+<td class="num pos">+3.12</td>
+<td class="num">1.035</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">69</td>
+<td class="mono">2998000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">88.44</td>
+<td class="num"><b>83.35</b></td>
+<td class="num">87.88</td>
+<td class="num ">12.30</td>
+<td class="num pos">+4.53</td>
+<td class="num">1.054</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="partial">
+<td class="num">70</td>
+<td class="mono">3001000</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">92.97</td>
+<td class="num"><b>89.14</b></td>
+<td class="num">94.68</td>
+<td class="num ">16.50</td>
+<td class="num pos">+5.54</td>
+<td class="num">1.062</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">71</td>
+<td class="mono">3011000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.97</td>
+<td class="num"><b>94.06</b></td>
+<td class="num">99.60</td>
+<td class="num ">19.97</td>
+<td class="num pos">+5.55</td>
+<td class="num">1.059</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">72</td>
+<td class="mono">3013000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.71</td>
+<td class="num"><b>94.65</b></td>
+<td class="num">102.42</td>
+<td class="num ">18.72</td>
+<td class="num pos">+7.76</td>
+<td class="num">1.082</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">73</td>
+<td class="mono">3018000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.26</td>
+<td class="num"><b>94.51</b></td>
+<td class="num">102.09</td>
+<td class="num ">18.95</td>
+<td class="num pos">+7.57</td>
+<td class="num">1.08</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">74</td>
+<td class="mono">3022000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.25</td>
+<td class="num"><b>92.35</b></td>
+<td class="num">101.07</td>
+<td class="num biggap">28.41</td>
+<td class="num pos">+8.73</td>
+<td class="num">1.094</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">75</td>
+<td class="mono">3023000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.92</td>
+<td class="num"><b>92.31</b></td>
+<td class="num">93.22</td>
+<td class="num ">13.97</td>
+<td class="num pos">+0.91</td>
+<td class="num">1.01</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">76</td>
+<td class="mono">3026000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.06</td>
+<td class="num"><b>97.00</b></td>
+<td class="num">102.60</td>
+<td class="num ">17.20</td>
+<td class="num pos">+5.60</td>
+<td class="num">1.058</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">77</td>
+<td class="mono">3034000</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.11</td>
+<td class="num"><b>94.33</b></td>
+<td class="num">110.78</td>
+<td class="num biggap">33.83</td>
+<td class="num pos">+16.44</td>
+<td class="num">1.174</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">78</td>
+<td class="mono">3041000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.01</td>
+<td class="num"><b>95.30</b></td>
+<td class="num">104.22</td>
+<td class="num ">12.95</td>
+<td class="num pos">+8.93</td>
+<td class="num">1.094</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">79</td>
+<td class="mono">3051000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">107.50</td>
+<td class="num"><b>104.29</b></td>
+<td class="num">108.52</td>
+<td class="num ">15.86</td>
+<td class="num pos">+4.23</td>
+<td class="num">1.041</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">80</td>
+<td class="mono">3063000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">104.93</td>
+<td class="num"><b>93.23</b></td>
+<td class="num">99.05</td>
+<td class="num ">22.15</td>
+<td class="num pos">+5.82</td>
+<td class="num">1.062</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">81</td>
+<td class="mono">3074000</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.03</td>
+<td class="num"><b>99.59</b></td>
+<td class="num">112.42</td>
+<td class="num biggap">25.80</td>
+<td class="num pos">+12.84</td>
+<td class="num">1.129</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">82</td>
+<td class="mono">3081000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.73</td>
+<td class="num"><b>95.35</b></td>
+<td class="num">103.95</td>
+<td class="num ">21.82</td>
+<td class="num pos">+8.59</td>
+<td class="num">1.09</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">83</td>
+<td class="mono">3082000</td>
+<td class="num">12</td>
+<td class="num">8</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.49</td>
+<td class="num"><b>95.01</b></td>
+<td class="num">99.88</td>
+<td class="num ">17.42</td>
+<td class="num pos">+4.87</td>
+<td class="num">1.051</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 8개</td>
+</tr>
+<tr class="">
+<td class="num">84</td>
+<td class="mono">3106000</td>
+<td class="num">12</td>
+<td class="num">7</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.96</td>
+<td class="num"><b>94.96</b></td>
+<td class="num">105.37</td>
+<td class="num ">24.27</td>
+<td class="num pos">+10.41</td>
+<td class="num">1.11</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 7개</td>
+</tr>
+<tr class="partial">
+<td class="num">85</td>
+<td class="mono">3119000</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">93.59</td>
+<td class="num"><b>88.14</b></td>
+<td class="num">89.51</td>
+<td class="num ">13.13</td>
+<td class="num pos">+1.36</td>
+<td class="num">1.015</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">86</td>
+<td class="mono">3120000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.33</td>
+<td class="num"><b>89.36</b></td>
+<td class="num">95.62</td>
+<td class="num ">24.16</td>
+<td class="num pos">+6.26</td>
+<td class="num">1.07</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">87</td>
+<td class="mono">3121000</td>
+<td class="num">12</td>
+<td class="num">9</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.42</td>
+<td class="num"><b>97.65</b></td>
+<td class="num">113.35</td>
+<td class="num biggap">30.93</td>
+<td class="num pos">+15.70</td>
+<td class="num">1.161</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 9개</td>
+</tr>
+<tr class="">
+<td class="num">88</td>
+<td class="mono">3126000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.92</td>
+<td class="num"><b>93.38</b></td>
+<td class="num">103.33</td>
+<td class="num biggap">30.34</td>
+<td class="num pos">+9.96</td>
+<td class="num">1.107</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">89</td>
+<td class="mono">3127000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.50</td>
+<td class="num"><b>98.26</b></td>
+<td class="num">103.16</td>
+<td class="num ">18.98</td>
+<td class="num pos">+4.89</td>
+<td class="num">1.05</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">90</td>
+<td class="mono">3132000</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">89.97</td>
+<td class="num"><b>86.66</b></td>
+<td class="num">96.76</td>
+<td class="num biggap">25.38</td>
+<td class="num pos">+10.09</td>
+<td class="num">1.116</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">91</td>
+<td class="mono">3160000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.85</td>
+<td class="num"><b>97.49</b></td>
+<td class="num">105.14</td>
+<td class="num ">12.32</td>
+<td class="num pos">+7.65</td>
+<td class="num">1.078</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">92</td>
+<td class="mono">3166001</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.16</td>
+<td class="num"><b>96.98</b></td>
+<td class="num">106.05</td>
+<td class="num ">21.50</td>
+<td class="num pos">+9.07</td>
+<td class="num">1.094</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">93</td>
+<td class="mono">3195000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">96.23</td>
+<td class="num"><b>92.25</b></td>
+<td class="num">97.20</td>
+<td class="num ">16.62</td>
+<td class="num pos">+4.95</td>
+<td class="num">1.054</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">94</td>
+<td class="mono">3208000</td>
+<td class="num">12</td>
+<td class="num">10</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">102.74</td>
+<td class="num"><b>100.67</b></td>
+<td class="num">119.07</td>
+<td class="num biggap">36.96</td>
+<td class="num pos">+18.40</td>
+<td class="num">1.183</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 10개</td>
+</tr>
+<tr class="">
+<td class="num">95</td>
+<td class="mono">3213000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.61</td>
+<td class="num"><b>97.81</b></td>
+<td class="num">105.92</td>
+<td class="num biggap">28.98</td>
+<td class="num pos">+8.11</td>
+<td class="num">1.083</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="partial">
+<td class="num">96</td>
+<td class="mono">3224000</td>
+<td class="num">10</td>
+<td class="num">8</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">88.93</td>
+<td class="num"><b>78.00</b></td>
+<td class="num">78.88</td>
+<td class="num ">18.21</td>
+<td class="num pos">+0.89</td>
+<td class="num">1.011</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 10개(불완전); EZ점 8개</td>
+</tr>
+<tr class="">
+<td class="num">97</td>
+<td class="mono">3227000</td>
+<td class="num">12</td>
+<td class="num">9</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">92.12</td>
+<td class="num"><b>90.60</b></td>
+<td class="num">99.24</td>
+<td class="num ">13.09</td>
+<td class="num pos">+8.63</td>
+<td class="num">1.095</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 9개</td>
+</tr>
+<tr class="">
+<td class="num">98</td>
+<td class="mono">3240000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">108.85</td>
+<td class="num"><b>105.79</b></td>
+<td class="num">111.12</td>
+<td class="num ">16.18</td>
+<td class="num pos">+5.33</td>
+<td class="num">1.05</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">99</td>
+<td class="mono">3242000</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.72</td>
+<td class="num"><b>97.82</b></td>
+<td class="num">103.68</td>
+<td class="num ">16.97</td>
+<td class="num pos">+5.86</td>
+<td class="num">1.06</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">100</td>
+<td class="mono">3246000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">100.99</td>
+<td class="num"><b>96.90</b></td>
+<td class="num">102.72</td>
+<td class="num ">17.39</td>
+<td class="num pos">+5.82</td>
+<td class="num">1.06</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">101</td>
+<td class="mono">3248000</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">94.68</td>
+<td class="num"><b>90.84</b></td>
+<td class="num">90.95</td>
+<td class="num ">8.29</td>
+<td class="num pos">+0.11</td>
+<td class="num">1.001</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">102</td>
+<td class="mono">26052019061510</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">99.11</td>
+<td class="num"><b>96.44</b></td>
+<td class="num">105.02</td>
+<td class="num ">20.27</td>
+<td class="num pos">+8.58</td>
+<td class="num">1.089</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">103</td>
+<td class="mono">32502023010911</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">92.68</td>
+<td class="num"><b>91.55</b></td>
+<td class="num">97.61</td>
+<td class="num ">12.54</td>
+<td class="num pos">+6.06</td>
+<td class="num">1.066</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">104</td>
+<td class="mono">32552023011608</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.69</td>
+<td class="num"><b>90.39</b></td>
+<td class="num">93.51</td>
+<td class="num ">13.66</td>
+<td class="num pos">+3.12</td>
+<td class="num">1.035</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">105</td>
+<td class="mono">32602023012708</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">101.71</td>
+<td class="num"><b>100.14</b></td>
+<td class="num">104.13</td>
+<td class="num ">15.76</td>
+<td class="num pos">+3.99</td>
+<td class="num">1.04</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">106</td>
+<td class="mono">32662023020408</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">97.12</td>
+<td class="num"><b>96.14</b></td>
+<td class="num">116.32</td>
+<td class="num ">24.67</td>
+<td class="num pos">+20.18</td>
+<td class="num">1.21</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">107</td>
+<td class="mono">32672023020611</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.10</td>
+<td class="num"><b>88.49</b></td>
+<td class="num">108.19</td>
+<td class="num biggap">31.77</td>
+<td class="num pos">+19.70</td>
+<td class="num">1.223</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">108</td>
+<td class="mono">32682023020611</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">108.28</td>
+<td class="num"><b>107.78</b></td>
+<td class="num">115.05</td>
+<td class="num ">17.07</td>
+<td class="num pos">+7.27</td>
+<td class="num">1.067</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">109</td>
+<td class="mono">32772023022208</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">90.25</td>
+<td class="num"><b>89.60</b></td>
+<td class="num">95.65</td>
+<td class="num ">14.51</td>
+<td class="num pos">+6.05</td>
+<td class="num">1.068</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">110</td>
+<td class="mono">32782023022211</td>
+<td class="num">12</td>
+<td class="num">12</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">89.56</td>
+<td class="num"><b>88.11</b></td>
+<td class="num">97.97</td>
+<td class="num biggap">25.93</td>
+<td class="num pos">+9.86</td>
+<td class="num">1.112</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note"></td>
+</tr>
+<tr class="">
+<td class="num">111</td>
+<td class="mono">32822023022511</td>
+<td class="num">12</td>
+<td class="num">13</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">106.02</td>
+<td class="num"><b>102.85</b></td>
+<td class="num">115.69</td>
+<td class="num biggap">26.16</td>
+<td class="num pos">+12.85</td>
+<td class="num">1.125</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 13개</td>
+</tr>
+<tr class="">
+<td class="num">112</td>
+<td class="mono">32832023022711</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">98.95</td>
+<td class="num"><b>97.49</b></td>
+<td class="num">116.02</td>
+<td class="num biggap">33.18</td>
+<td class="num pos">+18.53</td>
+<td class="num">1.19</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="">
+<td class="num">113</td>
+<td class="mono">32902023032111</td>
+<td class="num">12</td>
+<td class="num">11</td>
+<td><span class="badge ok">완전</span></td>
+<td class="num" style="color:#999">95.20</td>
+<td class="num"><b>94.78</b></td>
+<td class="num">112.38</td>
+<td class="num biggap">30.57</td>
+<td class="num pos">+17.60</td>
+<td class="num">1.186</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">EZ점 11개</td>
+</tr>
+<tr class="partial">
+<td class="num">114</td>
+<td class="mono">33062023050611</td>
+<td class="num">11</td>
+<td class="num">11</td>
+<td><span class="badge partial">불완전</span></td>
+<td class="num" style="color:#999">101.18</td>
+<td class="num"><b>96.71</b></td>
+<td class="num">106.64</td>
+<td class="num biggap">27.38</td>
+<td class="num pos">+9.93</td>
+<td class="num">1.103</td>
+<td><span class="tag tzl">TZL</span></td>
+<td class="note">치아폭 11개(불완전); EZ점 11개</td>
+</tr>
+    </tbody>
+  </table>
+  </div><!-- /panel-table -->
+
+  <div class="panel" id="panel-compareEzl">
+    <div class="frame-wrap">
+      <iframe id="frame-compareEzl" data-src="ezl_gt_tzl_compare.html" title="EZL>TZL 사진 비교"></iframe>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-compareTzl">
+    <div class="frame-wrap">
+      <iframe id="frame-compareTzl" data-src="tzl_gt_ezl_compare.html" title="TZL>EZL 사진 비교"></iframe>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-compareGap">
+    <div class="frame-wrap">
+      <iframe id="frame-compareGap" data-src="big_gap_compare.html" title="치아 간격 큰 사례"></iframe>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-compareInflate">
+    <div class="frame-wrap">
+      <iframe id="frame-compareInflate" data-src="ezl_inflate_compare.html" title="EZL 증가 원인"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+    // 해당 패널에 lazy-load 대상 iframe이 있으면 첫 진입 시 로드
+    const f = document.getElementById('frame-' + name);
+    if (f && !f.src && f.dataset.src) f.src = f.dataset.src;
+  }
+
+  const tbody = document.getElementById('tbody');
+  const allRows = Array.from(tbody.rows);
+  let sortCol = -1, sortDir = 1;
+
+  function sortBy(col, type) {
+    sortDir = (sortCol === col) ? -sortDir : 1;
+    sortCol = col;
+    const rows = Array.from(tbody.rows);
+    rows.sort((a, b) => {
+      let x = a.cells[col].textContent.trim(), y = b.cells[col].textContent.trim();
+      if (type === 'n') {
+        x = parseFloat(x.replace('+','')) ; y = parseFloat(y.replace('+',''));
+        if (isNaN(x)) x = -Infinity; if (isNaN(y)) y = -Infinity;
+        return (x - y) * sortDir;
+      }
+      return x.localeCompare(y, 'ko') * sortDir;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  }
+
+  function filterRows() {
+    const q = document.getElementById('q').value.toLowerCase();
+    const only12 = document.getElementById('only12').checked;
+    const onlyEz = document.getElementById('onlyEz').checked;
+    let shown = 0;
+    for (const r of allRows) {
+      const id = r.cells[1].textContent.toLowerCase();
+      const is12 = r.cells[2].textContent.trim() === '12';
+      const isEz = r.cells[11].textContent.trim() === 'EZL';
+      const ok = id.includes(q) && (!only12 || is12) && (!onlyEz || isEz);
+      r.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    }
+    document.getElementById('count').textContent = shown + ' / ' + allRows.length + ' 행 표시';
+  }
+  filterRows();
+</script>
+</body>
+</html>

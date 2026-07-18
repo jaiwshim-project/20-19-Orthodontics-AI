@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "ez-medical-ml-harness-run/v1",
+  "privacy": {
+    "aggregateOnly": true,
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsImageHashes": false,
+    "containsSourcePaths": false,
+    "containsImageCoordinates": false
+  },
+  "round": 2,
+  "executionMode": "train_current_round",
+  "startedAt": "2026-07-17T20:21:22.292Z",
+  "completedAt": "2026-07-17T20:23:37.835Z",
+  "durationMs": 135543,
+  "pipelineStatus": "FAILED",
+  "promotionStatus": "BLOCKED",
+  "deploymentMode": "research_only",
+  "humanApprovalRequired": true,
+  "productionPromotionAllowed": false,
+  "productionHtml": {
+    "editedByHarness": false,
+    "unchangedDigestVerified": true
+  },
+  "stages": [
+    {
+      "id": 1,
+      "name": "Curator",
+      "status": "PASS",
+      "durationMs": 12519,
+      "commands": [
+        {
+          "label": "build_dataset_index",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 12513
+        }
+      ],
+      "aggregate": {
+        "mappingAudit": "PASS",
+        "phiAudit": "PASS",
+        "canonicalCases": 174,
+        "rootBackedCases": 119,
+        "embeddedOnlyCases": 55,
+        "widthAnnotations": 183,
+        "ezAnnotations": 114,
+        "exact12WidthCases": 110,
+        "exact12EzCases": 61,
+        "casesRequiringMappingReview": 55,
+        "duplicateImageRowsGrouped": 58
+      }
+    },
+    {
+      "id": 2,
+      "name": "Miner",
+      "status": "PASS",
+      "durationMs": 303,
+      "commands": [
+        {
+          "label": "evaluate_rule_baseline",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 296
+        }
+      ],
+      "aggregate": {
+        "baselineMode": "reused",
+        "totalCases": 174,
+        "successfulCases": 174,
+        "failedCases": 0,
+        "evaluatedWidthCases": 126,
+        "evaluatedEzCases": 113,
+        "pairedClinicalCases": 104,
+        "sanityChecksPassed": 9,
+        "sanityChecksTotal": 9
+      }
+    },
+    {
+      "id": 3,
+      "name": "Architect",
+      "status": "PASS",
+      "durationMs": 25,
+      "commands": [],
+      "aggregate": {
+        "configSchemaValid": true,
+        "policyComplete": true,
+        "policyChecksPassed": 12,
+        "policyChecksTotal": 12,
+        "splitUnit": "exact_image_digest_or_private_patient_group",
+        "groupedFolds": 5,
+        "uniqueSplitGroups": 174,
+        "seed": 20260711,
+        "splitDigest": "25d954b413e1a21eba44e93f5925867dad1d6fca168084e4adb38cf8d4f14d69",
+        "architectureDigest": "71b76269df926cd5126652a4576d74fe767edb2d32b8e1640ea56fec9b1b249e"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Trainer",
+      "status": "PASS",
+      "durationMs": 121570,
+      "commands": [
+        {
+          "label": "train_residual_model",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 1477
+        },
+        {
+          "label": "evaluate_clinical_lengths",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 2990
+        },
+        {
+          "label": "tune_fine_clinical_and_safety_policy",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 58382
+        },
+        {
+          "label": "validate_policy_with_nested_outer_folds",
+          "status": "PASS",
+          "exitCode": 0,
+          "durationMs": 58701
+        }
+      ],
+      "aggregate": {
+        "trainingMode": "trained",
+        "modelPresent": true,
+        "residualMetricsPresent": true,
+        "clinicalMetricsPresent": true,
+        "gateTuningPresent": true,
+        "fineGateTuningPreferred": true,
+        "deploymentPolicyPresent": true,
+        "nestedPolicyMetricsPresent": true,
+        "missingArtifactCount": 0,
+        "residual": {
+          "samplesWidth": 110,
+          "samplesEz": 113,
+          "statisticalGatePass": true
+        },
+        "clinical": {
+          "pairedCases": 104,
+          "pairedFallbackCases": 9
+        },
+        "tuning": {
+          "candidates": 1287,
+          "passingCandidates": 0,
+          "candidateSelected": false,
+          "actualPixelDiagonalCapVerified": true
+        },
+        "deploymentPolicy": {
+          "schemaValid": true,
+          "status": "candidate_rejected_nested_validation",
+          "validationGatePass": true,
+          "modelIdentityFieldsPresent": true
+        },
+        "nestedValidation": {
+          "outerFolds": 5,
+          "promotionGatePass": false,
+          "strictInnerPolicySelectedFolds": 4,
+          "requiredStrictInnerPolicySelectedFolds": 5
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "Critic",
+      "status": "FAILED",
+      "durationMs": 1121,
+      "commands": [
+        {
+          "label": "verify_dataset_baseline_pipeline",
+          "status": "FAILED",
+          "exitCode": 1,
+          "durationMs": 1120
+        }
+      ],
+      "aggregate": {}
+    }
+  ],
+  "automatedGates": null,
+  "blockedReasons": [
+    "fail_fast_pipeline_error"
+  ],
+  "outputArtifacts": {
+    "aggregateManifest": "harness-run.json",
+    "benchmarkReport": "benchmark.html",
+    "baselineMetrics": "baseline_metrics.json",
+    "residualMetrics": null,
+    "clinicalMetrics": null,
+    "gateTuning": null,
+    "deploymentPolicy": null,
+    "nestedPolicyMetrics": null
+  },
+  "fatalFailure": {
+    "code": "STAGE_5_CRITIC_FAILED"
+  }
+}

@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>EZ/TZL Batch Benchmark</title>
+  <style>
+    :root{--bg:#071019;--panel:#0e1a25;--panel2:#122333;--line:#263849;--text:#f3f7fb;--muted:#9eb0bf;--blue:#5eb7ff;--teal:#43d5bd;--violet:#a78bfa;--amber:#f6c453;--red:#ff7785;--green:#66dda2;--shadow:0 18px 60px rgba(0,0,0,.22)}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 18% 0%,#123149 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,"Pretendard Variable","Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.55}
+    .shell{max-width:1320px;margin:0 auto;padding:34px 24px 80px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px}.brand{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:800}.meta{font-size:12px;color:var(--muted);text-align:right}
+    .hero{background:linear-gradient(135deg,rgba(20,54,76,.94),rgba(14,27,39,.96));border:1px solid #31526b;border-radius:24px;padding:30px;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end}.hero h1{font-size:clamp(30px,5vw,55px);line-height:1.05;margin:8px 0 14px;letter-spacing:-.045em}.hero p{max-width:760px;color:#bfd0dd;margin:0;font-size:15px}.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--blue);font-weight:800}.hero-status{display:flex;flex-direction:column;align-items:flex-end;gap:10px}.hero-status small{color:var(--muted);max-width:280px;text-align:right}
+    .safety{margin:18px 0 34px;padding:17px 20px;border:1px solid #765e25;border-left:4px solid var(--amber);background:rgba(80,59,12,.2);border-radius:12px;color:#f7e5b5}.safety strong{color:#ffe395}.safety span{color:#d8c79b}
+    section{margin-top:42px}.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:16px}.section-head h2{font-size:24px;margin:0;letter-spacing:-.02em}.section-head p{margin:0;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.metric-card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px;min-height:135px}.metric-card.accent{border-color:#426fc0}.metric-card.good{border-color:#285e4e}.metric-card.warn{border-color:#64512a}.metric-title{color:var(--muted);font-size:12px;font-weight:700}.metric-value{font-size:27px;font-weight:830;letter-spacing:-.03em;margin:9px 0 4px}.metric-detail{font-size:12px;color:#9eb0bf}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.panel,.task-panel{background:rgba(14,26,37,.92);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}.panel h3,.task-panel h3{margin:4px 0 0;font-size:22px}.panel h4,.task-panel h4{font-size:14px;margin:27px 0 10px;color:#c8d7e3}
+    .progress-row+.progress-row{margin-top:18px}.progress-label{display:flex;justify-content:space-between;gap:12px;font-size:13px}.track{height:8px;border-radius:99px;background:#1d2d3a;overflow:hidden;margin:7px 0}.fill{height:100%;display:block;border-radius:inherit;background:var(--blue)}.fill.teal{background:var(--teal)}.fill.violet{background:var(--violet)}.fill.amber{background:var(--amber)}.progress-detail{font-size:11px;color:var(--muted)}
+    .facts{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fact{background:#0a1620;border:1px solid #203340;border-radius:12px;padding:13px}.fact span{display:block;color:var(--muted);font-size:11px}.fact strong{font-size:14px}.notice-list{margin-top:16px;padding:14px;border:1px solid #5c4d28;border-radius:10px;background:#231f14;color:#ead9a9;font-size:12px}.notice-list ul{margin:5px 0 0;padding-left:18px}
+    .badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid;padding:7px 11px;font-size:11px;font-weight:800;white-space:nowrap}.badge .dot{width:7px;height:7px;border-radius:50%;background:currentColor}.badge.pass{color:var(--green);border-color:#2c6852;background:#102a22}.badge.wait{color:#aebbc5;border-color:#455866;background:#15212b}.badge.warn{color:var(--amber);border-color:#6b572a;background:#282211}.badge.fail{color:var(--red);border-color:#713846;background:#2c151b}
+    .task-panel+.task-panel{margin-top:18px}.task-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.task-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.task-summary .metric-card{min-height:117px;padding:15px}.task-summary .metric-value{font-size:23px}.bar-chart{display:block;width:100%;height:auto;max-height:260px;background:#09141d;border:1px solid #1c2e3b;border-radius:13px;padding:12px}.bar-chart text{fill:#aebdca;font:12px system-ui,sans-serif}.bar-chart .axis-label{fill:#dce7ef;font-weight:700}.bar-chart .bar-value{fill:#c5d3dd;font-size:11px}.baseline-bar{fill:#55778f}.corrected-bar{fill:var(--teal)}
+    .table-wrap{overflow-x:auto;border:1px solid #203440;border-radius:12px}table{border-collapse:collapse;width:100%;min-width:660px;font-size:12px}th,td{text-align:right;padding:11px 13px;border-bottom:1px solid #1e303c}th:first-child,td:first-child{text-align:left}th{color:#9eb0bf;background:#0a1620;font-weight:700}tbody tr:last-child td{border-bottom:0}.positive{color:var(--green);font-weight:800}.negative{color:var(--red);font-weight:800}
+    .gate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;list-style:none;padding:0;margin:0}.gate-list li{display:flex;align-items:center;gap:9px;background:#0a1620;border:1px solid #20333f;border-radius:10px;padding:10px;font-size:12px}.check{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font-weight:900;flex:0 0 auto}.check.yes{background:#123a2b;color:var(--green)}.check.no{background:#401c24;color:var(--red)}
+    .validation-ladder{display:grid;gap:12px}.validation-ladder article{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:15px;background:#0a1620;border:1px solid #263a48;border-radius:14px;padding:16px}.validation-ladder article.authoritative{border-color:#75404a;background:linear-gradient(90deg,rgba(94,31,43,.24),#0a1620)}.validation-ladder h3{font-size:15px;margin:0 0 4px}.validation-ladder p{margin:0;color:var(--muted);font-size:12px}.ladder-index{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#183247;color:var(--blue);font-weight:900}.authoritative .ladder-index{background:#4a1d27;color:#ff9dab}.decision-banner{border:1px solid #763d49;background:linear-gradient(135deg,#38141c,#19151c);border-radius:18px;padding:22px;color:#ffd9de}.decision-banner h3{margin:0 0 8px;font-size:24px}.decision-banner p{margin:0;color:#dab7bd}
+    .empty{border:1px dashed #3c5060;border-radius:12px;padding:18px;text-align:center;color:var(--muted);background:#0a151e}.empty.large{padding:46px 18px}.footer{margin-top:45px;border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;gap:18px;color:var(--muted);font-size:11px}.footer strong{color:#c8d5df}
+    @media(max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-status{align-items:flex-start}.hero-status small{text-align:left}}
+    @media(max-width:620px){.shell{padding:22px 14px 60px}.topbar,.section-head,.footer{align-items:flex-start;flex-direction:column}.meta{text-align:left}.hero{padding:22px;border-radius:18px}.grid,.task-summary,.facts,.gate-list{grid-template-columns:1fr}.metric-card{min-height:auto}.task-head{flex-direction:column}.bar-chart{padding:4px}.safety{font-size:13px}.validation-ladder article{grid-template-columns:38px 1fr}.validation-ladder article .badge{grid-column:1/-1;justify-self:start}}
+    @media print{body{background:#fff;color:#111}.shell{max-width:none;padding:10px}.hero,.panel,.task-panel,.metric-card{box-shadow:none;background:#fff;color:#111;border-color:#bbb}.hero p,.meta,.metric-detail,.section-head p,.progress-detail,.footer{color:#555}.safety{background:#fff8df;color:#222}.bar-chart{background:#fff}.bar-chart text,.bar-chart .axis-label,.bar-chart .bar-value{fill:#111}.fact,.gate-list li,th{background:#fff}.task-panel{break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand">EZ CURVE · TZ LENGTH</div>
+      <div class="meta">보고서 생성 2026. 7. 18. AM 5:26</div>
+    </div>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">BATCH BENCHMARK · ROUND 01</div>
+        <h1>자동 분석 품질<br>집계 보고서</h1>
+        <p>전문가 정답과 규칙 기반 분석, 잔차 보정 모델을 증례 단위가 아닌 집계 수준에서 비교합니다. 이 보고서에는 환자 식별정보, 파일명, 이미지, 해시, 개별 좌표가 포함되지 않습니다.</p>
+      </div>
+      <div class="hero-status"><span class="badge fail"><span class="dot" aria-hidden="true"></span>운영 승격 보류 · 연구 전용</span><span class="badge pass"><span class="dot" aria-hidden="true"></span>집계 보고서 · PHI 비포함</span><small>최상위 판정은 untouched outer fold 기반 Nested 검증을 따릅니다.</small></div>
+    </header>
+
+    <aside class="safety"><strong>의료 보조 도구 경고:</strong> <span>이 결과는 진단, 발치, 치간 삭제 또는 치료 결정을 자동 확정하지 않습니다. 수치 게이트를 통과해도 치과의사의 증례별 검토와 명시적 사람 승인 전에는 운영 모델로 승격하거나 배포하지 마십시오.</span></aside>
+
+    <aside class="decision-banner"><h3>최종 상태: 운영 승격 보류 · 연구 전용</h3><p>Residual v1의 단순 좌표 PASS와 post-hoc fine-tuned 후보 PASS는 최종 운영 PASS가 아닙니다. 정책 선택에서 완전히 분리된 Nested outer-fold 검증이 FAIL이므로 현재 운영 HTML은 수정하지 않고 연구·오류 분석만 계속합니다.</p></aside>
+
+    <section aria-labelledby="data-title">
+      <div class="section-head"><div><div class="eyebrow">01 · DATA CURATION</div><h2 id="data-title">데이터·매칭·라벨 완전성</h2></div><p>개인정보를 제거한 집계만 표시</p></div>
+      <div class="grid"><article class="metric-card ">
+    <div class="metric-title">정규화 증례</div>
+    <div class="metric-value">174</div>
+    <div class="metric-detail">원본 기반 119 · 내장 이미지 전용 55</div>
+  </article><article class="metric-card warn">
+    <div class="metric-title">치아 폭 정답</div>
+    <div class="metric-value">126</div>
+    <div class="metric-detail">12치 완전 110 · 부분 16</div>
+  </article><article class="metric-card ">
+    <div class="metric-title">EZ 곡선 정답</div>
+    <div class="metric-value">113</div>
+    <div class="metric-detail">정확히 12점 61 · 재표본화 52</div>
+  </article><article class="metric-card ">
+    <div class="metric-title">두 정답 동시 보유</div>
+    <div class="metric-value">113</div>
+    <div class="metric-detail">폭만 13 · EZ만 0 · 없음 48</div>
+  </article></div>
+      <div class="two-col" style="margin-top:16px">
+        <article class="panel"><h3>라벨 커버리지</h3><div style="margin-top:20px"><div class="progress-row">
+    <div class="progress-label"><span>치아 폭 라벨 보유율</span><strong>72.4%</strong></div>
+    <div class="track" role="img" aria-label="치아 폭 라벨 보유율 72.4%"><span class="fill teal" style="width:72.41%"></span></div>
+    <div class="progress-detail">126 / 174 증례</div>
+  </div><div class="progress-row">
+    <div class="progress-label"><span>완전한 12치 폭 라벨</span><strong>87.3%</strong></div>
+    <div class="track" role="img" aria-label="완전한 12치 폭 라벨 87.3%"><span class="fill teal" style="width:87.30%"></span></div>
+    <div class="progress-detail">110 / 126 폭 라벨 증례</div>
+  </div><div class="progress-row">
+    <div class="progress-label"><span>EZ 라벨 보유율</span><strong>64.9%</strong></div>
+    <div class="track" role="img" aria-label="EZ 라벨 보유율 64.9%"><span class="fill violet" style="width:64.94%"></span></div>
+    <div class="progress-detail">113 / 174 증례</div>
+  </div><div class="progress-row">
+    <div class="progress-label"><span>폭·EZ 동시 라벨</span><strong>64.9%</strong></div>
+    <div class="track" role="img" aria-label="폭·EZ 동시 라벨 64.9%"><span class="fill violet" style="width:64.94%"></span></div>
+    <div class="progress-detail">113 / 174 증례</div>
+  </div></div></article>
+        <article class="panel"><h3>데이터 품질 상태</h3><div class="facts" style="margin-top:20px">
+          <div class="fact"><span>전문가 주석 원본</span><strong>183 폭 · 114 EZ</strong></div>
+          <div class="fact"><span>정규화 주석 레코드</span><strong>297</strong></div>
+          <div class="fact"><span>미해결 매칭 충돌</span><strong>0</strong></div>
+          <div class="fact"><span>중복 이미지 행 병합</span><strong>58</strong></div>
+          <div class="fact"><span>데이터 인덱스 생성</span><strong>2026. 7. 18. AM 5:21</strong></div>
+          <div class="fact"><span>개인정보 출력 설정</span><strong>비활성화 확인</strong></div>
+        </div><div class="notice-list"><strong>입력 상태</strong><ul><li>Post-hoc 배포 정책(선택) 파일 없음 — 평가 대기</li></ul></div></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="baseline-title">
+      <div class="section-head"><div><div class="eyebrow">02 · RULE ENGINE BASELINE</div><h2 id="baseline-title">기준 엔진 실행 상태</h2></div><p>엔진 tzl-ezl-rule-v1.0 · 2026. 7. 18. AM 5:16</p></div>
+      <div class="grid"><article class="metric-card good">
+    <div class="metric-title">실행 성공</div>
+    <div class="metric-value">174 / 174</div>
+    <div class="metric-detail">성공률 100.0%</div>
+  </article><article class="metric-card ">
+    <div class="metric-title">평균 처리 시간</div>
+    <div class="metric-value">200 ms</div>
+    <div class="metric-detail">중앙 194 ms · P95 337 ms</div>
+  </article><article class="metric-card ">
+    <div class="metric-title">평균 신뢰도</div>
+    <div class="metric-value">62.4%</div>
+    <div class="metric-detail">P10 57.8% · 폭 품질 50.4%</div>
+  </article><article class="metric-card warn">
+    <div class="metric-title">경고 발생 증례</div>
+    <div class="metric-value">166</div>
+    <div class="metric-detail">총 경고 172 · 실패 0</div>
+  </article></div>
+      <div class="panel" style="margin-top:16px">
+        <h3>실행 품질</h3>
+        <div style="margin-top:20px"><div class="progress-row">
+    <div class="progress-label"><span>배치 실행 성공률</span><strong>100.0%</strong></div>
+    <div class="track" role="img" aria-label="배치 실행 성공률 100.0%"><span class="fill teal" style="width:100.00%"></span></div>
+    <div class="progress-detail">174건 성공 · 0건 실패</div>
+  </div><div class="progress-row">
+    <div class="progress-label"><span>평균 전체 신뢰도</span><strong>62.4%</strong></div>
+    <div class="track" role="img" aria-label="평균 전체 신뢰도 62.4%"><span class="fill blue" style="width:62.42%"></span></div>
+    <div class="progress-detail">중앙 62.6% · 하위 10% 경계 57.8%</div>
+  </div><div class="progress-row">
+    <div class="progress-label"><span>평균 폭 경계 품질</span><strong>50.4%</strong></div>
+    <div class="track" role="img" aria-label="평균 폭 경계 품질 50.4%"><span class="fill violet" style="width:50.42%"></span></div>
+    <div class="progress-detail">규칙 기반 엔진의 내부 신뢰도이며 실제 오차를 대체하지 않음</div>
+  </div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="model-title">
+      <div class="section-head"><div><div class="eyebrow">03 · PRELIMINARY COORDINATE MODEL</div><h2 id="model-title">Residual v1 단순 좌표 검증</h2></div><p>5-fold OOF · 비최종 지표</p></div>
+      <aside class="safety" style="margin-top:0"><strong>해석 주의:</strong> <span>아래 PASS는 좌표 오차만 대상으로 한 초기 residual v1 게이트입니다. 임상 길이, 정책 선택 편향, untouched outer fold를 포함하지 않으므로 최종 승격 PASS로 해석하면 안 됩니다.</span></aside>
+      <article class="task-panel">
+    <div class="task-head">
+      <div><div class="eyebrow">OUT-OF-FOLD · 110건</div><h3>치아 폭</h3></div>
+      <span class="badge pass"><span class="dot" aria-hidden="true"></span>수치 기준 통과</span>
+    </div>
+    <div class="task-summary">
+      <article class="metric-card ">
+    <div class="metric-title">기준 좌표 MAE</div>
+    <div class="metric-value">3.69%</div>
+    <div class="metric-detail">정규화 이미지 대각선 대비</div>
+  </article>
+      <article class="metric-card accent">
+    <div class="metric-title">보정 좌표 MAE</div>
+    <div class="metric-value">2.81%</div>
+    <div class="metric-detail">정규화 이미지 대각선 대비</div>
+  </article>
+      <article class="metric-card good">
+    <div class="metric-title">상대 개선</div>
+    <div class="metric-value">24.0%</div>
+    <div class="metric-detail">P95 오차도 감소</div>
+  </article>
+    </div>
+    <svg class="bar-chart" viewBox="0 0 720 216" role="img" aria-label="치아 폭 기준 엔진과 보정 모델 오차 비교"><g class="legend"><rect x="474" y="10" width="12" height="12" rx="3" class="baseline-bar"/><text x="492" y="21">기준 엔진</text><rect x="572" y="10" width="12" height="12" rx="3" class="corrected-bar"/><text x="590" y="21">보정 모델</text></g><text x="0" y="62" class="axis-label">좌표 MAE</text><rect x="112" y="42" width="132.93" height="16" rx="4" class="baseline-bar"/><text x="252.93" y="55" class="bar-value">3.69%</text><rect x="112" y="64" width="101.01" height="16" rx="4" class="corrected-bar"/><text x="221.01" y="77" class="bar-value">2.81%</text><text x="0" y="120" class="axis-label">2D MAE</text><rect x="112" y="100" width="152.47" height="16" rx="4" class="baseline-bar"/><text x="272.47" y="113" class="bar-value">4.24%</text><rect x="112" y="122" width="115.63" height="16" rx="4" class="corrected-bar"/><text x="235.63" y="135" class="bar-value">3.21%</text><text x="0" y="178" class="axis-label">P95</text><rect x="112" y="158" width="460.00" height="16" rx="4" class="baseline-bar"/><text x="580.00" y="171" class="bar-value">12.79%</text><rect x="112" y="180" width="314.42" height="16" rx="4" class="corrected-bar"/><text x="434.42" y="193" class="bar-value">8.74%</text></svg>
+    <h4>Fold별 검증</h4>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Fold</th><th>시험 건수</th><th>기준 좌표 MAE</th><th>보정 좌표 MAE</th><th>상대 개선</th><th>보정 적용률</th></tr></thead>
+    <tbody><tr>
+      <td>1</td>
+      <td>22</td>
+      <td>3.71%</td>
+      <td>2.54%</td>
+      <td class="positive">31.7%</td>
+      <td>100.0%</td>
+    </tr><tr>
+      <td>2</td>
+      <td>22</td>
+      <td>3.70%</td>
+      <td>3.14%</td>
+      <td class="positive">15.1%</td>
+      <td>90.9%</td>
+    </tr><tr>
+      <td>3</td>
+      <td>22</td>
+      <td>3.74%</td>
+      <td>2.71%</td>
+      <td class="positive">27.5%</td>
+      <td>100.0%</td>
+    </tr><tr>
+      <td>4</td>
+      <td>22</td>
+      <td>4.07%</td>
+      <td>3.21%</td>
+      <td class="positive">21.2%</td>
+      <td>72.7%</td>
+    </tr><tr>
+      <td>5</td>
+      <td>22</td>
+      <td>3.24%</td>
+      <td>2.44%</td>
+      <td class="positive">24.7%</td>
+      <td>95.5%</td>
+    </tr></tbody>
+  </table></div>
+    <h4>자동 승격 차단 게이트</h4>
+    <ul class="gate-list"><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>좌표 MAE 상대 개선 10% 이상</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>5개 fold 중 4개 이상 개선</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>P95 오차 비퇴행</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>보정량 이미지 대각선 5% 제한</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>낯선 증례 기준 엔진 복귀</span>
+  </li></ul>
+  </article><article class="task-panel">
+    <div class="task-head">
+      <div><div class="eyebrow">OUT-OF-FOLD · 113건</div><h3>EZ 곡선</h3></div>
+      <span class="badge pass"><span class="dot" aria-hidden="true"></span>수치 기준 통과</span>
+    </div>
+    <div class="task-summary">
+      <article class="metric-card ">
+    <div class="metric-title">기준 좌표 MAE</div>
+    <div class="metric-value">4.27%</div>
+    <div class="metric-detail">정규화 이미지 대각선 대비</div>
+  </article>
+      <article class="metric-card accent">
+    <div class="metric-title">보정 좌표 MAE</div>
+    <div class="metric-value">2.66%</div>
+    <div class="metric-detail">정규화 이미지 대각선 대비</div>
+  </article>
+      <article class="metric-card good">
+    <div class="metric-title">상대 개선</div>
+    <div class="metric-value">37.8%</div>
+    <div class="metric-detail">P95 오차도 감소</div>
+  </article>
+    </div>
+    <svg class="bar-chart" viewBox="0 0 720 216" role="img" aria-label="EZ 곡선 기준 엔진과 보정 모델 오차 비교"><g class="legend"><rect x="474" y="10" width="12" height="12" rx="3" class="baseline-bar"/><text x="492" y="21">기준 엔진</text><rect x="572" y="10" width="12" height="12" rx="3" class="corrected-bar"/><text x="590" y="21">보정 모델</text></g><text x="0" y="62" class="axis-label">좌표 MAE</text><rect x="112" y="42" width="160.13" height="16" rx="4" class="baseline-bar"/><text x="280.13" y="55" class="bar-value">4.27%</text><rect x="112" y="64" width="99.65" height="16" rx="4" class="corrected-bar"/><text x="219.65" y="77" class="bar-value">2.66%</text><text x="0" y="120" class="axis-label">2D MAE</text><rect x="112" y="100" width="189.00" height="16" rx="4" class="baseline-bar"/><text x="309.00" y="113" class="bar-value">5.04%</text><rect x="112" y="122" width="115.77" height="16" rx="4" class="corrected-bar"/><text x="235.77" y="135" class="bar-value">3.09%</text><text x="0" y="178" class="axis-label">P95</text><rect x="112" y="158" width="460.00" height="16" rx="4" class="baseline-bar"/><text x="580.00" y="171" class="bar-value">12.26%</text><rect x="112" y="180" width="312.96" height="16" rx="4" class="corrected-bar"/><text x="432.96" y="193" class="bar-value">8.34%</text></svg>
+    <h4>Fold별 검증</h4>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Fold</th><th>시험 건수</th><th>기준 좌표 MAE</th><th>보정 좌표 MAE</th><th>상대 개선</th><th>보정 적용률</th></tr></thead>
+    <tbody><tr>
+      <td>1</td>
+      <td>23</td>
+      <td>4.14%</td>
+      <td>2.45%</td>
+      <td class="positive">40.7%</td>
+      <td>100.0%</td>
+    </tr><tr>
+      <td>2</td>
+      <td>23</td>
+      <td>4.36%</td>
+      <td>2.61%</td>
+      <td class="positive">40.1%</td>
+      <td>95.7%</td>
+    </tr><tr>
+      <td>3</td>
+      <td>23</td>
+      <td>4.41%</td>
+      <td>3.07%</td>
+      <td class="positive">30.2%</td>
+      <td>87.0%</td>
+    </tr><tr>
+      <td>4</td>
+      <td>22</td>
+      <td>4.07%</td>
+      <td>2.39%</td>
+      <td class="positive">41.3%</td>
+      <td>95.5%</td>
+    </tr><tr>
+      <td>5</td>
+      <td>22</td>
+      <td>4.36%</td>
+      <td>2.75%</td>
+      <td class="positive">37.0%</td>
+      <td>90.9%</td>
+    </tr></tbody>
+  </table></div>
+    <h4>자동 승격 차단 게이트</h4>
+    <ul class="gate-list"><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>좌표 MAE 상대 개선 10% 이상</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>5개 fold 중 4개 이상 개선</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>P95 오차 비퇴행</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>보정량 이미지 대각선 5% 제한</span>
+  </li><li>
+    <span class="check yes" aria-hidden="true">✓</span>
+    <span>낯선 증례 기준 엔진 복귀</span>
+  </li></ul>
+  </article>
+    </section>
+
+    <section aria-labelledby="hierarchy-title">
+      <div class="section-head"><div><div class="eyebrow">04 · VALIDATION HIERARCHY</div><h2 id="hierarchy-title">PASS의 단계와 최종 권위</h2></div><p>Nested outer-fold 판정이 최우선</p></div>
+      <div class="validation-ladder">
+    <article><div class="ladder-index">A</div><div><h3>Residual v1 단순 좌표 검증</h3><p>폭·EZ 좌표의 OOF 개선만 확인한 예비 단계입니다. 임상 길이와 정책 선택 편향을 검증하지 않아 최종 PASS로 사용할 수 없습니다.</p></div><span class="badge pass"><span class="dot" aria-hidden="true"></span>PASS · 좌표만</span></article>
+    <article><div class="ladder-index">B</div><div><h3>Post-hoc fine-tuned 후보</h3><p>전체 OOF 결과에서 blend·거리 게이트를 선택하고 같은 결과로 평가한 후보 PASS입니다. 선택 후 성능이 낙관적으로 보일 수 있습니다.</p></div><span class="badge wait"><span class="dot" aria-hidden="true"></span>평가 대기</span></article>
+    <article class="authoritative"><div class="ladder-index">C</div><div><h3>Nested outer-fold 검증</h3><p>각 outer 시험 fold를 정책 선택에서 완전히 제외한 최종 권위 평가입니다. 운영 승격 판단은 이 결과만 따릅니다.</p></div><span class="badge fail"><span class="dot" aria-hidden="true"></span>FAIL · 권위 판정</span></article>
+  </div>
+      <div class="grid" style="margin-top:16px"><article class="metric-card wait">
+    <div class="metric-title">Post-hoc 정책</div>
+    <div class="metric-value">평가 대기</div>
+    <div class="metric-detail">residual-deployment-policy.json이 없습니다.</div>
+  </article></div>
+    </section>
+
+    <section aria-labelledby="nested-title">
+      <div class="section-head"><div><div class="eyebrow">05 · AUTHORITATIVE NESTED VALIDATION</div><h2 id="nested-title">Untouched outer-fold 최종 검증</h2></div><span class="badge fail"><span class="dot" aria-hidden="true"></span>FAIL · 운영 승격 금지</span></div>
+      <div class="grid"><article class="metric-card good">
+    <div class="metric-title">Nested 폭 좌표 개선</div>
+    <div class="metric-value">17.78%</div>
+    <div class="metric-detail">4 / 5 fold 개선 · 10% 기준 미달</div>
+  </article><article class="metric-card good">
+    <div class="metric-title">Nested EZ 좌표 개선</div>
+    <div class="metric-value">26.03%</div>
+    <div class="metric-detail">4 / 5 fold 개선 · strict fold 기준 미달</div>
+  </article><article class="metric-card good">
+    <div class="metric-title">앱 스케일 TZL MAE</div>
+    <div class="metric-value">11.32%</div>
+    <div class="metric-detail">-0.78 mm 퇴행</div>
+  </article><article class="metric-card warn">
+    <div class="metric-title">Strict 정책 선택</div>
+    <div class="metric-value">4 / 5</div>
+    <div class="metric-detail">나머지 fold는 기준 엔진으로 안전 복귀</div>
+  </article></div>
+      <article class="task-panel" style="margin-top:16px">
+        <div class="task-head"><div><div class="eyebrow">CLINICAL OUTPUT · APP SCALE</div><h3>길이 오차 및 P95 퇴행</h3></div><span class="badge wait"><span class="dot" aria-hidden="true"></span>평가 확인</span></div>
+        <p style="color:var(--muted);font-size:13px">앱과 동일한 후보 EZ endpoint chord 스케일입니다. 음수 MAE 개선은 오차 증가를 뜻하며, 양수 P95 변화는 꼬리 오차 악화를 뜻합니다.</p>
+        <div class="table-wrap"><table>
+    <thead><tr><th>앱 스케일</th><th>기준 MAE</th><th>후보 MAE</th><th>MAE 개선</th><th>기준 P95</th><th>후보 P95</th><th>P95 변화</th><th>판정</th></tr></thead>
+    <tbody><tr>
+      <td>EZL</td>
+      <td>4.47 mm</td>
+      <td>4.03 mm</td>
+      <td class="positive">9.70%</td>
+      <td>9.70 mm</td>
+      <td>9.08 mm</td>
+      <td class="positive">-0.62 mm</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>비퇴행</span></td>
+    </tr><tr>
+      <td>TZL</td>
+      <td>6.89 mm</td>
+      <td>6.11 mm</td>
+      <td class="positive">11.32%</td>
+      <td>17.58 mm</td>
+      <td>18.15 mm</td>
+      <td class="negative">+0.58 mm</td>
+      <td><span class="badge fail"><span class="dot" aria-hidden="true"></span>실패</span></td>
+    </tr><tr>
+      <td>EZL−TZL 차이</td>
+      <td>6.39 mm</td>
+      <td>5.55 mm</td>
+      <td class="positive">13.13%</td>
+      <td>19.10 mm</td>
+      <td>14.68 mm</td>
+      <td class="positive">-4.43 mm</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>비퇴행</span></td>
+    </tr></tbody>
+  </table></div>
+        <h4>Outer fold별 정책 선택</h4>
+        <div class="table-wrap"><table>
+    <thead><tr><th>Outer fold</th><th>내부 정책 선택</th><th>Strict 후보 수</th><th>폭 개선</th><th>EZ 개선</th><th>짝지은 시험 증례</th></tr></thead>
+    <tbody><tr>
+      <td>1</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>Strict 후보 선택</span></td>
+      <td>174</td>
+      <td class="positive">18.23%</td>
+      <td class="positive">32.26%</td>
+      <td>21</td>
+    </tr><tr>
+      <td>2</td>
+      <td><span class="badge warn"><span class="dot" aria-hidden="true"></span>안전 복귀</span></td>
+      <td>0</td>
+      <td class="">0.00%</td>
+      <td class="">0.00%</td>
+      <td>21</td>
+    </tr><tr>
+      <td>3</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>Strict 후보 선택</span></td>
+      <td>183</td>
+      <td class="positive">22.57%</td>
+      <td class="positive">30.09%</td>
+      <td>21</td>
+    </tr><tr>
+      <td>4</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>Strict 후보 선택</span></td>
+      <td>144</td>
+      <td class="positive">25.91%</td>
+      <td class="positive">35.07%</td>
+      <td>21</td>
+    </tr><tr>
+      <td>5</td>
+      <td><span class="badge pass"><span class="dot" aria-hidden="true"></span>Strict 후보 선택</span></td>
+      <td>272</td>
+      <td class="positive">20.47%</td>
+      <td class="positive">33.47%</td>
+      <td>20</td>
+    </tr></tbody>
+  </table></div>
+      </article>
+      <article class="panel" style="margin-top:16px"><div class="facts">
+        <div class="fact"><span>Nested 최종 판정</span><strong>FAIL</strong></div>
+        <div class="fact"><span>짝지은 임상 증례</span><strong>104</strong></div>
+        <div class="fact"><span>Strict 정책 선택 fold</span><strong>4 / 5</strong></div>
+        <div class="fact"><span>운영 HTML</span><strong>미수정 확인</strong></div>
+      </div></article>
+    </section>
+
+    <section aria-labelledby="promotion-title">
+      <div class="section-head"><div><div class="eyebrow">06 · FINAL PROMOTION CONTROL</div><h2 id="promotion-title">최종 승격 판정</h2></div><span class="badge fail"><span class="dot" aria-hidden="true"></span>운영 승격 보류 · 연구 전용</span></div>
+      <article class="panel">
+        <div class="two-col">
+          <div><h3>운영 승격 보류 · 연구 전용</h3><p style="color:var(--muted);max-width:660px">폭 좌표 개선은 10% 기준에 미달했고, EZ는 개선 fold 수가 부족했습니다. 앱 스케일 TZL MAE 및 EZL·차이 P95가 퇴행하여 운영 모델로 승격하지 않습니다.</p></div>
+          <div class="facts">
+            <div class="fact"><span>허용 모드</span><strong>Research / offline only</strong></div>
+            <div class="fact"><span>자동 운영 승격</span><strong>차단</strong></div>
+            <div class="fact"><span>필수 승인자</span><strong>치과의사 / 책임자</strong></div>
+            <div class="fact"><span>운영 HTML 변경</span><strong>없음</strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="footer"><div><strong>개인정보 보호:</strong> 원본 환자명, 이미지명, 경로, 해시, 개별 좌표 미포함</div><div><strong>용도:</strong> 연구·품질검증·사람 승인 지원</div></footer>
+  </main>
+</body>
+</html>
