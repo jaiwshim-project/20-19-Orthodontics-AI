@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { searchKnowledge, saveConversation } from '../lib/supabase.js';
-import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { searchKnowledge, searchKnowledgeByKeyword, saveConversation } from '../lib/supabase.js';
+import {
+  azureChatCompletion, isAzureChatConfigured,
+  anthropicChatCompletion, isAnthropicConfigured
+} from '../lib/ai-provider.js';
 
 // ============================================================
 // 환자 상담 AI — 김용을 원장 RAG 자료 기반
@@ -61,9 +64,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'messages가 비어있습니다.' });
     }
 
-    if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+    if (!isAnthropicConfigured() && !isAzureChatConfigured() && !GEMINI_API_KEY) {
       return res.status(200).json({
-        reply: '죄송합니다. AI 서비스 키가 설정되지 않아 답변을 생성할 수 없습니다. (Azure OpenAI 또는 GEMINI_API_KEY 필요)',
+        reply: '죄송합니다. AI 서비스 키가 설정되지 않아 답변을 생성할 수 없습니다. (ANTHROPIC_API_KEY, Azure OpenAI, 또는 GEMINI_API_KEY 필요)',
         sources: [],
         usage: { model: 'fallback' },
         fallback: true
@@ -73,11 +76,21 @@ export default async function handler(req, res) {
     const userQuery = messages[messages.length - 1]?.content || '';
 
     // RAG 검색 — 김용을 원장 자료 포함 지식베이스에서 상위 4건
+    // 1순위: 벡터(임베딩) 검색 → 실패/빈 결과면 2순위: 키워드 검색 폴백
+    //   (Gemini 임베딩 키 정지 등 임베딩 불가 상황에서도 검색 유지)
     let sources = [];
     try {
       sources = await searchKnowledge(userQuery, 4);
     } catch (e) {
-      console.warn('[consult] RAG 건너뜀:', e.message);
+      console.warn('[consult] 벡터 RAG 실패:', e.message);
+    }
+    if (!sources.length) {
+      try {
+        sources = await searchKnowledgeByKeyword(userQuery, 4);
+        if (sources.length) console.log('[consult] 키워드 RAG 폴백 사용:', sources.length, '건');
+      } catch (e) {
+        console.warn('[consult] 키워드 RAG 실패:', e.message);
+      }
     }
 
     const ragContext = sources.length
@@ -92,7 +105,28 @@ export default async function handler(req, res) {
 
     const fullSystem = SYSTEM_PROMPT + patientBlock + ragContext;
 
-    // ---- Azure OpenAI 우선 ----
+    // ---- Claude (Anthropic) 우선 ----
+    if (isAnthropicConfigured()) {
+      const reply = await anthropicChatCompletion({
+        system: fullSystem,
+        messages,
+        maxTokens: 2048,
+        timeoutMs: 30000
+      });
+
+      if (userId) {
+        try { await saveConversation(userId, [...messages, { role: 'assistant', content: reply }]); }
+        catch (e) { console.warn('[consult] 저장 실패:', e.message); }
+      }
+
+      return res.status(200).json({
+        reply,
+        sources: sources.map(s => ({ source: s.source, snippet: (s.content || '').slice(0, 220) })),
+        usage: { provider: 'anthropic', model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-8' }
+      });
+    }
+
+    // ---- Azure OpenAI ----
     if (isAzureChatConfigured()) {
       const azureMessages = messages.map(m => ({
         role: m.role === 'assistant' ? 'assistant' : 'user',

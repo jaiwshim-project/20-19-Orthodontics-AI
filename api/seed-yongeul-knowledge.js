@@ -73,23 +73,36 @@ export default async function handler(req, res) {
     await sb.from('knowledge_chunks').delete().contains('metadata', { author: '김용을' });
   }
 
-  const results = { inserted: 0, errors: [] };
+  const results = { inserted: 0, embedded: 0, without_embedding: 0, errors: [] };
   for (const chunk of YONGEUL_CHUNKS) {
+    // 임베딩 시도 → 실패 시 null 임베딩으로라도 저장 (키워드 RAG 폴백이 검색 가능)
+    let embedVec = null;
     try {
-      const embedVec = await embed(chunk.content);
+      embedVec = await embed(chunk.content);
+    } catch (e) {
+      console.warn('[seed-yongeul] 임베딩 실패(키워드검색용으로 저장):', chunk.source, e.message);
+    }
+    try {
       const { error } = await sb.from('knowledge_chunks').insert({
         source: chunk.source,
         content: chunk.content,
-        embedding: embedVec,
+        embedding: embedVec,   // null 허용 — 임베딩 복구 후 재시드하면 벡터 검색 활성화
         metadata: chunk.metadata
       });
       if (error) throw error;
       results.inserted++;
+      if (embedVec) results.embedded++; else results.without_embedding++;
     } catch (e) {
       console.error('[seed-yongeul]', chunk.source, e.message);
       results.errors.push({ source: chunk.source, error: e.message });
     }
   }
 
-  return res.status(200).json({ ...results, total: YONGEUL_CHUNKS.length });
+  return res.status(200).json({
+    ...results,
+    total: YONGEUL_CHUNKS.length,
+    note: results.without_embedding > 0
+      ? '임베딩 프로바이더 미가동 → 키워드 검색으로 동작. 키 복구 후 force:true 재시드 권장.'
+      : undefined
+  });
 }

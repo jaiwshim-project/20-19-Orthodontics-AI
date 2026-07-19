@@ -103,22 +103,23 @@ export default async function handler(req, res) {
 
     try {
       const chunks = chunkText(rawText);
-      const vectors = await embedBatch(chunks);
-      const rows = [];
-      const failed = [];
-      chunks.forEach((c, i) => {
-        if (!vectors[i]) { failed.push(i); return; }
-        rows.push({
+      // 임베딩 시도 (프로바이더 불가 시 전부 null) → null이어도 저장(키워드 RAG 폴백)
+      let vectors = new Array(chunks.length).fill(null);
+      try {
+        vectors = await embedBatch(chunks);
+      } catch (e) {
+        console.warn('[knowledge-admin] 임베딩 배치 실패(키워드검색용 저장):', e.message);
+      }
+      let embedded = 0;
+      const rows = chunks.map((c, i) => {
+        if (vectors[i]) embedded++;
+        return {
           source: chunks.length > 1 ? `${source} (${i + 1}/${chunks.length})` : source,
           content: c,
-          embedding: vectors[i],
+          embedding: vectors[i] || null,
           metadata: { author, topic, ingested_via: 'knowledge-admin' }
-        });
+        };
       });
-
-      if (!rows.length) {
-        return res.status(500).json({ error: '임베딩 생성 실패 (프로바이더 키 확인)' });
-      }
 
       const { error } = await sb.from('knowledge_chunks').insert(rows);
       if (error) throw error;
@@ -126,9 +127,13 @@ export default async function handler(req, res) {
       return res.status(200).json({
         inserted: rows.length,
         chunks: chunks.length,
-        failed: failed.length,
+        embedded,
+        without_embedding: rows.length - embedded,
         source,
-        author
+        author,
+        note: embedded < rows.length
+          ? '임베딩 미생성분은 키워드 검색으로 동작합니다.'
+          : undefined
       });
     } catch (e) {
       console.error('[knowledge-admin] add 실패:', e.message);

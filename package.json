@@ -13,6 +13,7 @@
     "start": "node dev-server.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.112.3",
     "@google/generative-ai": "^0.21.0",
     "@supabase/supabase-js": "^2.108.2",
     "dotenv": "^17.4.2",
