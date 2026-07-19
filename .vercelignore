@@ -1,0 +1,29 @@
+﻿# Local-only files
+.env
+.env.*
+!.env.example
+node_modules/
+.git/
+.vercel/
+.claude/
+
+# Screenshots and temporary visual QA output
+screenshot_*.png
+*.tmp
+*.log
+
+# Local source materials / datasets not required by the static app runtime
+01 */
+00 */
+재분류/
+data/
+docs/PROJECT_PLANNING_20260616.md
+개발계획.html
+개발계획.md
+
+# Large source artifacts
+*.pptx
+*.pdf
+*.mov
+*.mp4
+*.zip
