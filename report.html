@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="20-19 Orthodontics AI 개발 결과물, 검증 상태, 정확도 향상 로드맵 보고서">
+  <title>20-19 Orthodontics AI 개발 결과 보고서</title>
+  <style>
+    :root {
+      --ink: #10233f;
+      --muted: #5f6f85;
+      --line: #dce5ef;
+      --soft: #f5f8fc;
+      --white: #ffffff;
+      --navy: #0b1f3a;
+      --blue: #1769e0;
+      --sky: #36a6ff;
+      --teal: #0f9f8f;
+      --green: #1c9b61;
+      --amber: #c77800;
+      --red: #c23b3b;
+      --purple: #7b5bd6;
+      --shadow: 0 14px 38px rgba(21, 48, 85, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef3f8;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .hero {
+      color: #fff;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(54,166,255,.34), transparent 31%),
+        radial-gradient(circle at 12% 110%, rgba(15,159,143,.30), transparent 35%),
+        linear-gradient(135deg, #081a33, #123f78 64%, #1769e0);
+      padding: 52px 24px 42px;
+    }
+    .hero-inner, .page { max-width: 1180px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(32px, 5vw, 54px); line-height: 1.13; letter-spacing: -.035em; }
+    .hero p { max-width: 840px; margin: 0; color: #dbeaff; font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 24px; color: #bad5f4; font-size: 13px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-weight: 800;
+      font-size: 13px;
+      text-decoration: none !important;
+    }
+    .btn-primary { color: #0b2a4e; background: #fff; }
+    .btn-ghost { color: #fff; border: 1px solid rgba(255,255,255,.30); background: rgba(255,255,255,.08); }
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+    }
+    .sticky-nav .inner { display: flex; gap: 4px; max-width: 1180px; margin: 0 auto; padding: 8px 18px; white-space: nowrap; }
+    .sticky-nav a { padding: 8px 10px; border-radius: 7px; color: #41536b; font-size: 12px; font-weight: 800; }
+    .sticky-nav a:hover { color: var(--blue); background: #edf5ff; text-decoration: none; }
+    .page { padding: 28px 20px 80px; }
+    .snapshot {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: -52px;
+      position: relative;
+      z-index: 2;
+    }
+    .metric {
+      min-height: 140px;
+      padding: 20px;
+      border: 1px solid rgba(220,229,239,.9);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .metric .kicker { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .metric .value { margin-top: 7px; color: var(--navy); font-size: 31px; line-height: 1.1; font-weight: 900; letter-spacing: -.03em; }
+    .metric .desc { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    section { scroll-margin-top: 70px; margin-top: 28px; padding: 28px; border: 1px solid var(--line); border-radius: 17px; background: #fff; box-shadow: 0 6px 20px rgba(21,48,85,.05); }
+    h2 { margin: 0 0 8px; font-size: 25px; letter-spacing: -.025em; }
+    h3 { margin: 22px 0 8px; color: #17395f; font-size: 17px; }
+    .lead { margin: 0 0 20px; color: var(--muted); }
+    .status-line { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 900; }
+    .ok { color: #0b7447; background: #e3f7ee; }
+    .research { color: #65500a; background: #fff5cc; }
+    .risk { color: #9f2c2c; background: #ffe7e7; }
+    .info { color: #1759aa; background: #e8f2ff; }
+    .prototype { color: #6742ad; background: #f0eaff; }
+    .callout { margin: 18px 0; padding: 16px 18px; border-left: 4px solid var(--blue); border-radius: 8px; background: #eef6ff; }
+    .callout.warning { border-color: var(--amber); background: #fff8e7; }
+    .callout.danger { border-color: var(--red); background: #fff0f0; }
+    .callout strong { display: block; margin-bottom: 3px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .mini-card { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+    .mini-card h3 { margin-top: 0; }
+    .mini-card p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 11px; }
+    table { width: 100%; min-width: 700px; border-collapse: collapse; font-size: 13px; }
+    th { padding: 11px 12px; color: #fff; background: #17395f; text-align: left; white-space: nowrap; }
+    td { padding: 11px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    ul, ol { padding-left: 21px; }
+    li + li { margin-top: 6px; }
+    code { padding: 2px 5px; border-radius: 5px; color: #153a68; background: #edf3f9; font-family: Consolas, monospace; font-size: .9em; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 16px; }
+    .flow .step { position: relative; min-height: 108px; padding: 15px; border: 1px solid #cfe0f2; border-radius: 12px; background: linear-gradient(180deg,#f7fbff,#edf5fd); }
+    .flow .step:not(:last-child)::after { content: "→"; position: absolute; right: -17px; top: 39px; z-index: 2; color: var(--sky); font-size: 21px; font-weight: 900; }
+    .step b { display: block; margin-bottom: 4px; color: #164c87; font-size: 13px; }
+    .step span { color: var(--muted); font-size: 12px; }
+    .bar { width: 100%; height: 8px; margin-top: 7px; overflow: hidden; border-radius: 99px; background: #dfe8f1; }
+    .bar > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,var(--blue),var(--teal)); }
+    .priority { display: inline-grid; place-items: center; min-width: 31px; height: 24px; border-radius: 6px; color: #fff; background: var(--red); font-size: 11px; font-weight: 900; }
+    .priority.p1 { background: var(--amber); }
+    .priority.p2 { background: var(--blue); }
+    .file-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 18px; padding: 0; list-style: none; }
+    .file-list li { margin: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fafcff; overflow-wrap: anywhere; }
+    .footer { margin-top: 30px; padding: 20px; color: #63758b; text-align: center; font-size: 12px; }
+    @media (max-width: 900px) {
+      .snapshot, .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .flow { grid-template-columns: 1fr; }
+      .flow .step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -20px; }
+    }
+    @media (max-width: 620px) {
+      .hero { padding: 38px 18px 70px; }
+      .page { padding: 20px 12px 60px; }
+      .snapshot, .grid-2, .grid-3, .file-list { grid-template-columns: 1fr; }
+      section { padding: 21px 17px; }
+      h1 { font-size: 34px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .sticky-nav, .hero-actions { display: none; }
+      .hero { padding: 30px 20px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .page { max-width: none; padding: 18px 0; }
+      .snapshot { margin-top: 12px; }
+      section, .metric { box-shadow: none; break-inside: avoid; }
+      a { color: inherit; }
+    }
+
+    /* 2026-07 readability refresh: premium cool theme + explicit text hierarchy */
+    :root {
+      --text-primary: #0f2038;
+      --text-secondary: #253b55;
+      --text-tertiary: #465d76;
+      --text-muted: #5c7087;
+      --text-inverse: #f8fbff;
+      --text-accent: #175ac4;
+      --bg-base: #edf3f9;
+      --bg-surface: #ffffff;
+      --bg-secondary: #f7faff;
+      --bg-accent: #edf6ff;
+      --border-light: #dce6f0;
+      --border-default: #c8d6e5;
+      --border-accent: #2d73dc;
+      --navy-deep: #071a33;
+      --navy-mid: #123f72;
+      --blue-bright: #2476e5;
+      --teal-bright: #0f9488;
+      --green-dark: #08734c;
+      --amber-dark: #8a5200;
+      --red-dark: #a52c36;
+      --purple-dark: #6540a8;
+      --shadow-soft: 0 8px 24px rgba(15, 32, 56, .07);
+      --shadow-raised: 0 16px 38px rgba(15, 48, 84, .13);
+      --ink: var(--text-primary);
+      --muted: var(--text-muted);
+      --line: var(--border-light);
+      --soft: var(--bg-secondary);
+      --white: var(--bg-surface);
+      --navy: var(--navy-deep);
+      --blue: var(--text-accent);
+      --sky: var(--blue-bright);
+      --teal: var(--teal-bright);
+      --green: var(--green-dark);
+      --amber: var(--amber-dark);
+      --red: var(--red-dark);
+      --purple: var(--purple-dark);
+      --shadow: var(--shadow-raised);
+    }
+    body {
+      color: var(--text-secondary);
+      background:
+        radial-gradient(circle at 4% 3%, rgba(36, 118, 229, .07), transparent 26rem),
+        linear-gradient(180deg, #f4f8fc 0, var(--bg-base) 28rem, #eef4f9 100%);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    p, li, td { color: var(--text-secondary); }
+    h1, h2, h3, strong, b { color: var(--text-primary); }
+    a {
+      color: var(--text-accent);
+      font-weight: 700;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+      transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    a:hover { color: #0b469e; text-decoration: underline; }
+    a:focus-visible, .btn:focus-visible {
+      outline: 3px solid rgba(36, 118, 229, .34);
+      outline-offset: 3px;
+    }
+    .hero {
+      color: var(--text-inverse);
+      border-bottom: 1px solid rgba(255,255,255,.18);
+      background:
+        radial-gradient(circle at 88% 6%, rgba(62, 169, 255, .38), transparent 32%),
+        radial-gradient(circle at 8% 116%, rgba(15, 148, 136, .31), transparent 36%),
+        linear-gradient(135deg, var(--navy-deep), var(--navy-mid) 62%, #1765c9);
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.08);
+    }
+    .hero h1, .hero strong { color: var(--text-inverse); }
+    .hero p { color: #e2efff; }
+    .meta { color: #c6dcf5; }
+    .eyebrow {
+      color: #f4f9ff;
+      border-color: rgba(255,255,255,.36);
+      background: rgba(255,255,255,.13);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    .btn {
+      border: 1px solid transparent;
+      box-shadow: 0 5px 14px rgba(5, 23, 46, .18);
+    }
+    .btn-primary { color: #0b2c53; border-color: #fff; background: #fff; }
+    .btn-primary:hover {
+      color: #083267;
+      border-color: #cfe5ff;
+      background: #eef7ff;
+      box-shadow: 0 10px 24px rgba(5, 23, 46, .28);
+      transform: translateY(-2px);
+    }
+    .btn-ghost { color: #fff; border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.10); }
+    .btn-ghost:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.19);
+      box-shadow: 0 10px 24px rgba(5, 23, 46, .24);
+      transform: translateY(-2px);
+    }
+    .sticky-nav {
+      border-bottom-color: #2b5e8d;
+      background: linear-gradient(90deg, #0b2848, #123f6c 56%, #155c8f);
+      box-shadow: 0 9px 24px rgba(7, 26, 51, .22);
+    }
+    .sticky-nav .inner { gap: 6px; padding-top: 9px; padding-bottom: 9px; }
+    .sticky-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px 7px 7px;
+      color: #e5f1ff;
+      border: 1px solid transparent;
+      border-radius: 9px;
+    }
+    .sticky-nav .nav-no {
+      display: inline-grid;
+      place-items: center;
+      min-width: 25px;
+      height: 23px;
+      padding: 0 5px;
+      color: #eaf4ff;
+      border: 1px solid rgba(220, 238, 255, .36);
+      border-radius: 7px;
+      background: rgba(255,255,255,.10);
+      font-size: 10px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+    }
+    .sticky-nav a:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,.34);
+      background: rgba(255,255,255,.14);
+      box-shadow: 0 5px 14px rgba(4, 19, 38, .20);
+      text-decoration: none;
+    }
+    .sticky-nav a:hover .nav-no {
+      color: #fff;
+      border-color: #35b8cb;
+      background: #1689b2;
+    }
+    .metric {
+      position: relative;
+      overflow: hidden;
+      border-color: var(--border-default);
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      box-shadow: var(--shadow-raised);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue-bright), var(--teal-bright));
+    }
+    .metric:hover {
+      border-color: #9fc2e9;
+      box-shadow: 0 20px 45px rgba(18, 63, 114, .16);
+      transform: translateY(-4px);
+    }
+    .metric .kicker { color: var(--text-tertiary); letter-spacing: .015em; }
+    .metric .value { color: var(--text-primary); }
+    .metric .value[style] { color: var(--amber-dark) !important; }
+    .metric .desc { color: var(--text-muted); line-height: 1.55; }
+    section {
+      position: relative;
+      overflow: hidden;
+      border-color: var(--border-default);
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-soft);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    section::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-bright), var(--teal-bright) 58%, transparent 94%);
+    }
+    section:hover { border-color: #b7cbe0; box-shadow: 0 12px 30px rgba(15, 48, 84, .09); }
+    h2 { color: var(--text-primary); line-height: 1.35; }
+    h3 { color: #173f69; line-height: 1.45; }
+    .lead { color: var(--text-tertiary); font-size: 15px; }
+    .pill { border: 1px solid currentColor; box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+    .ok { color: #076844; background: #e8f8f0; }
+    .research { color: #735600; background: #fff7d9; }
+    .risk { color: #982c34; background: #ffedef; }
+    .info { color: #1457a4; background: #ebf4ff; }
+    .prototype { color: #613b9e; background: #f2edff; }
+    .callout {
+      color: var(--text-secondary);
+      border: 1px solid #c9dff6;
+      border-left: 5px solid var(--blue-bright);
+      background: var(--bg-accent);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+      transition: border-color .18s ease, background-color .18s ease;
+    }
+    .callout:hover { border-color: #9ec5ed; background: #e8f3ff; }
+    .callout.warning { border-color: #ecd59c; border-left-color: #b56c00; background: #fff9e9; }
+    .callout.warning:hover { border-color: #ddb960; background: #fff5d9; }
+    .callout.danger { border-color: #edc3c8; border-left-color: var(--red-dark); background: #fff2f3; }
+    .callout.danger:hover { border-color: #dc9ea5; background: #ffeaec; }
+    .mini-card {
+      border-color: var(--border-light);
+      background: linear-gradient(145deg, #fbfdff, var(--bg-secondary));
+      box-shadow: 0 3px 10px rgba(15, 48, 84, .035);
+      transition: transform .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+    }
+    .mini-card:hover {
+      border-color: #a9c9e9;
+      background: #f2f8ff;
+      box-shadow: 0 9px 22px rgba(15, 72, 130, .09);
+      transform: translateY(-2px);
+    }
+    .mini-card p { color: var(--text-tertiary); }
+    .table-wrap {
+      border-color: var(--border-default);
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(15, 48, 84, .05);
+    }
+    th {
+      color: #f8fbff;
+      border-right: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, #1a4773, #12375e);
+      letter-spacing: .01em;
+    }
+    td { color: var(--text-secondary); border-color: var(--border-light); }
+    tbody tr { transition: background-color .16s ease, box-shadow .16s ease; }
+    tbody tr:nth-child(even) { background: #f7faff; }
+    tbody tr:hover { background: #eaf4ff; box-shadow: inset 4px 0 0 var(--blue-bright); }
+    code { color: #123d6b; border: 1px solid #d5e3f1; background: #edf4fb; }
+    .flow .step {
+      border-color: #c5d9ec;
+      background: linear-gradient(180deg, #fbfdff, #edf5fd);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .flow .step:hover {
+      border-color: #91bbe4;
+      box-shadow: 0 8px 18px rgba(15, 72, 130, .09);
+      transform: translateY(-2px);
+    }
+    .step b { color: #124b82; }
+    .step span { color: var(--text-tertiary); }
+    .bar { border: 1px solid #cfdae6; background: #dfe8f1; }
+    .priority { border: 1px solid rgba(255,255,255,.55); }
+    .file-list li {
+      border-color: var(--border-light);
+      background: var(--bg-secondary);
+      transition: transform .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+    }
+    .file-list li:hover {
+      border-color: #9fc2e8;
+      background: rgba(255,255,255,.14);
+      box-shadow: 0 7px 17px rgba(15, 72, 130, .08);
+      transform: translateX(3px);
+    }
+    .footer { color: var(--text-muted); border-top: 1px solid var(--border-default); }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+    @media print {
+      body { color: #111827; background: #fff; }
+      section::before, .metric::before { display: none; }
+      section, .metric, .mini-card, .table-wrap { border-color: #cbd5e1; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">DEVELOPMENT AUDIT · 2026-07-20</span>
+      <h1>20-19 Orthodontics AI<br>개발 결과 보고서</h1>
+      <p>13개 멀티모달 입력, Class I·II·III 부정교합 분류, EZ/TZ 치아 폭·평형존 분석, 데이터 자산과 검증 결과를 현재 파일 기준으로 통합 정리한 기술·임상 개발 현황입니다.</p>
+      <div class="meta">
+        <span>분석 범위: Orthodontics AI 전체 폴더</span>
+        <span>보고 기준: 현재 소스·데이터·평가 산출물</span>
+        <span>개인식별정보: 보고서 제외</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="classification.html">Class 분류 화면</a>
+        <a class="btn btn-ghost" href="photo-upload.html">13개 입력 화면</a>
+        <a class="btn btn-ghost" href="00 EZ Curce - TZ Length/excel.html">EZL·TZL 분석표(엑셀)</a>
+        <a class="btn btn-ghost" href="00 EZ Curce - TZ Length/EZ Curve - TZ Length - 보정 후 알고리즘 적용.html">KRR 보정 분석기(EZL-TZL)</a>
+        <a class="btn btn-ghost" href="patient-consult.html">환자 상담 AI(RAG)</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav" aria-label="보고서 목차">
+    <div class="inner">
+      <a href="#summary"><span class="nav-no">01</span>요약</a>
+      <a href="#inputs"><span class="nav-no">02</span>13개 입력</a>
+      <a href="#deliverables"><span class="nav-no">03</span>결과물</a>
+      <a href="#classification"><span class="nav-no">04</span>Class 분류</a>
+      <a href="#data"><span class="nav-no">05</span>데이터</a>
+      <a href="#eztz"><span class="nav-no">06</span>EZ/TZ</a>
+      <a href="#excel"><span class="nav-no">07</span>중간 분석표</a>
+      <a href="#issues"><span class="nav-no">08</span>문제점</a>
+      <a href="#needs"><span class="nav-no">09</span>필요 자료</a>
+      <a href="#roadmap"><span class="nav-no">10</span>로드맵</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="snapshot" aria-label="핵심 수치">
+      <div class="metric"><div class="kicker">멀티모달 입력 슬롯</div><div class="value">13개</div><div class="desc">구강 5 + 안면 4 + 세팔로 2 + 상·하악 3D 2</div></div>
+      <div class="metric"><div class="kicker">Class I 정리 데이터</div><div class="value">68명</div><div class="desc">초진·최종 1,814개 파일, 4개 자료군</div></div>
+      <div class="metric"><div class="kicker">EZ/TZ canonical</div><div class="value">174건</div><div class="desc">규칙 엔진 174/174 분석 성공</div></div>
+      <div class="metric"><div class="kicker">현재 배포 판정</div><div class="value" style="font-size:25px;color:#a46b00;">연구·초안</div><div class="desc">기능 구현 완료, 독립 임상 정확도 확정 전</div></div>
+    </div>
+
+    <section id="summary">
+      <h2>1. 경영·개발 요약</h2>
+      <p class="lead">플랫폼은 환자 자료 수집부터 Class 분류, EZ/TZ 분석, 발치 판단과 치료계획으로 이어지는 MVP 흐름을 갖췄습니다. 다만 “작동하는 기능”과 “임상적으로 검증된 모델”은 구분해야 합니다.</p>
+      <div class="status-line">
+        <span class="pill ok">● 13개 입력 UI 완료</span>
+        <span class="pill ok">● Class I·II·III 출력 완료</span>
+        <span class="pill ok">● 로컬·Supabase 저장 흐름</span>
+        <span class="pill ok">● EZ/TZ 자동 초안·수동보정</span>
+        <span class="pill research">● KRR 연구 모델</span>
+        <span class="pill ok">● 환자 상담 AI(Claude·RAG) 배포</span>
+        <span class="pill risk">● 외부 임상 검증 미완료</span>
+      </div>
+      <div class="grid-3">
+        <div class="mini-card"><h3>완성된 것</h3><p>화면·저장·AI API 호출·결과 렌더링·재학습 하네스·중첩 검증·수동 보정 순환까지 구현됐습니다.</p></div>
+        <div class="mini-card"><h3>검증된 것</h3><p>EZ/TZ 규칙 엔진과 KRR 좌표 개선은 수치 검증됐습니다. Class 분류 API 소스는 구문 검사에 통과했습니다.</p></div>
+        <div class="mini-card"><h3>아직 증명되지 않은 것</h3><p>Class I·II·III 독립 정확도, 13개 전체 입력의 진단 기여도, 신규 환자에서의 임상적 일반화는 아직 확정할 근거가 없습니다.</p></div>
+      </div>
+      <div class="callout warning">
+        <strong>현재 상태를 한 문장으로 표현하면</strong>
+        “13개 자료를 수집하는 교정 AI 플랫폼과 3장 핵심 영상 기반 Class 분류 기능은 개발 완료됐고, EZ/TZ 자동분석은 연구 모델까지 진전됐지만, 임상 배포 정확도는 추가 정답 데이터와 잠금 테스트로 확정해야 하는 단계”입니다.
+      </div>
+      <div class="callout">
+        <strong>2026-07-19 갱신</strong>
+        KRR 보정으로 규칙 엔진 대비 정확도가 크게 향상됐습니다(치아 폭 41%↓, EZ 곡선 60%↓, TZL 45%↓, EZL 37%↓). 5-fold 중첩검증은 10개 게이트 중 <b>9개를 통과</b>했고 승격을 막는 것은 TZL P95 꼬리 오차 하나뿐입니다. 남은 병목인 구치부(어금니) 정밀도를 높이기 위해, 오늘 확보한 교정 후 하악 사진 114장에 <b>치아 폭 정답을 라벨링</b>해 학습 데이터를 배가할 예정입니다. 운영 규칙 엔진 HTML은 변경하지 않았습니다(SHA 불변).
+      </div>
+      <div class="callout">
+        <strong>2026-07-20 갱신 — 환자 상담 AI(RAG) 신규 배포</strong>
+        김용을 원장의 EZL/TTL 이론 자료를 Supabase 지식베이스(<code>knowledge_chunks</code>, pgvector)에 저장해 환자에게 쉬운 언어로 설명하는 <a href="patient-consult.html">환자 상담 AI</a>를 신규 개발·프로덕션 배포했습니다. 대화는 <b>Claude(claude-opus-4-8)</b>가 생성하며, 답변마다 참조한 원장 자료를 출처로 표기합니다. RAG 검색은 벡터 검색을 우선 사용하되, 임베딩 제공자 장애 시 <b>키워드 검색으로 자동 폴백</b>해 무중단 동작하도록 설계했습니다. 환자 이름 등 개인 식별 정보는 답변·컨텍스트에서 제외합니다.
+      </div>
+    </section>
+
+    <section id="inputs">
+      <h2>2. 13개 입력 자료 구성과 실제 사용</h2>
+      <p class="lead"><a href="photo-upload.html">photo-upload.html</a>의 현재 슬롯은 총 13개입니다. 다만 각 자료가 Class 분류에 모두 투입되는 것은 아닙니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>자료군</th><th>수량</th><th>현재 UI 슬롯</th><th>현재 Class 분류 사용</th><th>다른 활용</th></tr></thead>
+          <tbody>
+            <tr><td><b>구강 내 사진</b></td><td class="num">5</td><td>정면, 좌측, 우측, 상악 교합면, 하악 교합면</td><td>좌측·우측 2장만 사용</td><td>하악 교합면은 EZ/TZ, 나머지는 종합 판독 자료</td></tr>
+            <tr><td><b>안면 사진</b></td><td class="num">4</td><td>정면, 측면, 스마일, 45도</td><td>현재 Class 전용 API에는 미사용</td><td>안모·치료 후 변화·종합진단 API용</td></tr>
+            <tr><td><b>세팔로</b></td><td class="num">2</td><td>측면 세팔로, 정면 PA</td><td>측면 세팔로 1장만 사용</td><td>골격 경향, 수직 패턴, 비대칭 평가 후보</td></tr>
+            <tr><td><b>CT/3D 자료</b></td><td class="num">2</td><td>코드상 상악·하악 PLY/STL 모델</td><td>현재 Class 전용 API에는 미사용</td><td>3D 뷰어와 EZ/TZ 정밀 계측</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <strong>용어 정합성 확인 필요</strong>
+        사용자 설명의 “CT 2장”은 현재 구현에서는 DICOM/CBCT 영상이 아니라 상·하악 PLY/STL 3D 모델 2개입니다. CT를 실제로 입력하려는 목적이라면 DICOM/CBCT 뷰어와 전처리 파이프라인을 별도로 구현해야 합니다.
+      </div>
+      <div class="flow" aria-label="현재 워크플로우">
+        <div class="step"><b>1 · 자료 입력</b><span>13개 슬롯, IndexedDB 저장, 선택적 Supabase 업로드</span></div>
+        <div class="step"><b>2 · Class 분류</b><span>세팔로 측면 + 좌·우 구강 측면 3장</span></div>
+        <div class="step"><b>3 · EZ/TZ 분석</b><span>교합면 사진, 곡선·치아 폭, 길이 계산</span></div>
+        <div class="step"><b>4 · 발치 판단</b><span>공간 부족과 안모·골격 보정</span></div>
+        <div class="step"><b>5 · 치료계획</b><span>단계별 방향, 위험요인, 전문의 검토</span></div>
+      </div>
+    </section>
+
+    <section id="deliverables">
+      <h2>3. 개발 결과물 지도</h2>
+      <p class="lead">상위 폴더에는 운영 화면, 서버리스 API, 임상 데이터, 알고리즘 연구물, 기획·사업 문서가 함께 존재합니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>영역</th><th>주요 결과물</th><th>현재 상태</th><th>판정</th></tr></thead>
+          <tbody>
+            <tr><td>환자 워크플로우</td><td><a href="photo-upload.html">사진 입력</a>, <a href="classification.html">Class 분류</a>, <a href="step3-new.html">EZ/TZ</a>, <a href="extraction-ai.html">발치 판단</a>, <a href="treatment-plan.html">치료계획</a></td><td>화면과 단계 이동 구현</td><td><span class="pill ok">MVP 완료</span></td></tr>
+            <tr><td>AI 분류</td><td><code>api/classify-diagnosis.js</code></td><td>Claude/Azure/Gemini 비전 다중 공급자, JSON 출력, 신뢰도 규칙</td><td><span class="pill ok">기능 완료</span></td></tr>
+            <tr><td>자료 자동 정리</td><td><code>api/classify-and-upload.js</code>, <code>scripts/reclassify-photos.cjs</code></td><td>구강·안면·X-ray·모델 슬롯 분류 및 저장</td><td><span class="pill ok">구현</span></td></tr>
+            <tr><td>EZ/TZ 분석</td><td><a href="00 EZ Curce - TZ Length/EZ Curve - TZ Length - 보정 후 알고리즘 적용.html">보정 후 분석기</a>, KRR 모델·하네스</td><td>규칙 엔진 + KRR + 수동 보정 + 재학습</td><td><span class="pill research">연구·초안</span></td></tr>
+            <tr><td>중간 데이터 분석</td><td><a href="00 EZ Curce - TZ Length/excel.html">excel.html</a>과 비교 페이지 4종</td><td>114건 EZL/TZL 정답 분석과 사례 비교</td><td><span class="pill info">분석 산출물</span></td></tr>
+            <tr><td>환자 상담 AI (RAG)</td><td><a href="patient-consult.html">patient-consult.html</a>, <code>api/consult.js</code>, <code>api/knowledge-admin.js</code></td><td>김용을 원장 자료 pgvector 저장, Claude(claude-opus-4-8) 상담, 벡터→키워드 검색 폴백</td><td><span class="pill ok">배포 완료</span></td></tr>
+            <tr><td>기타 AI 엔진</td><td><a href="growth-prediction.html">성장 예측</a>, <a href="facial-simulation.html">안모 시뮬레이션</a>, <a href="recurrence-prediction.html">재발 예측</a>, <a href="before-after.html">전후 상담</a></td><td>UI·API·규칙/생성형 AI 기반 기능</td><td><span class="pill prototype">프로토타입</span></td></tr>
+            <tr><td>3D·RAG·관리</td><td><a href="3d-viewer.html">3D 뷰어</a>, <a href="chatbot.html">RAG 챗봇</a>, <a href="dashboard.html">대시보드</a>, 환자 이력 화면</td><td>Three.js, Supabase, pgvector 연동 구조</td><td><span class="pill prototype">MVP</span></td></tr>
+            <tr><td>문서</td><td><code>docs/PRD.md</code>, <code>개발계획.md</code>, SaaS·AI 에이전트·사업계획 문서</td><td>제품·임상·사업 확장 계획 보유</td><td><span class="pill info">문서화</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="classification">
+      <h2>4. Class I·II·III 분류 알고리즘</h2>
+      <p class="lead">현재 Class 분류는 자체 학습된 13장 융합 신경망이 아니라, 핵심 3장을 범용 멀티모달 AI에 전달하고 교정학 기준 프롬프트와 후처리 규칙으로 판정하는 구조입니다.</p>
+      <div class="grid-2">
+        <div class="mini-card">
+          <h3>실제 입력</h3>
+          <p><b>측면 세팔로</b>로 골격 Class 경향을 보고, <b>좌·우 구강 측면</b>으로 구치·견치 관계와 교차교합을 확인합니다.</p>
+        </div>
+        <div class="mini-card">
+          <h3>AI 공급자</h3>
+          <p>Anthropic이 설정되면 우선 사용하고, 다음으로 Azure OpenAI Vision, 마지막으로 Gemini 2.5 Flash를 사용합니다.</p>
+        </div>
+        <div class="mini-card">
+          <h3>오진 방지 규칙</h3>
+          <p>총생으로 인한 전치 돌출을 Class II로 오인하지 않도록, Class II는 골격 근거와 구치·견치 관계를 함께 요구합니다.</p>
+        </div>
+        <div class="mini-card">
+          <h3>출력</h3>
+          <p>Angle Class, 골격 경향, dental findings, cephalometric impression, 치료 접근, 위험요인과 제한점을 JSON으로 반환합니다.</p>
+        </div>
+      </div>
+      <h3>신뢰도 후처리</h3>
+      <ul>
+        <li>AI가 제시한 confidence는 0~0.95로 제한합니다.</li>
+        <li>증거 문장 수, 세팔로 근거, 좌우 양측 근거에 따라 최소 신뢰도를 조정합니다.</li>
+        <li>좌·우 중 한쪽 근거가 없으면 0.70 이하로 제한합니다.</li>
+        <li><code>Indeterminate</code> 결과는 낮은 신뢰도로 제한합니다.</li>
+      </ul>
+      <div class="callout danger">
+        <strong>정확도에 대한 현재 결론</strong>
+        폴더에서 Class I/II/III confusion matrix, 독립 테스트 정확도, 민감도·특이도, macro-F1 보고서는 확인되지 않았습니다. 따라서 화면에 표시되는 confidence는 임상 정답으로 보정된 확률이 아니라 규칙 기반 표시값이며, “Class 분류 기능 개발 완료”는 맞지만 “임상 정확도 검증 완료”로 표현하면 안 됩니다.
+      </div>
+      <div class="callout warning">
+        <strong>13장 융합과 3장 분류의 차이</strong>
+        <code>api/comprehensive-diagnosis.js</code>는 구강 5장·안면·세팔로·EZ/TZ를 종합할 수 있도록 작성됐지만, 현재 어떤 화면에서도 직접 호출되지 않습니다. 실제 <a href="classification.html">classification.html</a>은 <code>api/classify-diagnosis.js</code>만 호출하며 3장만 전송합니다.
+      </div>
+    </section>
+
+    <section id="data">
+      <h2>5. 보유 데이터 자산</h2>
+      <p class="lead">현재 확인되는 체계적 임상 학습 자료는 Class I 68명 초진·최종 데이터셋입니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>자료군</th><th>초진</th><th>최종</th><th>합계</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td>구강 내</td><td class="num">336</td><td class="num">337</td><td class="num">673</td><td>5방향, 배열·교합·악궁</td></tr>
+            <tr><td>안면</td><td class="num">269</td><td class="num">270</td><td class="num">539</td><td>정면·측면·45도·스마일</td></tr>
+            <tr><td>X-ray</td><td class="num">136</td><td class="num">128</td><td class="num">264</td><td>현재 정리본은 세팔로·파노라마</td></tr>
+            <tr><td>상·하악 3D 모델</td><td class="num">136</td><td class="num">134</td><td class="num">270</td><td>PLY/STL</td></tr>
+            <tr><td><b>전체</b></td><td class="num"><b>877</b></td><td class="num"><b>869</b></td><td class="num"><b>1,746</b></td><td>분류된 4개 자료군 합계</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--muted);font-size:12px;">데이터셋 메타데이터의 totalFiles는 1,814개이며, 위 1,746개와의 차이 68개는 환자별 부가/미분류 자료가 포함된 것으로 보입니다.</p>
+      <div class="grid-3">
+        <div class="mini-card"><h3>Class I</h3><p>68명, 초진/최종, 패턴 지식 JSON과 케이스 분석 문서 보유.</p></div>
+        <div class="mini-card"><h3>Class II</h3><p>실행 프롬프트 기준은 있으나 독립 라벨 데이터셋은 현재 폴더에서 확인되지 않음.</p></div>
+        <div class="mini-card"><h3>Class III</h3><p>실행 프롬프트 기준은 있으나 독립 라벨 데이터셋은 현재 폴더에서 확인되지 않음.</p></div>
+      </div>
+      <div class="callout">
+        <strong>플랫폼 테스트 자료</strong>
+        <code>01 플랫폼 테스팅 이미지 모음</code>에는 2개 케이스, 총 58개 파일(JPG 50, PLY 6, STL 2)이 있어 워크플로우 시연에는 유용합니다. 그러나 모델 정확도 평가 표본으로는 부족합니다.
+      </div>
+    </section>
+
+    <section id="eztz">
+      <h2>6. EZ/TZ 치아 크기·평형존 분석 결과</h2>
+      <p class="lead">하악 교합면 사진에서 치아별 좌우 폭, TZL, EZ 곡선, EZL과 차이값을 계산하는 모듈입니다.</p>
+      <div class="status-line">
+        <span class="pill ok">174/174 규칙 분석 성공</span>
+        <span class="pill ok">치아 폭 정답 113건</span>
+        <span class="pill ok">EZ 정답 114건</span>
+        <span class="pill info">완전 복합 비교 104건</span>
+        <span class="pill research">KRR 보정 적용</span>
+        <span class="pill info">교정 후 사진 114건 확보</span>
+      </div>
+      <h3>현재 알려진 정답 데이터에서의 엔진 측정</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>지표</th><th>평균</th><th>P95</th><th>최대</th><th>해석</th></tr></thead>
+          <tbody>
+            <tr><td>치아 폭 끝점 오차</td><td class="num">2.376%</td><td class="num">5.142%</td><td class="num">9.989%</td><td>앞니보다 구치부에서 큼</td></tr>
+            <tr><td>EZ 곡선 이탈</td><td class="num">0.729%</td><td class="num">1.337%</td><td class="num">1.599%</td><td>이미지 대각선 기준</td></tr>
+            <tr><td>TZL 절대오차</td><td class="num">4.888 mm</td><td class="num">10.654 mm</td><td class="num">15.206 mm</td><td>WIDTH_BIAS 1.051 적용 결과</td></tr>
+            <tr><td>EZL 절대오차</td><td class="num">4.875 mm</td><td class="num">13.132 mm</td><td class="num">14.731 mm</td><td>꼬리 오차 관리 필요</td></tr>
+            <tr><td>차이값 절대오차</td><td class="num">4.816 mm</td><td class="num">10.438 mm</td><td class="num">13.755 mm</td><td>TZL−EZL</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--muted);font-size:12px;">위 값은 학습에 사용된 정답 사례가 포함된 측정이므로 신규 환자 일반화 성능보다 낙관적으로 보일 수 있습니다.</p>
+      <h3>5-fold 중첩 교차검증</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>지표</th><th>규칙 기준</th><th>KRR 후보</th><th>개선</th><th>게이트</th></tr></thead>
+          <tbody>
+            <tr><td>치아 폭 좌표 MAE</td><td class="num">3.695%</td><td class="num">2.871%</td><td class="num">22.3%</td><td><span class="pill ok">통과</span></td></tr>
+            <tr><td>EZ 좌표 MAE</td><td class="num">4.269%</td><td class="num">2.987%</td><td class="num">30.0%</td><td><span class="pill ok">통과</span></td></tr>
+            <tr><td>EZL MAE</td><td class="num">4.465 mm</td><td class="num">3.933 mm</td><td class="num">11.9%</td><td><span class="pill ok">P95 개선</span></td></tr>
+            <tr><td>TZL MAE</td><td class="num">6.886 mm</td><td class="num">5.947 mm</td><td class="num">13.6%</td><td><span class="pill risk">P95 +0.580 mm</span></td></tr>
+            <tr><td>차이값 MAE</td><td class="num">6.387 mm</td><td class="num">5.418 mm</td><td class="num">15.2%</td><td><span class="pill ok">P95 개선</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning">
+        <strong>현재 운영 승격 차단 사유</strong>
+        5개 외부 fold의 좌표 개선은 모두 통과했지만 TZL P95가 17.577 mm에서 18.157 mm로 0.580 mm 악화됐습니다. 0.5 mm 허용을 적용해도 0.08 mm 초과하므로 연구·초안 상태를 유지합니다.
+      </div>
+      <h3>규칙 엔진 → KRR 정확도 개선 (114건 측정)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>지표</th><th>규칙 엔진</th><th>KRR 적용</th><th>개선</th></tr></thead>
+          <tbody>
+            <tr><td>치아 폭 끝점 오차</td><td class="num">4.01%</td><td class="num">2.37%</td><td class="num">41.0%↓</td></tr>
+            <tr><td>EZ 곡선 이탈</td><td class="num">1.83%</td><td class="num">0.73%</td><td class="num">60.1%↓</td></tr>
+            <tr><td>TZL 절대오차</td><td class="num">8.63 mm</td><td class="num">4.75 mm</td><td class="num">45.0%↓</td></tr>
+            <tr><td>EZL 절대오차</td><td class="num">7.74 mm</td><td class="num">4.89 mm</td><td class="num">36.7%↓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>치아별(어금니) 정밀도 — KRR 적용 후에도 구치부가 최악</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>치아 위치</th><th>규칙 엔진</th><th>KRR 적용</th><th>개선</th></tr></thead>
+          <tbody>
+            <tr><td>앞니 6번</td><td class="num">2.79%</td><td class="num">1.54%</td><td class="num">44.8%↓</td></tr>
+            <tr><td>앞니 8번</td><td class="num">3.86%</td><td class="num">1.99%</td><td class="num">48.5%↓</td></tr>
+            <tr><td>어금니 1번</td><td class="num">4.68%</td><td class="num">2.73%</td><td class="num">41.7%↓</td></tr>
+            <tr><td>어금니 11번</td><td class="num">5.24%</td><td class="num">3.40%</td><td class="num">35.1%↓</td></tr>
+            <tr><td>어금니 12번</td><td class="num">5.43%</td><td class="num">3.19%</td><td class="num">41.3%↓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--muted);font-size:12px;">KRR이 모든 치아를 35~48% 개선하지만, 개선 후에도 어금니(3.2~3.4%)는 앞니(1.5~2.0%)의 약 2배 오차로 여전히 가장 부정확합니다. 이 구치부 오차가 TZL P95 꼬리 오차의 주된 원인입니다.</p>
+      <h3>치아 크기 알고리즘의 핵심 문제</h3>
+      <ul>
+        <li>규칙 엔진이 대칭 포물선 악궁을 12등분하므로 실제 구치부 비대칭과 회전을 충분히 반영하지 못합니다.</li>
+        <li>평균 5% 폭 과소평가는 1.051배 보정으로 줄였지만, 잘못된 측정선 위치는 그대로 남습니다.</li>
+        <li>KRR은 규칙 엔진의 잔차를 보정하는 방식이라, 규칙 엔진의 구치부 예측 자체가 나쁘면(5%대) 보정 후에도 상한이 걸립니다.</li>
+        <li>경계 정렬, 법선 탐색, 어금니 탐색 확대는 이미 시험했으나 개선되지 않아 데이터 확대와 재학습이 우선입니다.</li>
+        <li>어금니 오차 상위 20건을 <code>molar_correction_targets.json</code>으로 목록화했습니다. 다만 기존 정답이 이미 학습에 포함돼 있어, 재라벨보다 <b>신규 정답 이미지 추가</b>가 근본적으로 더 효과적입니다.</li>
+      </ul>
+    </section>
+
+    <section id="excel">
+      <h2>7. <a href="00 EZ Curce - TZ Length/excel.html">excel.html</a> 중간 분석 결과물</h2>
+      <p class="lead">개발 중 전문가 정답 114건에서 EZL과 TZL의 관계를 탐색하고, 계산 정의와 이상 사례를 시각적으로 비교하기 위해 만든 분석 대시보드입니다.</p>
+      <div class="grid-3">
+        <div class="metric" style="box-shadow:none;min-height:120px;"><div class="kicker">완전 케이스</div><div class="value">104건</div><div class="desc">치아 폭 12개를 갖는 비교 가능 사례</div></div>
+        <div class="metric" style="box-shadow:none;min-height:120px;"><div class="kicker">평균 보정 EZL</div><div class="value">94.12 mm</div><div class="desc">치아가 점유한 곡선 구간만 계산</div></div>
+        <div class="metric" style="box-shadow:none;min-height:120px;"><div class="kicker">평균 TZL</div><div class="value">101.38 mm</div><div class="desc">12개 치아 폭 선분 합</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>관찰 항목</th><th>결과</th><th>개발상 의미</th></tr></thead>
+          <tbody>
+            <tr><td>평균 TZL−보정 EZL</td><td class="num">+7.26 mm</td><td>공간 부족량·배열 문제 가설 탐색</td></tr>
+            <tr><td>TZL &gt; 보정 EZL</td><td class="num">103/104건 (99%)</td><td>보정 정의가 거의 한 방향으로 결과를 만드는지 검증 필요</td></tr>
+            <tr><td>보정 EZL &gt; TZL</td><td class="num">1건</td><td>예외 사례 상세 검토 대상으로 분리</td></tr>
+            <tr><td>치아 간격 합 ≥ 25 mm</td><td class="num">18건</td><td>곡선 호 길이 팽창의 원인 후보</td></tr>
+            <tr><td>불완전 사례</td><td class="num">9건</td><td>치아 10~11개로 TZL 과소평가 가능</td></tr>
+            <tr><td>계산 불가</td><td class="num">1건</td><td>빈 치아 폭 정답 파일</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>함께 포함된 비교 화면</h3>
+      <ul class="file-list">
+        <li><a href="00 EZ Curce - TZ Length/ezl_gt_tzl_compare.html">EZL &gt; TZL 사진 비교</a></li>
+        <li><a href="00 EZ Curce - TZ Length/tzl_gt_ezl_compare.html">TZL &gt; EZL 사진 비교</a></li>
+        <li><a href="00 EZ Curce - TZ Length/big_gap_compare.html">치아 간격 큰 사례</a></li>
+        <li><a href="00 EZ Curce - TZ Length/ezl_inflate_compare.html">EZL 증가 원인 분석</a></li>
+      </ul>
+      <div class="callout warning">
+        <strong>해석 시 주의</strong>
+        이 산출물은 “EZ 곡선 양끝 chord = 54 mm 고정”과 “치아 사이 곡선 간격을 제외한 보정 EZL”이라는 중간 계산 가설을 사용합니다. 따라서 99% 결과를 임상 법칙으로 확정하기보다, 사진별 실제 스케일과 보정 정의를 독립 검증하기 위한 연구 자료로 보존하는 것이 적절합니다.
+      </div>
+    </section>
+
+    <section id="issues">
+      <h2>8. 현재 발견된 핵심 문제와 위험</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>우선순위</th><th>문제</th><th>영향</th><th>권장 조치</th></tr></thead>
+          <tbody>
+            <tr><td><span class="priority">P0</span></td><td>13개 수집 vs 3개 실제 Class 입력</td><td>사용자가 13장 전체가 판정에 반영된 것으로 오해할 수 있음</td><td>13장 융합 API 연결 또는 화면에 실제 사용 자료 명시</td></tr>
+            <tr><td><span class="priority">P0</span></td><td>세팔로 PA 슬롯이 저장 시 <code>02_pano</code>로 매핑</td><td>정면 세팔로와 파노라마 의미 혼동, 학습 라벨 오염 가능</td><td><code>cephPA</code>와 <code>pano</code>를 분리하고 데이터셋 스키마 통일</td></tr>
+            <tr><td><span class="priority">P0</span></td><td>CT 2장 vs PLY/STL 3D 모델 2개</td><td>요구사항·UI·저장 데이터의 의미 불일치</td><td>CT/CBCT인지 구강 스캔 모델인지 제품 정의 확정</td></tr>
+            <tr><td><span class="priority">P0</span></td><td>Class II/III 정답 데이터셋 부재</td><td>3-class 성능과 편향 검증 불가</td><td>동일 프로토콜로 균형 데이터 수집</td></tr>
+            <tr><td><span class="priority">P0</span></td><td>독립 Class 정확도 보고서 부재</td><td>confidence와 임상 정확도를 연결할 수 없음</td><td>환자 단위 잠금 테스트·confusion matrix 구축</td></tr>
+            <tr><td><span class="priority p1">P1</span></td><td>다음 단계 활성화 조건이 세팔로+하악 교합면뿐</td><td>좌·우 구강 측면 없이 2단계 진입 후 오류 발생</td><td>Class 필수 3장을 UI 진입 조건으로 검증</td></tr>
+            <tr><td><span class="priority p1">P1</span></td><td>종합진단 API가 화면에 연결되지 않음</td><td>다중 입력 분석 코드가 실제 사용자 흐름에서 미사용</td><td>통합하거나 제거해 단일 진단 경로로 정리</td></tr>
+            <tr><td><span class="priority p1">P1</span></td><td>일부 API 오류문자열 인코딩 손상</td><td>오류 발생 시 사용자 메시지 가독성 저하</td><td>UTF-8 문자열 정리와 API 오류 테스트</td></tr>
+            <tr><td><span class="priority p1">P1</span></td><td>TZL P95 꼬리 오차 (승격 차단 유일 게이트)</td><td>10개 게이트 중 9개 통과, TZL P95 +0.58 mm만 미달로 운영 승격 보류</td><td>교정 후 114장 치아 폭 라벨링으로 구치부 정답 확대 → 재학습</td></tr>
+            <tr><td><span class="priority p2">P2</span></td><td>정식 EZ/TZ 운영 파일명 불명확</td><td>보정 전·후·백업본 중 배포 대상 혼동</td><td>정식 파일·버전·해시·rollback manifest 확정</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="needs">
+      <h2>9. 정확도 향상을 위해 필요한 자료</h2>
+      <h3>Class I·II·III 분류</h3>
+      <div class="grid-2">
+        <div class="mini-card">
+          <h3>최소 파일럿</h3>
+          <p>Class별 100명 이상, 총 300명 수준의 균형 자료를 권장합니다. 각 Class에서 최소 20~30명은 잠금 테스트로 처음부터 분리해야 합니다.</p>
+        </div>
+        <div class="mini-card">
+          <h3>임상 일반화 검증</h3>
+          <p>병원·촬영장비·연령을 달리한 Class별 200명 이상, 총 600명 이상의 다기관 자료가 더 안정적입니다.</p>
+        </div>
+      </div>
+      <ul>
+        <li>동일 환자의 13개 자료가 정확히 연결된 비식별 케이스 패키지</li>
+        <li>전문의 2인 이상 합의 Class, skeletal Class와 dental Angle Class 분리 라벨</li>
+        <li>Class II Division 1/2, subdivision, borderline, asymmetric, indeterminate 라벨</li>
+        <li>ANB/Wits와 주요 세팔로 랜드마크 정답, 좌·우 구치·견치 관계 정답</li>
+        <li>촬영 장비·각도·화질·결손·보철·성장단계와 익명 <code>patientGroupId</code></li>
+        <li>초진·최종 자료는 같은 환자가 train/test로 갈라지지 않도록 환자 단위 분리</li>
+      </ul>
+      <h3>EZ/TZ와 치아 크기 분석</h3>
+      <div class="callout">
+        <strong>진행 중 (2026-07-19)</strong>
+        오늘 확보한 <b>교정 후 하악 사진 114장</b>에 <b>치아 폭 정답을 라벨링</b>해 제공할 예정입니다. 교정 후 치열은 어금니까지 이상적으로 정렬돼 있어 구치부 라벨 품질이 높고, 기존 교정 전 정답과 이미지가 다른 완전 신규 케이스라 학습 데이터가 113 → 227건으로 배가됩니다. 받는 즉시 이미지 SHA·좌표·스케일 무결성 검사 → 20장 잠금 테스트 분리 → 재학습 → 어금니·TZL P95 재측정 순으로 진행합니다.
+      </div>
+      <ul>
+        <li><b>교정 후 치아 폭 정답 114장</b>: 신규 폴더 저장, 파일번호 접두어 유지, <code>imageData</code>·<code>toothWidths</code> 12개·<code>molarMm 54</code> 포함(보정 후 HTML의 위치 저장 형식). 교정 전 정답과 폴더 분리.</li>
+        <li>이 중 최소 30건은 1·2·11·12번 구치부 오차가 크거나 비대칭·회전이 있는 사례를 우선 확인·보정</li>
+        <li>10건 정도의 반복 라벨과 제2 전문가 독립 라벨로 정답 변동성 측정</li>
+        <li>운영 안정화 목표라면 여기서 다시 다양한 형태(V형·비대칭·총생)로 추가 확대</li>
+      </ul>
+    </section>
+
+    <section id="roadmap">
+      <h2>10. 권장 실행 로드맵</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>단계</th><th>주요 작업</th><th>완료 기준</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 스키마 정리</b><br><span class="pill risk">즉시</span></td><td>13개 슬롯 명칭 확정, PA/파노라마 분리, CT/3D 정의 확정, 필수 입력 검증 수정</td><td>UI·PhotoStore·API·Supabase·학습 폴더가 같은 키 사용</td></tr>
+            <tr><td><b>2. 기준선 동결</b></td><td>정식 HTML·API·모델 버전과 SHA 고정, 테스트 케이스·오류 메시지 점검</td><td>재현 가능한 release manifest와 rollback 확보</td></tr>
+            <tr><td><b>3. Class 데이터 확장</b></td><td>Class II/III 수집, Class I 재감사, 전문가 합의 라벨</td><td>Class별 최소 100명, 잠금 세트 분리</td></tr>
+            <tr><td><b>4. 다중 입력 모델</b></td><td>3장 기준선과 13장 융합 후보 비교, 품질 게이트와 abstain 구현</td><td>13장 사용이 실제로 macro-F1/P95를 개선한다는 증거</td></tr>
+            <tr><td><b>5. EZ/TZ 재학습</b><br><span class="pill research">진행 중</span></td><td>교정 후 114장 치아 폭 라벨링으로 구치부 정답 확대, KRR 재학습, 필요 시 직접 landmark 모델 전환</td><td>TZL·EZL·차이값의 평균과 P95 모두 비악화(현재 TZL P95만 미달)</td></tr>
+            <tr><td><b>6. 독립 평가</b></td><td>잠금 테스트를 한 번만 실행하고 confusion matrix·bootstrap CI 산출</td><td>PRD의 전문의 panel 일치도 ≥85% 또는 사전 합의 기준 통과</td></tr>
+            <tr><td><b>7. 임상 초안 배포</b></td><td>의료진 수정, 감사 로그, confidence 설명, 개인정보·권한 강화</td><td>자동 진단이 아닌 검토 가능한 초안으로 제한 배포</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>최종 배포 게이트</h3>
+      <div class="grid-3">
+        <div class="mini-card"><h3>분류 성능</h3><p>정확도만이 아니라 Class별 sensitivity, specificity, macro-F1, confusion matrix와 95% 신뢰구간을 공개합니다.</p></div>
+        <div class="mini-card"><h3>안전 성능</h3><p>저화질·자료 누락·소견 충돌 시 억지 분류 대신 Indeterminate/전문의 검토로 전환합니다.</p></div>
+        <div class="mini-card"><h3>계측 성능</h3><p>평균 MAE와 함께 P90·P95·최악 사례, TZL·EZL·차이값을 모두 통과해야 합니다.</p></div>
+      </div>
+    </section>
+
+    <section id="files">
+      <h2>11. 핵심 파일 바로가기</h2>
+      <ul class="file-list">
+        <li><a href="photo-upload.html">photo-upload.html</a> — 13개 입력</li>
+        <li><a href="classification.html">classification.html</a> — Class 분류</li>
+        <li><a href="step3-new.html">step3-new.html</a> — EZ/TZ 분석 단계</li>
+        <li><a href="extraction-ai.html">extraction-ai.html</a> — 발치 판단</li>
+        <li><a href="patient-consult.html">patient-consult.html</a> — 환자 상담 AI(RAG)</li>
+        <li><a href="api/consult.js">api/consult.js</a> — 상담 RAG API (Claude)</li>
+        <li><a href="api/classify-diagnosis.js">api/classify-diagnosis.js</a> — 3장 분류 API</li>
+        <li><a href="api/comprehensive-diagnosis.js">api/comprehensive-diagnosis.js</a> — 종합진단 후보 API</li>
+        <li><a href="data/class1_training_knowledge.json">Class I 학습 지식</a></li>
+        <li><a href="00 EZ Curce - TZ Length/excel.html">excel.html</a> — 114건 중간 분석</li>
+        <li><a href="00 EZ Curce - TZ Length/EZ Curve - TZ Length - 보정 후 알고리즘 적용.html">EZ Curve - TZ Length - 보정 후 알고리즘 적용.html</a> — 규칙 엔진 + KRR 보정 분석기</li>
+        <li><a href="00 EZ Curce - TZ Length/03 AI 재학습/benchmark.html">EZ/TZ 벤치마크</a></li>
+        <li><a href="00 EZ Curce - TZ Length/03 AI 재학습/nested-policy-metrics.json">중첩 검증 JSON</a></li>
+        <li><a href="docs/PRD.md">제품 요구사항</a></li>
+        <li><a href="개발계획.html">개발계획</a></li>
+      </ul>
+    </section>
+
+    
+  </main>
+</body>
+</html>
