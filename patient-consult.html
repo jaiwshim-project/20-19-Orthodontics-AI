@@ -11,11 +11,15 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="css/global.css">
 <style>
-  .consult-shell { display:grid; grid-template-columns: 1fr 340px; gap:0; height: calc(100vh - 64px); min-height: 600px; }
+  /* 상담 페이지는 풀높이 앱 레이아웃 — 페이지 전체 스크롤 없이 채팅 영역만 스크롤 */
+  body { overflow: hidden; }
+  main.content { min-height: 0 !important; height: 100vh; padding-top: 64px; overflow: hidden; }
+  main.content .site-footer { display: none; }
+  .consult-shell { display:grid; grid-template-columns: 1fr 340px; gap:0; height: calc(100vh - 64px); min-height: 600px; overflow: hidden; }
   @media (max-width: 1024px) { .consult-shell { grid-template-columns: 1fr; } .consult-aside { display:none; } }
-  .consult-main { display:flex; flex-direction:column; min-width:0; }
-  .consult-aside { background:#F8FAFC; border-left:1px solid var(--border-subtle); padding:16px; overflow:auto; }
-  .chat-stream { flex:1; overflow:auto; padding:24px; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; }
+  .consult-main { display:flex; flex-direction:column; min-width:0; min-height:0; height:100%; }
+  .consult-aside { background:#F8FAFC; border-left:1px solid var(--border-subtle); padding:16px; overflow:auto; min-height:0; }
+  .chat-stream { flex:1 1 auto; overflow-y:auto; min-height:0; padding:24px; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; }
   .msg { max-width:80%; padding:12px 16px; border-radius:14px; line-height:1.7; font-size:14px; }
   .msg.user { align-self:flex-end; background:linear-gradient(135deg,#0EA5E9,#7C3AED); color:#fff; box-shadow:0 2px 12px rgba(14,165,233,0.25); }
   .msg.assistant { align-self:flex-start; background:#F8FAFC; border:1px solid var(--border-subtle); color:var(--text-primary); }
