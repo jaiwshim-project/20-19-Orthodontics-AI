@@ -29,6 +29,7 @@
       { path: 'patient-history.html', label: '환자 이력',          icon: '📂' }
     ]},
     { group: '환자 도구', items: [
+      { path: 'patient-consult.html', label: '환자 상담 AI',      icon: '💬' },
       { path: 'treatment-plan.html', label: '종합 치료계획',     icon: '🩺' },
       { path: 'before-after.html',   label: 'Before-After 자료', icon: '📊' },
       { path: 'face-3d.html',        label: '3D 얼굴 시뮬',      icon: '🧬' }
@@ -696,6 +697,7 @@
             <li><a href="growth-prediction.html">성장 예측 AI</a></li>
             <li><a href="facial-simulation.html">안모 시뮬레이션</a></li>
             <li><a href="recurrence-prediction.html">재발 예측 AI</a></li>
+            <li><a href="patient-consult.html">환자 상담 AI <span class="badge-mini">RAG</span></a></li>
             <li><a href="chatbot.html">RAG 챗봇 <span class="badge-mini">RAG</span></a></li>
             <li><a href="dashboard.html">환자 대시보드</a></li>
           </ul>
