@@ -114,19 +114,20 @@
   let messages = [];
 
   // ---- 환자 컨텍스트 ----
+  // 이름은 제외하고 임상 정보(나이/연령대/성별)만 상담 컨텍스트로 사용
   function getPatientContext() {
     const p = window.PatientStore?.get?.();
-    if (!p || !p.name) return '';
+    if (!p) return '';
     const ageLbl = p.ageGroup === 'child' ? '어린이(≤17세)' : p.ageGroup === 'adult' ? '성인' : '';
     const genderLbl = p.gender === 'male' ? '남성' : p.gender === 'female' ? '여성' : '';
-    return [p.name, p.age ? p.age + '세' : '', ageLbl, genderLbl].filter(Boolean).join(', ');
+    return [p.age ? p.age + '세' : '', ageLbl, genderLbl].filter(Boolean).join(', ');
   }
   function refreshBanner() {
     const ctx = getPatientContext();
     const el = document.getElementById('patientBanner');
     el.innerHTML = ctx
-      ? `상담 대상: <strong>${ctx.replace(/</g,'&lt;')}</strong> — 맞춤 상담 모드`
-      : '환자 미선택 — 상단 <strong>환자 변경</strong>에서 환자를 선택하면 맞춤 상담이 됩니다.';
+      ? `맞춤 상담 모드 — <strong>${ctx.replace(/</g,'&lt;')}</strong> 기준`
+      : '상단 <strong>환자 변경</strong>에서 환자를 선택하면 나이·연령대에 맞춘 상담이 됩니다.';
   }
 
   // ---- 메시지 렌더 ----
