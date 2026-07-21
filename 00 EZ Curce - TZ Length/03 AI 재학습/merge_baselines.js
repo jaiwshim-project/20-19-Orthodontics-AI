@@ -8,7 +8,9 @@ const path = require('path');
 const DIR = __dirname;
 const INPUTS = [
   { json: 'baseline_predictions.json', csv: 'baseline_predictions.csv' },
-  { json: 'baseline_ez_embedded_predictions.json', csv: 'baseline_ez_embedded_predictions.csv' }
+  { json: 'baseline_ez_embedded_predictions.json', csv: 'baseline_ez_embedded_predictions.csv' },
+  // 교정후 치아폭 학습용 규칙 baseline(width_embedded_only 케이스). 파일이 있을 때만 포함.
+  { json: 'baseline_corrected_width_predictions.json', csv: 'baseline_corrected_width_predictions.csv', optional: true }
 ];
 const OUTPUT_JSON = path.join(DIR, 'baseline_predictions_all.json');
 const OUTPUT_CSV = path.join(DIR, 'baseline_predictions_all.csv');
@@ -17,19 +19,27 @@ async function main() {
   const payloads = [];
   const csvParts = [];
   for (const input of INPUTS) {
-    const json = JSON.parse(await fsp.readFile(path.join(DIR, input.json), 'utf8'));
+    const jsonPath = path.join(DIR, input.json);
+    if (input.optional && !fs.existsSync(jsonPath)) continue; // 선택 소스는 없으면 건너뜀
+    const json = JSON.parse(await fsp.readFile(jsonPath, 'utf8'));
     const csv = await fsp.readFile(path.join(DIR, input.csv), 'utf8');
     payloads.push(json);
     csvParts.push(csv.trimEnd().split(/\r?\n/));
   }
   const header = csvParts[0][0];
   if (!csvParts.every((lines) => lines[0] === header)) throw new Error('Input CSV headers do not match. Re-run both baselines with the same runner version.');
-  const results = payloads.flatMap((payload) => payload.results || []);
+  const results = [];
   const ids = new Set();
-  for (const item of results) {
-    const key = `${item.sourceType}:${item.caseId}`;
-    if (ids.has(key)) throw new Error(`Duplicate baseline key: ${key}`);
-    ids.add(key);
+  for (const payload of payloads) {
+    for (const item of payload.results || []) {
+      const key = `${item.sourceType}:${item.caseId}`;
+      // 교정후 이미지 중 root와 SHA가 같은 47건은 root baseline이 이미 담당하고,
+      // EZ embedded 세트와 교정후 embedded 세트가 동일 SHA를 낼 일은 없다(EZ 폴더 미포함).
+      // 그래도 방어적으로 중복 키는 먼저 등록된 것을 유지하고 스킵한다.
+      if (ids.has(key)) continue;
+      ids.add(key);
+      results.push(item);
+    }
   }
   const combined = {
     schemaVersion: 'ez-rule-baseline-collection-v1',

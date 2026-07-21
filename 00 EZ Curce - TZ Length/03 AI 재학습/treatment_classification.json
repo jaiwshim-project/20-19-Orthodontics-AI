@@ -1,0 +1,1975 @@
+{
+  "schemaVersion": "treatment-classification-v1",
+  "createdAt": "2026-07-21T12:29:37.114Z",
+  "note": "교정 전/후 치아폭 정답을 파일번호로 페어링해 치료방법 3분류. 개수 변화=발치, TZL 5%+감소=IPR, 그 외=치아유지+교정틀.",
+  "scaleNote": "px→mm는 각 사진의 최외곽 치아폭 끝점 스팬을 molarMm(54)로 근사 정규화. 개수 변화는 스케일 불변 1차 신호.",
+  "thresholds": {
+    "iprTzlRatioMax": 0.95,
+    "extractionTeethDelta": -1
+  },
+  "pairedCases": 108,
+  "unpaired": 1,
+  "distribution": {
+    "extraction": 42,
+    "ipr": 9,
+    "retain": 57
+  },
+  "cases": [
+    {
+      "num": "3207",
+      "preNum": "3207",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 92.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.015,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 1.5%"
+    },
+    {
+      "num": "3235",
+      "preNum": "3235",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 108.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94.6
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.871,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3247",
+      "preNum": "3247",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 100.8
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.922,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3254",
+      "preNum": "3254",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93.7
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.946,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3256",
+      "preNum": "3256",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.978,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.2%"
+    },
+    {
+      "num": "3257",
+      "preNum": "3257",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 92.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 91.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.988,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.2%"
+    },
+    {
+      "num": "3258",
+      "preNum": "3258",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.5
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 86.3
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.885,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3261",
+      "preNum": "3261",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.011,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 1.1%"
+    },
+    {
+      "num": "3272",
+      "preNum": "3272",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 101.3
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.002,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.2%"
+    },
+    {
+      "num": "3274",
+      "preNum": "3274",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 100.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.011,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 1.1%"
+    },
+    {
+      "num": "3276",
+      "preNum": "3276",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.3
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 87
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.859,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3278",
+      "preNum": "3278",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 89.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.933,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 6.7% 감소"
+    },
+    {
+      "num": "3296",
+      "preNum": "3296",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 99.3
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.97,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -3.0%"
+    },
+    {
+      "num": "3297",
+      "preNum": "3297",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 92.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.027,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 2.7%"
+    },
+    {
+      "num": "3298",
+      "preNum": "3298",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 106.3
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 103.7
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.975,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.5%"
+    },
+    {
+      "num": "3305",
+      "preNum": "3305",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 92.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.022,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 2.2%"
+    },
+    {
+      "num": "3311",
+      "preNum": "3311",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 105.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.8
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.94,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 6.0% 감소"
+    },
+    {
+      "num": "3312",
+      "preNum": "3312",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.3
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.988,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.2%"
+    },
+    {
+      "num": "3318",
+      "preNum": "3318",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95.9
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 89.2
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.93,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→11 (감소 1개)"
+    },
+    {
+      "num": "3330",
+      "preNum": "3330",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 97.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.954,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -4.6%"
+    },
+    {
+      "num": "3337",
+      "preNum": "3337",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.6
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.958,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -4.2%"
+    },
+    {
+      "num": "3339",
+      "preNum": "3339",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 101.3
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.037,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 3.7%"
+    },
+    {
+      "num": "3343",
+      "preNum": "3343",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.937,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 6.3% 감소"
+    },
+    {
+      "num": "3344",
+      "preNum": "3344",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 90.7
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.924,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 7.6% 감소"
+    },
+    {
+      "num": "3349",
+      "preNum": "3349",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 97.7
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.995,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.5%"
+    },
+    {
+      "num": "3361",
+      "preNum": "3361",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 93.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 89.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.962,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -3.8%"
+    },
+    {
+      "num": "3364",
+      "preNum": "3364",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 92.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.032,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 3.2%"
+    },
+    {
+      "num": "3366",
+      "preNum": "3366",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 86.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 86.7
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.003,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.3%"
+    },
+    {
+      "num": "3371",
+      "preNum": "3371",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 93.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 92.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.987,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.3%"
+    },
+    {
+      "num": "3372",
+      "preNum": "3372",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.9
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 89.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.866,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3374",
+      "preNum": "3374",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 108.5
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94.5
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.871,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3378",
+      "preNum": "3378",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 101.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.027,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 2.7%"
+    },
+    {
+      "num": "3381",
+      "preNum": "3381",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 97.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 96.2
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.985,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 11→10 (감소 1개)"
+    },
+    {
+      "num": "3394",
+      "preNum": "3394",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.974,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.6%"
+    },
+    {
+      "num": "3395",
+      "preNum": "3395",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.1
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93.6
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.916,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3406",
+      "preNum": "3406",
+      "status": "ok",
+      "pre": {
+        "n": 10,
+        "tzlMm": 96.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 99
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.025,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(10) + TZL 변화 2.5%"
+    },
+    {
+      "num": "3409",
+      "preNum": "3409",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 93.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 92.8
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.988,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.2%"
+    },
+    {
+      "num": "3411",
+      "preNum": "3411",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 100.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.991,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.9%"
+    },
+    {
+      "num": "3415",
+      "status": "no_pre_pair",
+      "post": {
+        "fileName": "3415.md",
+        "molarMm": 54,
+        "tzlMm": 105.15501230991987,
+        "pxPerMm": 71.75810273858956,
+        "n": 12,
+        "rawN": 12
+      }
+    },
+    {
+      "num": "3422",
+      "preNum": "3422",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 98.7
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 98.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.998,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(11) + TZL 변화 -0.2%"
+    },
+    {
+      "num": "3424",
+      "preNum": "3424",
+      "status": "ok",
+      "pre": {
+        "n": 10,
+        "tzlMm": 97.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 92.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.949,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(10) + TZL 5.1% 감소"
+    },
+    {
+      "num": "3426",
+      "preNum": "3426",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 88.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.868,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3431",
+      "preNum": "3431",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 99.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.973,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.7%"
+    },
+    {
+      "num": "3441",
+      "preNum": "3441",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 102.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.988,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.2%"
+    },
+    {
+      "num": "3443",
+      "preNum": "3443",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 94.8
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 91.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.96,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(11) + TZL 변화 -4.0%"
+    },
+    {
+      "num": "3445",
+      "preNum": "3445",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95.9
+      },
+      "post": {
+        "n": 13,
+        "tzlMm": 97.9
+      },
+      "deltaTeeth": 1,
+      "tzlRatio": 1.021,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 2.1%"
+    },
+    {
+      "num": "3447",
+      "preNum": "3447",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 87.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.902,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3448",
+      "preNum": "3448",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.961,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -3.9%"
+    },
+    {
+      "num": "3449",
+      "preNum": "3449",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 105.1
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94.2
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.897,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3453",
+      "preNum": "3453",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 86.2
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.837,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3456",
+      "preNum": "3456",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95.2
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.929,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 7.1% 감소"
+    },
+    {
+      "num": "3459",
+      "preNum": "3459",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.5
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94.4
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.912,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3462",
+      "preNum": "3462",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 96.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.991,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.9%"
+    },
+    {
+      "num": "3471",
+      "preNum": "3471",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 100.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.011,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 1.1%"
+    },
+    {
+      "num": "3474",
+      "preNum": "3474",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 93
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.971,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.9%"
+    },
+    {
+      "num": "3479",
+      "preNum": "3479",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.5
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.2
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.007,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.7%"
+    },
+    {
+      "num": "3481",
+      "preNum": "3481",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.2
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93.8
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.926,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3486",
+      "preNum": "3486",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 101.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.001,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.1%"
+    },
+    {
+      "num": "3492",
+      "preNum": "3492",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 96.6
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 96.2
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.996,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.4%"
+    },
+    {
+      "num": "3501",
+      "preNum": "3501",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 94.5
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.015,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 1.5%"
+    },
+    {
+      "num": "2960000",
+      "preNum": "2960000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 98.4
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 93.7
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.952,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→11 (감소 1개)"
+    },
+    {
+      "num": "2970000",
+      "preNum": "2970000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 90.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.04,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 4.0%"
+    },
+    {
+      "num": "2976000",
+      "preNum": "2976000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95.8
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 88.7
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.926,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "2983000",
+      "preNum": "2983000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.5
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 88
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.885,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "2988000",
+      "preNum": "2988000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.7
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 90.2
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.905,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "2993000",
+      "preNum": "2993000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 95
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.038,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 3.8%"
+    },
+    {
+      "num": "2998000",
+      "preNum": "2998000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 87.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 82.7
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.946,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3001000",
+      "preNum": "3001000",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 93.5
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 84.5
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.903,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 11→10 (감소 1개)"
+    },
+    {
+      "num": "3011000",
+      "preNum": "3011000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.1
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 91.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.927,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3013000",
+      "preNum": "3013000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 100.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 98.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.973,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.7%"
+    },
+    {
+      "num": "3018000",
+      "preNum": "3018000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 96.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 103
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.069,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 6.9%"
+    },
+    {
+      "num": "3022000",
+      "preNum": "3022000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 89.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.87,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3023000",
+      "preNum": "3023000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 94.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 99
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.044,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 4.4%"
+    },
+    {
+      "num": "3026000",
+      "preNum": "3026000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.8
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 89.5
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.878,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3034000",
+      "preNum": "3034000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 111.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 92.5
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.83,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3041000",
+      "preNum": "3041000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93.9
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.925,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3051000",
+      "preNum": "3051000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.5
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 103.3
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.008,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.8%"
+    },
+    {
+      "num": "3063000",
+      "preNum": "3063000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 91.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 104.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.133,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 13.3%"
+    },
+    {
+      "num": "3074000",
+      "preNum": "3074000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 111.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 104
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.933,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 6.7% 감소"
+    },
+    {
+      "num": "3081000",
+      "preNum": "3081000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.1
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 89.4
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.867,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→11 (감소 1개)"
+    },
+    {
+      "num": "3082000",
+      "preNum": "3082000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 99.3
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95.2
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.959,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -4.1%"
+    },
+    {
+      "num": "3106000",
+      "preNum": "3106000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.1
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 96.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.945,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 5.5% 감소"
+    },
+    {
+      "num": "3119000",
+      "preNum": "3119000",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 89.2
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 87.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.985,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(11) + TZL 변화 -1.5%"
+    },
+    {
+      "num": "3121000",
+      "preNum": "3121000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 108.9
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 93.6
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.86,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3126000",
+      "preNum": "3126000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.9
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 99.7
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.969,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→11 (감소 1개)"
+    },
+    {
+      "num": "3127000",
+      "preNum": "3127000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.3
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 96.6
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.993,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3132000",
+      "preNum": "3132000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 96
+      },
+      "post": {
+        "n": 11,
+        "tzlMm": 89.5
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.933,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→11 (감소 1개)"
+    },
+    {
+      "num": "3160000",
+      "preNum": "3160000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 101.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 104.6
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.032,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 3.2%"
+    },
+    {
+      "num": "3166000",
+      "preNum": "3166001",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.5
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 101.8
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.993,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.7%"
+    },
+    {
+      "num": "3195000",
+      "preNum": "3195000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 96.2
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 88.2
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.917,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3208000",
+      "preNum": "3208000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 109.8
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 97.3
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.886,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3213000",
+      "preNum": "3213000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 106
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.886,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3224000",
+      "preNum": "3224000",
+      "status": "ok",
+      "pre": {
+        "n": 10,
+        "tzlMm": 78.8
+      },
+      "post": {
+        "n": 9,
+        "tzlMm": 73.7
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.935,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 10→9 (감소 1개)"
+    },
+    {
+      "num": "3227000",
+      "preNum": "3227000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.7
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 93.7
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.912,
+      "method": "ipr",
+      "label": "② IPR(치간삭제) 후 교정틀 부착",
+      "reason": "개수 유지(12) + TZL 8.8% 감소"
+    },
+    {
+      "num": "3240000",
+      "preNum": "3240000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 105.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 106
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.007,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 0.7%"
+    },
+    {
+      "num": "3242000",
+      "preNum": "3242000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.3
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 87.1
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.852,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3246000",
+      "preNum": "3246000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.1
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 87.6
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.858,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "3248000",
+      "preNum": "3248000",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 89.9
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 94.9
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.055,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 5.5%"
+    },
+    {
+      "num": "26052019061510",
+      "preNum": "26052019061510",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 103.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 102.3
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.989,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.1%"
+    },
+    {
+      "num": "32502023010911",
+      "preNum": "32502023010911",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 96.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 95.5
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.986,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -1.4%"
+    },
+    {
+      "num": "32552023011608",
+      "preNum": "32552023011608",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 93.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 97.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1.043,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 4.3%"
+    },
+    {
+      "num": "32602023012708",
+      "preNum": "32602023012708",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 102.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 102.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 1,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.0%"
+    },
+    {
+      "num": "32662023020408",
+      "preNum": "32662023020408",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 111.6
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 90.1
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.808,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "32682023020611",
+      "preNum": "32682023020611",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 104.4
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 91.3
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.874,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "32772023022208",
+      "preNum": "32772023022208",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 97.2
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 92.4
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.951,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -4.9%"
+    },
+    {
+      "num": "32822023022511",
+      "preNum": "32822023022511",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 107.8
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 107.2
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.994,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -0.6%"
+    },
+    {
+      "num": "32832023022711",
+      "preNum": "32832023022711",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 107.2
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 98.2
+      },
+      "deltaTeeth": -2,
+      "tzlRatio": 0.916,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 12→10 (감소 2개)"
+    },
+    {
+      "num": "32902023032111",
+      "preNum": "32902023032111",
+      "status": "ok",
+      "pre": {
+        "n": 12,
+        "tzlMm": 106.4
+      },
+      "post": {
+        "n": 12,
+        "tzlMm": 104.1
+      },
+      "deltaTeeth": 0,
+      "tzlRatio": 0.979,
+      "method": "retain",
+      "label": "③ 치아유지 + 교정틀만",
+      "reason": "개수 유지(12) + TZL 변화 -2.1%"
+    },
+    {
+      "num": "33062023050611",
+      "preNum": "33062023050611",
+      "status": "ok",
+      "pre": {
+        "n": 11,
+        "tzlMm": 102.8
+      },
+      "post": {
+        "n": 10,
+        "tzlMm": 94.4
+      },
+      "deltaTeeth": -1,
+      "tzlRatio": 0.918,
+      "method": "extraction",
+      "label": "① 발치 후 교정틀 부착",
+      "reason": "치아 개수 11→10 (감소 1개)"
+    }
+  ]
+}

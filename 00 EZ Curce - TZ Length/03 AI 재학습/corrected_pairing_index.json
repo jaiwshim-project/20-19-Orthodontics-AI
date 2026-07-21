@@ -1,0 +1,1037 @@
+{
+  "schemaVersion": "corrected-pairing-v1",
+  "createdAt": "2026-07-19T05:48:17.575Z",
+  "note": "교정 후 사진과 교정 전 라벨(EZ/치아폭)을 파일번호로 매핑. 이미지 SHA는 교정 전과 다르므로 좌표 직접 결합 금지, 환자 단위 검증용.",
+  "afterCount": 114,
+  "withBeforeEz": 114,
+  "withBeforeWidth": 114,
+  "withoutPair": [],
+  "pairs": [
+    {
+      "caseId": "after-3207",
+      "num": "3207",
+      "afterFile": "3207 유희준.JPG",
+      "afterSha256": "8b400f1dbb4ae414d7479ad93eb8e5f9bcb42b59d026952d226ea4a6d6388479",
+      "beforeEzLabel": "3207.md",
+      "beforeWidthLabel": "3207.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3235",
+      "num": "3235",
+      "afterFile": "3235 이슬기.jpg",
+      "afterSha256": "2b96e4875af1979c90dd5008c0a575e7e9e4dfb05c1f95101516f88345eef47a",
+      "beforeEzLabel": "3235.md",
+      "beforeWidthLabel": "3235.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3247",
+      "num": "3247",
+      "afterFile": "3247 유소리.jpg",
+      "afterSha256": "f02487c30b0b28e453c056c3f25c103dca576f663b608b90181f5aa50859eb7f",
+      "beforeEzLabel": "3247.md",
+      "beforeWidthLabel": "3247.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3254",
+      "num": "3254",
+      "afterFile": "3254 문정우.jpg",
+      "afterSha256": "1d971a2b0e7b3962329fe85a7ee9f4c65e048ec2e2523a4eb3d42adb715de21e",
+      "beforeEzLabel": "3254.md",
+      "beforeWidthLabel": "3254.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3256",
+      "num": "3256",
+      "afterFile": "3256 이은솔.jpg",
+      "afterSha256": "bf0e86a932f9f1ce005b57119f95d7b4ce44be7c4779fbc803cf3e93c0fa3549",
+      "beforeEzLabel": "3256.md",
+      "beforeWidthLabel": "3256.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3257",
+      "num": "3257",
+      "afterFile": "3257 남하은.jpg",
+      "afterSha256": "a7fdddf326981f8cc93ebfb92d5f947aed7adf0b9e744989d1f9333cc0b9b831",
+      "beforeEzLabel": "3257.md",
+      "beforeWidthLabel": "3257.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3258",
+      "num": "3258",
+      "afterFile": "3258 김서윤.JPG",
+      "afterSha256": "1d5f283a9631414964ffa260d53484e944308b5eb8aec8b972bfe53daed6cc31",
+      "beforeEzLabel": "3258.md",
+      "beforeWidthLabel": "3258.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3261",
+      "num": "3261",
+      "afterFile": "3261 홍세민.JPG",
+      "afterSha256": "c47b4cfb49374fb6ea885e653310b5d8dfb4f98ba160faf952af8c4d2b47b06c",
+      "beforeEzLabel": "3261.md",
+      "beforeWidthLabel": "3261.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3272",
+      "num": "3272",
+      "afterFile": "3272 김민서.JPG",
+      "afterSha256": "201710aff79e2f3d68ebe0988a306a8d5ee42fd3fc84ebaa8b0a7de365330c57",
+      "beforeEzLabel": "3272.md",
+      "beforeWidthLabel": "3272.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3274",
+      "num": "3274",
+      "afterFile": "3274 성가람.JPG",
+      "afterSha256": "3348a7d7dbfe51fc25647208075ec74497f134759ed25872069b927422d21aea",
+      "beforeEzLabel": "3274.md",
+      "beforeWidthLabel": "3274.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3276",
+      "num": "3276",
+      "afterFile": "3276 박미엘.JPG",
+      "afterSha256": "38e2acfaf3b2579c94bc86f1018df5b3c6e24deff7394a83c1153499da9d16b5",
+      "beforeEzLabel": "3276.md",
+      "beforeWidthLabel": "3276.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3278",
+      "num": "3278",
+      "afterFile": "3278 신진용.JPG",
+      "afterSha256": "e39cd12da306bf3795637b40534773691edf44779dc729e4c1acccd88fb677c8",
+      "beforeEzLabel": "3278.md",
+      "beforeWidthLabel": "3278.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3296",
+      "num": "3296",
+      "afterFile": "3296 김경아.JPG",
+      "afterSha256": "69958c77925290914793a88d78224e29b088e17dcc48c1a46f4b58b7b1abe420",
+      "beforeEzLabel": "3296.md",
+      "beforeWidthLabel": "3296.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3297",
+      "num": "3297",
+      "afterFile": "3297 김서연.JPG",
+      "afterSha256": "4455dc3c8216210913c41a8fb4a04b8ac27b7403d119f13b4308e73f3fbf2742",
+      "beforeEzLabel": "3297.md",
+      "beforeWidthLabel": "3297.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3298",
+      "num": "3298",
+      "afterFile": "3298 전한울.JPG",
+      "afterSha256": "b3c586f305c8fef1dcdc076a335b10daa051c754d71fabd09ab2d35e3d75e527",
+      "beforeEzLabel": "3298.md",
+      "beforeWidthLabel": "3298.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3305",
+      "num": "3305",
+      "afterFile": "3305 김도현.jpg",
+      "afterSha256": "9ca3bd9b25c6db713800f0dac8010986f163812ae357b305abdb58486992dfda",
+      "beforeEzLabel": "3305.md",
+      "beforeWidthLabel": "3305.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3311",
+      "num": "3311",
+      "afterFile": "3311 강연정.JPG",
+      "afterSha256": "ea7a70cef2c160a1b77b133220d5015a8620aac6077b8dcaaf6b4820e0440c3c",
+      "beforeEzLabel": "3311.md",
+      "beforeWidthLabel": "3311.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3312",
+      "num": "3312",
+      "afterFile": "3312 신영섭.JPG",
+      "afterSha256": "2c512dab900c7c69348c1e4df91324b26e8b877e049bc302874dd760820763b8",
+      "beforeEzLabel": "3312.md",
+      "beforeWidthLabel": "3312.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3318",
+      "num": "3318",
+      "afterFile": "3318 박유나.jpg",
+      "afterSha256": "26e8d74b8d00e577992859127e1c656c0e3eb81cb988e31a59e50a9471ee17ff",
+      "beforeEzLabel": "3318.md",
+      "beforeWidthLabel": "3318.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3330",
+      "num": "3330",
+      "afterFile": "3330 황지윤.JPG",
+      "afterSha256": "0bc9b512733deab4a298f1457075e887785ec1f9c3fae627c9d0e975f9b330a3",
+      "beforeEzLabel": "3330.md",
+      "beforeWidthLabel": "3330.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3337",
+      "num": "3337",
+      "afterFile": "3337 김단아.JPG",
+      "afterSha256": "796c3a17950e3c6404658c470404e3d36cc2d6109585c8ae59900f5473145cce",
+      "beforeEzLabel": "3337.md",
+      "beforeWidthLabel": "3337.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3339",
+      "num": "3339",
+      "afterFile": "3339 김미진.JPG",
+      "afterSha256": "b8c7bd41fa64c3c8eef01cdfe652599386cde6472945e70fbcc2c652aefd38f4",
+      "beforeEzLabel": "3339.md",
+      "beforeWidthLabel": "3339.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3343",
+      "num": "3343",
+      "afterFile": "3343 백승아.JPG",
+      "afterSha256": "0b93e94344c23bc3869441cd7860a05563ccac7dcde1615fea258b5c54cf8fa8",
+      "beforeEzLabel": "3343.md",
+      "beforeWidthLabel": "3343.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3344",
+      "num": "3344",
+      "afterFile": "3344 백승민.JPG",
+      "afterSha256": "7ff019130eed47cc31c870fae1d1685be9a4e5ee9741f27d927407728f8c8ba3",
+      "beforeEzLabel": "3344.md",
+      "beforeWidthLabel": "3344.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3349",
+      "num": "3349",
+      "afterFile": "3349 홍혜원.JPG",
+      "afterSha256": "0a30ac9f894b60f2b4b3fa75c84e66250ced0f00f505549578bc4ef632c3fcb8",
+      "beforeEzLabel": "3349.md",
+      "beforeWidthLabel": "3349.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3355",
+      "num": "3355",
+      "afterFile": "3355 신정연.JPG",
+      "afterSha256": "d8c667922e852422706eb4b3aecd6440b5c9b4998f83012f1aad2b17e1f6a34b",
+      "beforeEzLabel": "3355.md",
+      "beforeWidthLabel": "3355.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3361",
+      "num": "3361",
+      "afterFile": "3361 한지연.JPG",
+      "afterSha256": "2749c396bdcb7d336c11e40b08f350c4d1ccaec8196fa53387b91a46a46ff01b",
+      "beforeEzLabel": "3361.md",
+      "beforeWidthLabel": "3361.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3364",
+      "num": "3364",
+      "afterFile": "3364 곽시연.JPG",
+      "afterSha256": "cfef9dc57cd4bc00f7aa79078f7344251fe1eef92279e9f879d5f3a0c89702ee",
+      "beforeEzLabel": "3364.md",
+      "beforeWidthLabel": "3364.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3366",
+      "num": "3366",
+      "afterFile": "3366 원보미.jpg",
+      "afterSha256": "bf9c782f875cbf3715099a16584d45ac7c31f9c218028bee72f50520e0700b1e",
+      "beforeEzLabel": "3366.md",
+      "beforeWidthLabel": "3366.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3371",
+      "num": "3371",
+      "afterFile": "3371 박성은.JPG",
+      "afterSha256": "dbd09fa036f719fba383bdc6adcf0a4d7e9c7befb7a0552c063ed3a027249174",
+      "beforeEzLabel": "3371.md",
+      "beforeWidthLabel": "3371.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3372",
+      "num": "3372",
+      "afterFile": "3372 김서연.JPG",
+      "afterSha256": "50e8d3035c2c573293606976e6e4bd9eae04ec844d0be62ebeb09e342271fd49",
+      "beforeEzLabel": "3372.md",
+      "beforeWidthLabel": "3372.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3374",
+      "num": "3374",
+      "afterFile": "3374 이효은.JPG",
+      "afterSha256": "0546881faf17a8ef8a50f566649468917ee09719e3a85d8844e3b07c0188c192",
+      "beforeEzLabel": "3374.md",
+      "beforeWidthLabel": "3374.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3378",
+      "num": "3378",
+      "afterFile": "3378 오주연.JPG",
+      "afterSha256": "598f0b4606bbfb274d51ed96d2c9c0a1873470b3a529155cf3eeb56c1f736b25",
+      "beforeEzLabel": "3378.md",
+      "beforeWidthLabel": "3378.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3381",
+      "num": "3381",
+      "afterFile": "3381 김서영.JPG",
+      "afterSha256": "8e22470076d7f8f479596160d364670737bc363eb42cb2eb8622c7b7381481cc",
+      "beforeEzLabel": "3381.md",
+      "beforeWidthLabel": "3381.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3394",
+      "num": "3394",
+      "afterFile": "3394 황정인.JPG",
+      "afterSha256": "51bf4dbaf27b7f3d53d84f746ba30c29af4b8bba76cfa343bec282503a2a6302",
+      "beforeEzLabel": "3394.md",
+      "beforeWidthLabel": "3394.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3395",
+      "num": "3395",
+      "afterFile": "3395 이윤성.jpg",
+      "afterSha256": "075bb28db006493cc5d48acd94038ee2c0d3a08a00d4255ce5674aad5236c49e",
+      "beforeEzLabel": "3395.md",
+      "beforeWidthLabel": "3395.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3406",
+      "num": "3406",
+      "afterFile": "3406 김수경.JPG",
+      "afterSha256": "f419ff14f159ae9a46ca54930ba49557a8e91e7437197cc64d5c832293f79931",
+      "beforeEzLabel": "3406.md",
+      "beforeWidthLabel": "3406.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3409",
+      "num": "3409",
+      "afterFile": "3409 김지연.JPG",
+      "afterSha256": "b06ad0ea9b7aa336abeb90d580bedfcbb1c8ebfbca77c7db2fe673870ff5cdbf",
+      "beforeEzLabel": "3409.md",
+      "beforeWidthLabel": "3409.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3411",
+      "num": "3411",
+      "afterFile": "3411 홍수민.JPG",
+      "afterSha256": "c7237fd1ac6b187265bba79aa390cd36492467698fdc351c29ac49794dd94935",
+      "beforeEzLabel": "3411.md",
+      "beforeWidthLabel": "3411.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3415",
+      "num": "3415",
+      "afterFile": "3415 이가은.JPG",
+      "afterSha256": "95812d4ac06c68450ed189d0dcd70225fff1bc007bd1a95c50ca97126a540c80",
+      "beforeEzLabel": "3415.md",
+      "beforeWidthLabel": "3415.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3422",
+      "num": "3422",
+      "afterFile": "3422 박은서.JPG",
+      "afterSha256": "9dd0aaf4e1573355483b2d3f3c57640d8f73900addde7da84d626a212a4596a2",
+      "beforeEzLabel": "3422.md",
+      "beforeWidthLabel": "3422.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3424",
+      "num": "3424",
+      "afterFile": "3424 최희원.jpg",
+      "afterSha256": "460563b6d8396791890491cbf134ee2ca8157d848145f87c38969d4970d1784a",
+      "beforeEzLabel": "3424.md",
+      "beforeWidthLabel": "3424.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3426",
+      "num": "3426",
+      "afterFile": "3426 김은수.JPG",
+      "afterSha256": "de09e88c46cb369ee074af356590203884fc37035fa7996810669e9c63aa6444",
+      "beforeEzLabel": "3426.md",
+      "beforeWidthLabel": "3426.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3431",
+      "num": "3431",
+      "afterFile": "3431 이유진.JPG",
+      "afterSha256": "e8cd611f2e94f9bcc30b5e92624c40534a77a910228e14dd3af7b8928b0ad90d",
+      "beforeEzLabel": "3431.md",
+      "beforeWidthLabel": "3431.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3441",
+      "num": "3441",
+      "afterFile": "3441 송채호.JPG",
+      "afterSha256": "38f1ea842a78789c3b1fe1115e3acdeb9feb436ab4c5c4b03040fc67a2e02ff0",
+      "beforeEzLabel": "3441.md",
+      "beforeWidthLabel": "3441.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3443",
+      "num": "3443",
+      "afterFile": "3443 노태원.JPG",
+      "afterSha256": "cba47aab314805c6d5c6c023dd006caf2c576daba87305c63a2e24e186ed84d1",
+      "beforeEzLabel": "3443.md",
+      "beforeWidthLabel": "3443.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3445",
+      "num": "3445",
+      "afterFile": "3445 김정우.jpg",
+      "afterSha256": "a2a7ad64b0ce6bdf93871ae57917edf6ab5ecb7cabe0a99e605767b810690e6d",
+      "beforeEzLabel": "3445.md",
+      "beforeWidthLabel": "3445.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3447",
+      "num": "3447",
+      "afterFile": "3447 남기윤.JPG",
+      "afterSha256": "1e4f9abd631487ca79e991c182aafee0919cdee2fb62df4e151bb5199bdaac5e",
+      "beforeEzLabel": "3447.md",
+      "beforeWidthLabel": "3447.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3448",
+      "num": "3448",
+      "afterFile": "3448 조항규.JPG",
+      "afterSha256": "54dfc1c36e7ea87916235d4ba4c43f9fb7a4440b06ec84a8cfdc61bf503c0762",
+      "beforeEzLabel": "3448.md",
+      "beforeWidthLabel": "3448.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3449",
+      "num": "3449",
+      "afterFile": "3449 변지명.JPG",
+      "afterSha256": "3dd026f48346da47d6a1dae1ca8f14301e2214ac4ef344be97e36c06c572a558",
+      "beforeEzLabel": "3449.md",
+      "beforeWidthLabel": "3449.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3453",
+      "num": "3453",
+      "afterFile": "3453 임재은.JPG",
+      "afterSha256": "02cdd36cfce390bfdcd03649574d715d6e23c03bf2da7c6b5d30fce879fa9a46",
+      "beforeEzLabel": "3453.md",
+      "beforeWidthLabel": "3453.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3456",
+      "num": "3456",
+      "afterFile": "3456 오혜성.JPG",
+      "afterSha256": "4d90e5aa2d7ae5950fd293a056700ddc209a373b32b4f6fdd777b261ac30aac2",
+      "beforeEzLabel": "3456.md",
+      "beforeWidthLabel": "3456.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3459",
+      "num": "3459",
+      "afterFile": "3459 이수민.jpg",
+      "afterSha256": "34a7f941e82a45ae71dc4906fa04d3d02e1be1e63ec488618a1c35eaf2fdaaa8",
+      "beforeEzLabel": "3459.md",
+      "beforeWidthLabel": "3459.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3462",
+      "num": "3462",
+      "afterFile": "3462 김본.jpg",
+      "afterSha256": "5151589cb22efa96dfe22094c2dc3600985275346e727b481cf566971a1e0f75",
+      "beforeEzLabel": "3462.md",
+      "beforeWidthLabel": "3462.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3471",
+      "num": "3471",
+      "afterFile": "3471 안옹규.JPG",
+      "afterSha256": "f9429af2be991943e6c09a14818a3a522c2704601aa00da8eeec3f7af63cc5b4",
+      "beforeEzLabel": "3471.md",
+      "beforeWidthLabel": "3471.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3474",
+      "num": "3474",
+      "afterFile": "3474 서지선.jpg",
+      "afterSha256": "08ab19bc65dc5f34fde7780fce8c6d929c2017d1dbac529f4f08a1ea7ad1a64f",
+      "beforeEzLabel": "3474.md",
+      "beforeWidthLabel": "3474.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3479",
+      "num": "3479",
+      "afterFile": "3479 윤세준.jpg",
+      "afterSha256": "dec7ad7ae453a5d895d7707b3742919337d14906fb38fa4688adc0646b248af3",
+      "beforeEzLabel": "3479.md",
+      "beforeWidthLabel": "3479.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3481",
+      "num": "3481",
+      "afterFile": "3481  고정원.JPG",
+      "afterSha256": "6eb52d66e52c60f56768b687bb61db4fb900a40a635fd4e71274557d307182f4",
+      "beforeEzLabel": "3481.md",
+      "beforeWidthLabel": "3481.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3486",
+      "num": "3486",
+      "afterFile": "3486 민경준.JPG",
+      "afterSha256": "64c9dd98cac3a5df204ce63b5b2aeff3a0521a6caf700a7e4ca7a84045b1ec4b",
+      "beforeEzLabel": "3486.md",
+      "beforeWidthLabel": "3486.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3491",
+      "num": "3491",
+      "afterFile": "3491 김가연.JPG",
+      "afterSha256": "504095bb5c0fc64eb7dc14403a22c50a3bb95218d0099cdf41f4ebbc2811756e",
+      "beforeEzLabel": "3491.md",
+      "beforeWidthLabel": "3491.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3492",
+      "num": "3492",
+      "afterFile": "3492 김현정.JPG",
+      "afterSha256": "d286464a9067f096c235653d6d6064c7174fc35d8fce6d170e5f45b296b028f4",
+      "beforeEzLabel": "3492.md",
+      "beforeWidthLabel": "3492.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3501",
+      "num": "3501",
+      "afterFile": "3501 이수현.jpg",
+      "afterSha256": "e653206e1f3dfdae82d5ff12e54be291088a648453a94e95c55d6203e19a72e6",
+      "beforeEzLabel": "3501.md",
+      "beforeWidthLabel": "3501.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2960000",
+      "num": "2960000",
+      "afterFile": "2960000 윤소희.JPG",
+      "afterSha256": "1fdfb28ca77cd9b195e46dfaf92b7c88c6960e668925d5c36bb96272c88904af",
+      "beforeEzLabel": "2960000.md",
+      "beforeWidthLabel": "2960000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2970000",
+      "num": "2970000",
+      "afterFile": "2970000 정희준.JPG",
+      "afterSha256": "a758b96d76210faf4757ab0ca766c34f7585a62c0d1828ff0a0855c7cfc5384a",
+      "beforeEzLabel": "2970000.md",
+      "beforeWidthLabel": "2970000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2976000",
+      "num": "2976000",
+      "afterFile": "2976000 문정윤.jpg",
+      "afterSha256": "22d0535e5bf8abd3915e834d4cb0baea8626301fabff7993bf75e2ebc0de06c1",
+      "beforeEzLabel": "2976000.md",
+      "beforeWidthLabel": "2976000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2983000",
+      "num": "2983000",
+      "afterFile": "2983000 조영민.JPG",
+      "afterSha256": "4ddc07ed1019cb3e2d2b27ee476e03096473eabe077176b140079bf4a0c7f275",
+      "beforeEzLabel": "2983000.md",
+      "beforeWidthLabel": "2983000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2988000",
+      "num": "2988000",
+      "afterFile": "2988000 서해온.jpg",
+      "afterSha256": "01713acc789ead2d39ce3cfbde6465947d764a94262ade9c21b2cd620fcbe77d",
+      "beforeEzLabel": "2988000.md",
+      "beforeWidthLabel": "2988000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2993000",
+      "num": "2993000",
+      "afterFile": "2993000 육군호.JPG",
+      "afterSha256": "b17c6d1bfe8ba93188b8d09c60b77f151fdb160a87aa59d5e1e62c7acfa94b15",
+      "beforeEzLabel": "2993000.md",
+      "beforeWidthLabel": "2993000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-2998000",
+      "num": "2998000",
+      "afterFile": "2998000 박인우.jpg",
+      "afterSha256": "77997852f623f751a0ae9bb8676f4b68c4a33a5dfa2f621283075803479ba6c7",
+      "beforeEzLabel": "2998000.md",
+      "beforeWidthLabel": "2998000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3001000",
+      "num": "3001000",
+      "afterFile": "3001000 김지윤.jpg",
+      "afterSha256": "a03fca9ec2528aa30015c35a450a9b217d3edab59ea3f30e19adc56b960e47f0",
+      "beforeEzLabel": "3001000.md",
+      "beforeWidthLabel": "3001000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3011000",
+      "num": "3011000",
+      "afterFile": "3011000 김영은.JPG",
+      "afterSha256": "0d0c98183d6e86707c99f6f06fe061146187392a810f826bf09654ffc563d5b8",
+      "beforeEzLabel": "3011000.md",
+      "beforeWidthLabel": "3011000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3013000",
+      "num": "3013000",
+      "afterFile": "3013000 안원용.JPG",
+      "afterSha256": "a1d2d15b6d362e071839f611d6e97029b417a166df0878c1479e5a384c807617",
+      "beforeEzLabel": "3013000.md",
+      "beforeWidthLabel": "3013000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3018000",
+      "num": "3018000",
+      "afterFile": "3018000 최지민.JPG",
+      "afterSha256": "61815b1d70b44bb79b94d8d04c1e2060fd3ccf0993f067b2e342b24609d9e34d",
+      "beforeEzLabel": "3018000.md",
+      "beforeWidthLabel": "3018000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3022000",
+      "num": "3022000",
+      "afterFile": "3022000 길도영.JPG",
+      "afterSha256": "1d10cbcf33ae22aa94c3767da14e6432a047c30016656f4df721aaa1efb4a1b3",
+      "beforeEzLabel": "3022000.md",
+      "beforeWidthLabel": "3022000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3023000",
+      "num": "3023000",
+      "afterFile": "3023000 김은비.JPG",
+      "afterSha256": "efb48526656d5600e78b29a3240045986ae6be428fa5ed584b30c7dc708a6818",
+      "beforeEzLabel": "3023000.md",
+      "beforeWidthLabel": "3023000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3026000",
+      "num": "3026000",
+      "afterFile": "3026000 이현지.JPG",
+      "afterSha256": "09487a92b7892d8c9a2e1ce30e6635f821b71733a12eb93d331bc3533d9124a5",
+      "beforeEzLabel": "3026000.md",
+      "beforeWidthLabel": "3026000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3034000",
+      "num": "3034000",
+      "afterFile": "3034000 이영기.JPG",
+      "afterSha256": "a0061d2ea9332ffa224a991d7c3d1a7aa77fcc762e42ddc8db2e74882b4e33e1",
+      "beforeEzLabel": "3034000.md",
+      "beforeWidthLabel": "3034000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3041000",
+      "num": "3041000",
+      "afterFile": "3041000 정민진.JPG",
+      "afterSha256": "2fd98f0c0b27808e860a07978d56425101f335a4c91c2d726cb7cac20d67c07a",
+      "beforeEzLabel": "3041000.md",
+      "beforeWidthLabel": "3041000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3051000",
+      "num": "3051000",
+      "afterFile": "3051000 김선준.JPG",
+      "afterSha256": "a4c4f621c4c483e4eb71ce117695d90e62b2ed8990fe884d8ac0029cb0b401a0",
+      "beforeEzLabel": "3051000.md",
+      "beforeWidthLabel": "3051000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3063000",
+      "num": "3063000",
+      "afterFile": "3063000 김재원.JPG",
+      "afterSha256": "9264818c191288614f5734bb1cfe58cf84e58f3fe6f8ecb75d7606729a960579",
+      "beforeEzLabel": "3063000.md",
+      "beforeWidthLabel": "3063000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3074000",
+      "num": "3074000",
+      "afterFile": "3074000 임채윤.JPG",
+      "afterSha256": "c6239a8dc3239346c70ca92df85253915a327b7a3ab6a18510ad7995b7e6aea4",
+      "beforeEzLabel": "3074000.md",
+      "beforeWidthLabel": "3074000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3081000",
+      "num": "3081000",
+      "afterFile": "3081000 오수비.jpg",
+      "afterSha256": "a27050b84afa93eb2108ad1159b12d73d89de93f8a9bf0828481ed1adc90b59b",
+      "beforeEzLabel": "3081000.md",
+      "beforeWidthLabel": "3081000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3082000",
+      "num": "3082000",
+      "afterFile": "3082000 오유비.jpg",
+      "afterSha256": "574404b85613e2973fc955bbb19197af5f455eb48fe359fd5852c27ef7735d64",
+      "beforeEzLabel": "3082000.md",
+      "beforeWidthLabel": "3082000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3106000",
+      "num": "3106000",
+      "afterFile": "3106000 신하원.jpg",
+      "afterSha256": "86bec7d5ab6611ce4396dfd186b736244e06dd6c2140b4b5d7bd0d44ddba00ae",
+      "beforeEzLabel": "3106000.md",
+      "beforeWidthLabel": "3106000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3119000",
+      "num": "3119000",
+      "afterFile": "3119000 양지영.JPG",
+      "afterSha256": "4a58fea5c638a962d9a802012047fd43a2d354e5546b4ce345c4cda3469a39bb",
+      "beforeEzLabel": "3119000.md",
+      "beforeWidthLabel": "3119000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3120000",
+      "num": "3120000",
+      "afterFile": "3120000 박서윤.JPG",
+      "afterSha256": "5e43aedab188477f11ab0b187d31d945b6a7dfc815f7679d8af31ba1a7e106e5",
+      "beforeEzLabel": "3120000.md",
+      "beforeWidthLabel": "3120000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3121000",
+      "num": "3121000",
+      "afterFile": "3121000 배경표.JPG",
+      "afterSha256": "93219a55e4565d624ad6e39e1aaf773f48e1372ac4acb5c3b5b27ed06110d04d",
+      "beforeEzLabel": "3121000.md",
+      "beforeWidthLabel": "3121000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3126000",
+      "num": "3126000",
+      "afterFile": "3126000 우현영.jpg",
+      "afterSha256": "4c7ddd8b5cd6d5f9e9146da24f749d7496410b5f8fcf9619021409d35b4f04a3",
+      "beforeEzLabel": "3126000.md",
+      "beforeWidthLabel": "3126000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3127000",
+      "num": "3127000",
+      "afterFile": "3127000 이예본.JPG",
+      "afterSha256": "d2363c1286ff011c2d16ea965bfab499860bc8f71b6cf1fe01e885096014c1f0",
+      "beforeEzLabel": "3127000.md",
+      "beforeWidthLabel": "3127000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3132000",
+      "num": "3132000",
+      "afterFile": "3132000 서정심.jpg",
+      "afterSha256": "654752b2d93dceb5ea85c1bd4ce2cf6ba4fc74a4ca92d1c4e8adeff288df8aba",
+      "beforeEzLabel": "3132000.md",
+      "beforeWidthLabel": "3132000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3160000",
+      "num": "3160000",
+      "afterFile": "3160000 임가을.JPG",
+      "afterSha256": "59fed314d587dd43c9f4fc351ef2e09c7bc1b7dcf38a36770a779a854386f388",
+      "beforeEzLabel": "3160000.md",
+      "beforeWidthLabel": "3160000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3166000",
+      "num": "3166000",
+      "afterFile": "3166000 채종수.jpg",
+      "afterSha256": "c75ac3eb09ab787de64cee325edce33d051c058514fc275ab67e2605d1ffe51b",
+      "beforeEzLabel": "3166001.md",
+      "beforeWidthLabel": "3166001.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3195000",
+      "num": "3195000",
+      "afterFile": "3195000 천성인.jpg",
+      "afterSha256": "5799601b26b4f7e4345d27f60bff2826c85be8d0ef1b05a5fac5635d15e2d566",
+      "beforeEzLabel": "3195000.md",
+      "beforeWidthLabel": "3195000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3208000",
+      "num": "3208000",
+      "afterFile": "3208000 박소연.jpg",
+      "afterSha256": "ac12301b98546e3d82a383e0168cb9e8d263a7f8df4ef9e99a5e9d67a2db7ce2",
+      "beforeEzLabel": "3208000.md",
+      "beforeWidthLabel": "3208000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3213000",
+      "num": "3213000",
+      "afterFile": "3213000 박범준.jpg",
+      "afterSha256": "69c7c86c276725acddbc09ac4e68847d8411424578ec69830f6ae87b0a113d17",
+      "beforeEzLabel": "3213000.md",
+      "beforeWidthLabel": "3213000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3224000",
+      "num": "3224000",
+      "afterFile": "3224000 임장순.jpg",
+      "afterSha256": "e375def14b3234760d70158300371b4d56c6e4a315efb3af2710b88755b490bc",
+      "beforeEzLabel": "3224000.md",
+      "beforeWidthLabel": "3224000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3227000",
+      "num": "3227000",
+      "afterFile": "3227000 이유진.jpg",
+      "afterSha256": "b287bc015d9615c8209f341b225ff172e47cf7aad00d4c0516435c6ea5b52538",
+      "beforeEzLabel": "3227000.md",
+      "beforeWidthLabel": "3227000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3240000",
+      "num": "3240000",
+      "afterFile": "3240000 김지혜.jpg",
+      "afterSha256": "ab28372627ab114bbf6b9529e4d8d82639d25125f3d6a2a113bc2932dc03c3b9",
+      "beforeEzLabel": "3240000.md",
+      "beforeWidthLabel": "3240000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3242000",
+      "num": "3242000",
+      "afterFile": "3242000 김나겸.jpg",
+      "afterSha256": "0efd28a5b5deebbafcb28888cb48bb7e4755945021439347127a21019c4e549d",
+      "beforeEzLabel": "3242000.md",
+      "beforeWidthLabel": "3242000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3246000",
+      "num": "3246000",
+      "afterFile": "3246000 김지현.jpg",
+      "afterSha256": "1f4278fe07a655c7c4baebc6d07803e082281f13232aa10b2b41eb3b39ad096d",
+      "beforeEzLabel": "3246000.md",
+      "beforeWidthLabel": "3246000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-3248000",
+      "num": "3248000",
+      "afterFile": "3248000 김상진.jpg",
+      "afterSha256": "f89540b795d0260cff6c229de9c6d07f63b8c68e0cbc4c28e3c8253a3a7ed076",
+      "beforeEzLabel": "3248000.md",
+      "beforeWidthLabel": "3248000.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-26052019061510",
+      "num": "26052019061510",
+      "afterFile": "26052019061510.md 이가연.jpg",
+      "afterSha256": "45ee753d68fbb2f491466deb7a7a4496a7f9801eb77e5d90c0b2e2585b17d8f9",
+      "beforeEzLabel": "26052019061510.md",
+      "beforeWidthLabel": "26052019061510.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32502023010911",
+      "num": "32502023010911",
+      "afterFile": "32502023010911.md 이윤서.jpg",
+      "afterSha256": "2fac07145681fda76402e22193f8120a995911fab6a8fb5a11c71ba3868f181f",
+      "beforeEzLabel": "32502023010911.md",
+      "beforeWidthLabel": "32502023010911.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32552023011608",
+      "num": "32552023011608",
+      "afterFile": "32552023011608.md 김지아.jpg",
+      "afterSha256": "7a5cc140d0c32aa01b64276b34a2880b9dfef18ceea64085bcfafe5e17e10180",
+      "beforeEzLabel": "32552023011608.md",
+      "beforeWidthLabel": "32552023011608.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32602023012708",
+      "num": "32602023012708",
+      "afterFile": "32602023012708.md 구본혁.jpg",
+      "afterSha256": "4baee4176a3e9fce1e4e9236a4c1fe741f8ad88b5f0fc9b5655e33ee0ac1efaf",
+      "beforeEzLabel": "32602023012708.md",
+      "beforeWidthLabel": "32602023012708.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32662023020408",
+      "num": "32662023020408",
+      "afterFile": "32662023020408.md 양혜빈.jpg",
+      "afterSha256": "b32f3ba3c056ed3c0ce17a2a7ac486f846532ae9a96e428a18a4b7b2cb73d267",
+      "beforeEzLabel": "32662023020408.md",
+      "beforeWidthLabel": "32662023020408.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32672023020611",
+      "num": "32672023020611",
+      "afterFile": "32672023020611.md 박민수.jpg",
+      "afterSha256": "58370548ee7dd6d8a25aea28a26cad36481797ee509f717e641e7b75fda3b16a",
+      "beforeEzLabel": "32672023020611.md",
+      "beforeWidthLabel": "32672023020611.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32682023020611",
+      "num": "32682023020611",
+      "afterFile": "32682023020611.md 한지호.jpg",
+      "afterSha256": "cc46a0b37a01ffb55577498f7cd5cf7deac4720954874b93dc1acb3152944b01",
+      "beforeEzLabel": "32682023020611.md",
+      "beforeWidthLabel": "32682023020611.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32772023022208",
+      "num": "32772023022208",
+      "afterFile": "32772023022208.md 황재빈.jpg",
+      "afterSha256": "5a23142155930f1991131648208875519585c2ca7cc9caf3599bd9d38bc05f0a",
+      "beforeEzLabel": "32772023022208.md",
+      "beforeWidthLabel": "32772023022208.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32782023022211",
+      "num": "32782023022211",
+      "afterFile": "32782023022211.md 신진용.jpg",
+      "afterSha256": "ac03a87d079ee4fbcda837d5c10e21abc17b9b54250177718f72f4957e313562",
+      "beforeEzLabel": "32782023022211.md",
+      "beforeWidthLabel": "32782023022211.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32822023022511",
+      "num": "32822023022511",
+      "afterFile": "32822023022511.md 장유경.jpg",
+      "afterSha256": "0a65b1d82c849b2e00b4e14780e49bbd794a5d2f8aab05e878a43cc8a60f7c6d",
+      "beforeEzLabel": "32822023022511.md",
+      "beforeWidthLabel": "32822023022511.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32832023022711",
+      "num": "32832023022711",
+      "afterFile": "32832023022711.md 신아성.jpg",
+      "afterSha256": "79459d4c0dfd0ae25ae68c303c294d55c754268b67e9b21e8df2726a044b9823",
+      "beforeEzLabel": "32832023022711.md",
+      "beforeWidthLabel": "32832023022711.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-32902023032111",
+      "num": "32902023032111",
+      "afterFile": "32902023032111.md 여수진.jpg",
+      "afterSha256": "d2e68e9e1195bfe4407fd29b7981c2c7dd33d6cf4da984fde8fa731bb9a36f59",
+      "beforeEzLabel": "32902023032111.md",
+      "beforeWidthLabel": "32902023032111.md",
+      "hasBeforePair": true
+    },
+    {
+      "caseId": "after-33062023050611",
+      "num": "33062023050611",
+      "afterFile": "33062023050611.md 이승찬.jpg",
+      "afterSha256": "38d32ba463839b0c8ef29de29144b06165ec3f7a3e503c28ecf945304fc061c8",
+      "beforeEzLabel": "33062023050611.md",
+      "beforeWidthLabel": "33062023050611.md",
+      "hasBeforePair": true
+    }
+  ]
+}

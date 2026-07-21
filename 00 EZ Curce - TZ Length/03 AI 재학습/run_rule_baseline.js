@@ -13,8 +13,17 @@ const { spawn } = require('child_process');
 const { createHash } = require('crypto');
 
 const PROJECT_DIR = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
-const APP_PATH = path.join(PROJECT_DIR, 'EZ Curve - TZ Length.html');
-const EZ_ANNOTATION_DIR = path.join(PROJECT_DIR, '02 이퀼리브리엄 찍기');
+// 파일명 접미어(담당자/버전)가 세션마다 달라지므로 후보들을 순서대로 탐지한다. 원본은 읽기 전용.
+function resolveFile(...cands) { for (const c of cands) { const p = path.join(PROJECT_DIR, c); if (fs.existsSync(p)) return p; } return path.join(PROJECT_DIR, cands[0]); }
+function resolveDir(...prefixes) {
+  for (const pre of prefixes) { const p = path.join(PROJECT_DIR, pre); if (fs.existsSync(p)) return p; }
+  const base = prefixes[0].replace(/\s*\(.*$/, '').trim();
+  try { const hit = fs.readdirSync(PROJECT_DIR).find((n) => n.startsWith(base) && fs.statSync(path.join(PROJECT_DIR, n)).isDirectory()); if (hit) return path.join(PROJECT_DIR, hit); } catch (_) { /* */ }
+  return path.join(PROJECT_DIR, prefixes[0]);
+}
+// 운영 규칙엔진 HTML(SHA 6ee35113…712197). 사용자가 "보정 전 알고리즘 적용"으로 이름 변경함.
+const APP_PATH = resolveFile('EZ Curve - TZ Length.html', 'EZ Curve - TZ Length - 보정 전 알고리즘 적용.html');
+const EZ_ANNOTATION_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
 const SCRATCH_DIR = __dirname;
 const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
 const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');

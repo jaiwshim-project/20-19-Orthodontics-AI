@@ -1,15 +1,35 @@
 #!/usr/bin/env node
 
 import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const PROJECT = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
-const WIDTH_DIR = path.join(PROJECT, '01 치아 좌우폭 찍기');
-const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
+// 라벨 폴더는 담당자 접미어(예: "(김원장님)", " (유라쌤)")가 세션마다 붙었다 빠졌다 하므로
+// 접두어(핵심 이름)로 실제 존재하는 폴더를 자동 탐지한다. 원본 폴더는 읽기 전용.
+function resolveDir(...prefixes) {
+  for (const pre of prefixes) {
+    const exact = path.join(PROJECT, pre);
+    if (existsSync(exact)) return exact;
+  }
+  const base = prefixes[0].replace(/\s*\(.*$/, '').trim(); // 담당자 괄호 앞까지의 핵심 이름
+  try {
+    const hit = readdirSync(PROJECT).find((n) => n.startsWith(base) && statSync(path.join(PROJECT, n)).isDirectory());
+    if (hit) return path.join(PROJECT, hit);
+  } catch { /* ignore */ }
+  return path.join(PROJECT, prefixes[0]);
+}
+const WIDTH_DIR = resolveDir('01 치아 좌우폭 찍기 (유라쌤)', '01 치아 좌우폭 찍기');
+const EZ_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
 // TS 폴더: EZ(02)와 동일 이미지 SHA-256를 공유하는 동일 환자 치아 좌우폭 정답.
 // 파일명이 EZ 폴더와 1:1 대응하며, 검증 결과 112/112 임베디드 이미지 해시가 일치한다.
-const TS_WIDTH_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
+const TS_WIDTH_DIR = resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기');
+// 교정 후 치아폭 정답(신규): 교정 후 재촬영 사진이라 임베디드 이미지 SHA-256가
+// 교정 전(01/TS) 및 번호 root와 전부 다르다. 따라서 root/EZ와 매칭되지 않고
+// width_embedded_only 케이스로 편입된다. 발치 케이스는 치아폭이 12개 미만이라
+// train_residual의 len==12 필터에서 자동 제외되고, 12개 완전 라벨만 학습에 채택된다.
+const CORRECTED_WIDTH_DIR = resolveDir('02 교정 후 치아폭 찍기(김원장님)', '02 교정 후 치아폭 찍기');
 
 function sha256Buffer(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
@@ -597,7 +617,10 @@ async function main() {
   const roots = await readRootImages();
   const widths01 = await readAnnotations(WIDTH_DIR, 'tooth_width', skippedAnnotations);
   const widthsTs = await readAnnotations(TS_WIDTH_DIR, 'tooth_width', skippedAnnotations);
-  const widths = [...widths01, ...widthsTs];
+  const widthsCorrected = CORRECTED_WIDTH_DIR !== TS_WIDTH_DIR
+    ? await readAnnotations(CORRECTED_WIDTH_DIR, 'tooth_width', skippedAnnotations)
+    : [];
+  const widths = [...widths01, ...widthsTs, ...widthsCorrected];
   const ez = await readAnnotations(EZ_DIR, 'ez_curve', skippedAnnotations);
   const rootByHash = groupBy(roots, item => item.sha256);
   const rootByNumber = new Map(roots.map(item => [item.caseNumber, item]));

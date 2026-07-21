@@ -2,13 +2,20 @@
 // 측정 하네스: 자동분석 예측 vs 전문가 정답 오차를 한 번에 산출(이미지 생성 없이 수치만, 빠름).
 // 사용: node measure_engine.mjs [예측파일]  (기본 fixed_pred_all.json)
 // 출력: 콘솔 요약 + engine_metrics.json (치아별/케이스별/EZ/치아폭/TZL/EZL)
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
 const PROJECT = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
-const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
-const TZ_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
+// 라벨 폴더 담당자 접미어 유무를 자동 탐지(예: "(김원장님)").
+function resolveDir(...prefixes) {
+  for (const pre of prefixes) { const p = path.join(PROJECT, pre); if (existsSync(p)) return p; }
+  const base = prefixes[0].replace(/\s*\(.*$/, '').trim();
+  try { const hit = readdirSync(PROJECT).find((n) => n.startsWith(base) && statSync(path.join(PROJECT, n)).isDirectory()); if (hit) return path.join(PROJECT, hit); } catch { /* */ }
+  return path.join(PROJECT, prefixes[0]);
+}
+const EZ_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
+const TZ_DIR = resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기');
 const HERE = path.join(PROJECT, '03 AI 재학습');
 const PRED_PATH = path.join(HERE, process.argv[2] || 'fixed_pred_all.json');
 const SCALE_CHORD_MM = 54, SAMPLES = 40;

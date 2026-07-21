@@ -17,7 +17,7 @@
  *   node retrain_loop.mjs --python <exe> # Python 실행파일 지정
  */
 import { readdir, readFile, writeFile, copyFile, stat } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
@@ -25,8 +25,15 @@ import { spawn } from 'node:child_process';
 const PROJECT = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
 const HERE = path.join(PROJECT, '03 AI 재학습');
 const COLLECT_DIR = path.join(PROJECT, '04 수정본 수집');
-const EZ_DIR = path.join(PROJECT, '02 이퀼리브리엄 찍기');
-const TS_DIR = path.join(PROJECT, '02 치아 좌우폭 찍기');
+// 라벨 폴더 담당자 접미어("(김원장님)") 자동 탐지. 원본은 읽기 전용.
+function resolveDir(...prefixes) {
+  for (const pre of prefixes) { const p = path.join(PROJECT, pre); if (existsSync(p)) return p; }
+  const base = prefixes[0].replace(/\s*\(.*$/, '').trim();
+  try { const hit = readdirSync(PROJECT).find((n) => n.startsWith(base) && statSync(path.join(PROJECT, n)).isDirectory()); if (hit) return path.join(PROJECT, hit); } catch { /* */ }
+  return path.join(PROJECT, prefixes[0]);
+}
+const EZ_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
+const TS_DIR = resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기');
 
 const args = process.argv.slice(2);
 const INGEST_ONLY = args.includes('--ingest-only');
@@ -145,6 +152,13 @@ async function main() {
     await run('node', ['build_dataset_index.mjs', '--output', 'dataset-index.json'], '데이터셋 인덱스 재빌드');
     await run('node', ['run_rule_baseline.js', '--output=baseline_predictions.json', '--csv=baseline_predictions.csv'], '규칙 베이스라인(root)');
     await run('node', ['run_rule_baseline.js', '--source=ez-embedded-only', '--output=baseline_ez_embedded_predictions.json', '--csv=baseline_ez_embedded_predictions.csv'], '규칙 베이스라인(embedded)');
+    // 교정후 치아폭 학습용 규칙 baseline(width_embedded_only 케이스). corrected_after_predictions.json이
+    // 있으면 사진 SHA로 매핑해 생성한다. 없으면(교정후 예측 미생성) 건너뛰고 경고만 — merge는 optional 처리.
+    if (existsSync(path.join(HERE, 'corrected_after_predictions.json'))) {
+      await run('node', ['build_corrected_width_baseline.mjs'], '교정후 치아폭 규칙 베이스라인');
+    } else {
+      console.log('  ⚠ corrected_after_predictions.json 없음 → 교정후 baseline 건너뜀. 필요시 run_corrected_after.js 먼저 실행.');
+    }
     await run('node', ['merge_baselines.js'], '베이스라인 병합');
     await run('node', ['evaluate_baseline.mjs'], '베이스라인 평가');
     await run(PYTHON, ['train_residual.py', '--dataset-index', 'dataset-index.json', '--baseline-predictions', 'baseline_predictions_all.json', '--output-dir', '.'], 'KRR 재학습');

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ez-rule-baseline-v1",
-  "createdAt": "2026-07-17T20:16:24.859Z",
+  "createdAt": "2026-07-19T06:00:06.058Z",
   "engineSource": "EZ Curve - TZ Length.html",
   "sourceSet": "ez-embedded-only",
   "caseCount": 55,
@@ -239,7 +239,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:12.862Z",
+          "analyzedAt": "2026-07-19T05:59:54.775Z",
           "confidence": {
             "overall": 0.6190971996328722,
             "imageQuality": 0.42300274977894503,
@@ -273,7 +273,7 @@
           "difference": 3.7123951649928415
         }
       },
-      "runtimeMs": 313.7
+      "runtimeMs": 241.2
     },
     {
       "caseId": "embedded-0e66f437786ef449",
@@ -509,7 +509,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:13.084Z",
+          "analyzedAt": "2026-07-19T05:59:54.973Z",
           "confidence": {
             "overall": 0.5969561220820483,
             "imageQuality": 0.46452617879187474,
@@ -543,7 +543,7 @@
           "difference": 0.9584723543918017
         }
       },
-      "runtimeMs": 217
+      "runtimeMs": 193.6
     },
     {
       "caseId": "embedded-0f179fef4ecf8c23",
@@ -779,7 +779,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:13.358Z",
+          "analyzedAt": "2026-07-19T05:59:55.239Z",
           "confidence": {
             "overall": 0.7067007649950217,
             "imageQuality": 0.6273406011944027,
@@ -813,7 +813,7 @@
           "difference": 10.1417330500054
         }
       },
-      "runtimeMs": 271.8
+      "runtimeMs": 263.6
     },
     {
       "caseId": "embedded-12ffb10d47822216",
@@ -1049,7 +1049,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:13.691Z",
+          "analyzedAt": "2026-07-19T05:59:55.552Z",
           "confidence": {
             "overall": 0.6179927395127722,
             "imageQuality": 0.5488642858270166,
@@ -1083,7 +1083,7 @@
           "difference": -1.1312854770369398
         }
       },
-      "runtimeMs": 331
+      "runtimeMs": 310.9
     },
     {
       "caseId": "embedded-13b4854736de616b",
@@ -1319,7 +1319,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:13.966Z",
+          "analyzedAt": "2026-07-19T05:59:55.819Z",
           "confidence": {
             "overall": 0.5829072041045662,
             "imageQuality": 0.48643987765965924,
@@ -1353,7 +1353,7 @@
           "difference": -2.479806097577466
         }
       },
-      "runtimeMs": 270.8
+      "runtimeMs": 264.1
     },
     {
       "caseId": "embedded-202f4ca1befd83a7",
@@ -1589,7 +1589,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:14.243Z",
+          "analyzedAt": "2026-07-19T05:59:56.098Z",
           "confidence": {
             "overall": 0.6245087069489048,
             "imageQuality": 0.6434022247749109,
@@ -1623,7 +1623,7 @@
           "difference": 1.345183216850188
         }
       },
-      "runtimeMs": 274.3
+      "runtimeMs": 276.6
     },
     {
       "caseId": "embedded-24729bbd3a5bfad7",
@@ -1859,7 +1859,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:14.453Z",
+          "analyzedAt": "2026-07-19T05:59:56.288Z",
           "confidence": {
             "overall": 0.5101366872445832,
             "imageQuality": 0.538815519333357,
@@ -1894,7 +1894,7 @@
           "difference": 3.055034056484942
         }
       },
-      "runtimeMs": 208
+      "runtimeMs": 188
     },
     {
       "caseId": "embedded-29d9058972db341f",
@@ -2130,7 +2130,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:14.769Z",
+          "analyzedAt": "2026-07-19T05:59:56.580Z",
           "confidence": {
             "overall": 0.608282308116894,
             "imageQuality": 0.5634053609302483,
@@ -2164,7 +2164,7 @@
           "difference": -3.502490510154445
         }
       },
-      "runtimeMs": 312.3
+      "runtimeMs": 287.1
     },
     {
       "caseId": "embedded-2a741111113e8d90",
@@ -2400,7 +2400,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:14.985Z",
+          "analyzedAt": "2026-07-19T05:59:56.752Z",
           "confidence": {
             "overall": 0.5726073995197705,
             "imageQuality": 0.47043407035458323,
@@ -2434,7 +2434,7 @@
           "difference": -3.6562375091073136
         }
       },
-      "runtimeMs": 212.8
+      "runtimeMs": 169.5
     },
     {
       "caseId": "embedded-2f295b2be18fcad9",
@@ -2670,7 +2670,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:15.137Z",
+          "analyzedAt": "2026-07-19T05:59:56.881Z",
           "confidence": {
             "overall": 0.6274527245296686,
             "imageQuality": 0.4969185372917323,
@@ -2704,7 +2704,7 @@
           "difference": -0.7160765054891982
         }
       },
-      "runtimeMs": 150.1
+      "runtimeMs": 126.8
     },
     {
       "caseId": "embedded-34ab80c2de9a4123",
@@ -2940,7 +2940,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:15.297Z",
+          "analyzedAt": "2026-07-19T05:59:57.036Z",
           "confidence": {
             "overall": 0.5101380549009651,
             "imageQuality": 0.48834574486819854,
@@ -2975,7 +2975,7 @@
           "difference": 3.4305383671768226
         }
       },
-      "runtimeMs": 157.9
+      "runtimeMs": 152
     },
     {
       "caseId": "embedded-3986c92450232402",
@@ -3211,7 +3211,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:15.360Z",
+          "analyzedAt": "2026-07-19T05:59:57.099Z",
           "confidence": {
             "overall": 0.5946191162613839,
             "imageQuality": 0.5205946249404156,
@@ -3481,7 +3481,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:15.498Z",
+          "analyzedAt": "2026-07-19T05:59:57.197Z",
           "confidence": {
             "overall": 0.664943825266583,
             "imageQuality": 0.5774225674085699,
@@ -3515,7 +3515,7 @@
           "difference": 10.121111526068148
         }
       },
-      "runtimeMs": 135.8
+      "runtimeMs": 96.4
     },
     {
       "caseId": "embedded-3e1eed8544ef30e4",
@@ -3751,7 +3751,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:15.834Z",
+          "analyzedAt": "2026-07-19T05:59:57.435Z",
           "confidence": {
             "overall": 0.6101168259189034,
             "imageQuality": 0.49676511699803144,
@@ -3785,7 +3785,7 @@
           "difference": -3.2521722640093174
         }
       },
-      "runtimeMs": 332
+      "runtimeMs": 236
     },
     {
       "caseId": "embedded-46444f2aaf1d7bb1",
@@ -4021,7 +4021,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:16.176Z",
+          "analyzedAt": "2026-07-19T05:59:57.725Z",
           "confidence": {
             "overall": 0.6645510868925598,
             "imageQuality": 0.546397661242104,
@@ -4055,7 +4055,7 @@
           "difference": 2.35799236069532
         }
       },
-      "runtimeMs": 339.5
+      "runtimeMs": 287.6
     },
     {
       "caseId": "embedded-4682be1d7611d8e5",
@@ -4291,7 +4291,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:16.367Z",
+          "analyzedAt": "2026-07-19T05:59:57.892Z",
           "confidence": {
             "overall": 0.6646376981108351,
             "imageQuality": 0.5551954401708588,
@@ -4325,7 +4325,7 @@
           "difference": 2.445629733921848
         }
       },
-      "runtimeMs": 189
+      "runtimeMs": 164.9
     },
     {
       "caseId": "embedded-4e1cc3de7b971047",
@@ -4561,7 +4561,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:16.663Z",
+          "analyzedAt": "2026-07-19T05:59:58.176Z",
           "confidence": {
             "overall": 0.6096278061194826,
             "imageQuality": 0.42744794309759016,
@@ -4595,7 +4595,7 @@
           "difference": 3.616926547210312
         }
       },
-      "runtimeMs": 291.7
+      "runtimeMs": 280.2
     },
     {
       "caseId": "embedded-4f812f49e81ffb36",
@@ -4831,7 +4831,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:16.755Z",
+          "analyzedAt": "2026-07-19T05:59:58.269Z",
           "confidence": {
             "overall": 0.6287146220498955,
             "imageQuality": 0.44964123216919993,
@@ -4865,7 +4865,7 @@
           "difference": 9.470886874642119
         }
       },
-      "runtimeMs": 89.9
+      "runtimeMs": 91.5
     },
     {
       "caseId": "embedded-53c9700cae7ec762",
@@ -5101,7 +5101,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:16.934Z",
+          "analyzedAt": "2026-07-19T05:59:58.443Z",
           "confidence": {
             "overall": 0.6371941168457105,
             "imageQuality": 0.5096867817328627,
@@ -5135,7 +5135,7 @@
           "difference": -5.003334652274532
         }
       },
-      "runtimeMs": 174.5
+      "runtimeMs": 170.2
     },
     {
       "caseId": "embedded-5799601b26b4f7e4",
@@ -5371,7 +5371,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:17.296Z",
+          "analyzedAt": "2026-07-19T05:59:58.803Z",
           "confidence": {
             "overall": 0.6606111713213345,
             "imageQuality": 0.5305226982187693,
@@ -5405,7 +5405,7 @@
           "difference": -3.0069433674964756
         }
       },
-      "runtimeMs": 359.7
+      "runtimeMs": 358.6
     },
     {
       "caseId": "embedded-59859c060bc3bcfa",
@@ -5641,7 +5641,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:17.447Z",
+          "analyzedAt": "2026-07-19T05:59:58.948Z",
           "confidence": {
             "overall": 0.6070617514287734,
             "imageQuality": 0.5805532011580546,
@@ -5675,7 +5675,7 @@
           "difference": 0.490769546491137
         }
       },
-      "runtimeMs": 149
+      "runtimeMs": 140.7
     },
     {
       "caseId": "embedded-5a7da1ba3e15c065",
@@ -5911,7 +5911,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:17.829Z",
+          "analyzedAt": "2026-07-19T05:59:59.316Z",
           "confidence": {
             "overall": 0.6808962771661189,
             "imageQuality": 0.6857424150101223,
@@ -5945,7 +5945,7 @@
           "difference": 6.968841521366542
         }
       },
-      "runtimeMs": 379.3
+      "runtimeMs": 365.1
     },
     {
       "caseId": "embedded-5cd9d28cc7af614b",
@@ -6181,7 +6181,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:17.999Z",
+          "analyzedAt": "2026-07-19T05:59:59.493Z",
           "confidence": {
             "overall": 0.6041200548626894,
             "imageQuality": 0.5514865985442958,
@@ -6215,7 +6215,7 @@
           "difference": -2.0751144202092604
         }
       },
-      "runtimeMs": 167.6
+      "runtimeMs": 174.1
     },
     {
       "caseId": "embedded-5fb0cd45074a45df",
@@ -6451,7 +6451,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:18.112Z",
+          "analyzedAt": "2026-07-19T05:59:59.633Z",
           "confidence": {
             "overall": 0.650915834712986,
             "imageQuality": 0.713463726029379,
@@ -6485,7 +6485,7 @@
           "difference": -3.0657277517896944
         }
       },
-      "runtimeMs": 107.3
+      "runtimeMs": 135.1
     },
     {
       "caseId": "embedded-6948334b5faf8a8e",
@@ -6721,7 +6721,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:18.335Z",
+          "analyzedAt": "2026-07-19T05:59:59.888Z",
           "confidence": {
             "overall": 0.6250870772395327,
             "imageQuality": 0.6177148630481124,
@@ -6755,7 +6755,7 @@
           "difference": 0.4886467889353696
         }
       },
-      "runtimeMs": 221.8
+      "runtimeMs": 253
     },
     {
       "caseId": "embedded-6ac50315d329d27d",
@@ -6991,7 +6991,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:18.469Z",
+          "analyzedAt": "2026-07-19T06:00:00.022Z",
           "confidence": {
             "overall": 0.6154610308447258,
             "imageQuality": 0.4740640261713225,
@@ -7025,7 +7025,7 @@
           "difference": -2.6932735617483985
         }
       },
-      "runtimeMs": 131.7
+      "runtimeMs": 133.1
     },
     {
       "caseId": "embedded-6d555fede9d55069",
@@ -7261,7 +7261,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:18.644Z",
+          "analyzedAt": "2026-07-19T06:00:00.202Z",
           "confidence": {
             "overall": 0.577761389494877,
             "imageQuality": 0.4687423137776136,
@@ -7295,7 +7295,7 @@
           "difference": 2.172576515059049
         }
       },
-      "runtimeMs": 172
+      "runtimeMs": 175.4
     },
     {
       "caseId": "embedded-6fa62eea74838813",
@@ -7531,7 +7531,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:18.970Z",
+          "analyzedAt": "2026-07-19T06:00:00.518Z",
           "confidence": {
             "overall": 0.6090100724324033,
             "imageQuality": 0.5852602220081775,
@@ -7565,7 +7565,7 @@
           "difference": 1.1222091253363118
         }
       },
-      "runtimeMs": 322.9
+      "runtimeMs": 313.6
     },
     {
       "caseId": "embedded-7113988402b899ca",
@@ -7801,7 +7801,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:19.307Z",
+          "analyzedAt": "2026-07-19T06:00:00.800Z",
           "confidence": {
             "overall": 0.6319757071211896,
             "imageQuality": 0.3815652867707417,
@@ -7835,7 +7835,7 @@
           "difference": 5.800342310331786
         }
       },
-      "runtimeMs": 335.1
+      "runtimeMs": 280.6
     },
     {
       "caseId": "embedded-7e056efd719deab7",
@@ -8071,7 +8071,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:19.522Z",
+          "analyzedAt": "2026-07-19T06:00:00.973Z",
           "confidence": {
             "overall": 0.6324213998950916,
             "imageQuality": 0.6225364092682963,
@@ -8105,7 +8105,7 @@
           "difference": -0.8262182266155662
         }
       },
-      "runtimeMs": 213.2
+      "runtimeMs": 170.7
     },
     {
       "caseId": "embedded-807821b1007c03e9",
@@ -8341,7 +8341,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:19.788Z",
+          "analyzedAt": "2026-07-19T06:00:01.210Z",
           "confidence": {
             "overall": 0.6547363159886895,
             "imageQuality": 0.6773807194493467,
@@ -8375,7 +8375,7 @@
           "difference": 0.7264413779790004
         }
       },
-      "runtimeMs": 262.7
+      "runtimeMs": 230.8
     },
     {
       "caseId": "embedded-858df7d73067f9a5",
@@ -8611,7 +8611,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.078Z",
+          "analyzedAt": "2026-07-19T06:00:01.493Z",
           "confidence": {
             "overall": 0.6212460369386191,
             "imageQuality": 0.5470340753119003,
@@ -8645,7 +8645,7 @@
           "difference": 1.9743419764160848
         }
       },
-      "runtimeMs": 287.9
+      "runtimeMs": 280.9
     },
     {
       "caseId": "embedded-8931b83f8bd1d403",
@@ -8881,7 +8881,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.381Z",
+          "analyzedAt": "2026-07-19T06:00:01.778Z",
           "confidence": {
             "overall": 0.6507919553556374,
             "imageQuality": 0.5355301370596797,
@@ -8915,7 +8915,7 @@
           "difference": 9.631973752143423
         }
       },
-      "runtimeMs": 300.9
+      "runtimeMs": 282.9
     },
     {
       "caseId": "embedded-961a443eed58c5a6",
@@ -9151,7 +9151,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.456Z",
+          "analyzedAt": "2026-07-19T06:00:01.841Z",
           "confidence": {
             "overall": 0.6170048102814232,
             "imageQuality": 0.5183546811422031,
@@ -9185,7 +9185,7 @@
           "difference": -3.016152780212238
         }
       },
-      "runtimeMs": 72.4
+      "runtimeMs": 60.7
     },
     {
       "caseId": "embedded-9905350a049587c8",
@@ -9421,7 +9421,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.521Z",
+          "analyzedAt": "2026-07-19T06:00:01.906Z",
           "confidence": {
             "overall": 0.6388632966103718,
             "imageQuality": 0.4898126024687731,
@@ -9455,7 +9455,7 @@
           "difference": 2.500258945724795
         }
       },
-      "runtimeMs": 61.5
+      "runtimeMs": 62.2
     },
     {
       "caseId": "embedded-a2d7586d2022f2d1",
@@ -9691,7 +9691,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.703Z",
+          "analyzedAt": "2026-07-19T06:00:02.077Z",
           "confidence": {
             "overall": 0.587784007593733,
             "imageQuality": 0.528674020974565,
@@ -9725,7 +9725,7 @@
           "difference": -12.255285436440616
         }
       },
-      "runtimeMs": 180.1
+      "runtimeMs": 169.7
     },
     {
       "caseId": "embedded-a355f6b283306fe0",
@@ -9961,7 +9961,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:20.868Z",
+          "analyzedAt": "2026-07-19T06:00:02.247Z",
           "confidence": {
             "overall": 0.5459820626842355,
             "imageQuality": 0.6869199190391477,
@@ -9996,7 +9996,7 @@
           "difference": -6.131827365024279
         }
       },
-      "runtimeMs": 161
+      "runtimeMs": 166.3
     },
     {
       "caseId": "embedded-ab0ff2e78eaee8ed",
@@ -10232,7 +10232,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:21.152Z",
+          "analyzedAt": "2026-07-19T06:00:02.487Z",
           "confidence": {
             "overall": 0.6654198171854736,
             "imageQuality": 0.6798466816824391,
@@ -10266,7 +10266,7 @@
           "difference": 3.156759690243746
         }
       },
-      "runtimeMs": 281.4
+      "runtimeMs": 237.7
     },
     {
       "caseId": "embedded-ba2af1def313b39e",
@@ -10502,7 +10502,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:21.355Z",
+          "analyzedAt": "2026-07-19T06:00:02.674Z",
           "confidence": {
             "overall": 0.6155949323190154,
             "imageQuality": 0.5407776091195933,
@@ -10536,7 +10536,7 @@
           "difference": 6.705901738032509
         }
       },
-      "runtimeMs": 200.3
+      "runtimeMs": 185
     },
     {
       "caseId": "embedded-bf5d13d62a467010",
@@ -10772,7 +10772,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:21.524Z",
+          "analyzedAt": "2026-07-19T06:00:02.827Z",
           "confidence": {
             "overall": 0.526795071338312,
             "imageQuality": 0.4409477562104137,
@@ -10807,7 +10807,7 @@
           "difference": -0.20678401644543953
         }
       },
-      "runtimeMs": 164.6
+      "runtimeMs": 147.8
     },
     {
       "caseId": "embedded-c3023df86bef4766",
@@ -11043,7 +11043,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:21.702Z",
+          "analyzedAt": "2026-07-19T06:00:02.969Z",
           "confidence": {
             "overall": 0.636778584961083,
             "imageQuality": 0.6063178322714056,
@@ -11077,7 +11077,7 @@
           "difference": 8.215422856835502
         }
       },
-      "runtimeMs": 176.3
+      "runtimeMs": 140.4
     },
     {
       "caseId": "embedded-c349b51b55f966ef",
@@ -11313,7 +11313,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:21.880Z",
+          "analyzedAt": "2026-07-19T06:00:03.145Z",
           "confidence": {
             "overall": 0.6432641886646375,
             "imageQuality": 0.6729022249243843,
@@ -11347,7 +11347,7 @@
           "difference": 1.6528076696989586
         }
       },
-      "runtimeMs": 175.3
+      "runtimeMs": 173.9
     },
     {
       "caseId": "embedded-c465c151d1b47129",
@@ -11583,7 +11583,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:22.246Z",
+          "analyzedAt": "2026-07-19T06:00:03.487Z",
           "confidence": {
             "overall": 0.6413779662546446,
             "imageQuality": 0.4369036022814421,
@@ -11617,7 +11617,7 @@
           "difference": -0.8974733433534539
         }
       },
-      "runtimeMs": 361.6
+      "runtimeMs": 335.4
     },
     {
       "caseId": "embedded-c538888ba3f65b7f",
@@ -11853,7 +11853,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:22.524Z",
+          "analyzedAt": "2026-07-19T06:00:03.751Z",
           "confidence": {
             "overall": 0.6429896147684204,
             "imageQuality": 0.5403368911117008,
@@ -11887,7 +11887,7 @@
           "difference": -0.43780543969174346
         }
       },
-      "runtimeMs": 275.7
+      "runtimeMs": 261.2
     },
     {
       "caseId": "embedded-d601404f86a0f64f",
@@ -12123,7 +12123,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:22.727Z",
+          "analyzedAt": "2026-07-19T06:00:03.956Z",
           "confidence": {
             "overall": 0.6148472067052273,
             "imageQuality": 0.6357013285759787,
@@ -12157,7 +12157,7 @@
           "difference": 2.0690059419955134
         }
       },
-      "runtimeMs": 200.9
+      "runtimeMs": 203.3
     },
     {
       "caseId": "embedded-d7751d43a2ea0b12",
@@ -12393,7 +12393,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:23.009Z",
+          "analyzedAt": "2026-07-19T06:00:04.276Z",
           "confidence": {
             "overall": 0.6211148605363646,
             "imageQuality": 0.5391496479212119,
@@ -12427,7 +12427,7 @@
           "difference": 2.1576792598346515
         }
       },
-      "runtimeMs": 279.4
+      "runtimeMs": 317.4
     },
     {
       "caseId": "embedded-d8aca7d13b0579bf",
@@ -12663,7 +12663,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:23.180Z",
+          "analyzedAt": "2026-07-19T06:00:04.475Z",
           "confidence": {
             "overall": 0.6173950856100792,
             "imageQuality": 0.581349242634196,
@@ -12697,7 +12697,7 @@
           "difference": 4.941212591204831
         }
       },
-      "runtimeMs": 167.2
+      "runtimeMs": 196.4
     },
     {
       "caseId": "embedded-d917b314d5d45489",
@@ -12933,7 +12933,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:23.374Z",
+          "analyzedAt": "2026-07-19T06:00:04.661Z",
           "confidence": {
             "overall": 0.6333950581224195,
             "imageQuality": 0.45652247454594597,
@@ -12967,7 +12967,7 @@
           "difference": 8.427047832889102
         }
       },
-      "runtimeMs": 191.9
+      "runtimeMs": 181.4
     },
     {
       "caseId": "embedded-dab328229cdff070",
@@ -13203,7 +13203,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:23.579Z",
+          "analyzedAt": "2026-07-19T06:00:04.871Z",
           "confidence": {
             "overall": 0.6265194656047754,
             "imageQuality": 0.7386972204658575,
@@ -13237,7 +13237,7 @@
           "difference": -2.58743191120422
         }
       },
-      "runtimeMs": 202.8
+      "runtimeMs": 208.7
     },
     {
       "caseId": "embedded-e35e669b675a89f4",
@@ -13473,7 +13473,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:23.804Z",
+          "analyzedAt": "2026-07-19T06:00:05.102Z",
           "confidence": {
             "overall": 0.708829492466247,
             "imageQuality": 0.6432157092506179,
@@ -13507,7 +13507,7 @@
           "difference": 5.222384851748785
         }
       },
-      "runtimeMs": 222.6
+      "runtimeMs": 229.1
     },
     {
       "caseId": "embedded-e981a4485c386cb6",
@@ -13743,7 +13743,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:24.052Z",
+          "analyzedAt": "2026-07-19T06:00:05.350Z",
           "confidence": {
             "overall": 0.6329805174062695,
             "imageQuality": 0.558132414081169,
@@ -13777,7 +13777,7 @@
           "difference": 2.900761198226533
         }
       },
-      "runtimeMs": 246.4
+      "runtimeMs": 246.1
     },
     {
       "caseId": "embedded-ea54b86c2c7f73b2",
@@ -14013,7 +14013,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:24.282Z",
+          "analyzedAt": "2026-07-19T06:00:05.564Z",
           "confidence": {
             "overall": 0.6816757311017336,
             "imageQuality": 0.656686134467031,
@@ -14047,7 +14047,7 @@
           "difference": -1.7815989223433917
         }
       },
-      "runtimeMs": 225.3
+      "runtimeMs": 208.7
     },
     {
       "caseId": "embedded-f5346b3c0c02ebf5",
@@ -14283,7 +14283,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:24.454Z",
+          "analyzedAt": "2026-07-19T06:00:05.720Z",
           "confidence": {
             "overall": 0.6597181832349542,
             "imageQuality": 0.5246278483339959,
@@ -14317,7 +14317,7 @@
           "difference": 3.804483013578846
         }
       },
-      "runtimeMs": 170
+      "runtimeMs": 155
     },
     {
       "caseId": "embedded-fd20da791578e894",
@@ -14553,7 +14553,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:24.655Z",
+          "analyzedAt": "2026-07-19T06:00:05.892Z",
           "confidence": {
             "overall": 0.6139820180031443,
             "imageQuality": 0.5796071365379694,
@@ -14587,7 +14587,7 @@
           "difference": 8.761217760353006
         }
       },
-      "runtimeMs": 200
+      "runtimeMs": 168.6
     },
     {
       "caseId": "embedded-fef6f375ed993075",
@@ -14823,7 +14823,7 @@
         "analysisMeta": {
           "engineVersion": "tzl-ezl-rule-v1.0",
           "source": "rule-based-auto-draft",
-          "analyzedAt": "2026-07-17T20:16:24.857Z",
+          "analyzedAt": "2026-07-19T06:00:06.056Z",
           "confidence": {
             "overall": 0.5958831446231314,
             "imageQuality": 0.43182572838030975,
@@ -14857,7 +14857,7 @@
           "difference": 2.26755673477561
         }
       },
-      "runtimeMs": 199.2
+      "runtimeMs": 160.5
     }
   ]
 }

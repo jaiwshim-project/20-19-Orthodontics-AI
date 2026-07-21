@@ -14,7 +14,14 @@ const { createHash } = require('crypto');
 
 const PROJECT_DIR = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
 const APP_PATH = path.join(PROJECT_DIR, 'EZ Curve - TZ Length - 보정 후 알고리즘 적용.html');
-const EZ_ANNOTATION_DIR = path.join(PROJECT_DIR, '02 이퀼리브리엄 찍기');
+// EZ 라벨 폴더 담당자 접미어("(김원장님)") 자동 탐지. 원본은 읽기 전용.
+function resolveDir(...prefixes) {
+  for (const pre of prefixes) { const p = path.join(PROJECT_DIR, pre); if (fs.existsSync(p)) return p; }
+  const base = prefixes[0].replace(/\s*\(.*$/, '').trim();
+  try { const hit = fs.readdirSync(PROJECT_DIR).find((n) => n.startsWith(base) && fs.statSync(path.join(PROJECT_DIR, n)).isDirectory()); if (hit) return path.join(PROJECT_DIR, hit); } catch (_) { /* */ }
+  return path.join(PROJECT_DIR, prefixes[0]);
+}
+const EZ_ANNOTATION_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
 const SCRATCH_DIR = __dirname;
 const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
 const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');
