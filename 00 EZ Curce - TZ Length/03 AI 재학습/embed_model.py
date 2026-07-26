@@ -43,7 +43,7 @@ b2 = new_text.find("{", new_text.find(start_marker))
 ea2 = re.search(r"\n\}\n;\n</script>", new_text[b2:])
 json.loads(new_text[b2:b2 + ea2.start() + len("\n}")])
 
-shutil.copy2(HTML, str(HTML) + ".bak-before-corrected-embed")
+shutil.copy2(HTML, str(HTML) + ".bak-before-class2-embed")
 HTML.write_text(new_text, encoding="utf-8")
 
 print("OK embedded.")

@@ -10,7 +10,12 @@ const INPUTS = [
   { json: 'baseline_predictions.json', csv: 'baseline_predictions.csv' },
   { json: 'baseline_ez_embedded_predictions.json', csv: 'baseline_ez_embedded_predictions.csv' },
   // 교정후 치아폭 학습용 규칙 baseline(width_embedded_only 케이스). 파일이 있을 때만 포함.
-  { json: 'baseline_corrected_width_predictions.json', csv: 'baseline_corrected_width_predictions.csv', optional: true }
+  { json: 'baseline_corrected_width_predictions.json', csv: 'baseline_corrected_width_predictions.csv', optional: true },
+  // 클래스2 치아폭(2026-07-26 신규 99건) 규칙 baseline. 완전 신규 SHA라 중복 없음. 있을 때만 포함.
+  { json: 'baseline_class2_width_predictions.json', csv: 'baseline_class2_width_predictions.csv', optional: true },
+  // 위 소스들이 훑지 못한 임베디드 이미지 보충분(--source=embedded-missing). dataset ↔ baseline
+  // 케이스 수 일치를 보장해 evaluate_baseline의 전수 예측 검사를 통과시킨다.
+  { json: 'baseline_missing_predictions.json', csv: 'baseline_missing_predictions.csv', optional: true }
 ];
 const OUTPUT_JSON = path.join(DIR, 'baseline_predictions_all.json');
 const OUTPUT_CSV = path.join(DIR, 'baseline_predictions_all.csv');

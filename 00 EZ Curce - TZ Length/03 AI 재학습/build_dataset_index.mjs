@@ -30,6 +30,11 @@ const TS_WIDTH_DIR = resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 
 // width_embedded_only 케이스로 편입된다. 발치 케이스는 치아폭이 12개 미만이라
 // train_residual의 len==12 필터에서 자동 제외되고, 12개 완전 라벨만 학습에 채택된다.
 const CORRECTED_WIDTH_DIR = resolveDir('02 교정 후 치아폭 찍기(김원장님)', '02 교정 후 치아폭 찍기');
+// 클래스2 치아폭 정답(2026-07-26 신규 101건). 감사 결과 유효 99건 전부
+// ① 치아 12개 완전 라벨(발치 0건) ② 임베디드 이미지 SHA-256이 기존 모든 라벨(01/TS/교정후/EZ)과
+// 중복 0건인 완전 신규 케이스다. EZ 라벨은 없어 width_embedded_only 케이스로 편입되며,
+// 어금니 잔차 분산(TZL P95 꼬리)을 줄이기 위한 표본 확대분이다.
+const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클래스2)', '03 치아 좌우폭 찍기');
 
 function sha256Buffer(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
@@ -620,7 +625,11 @@ async function main() {
   const widthsCorrected = CORRECTED_WIDTH_DIR !== TS_WIDTH_DIR
     ? await readAnnotations(CORRECTED_WIDTH_DIR, 'tooth_width', skippedAnnotations)
     : [];
-  const widths = [...widths01, ...widthsTs, ...widthsCorrected];
+  const class2Dirs = new Set([WIDTH_DIR, TS_WIDTH_DIR, CORRECTED_WIDTH_DIR]);
+  const widthsClass2 = !class2Dirs.has(CLASS2_WIDTH_DIR)
+    ? await readAnnotations(CLASS2_WIDTH_DIR, 'tooth_width', skippedAnnotations)
+    : [];
+  const widths = [...widths01, ...widthsTs, ...widthsCorrected, ...widthsClass2];
   const ez = await readAnnotations(EZ_DIR, 'ez_curve', skippedAnnotations);
   const rootByHash = groupBy(roots, item => item.sha256);
   const rootByNumber = new Map(roots.map(item => [item.caseNumber, item]));

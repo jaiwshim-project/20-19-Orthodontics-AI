@@ -24,6 +24,21 @@ function resolveDir(...prefixes) {
 // 운영 규칙엔진 HTML(SHA 6ee35113…712197). 사용자가 "보정 전 알고리즘 적용"으로 이름 변경함.
 const APP_PATH = resolveFile('EZ Curve - TZ Length.html', 'EZ Curve - TZ Length - 보정 전 알고리즘 적용.html');
 const EZ_ANNOTATION_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
+// 클래스2 치아폭 정답(2026-07-26 신규). 임베디드 이미지가 root/EZ 어디에도 없는 완전 신규 SHA라
+// dataset에서 width_embedded_only 케이스가 된다. train_residual이 잔차를 학습하려면
+// 이 이미지에 대한 규칙엔진 baseline이 필요하므로 --source=class2-width-embedded로 생성한다.
+const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클래스2)', '03 치아 좌우폭 찍기');
+// --source=embedded-missing 전용: 모든 라벨 폴더의 임베디드 이미지 중
+// baseline_predictions_all.json에 아직 없는 SHA만 골라 규칙엔진을 돌린다.
+// dataset 케이스 수와 baseline 케이스 수가 어긋나 evaluate_baseline의
+// all_dataset_cases_have_successful_prediction 검사가 깨지는 것을 막는 보충 경로.
+const ALL_LABEL_DIRS = [
+  CLASS2_WIDTH_DIR,
+  resolveDir('02 교정 후 치아폭 찍기(김원장님)', '02 교정 후 치아폭 찍기'),
+  resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기'),
+  resolveDir('01 치아 좌우폭 찍기 (유라쌤)', '01 치아 좌우폭 찍기'),
+  resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기'),
+];
 const SCRATCH_DIR = __dirname;
 const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
 const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');
@@ -40,7 +55,7 @@ function parseArgs(argv) {
   }
   if (!Number.isInteger(out.from) || out.from < 1) throw new Error('--from must be a positive integer');
   if (out.limit != null && (!Number.isInteger(out.limit) || out.limit < 1)) throw new Error('--limit must be a positive integer');
-  if (!['root', 'ez-embedded-only'].includes(out.source)) throw new Error('--source must be root or ez-embedded-only');
+  if (!['root', 'ez-embedded-only', 'class2-width-embedded', 'embedded-missing'].includes(out.source)) throw new Error('--source must be root, ez-embedded-only, class2-width-embedded, or embedded-missing');
   return out;
 }
 
@@ -65,23 +80,54 @@ async function buildManifest(options) {
       }
     }
   } else {
-    // Embedded-only means an EZ annotation image whose exact SHA-256 is absent
+    // Embedded-only means an annotation image whose exact SHA-256 is absent
     // from the numbered root set. Duplicate embedded images are analyzed once.
     const rootHashes = new Set();
     for (let n = 1; n <= 119; n++) {
       const filePath = path.join(PROJECT_DIR, `${String(n).padStart(3, '0')}.jpg`);
       if (fs.existsSync(filePath)) rootHashes.add(sha256(await fsp.readFile(filePath)));
     }
-    const mdNames = (await fsp.readdir(EZ_ANNOTATION_DIR)).filter((name) => /\.md$/i.test(name)).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
-    const byHash = new Map();
-    for (const name of mdNames) {
-      const mdPath = path.join(EZ_ANNOTATION_DIR, name);
-      const embedded = extractEmbeddedImage(await fsp.readFile(mdPath, 'utf8'), mdPath);
-      const hash = sha256(embedded.buffer);
-      if (!rootHashes.has(hash) && !byHash.has(hash)) byHash.set(hash, { mdPath, mime: embedded.mime, hash });
+    // 클래스2 소스는 치아폭 정답 폴더의 임베디드 이미지를 사용한다. 형식(JSON fence + imageData)이
+    // EZ 폴더와 동일하므로 동일 추출 경로를 재사용하며, 0 byte/손상 파일은 건너뛴다.
+    let annotationDirs;
+    if (options.source === 'class2-width-embedded') annotationDirs = [CLASS2_WIDTH_DIR];
+    else if (options.source === 'embedded-missing') annotationDirs = ALL_LABEL_DIRS;
+    else annotationDirs = [EZ_ANNOTATION_DIR];
+
+    // embedded-missing은 이미 baseline이 있는 SHA를 제외한다.
+    const alreadyCovered = new Set();
+    if (options.source === 'embedded-missing') {
+      const existing = path.join(SCRATCH_DIR, 'baseline_predictions_all.json');
+      if (fs.existsSync(existing)) {
+        const document = JSON.parse(await fsp.readFile(existing, 'utf8'));
+        for (const item of document.results || []) {
+          const ref = String(item.imageRef || '');
+          if (ref.startsWith('sha256:')) alreadyCovered.add(ref.slice(7));
+        }
+      }
     }
+
+    const byHash = new Map();
+    const skipped = [];
+    for (const annotationDir of annotationDirs) {
+      if (!fs.existsSync(annotationDir)) continue;
+      const mdNames = (await fsp.readdir(annotationDir)).filter((name) => /\.md$/i.test(name)).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+      for (const name of mdNames) {
+        const mdPath = path.join(annotationDir, name);
+        if ((await fsp.stat(mdPath)).size === 0) { skipped.push(`${name}: empty file`); continue; }
+        let embedded;
+        try { embedded = extractEmbeddedImage(await fsp.readFile(mdPath, 'utf8'), mdPath); }
+        catch (error) { skipped.push(`${name}: ${error.message}`); continue; }
+        const hash = sha256(embedded.buffer);
+        if (rootHashes.has(hash) || byHash.has(hash) || alreadyCovered.has(hash)) continue;
+        byHash.set(hash, { mdPath, mime: embedded.mime, hash });
+      }
+    }
+    if (skipped.length) console.log(`Skipped ${skipped.length} annotation file(s):\n  ${skipped.join('\n  ')}`);
     all = [...byHash.values()].sort((a, b) => a.hash.localeCompare(b.hash)).map((item) => {
       const caseId = `embedded-${item.hash.slice(0, 16)}`;
+      // sourceType은 merge_baselines의 중복키 규칙(sourceType:caseId)과 dataset 매칭(imageRef SHA)에
+      // 맞춰 embedded 계열과 동일하게 유지한다.
       return { caseId, sourceType: 'ez-embedded-only', imageFile: null, imageRef: `sha256:${item.hash}`, imageUrl: `/embedded/${caseId}`, mdPath: item.mdPath, mime: item.mime };
     });
   }

@@ -22,6 +22,9 @@ function resolveDir(...prefixes) {
   return path.join(PROJECT_DIR, prefixes[0]);
 }
 const EZ_ANNOTATION_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
+// 클래스2 치아폭 정답 폴더(2026-07-26 신규). --source=class2-width-embedded로 이 이미지에
+// KRR 적용 엔진 예측을 생성해 신규 데이터에서의 개선 여부를 측정한다.
+const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클래스2)', '03 치아 좌우폭 찍기');
 const SCRATCH_DIR = __dirname;
 const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
 const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');
@@ -38,7 +41,7 @@ function parseArgs(argv) {
   }
   if (!Number.isInteger(out.from) || out.from < 1) throw new Error('--from must be a positive integer');
   if (out.limit != null && (!Number.isInteger(out.limit) || out.limit < 1)) throw new Error('--limit must be a positive integer');
-  if (!['root', 'ez-embedded-only'].includes(out.source)) throw new Error('--source must be root or ez-embedded-only');
+  if (!['root', 'ez-embedded-only', 'class2-width-embedded'].includes(out.source)) throw new Error('--source must be root, ez-embedded-only, or class2-width-embedded');
   return out;
 }
 
@@ -70,11 +73,14 @@ async function buildManifest(options) {
       const filePath = path.join(PROJECT_DIR, `${String(n).padStart(3, '0')}.jpg`);
       if (fs.existsSync(filePath)) rootHashes.add(sha256(await fsp.readFile(filePath)));
     }
-    const mdNames = (await fsp.readdir(EZ_ANNOTATION_DIR)).filter((name) => /\.md$/i.test(name)).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+    const annotationDir = options.source === 'class2-width-embedded' ? CLASS2_WIDTH_DIR : EZ_ANNOTATION_DIR;
+    const mdNames = (await fsp.readdir(annotationDir)).filter((name) => /\.md$/i.test(name)).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
     const byHash = new Map();
     for (const name of mdNames) {
-      const mdPath = path.join(EZ_ANNOTATION_DIR, name);
-      const embedded = extractEmbeddedImage(await fsp.readFile(mdPath, 'utf8'), mdPath);
+      const mdPath = path.join(annotationDir, name);
+      if ((await fsp.stat(mdPath)).size === 0) continue; // 0 byte 라벨 파일 skip
+      let embedded;
+      try { embedded = extractEmbeddedImage(await fsp.readFile(mdPath, 'utf8'), mdPath); } catch (_) { continue; }
       const hash = sha256(embedded.buffer);
       if (!rootHashes.has(hash) && !byHash.has(hash)) byHash.set(hash, { mdPath, mime: embedded.mime, hash });
     }

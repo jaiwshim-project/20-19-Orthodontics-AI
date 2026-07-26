@@ -9,7 +9,7 @@
   },
   "seed": 20260711,
   "foldCount": 5,
-  "trainingDataDigestSha256": "28dd7bdad4e92a582909e34b419102d77346c8de7d5e558793418d53d76075b5",
+  "trainingDataDigestSha256": "aec09c216e8b0c63ab5747296dde00a1c996aaec89a0e4074ceb9a0b6c7f5b95",
   "metricDefinitions": {
     "coordinateMAE": "mean absolute x/y error after axis normalization",
     "mae": "mean 2D landmark error as fraction of normalized image diagonal",
@@ -19,23 +19,24 @@
     "overallOutOfFold": "each prediction is from a model that excluded its split group"
   },
   "inputSummary": {
-    "datasetCases": 335,
-    "baselineRecords": 335,
-    "matchedUsableBaselines": 335,
+    "datasetCases": 236,
+    "baselineRecords": 235,
+    "matchedUsableBaselines": 235,
     "taskSamples": {
-      "width": 268,
+      "width": 169,
       "ez": 113
     },
     "taskGroups": {
-      "width": 268,
+      "width": 169,
       "ez": 113
     }
   },
   "labelQuality": {
     "counts": {
-      "casesWithoutComplete12WidthTruth": 67,
-      "casesWithoutUsableEzTruth": 222,
-      "expertWidthPairsCanonicalized": 18,
+      "casesWithoutBaseline": 1,
+      "casesWithoutComplete12WidthTruth": 66,
+      "casesWithoutUsableEzTruth": 122,
+      "expertWidthPairsCanonicalized": 8,
       "ezMultiAnnotationCases": 1,
       "widthMultiAnnotationCases": 53
     },
@@ -47,279 +48,279 @@
   },
   "tasks": {
     "width": {
-      "samples": 268,
-      "groups": 268,
+      "samples": 169,
+      "groups": 169,
       "folds": [
         {
           "fold": 1,
-          "trainSamples": 214,
-          "testSamples": 54,
-          "trainGroups": 214,
-          "testGroups": 54,
+          "trainSamples": 135,
+          "testSamples": 34,
+          "trainGroups": 135,
+          "testGroups": 34,
           "hyperparameters": {
             "gammaFactor": 0.25,
-            "gamma": 0.0008391993989011543,
+            "gamma": 0.0008231142251060307,
             "lambda": 0.1
           },
           "distanceGate": {
-            "threshold": 13.093000021808097,
-            "kernelSimilarityFloor": 0.8660079924756064,
-            "accepted": 53,
-            "fallback": 1,
-            "acceptedRate": 0.9814814814814815
+            "threshold": 12.934555837417545,
+            "kernelSimilarityFloor": 0.8713519910679552,
+            "accepted": 30,
+            "fallback": 4,
+            "acceptedRate": 0.8823529411764706
           },
           "baseline": {
-            "mae": 0.04548841741850021,
-            "rmse": 0.062172434719371776,
-            "coordinateMAE": 0.03922612315882133,
-            "coordinateRMSE": 0.062172434719371776,
-            "p95": 0.13404328920734357,
+            "mae": 0.03941620984870693,
+            "rmse": 0.0527356034026682,
+            "coordinateMAE": 0.03470902715003648,
+            "coordinateRMSE": 0.0527356034026682,
+            "p95": 0.12136928817235945,
             "pck": {
-              "2pct": 0.3587962962962963,
-              "5pct": 0.6743827160493827,
-              "10pct": 0.8557098765432098
+              "2pct": 0.36151960784313725,
+              "5pct": 0.7303921568627451,
+              "10pct": 0.9154411764705882
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
           "corrected": {
-            "mae": 0.03210247543473549,
-            "rmse": 0.04170538221744665,
-            "coordinateMAE": 0.027886035230081693,
-            "coordinateRMSE": 0.04170538221744665,
-            "p95": 0.08588022304093701,
+            "mae": 0.030801030301335148,
+            "rmse": 0.03942970409816802,
+            "coordinateMAE": 0.027117175243893545,
+            "coordinateRMSE": 0.039429704098168025,
+            "p95": 0.08739255964052685,
             "pck": {
-              "2pct": 0.4012345679012346,
-              "5pct": 0.8101851851851852,
-              "10pct": 0.9753086419753086
+              "2pct": 0.43014705882352944,
+              "5pct": 0.8272058823529411,
+              "10pct": 0.9803921568627451
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
-          "coordinateMaeRelativeImprovement": 0.28909530220014706,
-          "p95Regression": -0.04816306616640656
+          "coordinateMaeRelativeImprovement": 0.2187284556644497,
+          "p95Regression": -0.0339767285318326
         },
         {
           "fold": 2,
-          "trainSamples": 214,
-          "testSamples": 54,
-          "trainGroups": 214,
-          "testGroups": 54,
+          "trainSamples": 135,
+          "testSamples": 34,
+          "trainGroups": 135,
+          "testGroups": 34,
           "hyperparameters": {
             "gammaFactor": 0.25,
-            "gamma": 0.000849000776029525,
+            "gamma": 0.0008550173469833359,
             "lambda": 0.1
           },
           "distanceGate": {
-            "threshold": 12.622866312371423,
-            "kernelSimilarityFloor": 0.8734739016624667,
-            "accepted": 51,
-            "fallback": 3,
-            "acceptedRate": 0.9444444444444444
+            "threshold": 12.898739570238627,
+            "kernelSimilarityFloor": 0.8673994916128773,
+            "accepted": 32,
+            "fallback": 2,
+            "acceptedRate": 0.9411764705882353
           },
           "baseline": {
-            "mae": 0.04920955800530442,
-            "rmse": 0.06394196113943534,
-            "coordinateMAE": 0.043092228930224234,
-            "coordinateRMSE": 0.06394196113943536,
-            "p95": 0.13390702722495157,
+            "mae": 0.040418221912809325,
+            "rmse": 0.05527754331985883,
+            "coordinateMAE": 0.03546905566107688,
+            "coordinateRMSE": 0.05527754331985883,
+            "p95": 0.12485855601689914,
             "pck": {
-              "2pct": 0.2808641975308642,
-              "5pct": 0.6265432098765432,
-              "10pct": 0.8587962962962963
+              "2pct": 0.3799019607843137,
+              "5pct": 0.7169117647058824,
+              "10pct": 0.9105392156862745
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
           "corrected": {
-            "mae": 0.034741065426024446,
-            "rmse": 0.044840304467435796,
-            "coordinateMAE": 0.030592101505995162,
-            "coordinateRMSE": 0.044840304467435796,
-            "p95": 0.09534606142404765,
+            "mae": 0.02878782014058583,
+            "rmse": 0.03939933211893485,
+            "coordinateMAE": 0.025224404958489283,
+            "coordinateRMSE": 0.03939933211893486,
+            "p95": 0.08410945248792288,
             "pck": {
-              "2pct": 0.38040123456790126,
-              "5pct": 0.7777777777777778,
-              "10pct": 0.9606481481481481
+              "2pct": 0.5208333333333334,
+              "5pct": 0.8296568627450981,
+              "10pct": 0.9779411764705882
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
-          "coordinateMaeRelativeImprovement": 0.29007846042193636,
-          "p95Regression": -0.038560965800903915
+          "coordinateMaeRelativeImprovement": 0.2888334778484079,
+          "p95Regression": -0.04074910352897626
         },
         {
           "fold": 3,
-          "trainSamples": 214,
-          "testSamples": 54,
-          "trainGroups": 214,
-          "testGroups": 54,
+          "trainSamples": 135,
+          "testSamples": 34,
+          "trainGroups": 135,
+          "testGroups": 34,
           "hyperparameters": {
             "gammaFactor": 0.25,
-            "gamma": 0.0008378536172288396,
+            "gamma": 0.0008521274460328197,
             "lambda": 0.1
           },
           "distanceGate": {
-            "threshold": 12.699107411042418,
-            "kernelSimilarityFloor": 0.8736124567659317,
-            "accepted": 49,
-            "fallback": 5,
-            "acceptedRate": 0.9074074074074074
+            "threshold": 13.505517783287454,
+            "kernelSimilarityFloor": 0.856049392439565,
+            "accepted": 33,
+            "fallback": 1,
+            "acceptedRate": 0.9705882352941176
           },
           "baseline": {
-            "mae": 0.049907476932303955,
-            "rmse": 0.0653022379941557,
-            "coordinateMAE": 0.043410079905833114,
-            "coordinateRMSE": 0.06530223799415572,
-            "p95": 0.13800620146120346,
+            "mae": 0.038281216582879155,
+            "rmse": 0.05252277350365483,
+            "coordinateMAE": 0.03353941569266132,
+            "coordinateRMSE": 0.052522773503654835,
+            "p95": 0.12095173804611649,
             "pck": {
-              "2pct": 0.2824074074074074,
-              "5pct": 0.6396604938271605,
-              "10pct": 0.8317901234567902
+              "2pct": 0.40808823529411764,
+              "5pct": 0.75,
+              "10pct": 0.9019607843137255
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
           "corrected": {
-            "mae": 0.03480852067941498,
-            "rmse": 0.04550662623055,
-            "coordinateMAE": 0.03016400737667393,
-            "coordinateRMSE": 0.04550662623055,
-            "p95": 0.09493964018230337,
+            "mae": 0.028474112588573686,
+            "rmse": 0.03798683918355887,
+            "coordinateMAE": 0.02482897715432069,
+            "coordinateRMSE": 0.03798683918355888,
+            "p95": 0.07921471180461138,
             "pck": {
-              "2pct": 0.41898148148148145,
-              "5pct": 0.7569444444444444,
-              "10pct": 0.9598765432098766
+              "2pct": 0.49019607843137253,
+              "5pct": 0.8431372549019608,
+              "10pct": 0.9779411764705882
             },
-            "landmarkCount": 1296
+            "landmarkCount": 816
           },
-          "coordinateMaeRelativeImprovement": 0.3051381743109687,
-          "p95Regression": -0.04306656127890009
+          "coordinateMaeRelativeImprovement": 0.25970752198424674,
+          "p95Regression": -0.041737026241505104
         },
         {
           "fold": 4,
-          "trainSamples": 215,
-          "testSamples": 53,
-          "trainGroups": 215,
-          "testGroups": 53,
+          "trainSamples": 135,
+          "testSamples": 34,
+          "trainGroups": 135,
+          "testGroups": 34,
           "hyperparameters": {
             "gammaFactor": 0.25,
-            "gamma": 0.0008403462795876414,
+            "gamma": 0.0008453676924254765,
             "lambda": 0.1
           },
           "distanceGate": {
-            "threshold": 12.891996865123774,
-            "kernelSimilarityFloor": 0.8696464208381056,
-            "accepted": 49,
-            "fallback": 4,
-            "acceptedRate": 0.9245283018867925
+            "threshold": 13.311374515747026,
+            "kernelSimilarityFloor": 0.8608861814533255,
+            "accepted": 33,
+            "fallback": 1,
+            "acceptedRate": 0.9705882352941176
           },
           "baseline": {
-            "mae": 0.04301151026584685,
-            "rmse": 0.05843536441737562,
-            "coordinateMAE": 0.03768037870474964,
-            "coordinateRMSE": 0.058435364417375624,
-            "p95": 0.13114971439545114,
+            "mae": 0.03280582230242471,
+            "rmse": 0.042764237507015815,
+            "coordinateMAE": 0.029101269032074974,
+            "coordinateRMSE": 0.042764237507015815,
+            "p95": 0.0939256534712797,
             "pck": {
-              "2pct": 0.3789308176100629,
-              "5pct": 0.7051886792452831,
-              "10pct": 0.875
+              "2pct": 0.40318627450980393,
+              "5pct": 0.8063725490196079,
+              "10pct": 0.9583333333333334
             },
-            "landmarkCount": 1272
+            "landmarkCount": 816
           },
           "corrected": {
-            "mae": 0.03190779167796132,
-            "rmse": 0.04102547482294562,
-            "coordinateMAE": 0.027860717296599526,
-            "coordinateRMSE": 0.04102547482294562,
-            "p95": 0.08654696276900929,
+            "mae": 0.023985294150652637,
+            "rmse": 0.029315304482488678,
+            "coordinateMAE": 0.021149241919437616,
+            "coordinateRMSE": 0.029315304482488678,
+            "p95": 0.05470942102505279,
             "pck": {
-              "2pct": 0.4158805031446541,
-              "5pct": 0.8105345911949685,
-              "10pct": 0.9779874213836478
+              "2pct": 0.5,
+              "5pct": 0.9240196078431373,
+              "10pct": 0.9950980392156863
             },
-            "landmarkCount": 1272
+            "landmarkCount": 816
           },
-          "coordinateMaeRelativeImprovement": 0.26060410605460127,
-          "p95Regression": -0.04460275162644185
+          "coordinateMaeRelativeImprovement": 0.273253620104084,
+          "p95Regression": -0.039216232446226906
         },
         {
           "fold": 5,
-          "trainSamples": 215,
-          "testSamples": 53,
-          "trainGroups": 215,
-          "testGroups": 53,
+          "trainSamples": 136,
+          "testSamples": 33,
+          "trainGroups": 136,
+          "testGroups": 33,
           "hyperparameters": {
             "gammaFactor": 0.25,
-            "gamma": 0.0008394250279094022,
+            "gamma": 0.000835533944093725,
             "lambda": 0.1
           },
           "distanceGate": {
-            "threshold": 12.76380871196534,
-            "kernelSimilarityFloor": 0.8721840844681777,
-            "accepted": 50,
+            "threshold": 13.573725599183069,
+            "kernelSimilarityFloor": 0.857320193059472,
+            "accepted": 30,
             "fallback": 3,
-            "acceptedRate": 0.9433962264150944
+            "acceptedRate": 0.9090909090909091
           },
           "baseline": {
-            "mae": 0.046207165191643494,
-            "rmse": 0.06280161787590546,
-            "coordinateMAE": 0.040158842584331916,
-            "coordinateRMSE": 0.06280161787590546,
-            "p95": 0.13342934997959888,
+            "mae": 0.04091216511204253,
+            "rmse": 0.05592004762330087,
+            "coordinateMAE": 0.035627482122156016,
+            "coordinateRMSE": 0.05592004762330087,
+            "p95": 0.12881944011265636,
             "pck": {
-              "2pct": 0.3608490566037736,
-              "5pct": 0.6690251572327044,
-              "10pct": 0.8498427672955975
+              "2pct": 0.37752525252525254,
+              "5pct": 0.7323232323232324,
+              "10pct": 0.8888888888888888
             },
-            "landmarkCount": 1272
+            "landmarkCount": 792
           },
           "corrected": {
-            "mae": 0.03271641253273392,
-            "rmse": 0.042504598165301645,
-            "coordinateMAE": 0.028525653191226373,
-            "coordinateRMSE": 0.042504598165301645,
-            "p95": 0.08743985505444699,
+            "mae": 0.029780860030479982,
+            "rmse": 0.03987524353501788,
+            "coordinateMAE": 0.026025599111949238,
+            "coordinateRMSE": 0.03987524353501788,
+            "p95": 0.08814913431112965,
             "pck": {
-              "2pct": 0.42374213836477986,
-              "5pct": 0.789308176100629,
-              "10pct": 0.9787735849056604
+              "2pct": 0.4911616161616162,
+              "5pct": 0.8282828282828283,
+              "10pct": 0.9696969696969697
             },
-            "landmarkCount": 1272
+            "landmarkCount": 792
           },
-          "coordinateMaeRelativeImprovement": 0.28967939921765234,
-          "p95Regression": -0.04598949492515189
+          "coordinateMaeRelativeImprovement": 0.26950776306012264,
+          "p95Regression": -0.04067030580152671
         }
       ],
       "overallOutOfFold": {
         "baseline": {
-          "mae": 0.04678091129282407,
-          "rmse": 0.06258739696838624,
-          "coordinateMAE": 0.04072691811957004,
-          "coordinateRMSE": 0.06258739696838624,
-          "p95": 0.1340437137375143,
+          "mae": 0.03835166538869401,
+          "rmse": 0.052036125868862436,
+          "coordinateMAE": 0.033677781102071216,
+          "coordinateRMSE": 0.05203612586886244,
+          "p95": 0.12014449477714297,
           "pck": {
-            "2pct": 0.332089552238806,
-            "5pct": 0.6627798507462687,
-            "10pct": 0.8541666666666666
+            "2pct": 0.386094674556213,
+            "5pct": 0.7472879684418146,
+            "10pct": 0.9151873767258383
           },
-          "landmarkCount": 6432
+          "landmarkCount": 4056
         },
         "corrected": {
-          "mae": 0.03326229159080706,
-          "rmse": 0.04316236852849615,
-          "coordinateMAE": 0.029011766484863116,
-          "coordinateRMSE": 0.043162368528496156,
-          "p95": 0.08963084544771148,
+          "mae": 0.02835745044476241,
+          "rmse": 0.03740001418785905,
+          "coordinateMAE": 0.02486223636735576,
+          "coordinateRMSE": 0.03740001418785905,
+          "p95": 0.08197273479654349,
           "pck": {
-            "2pct": 0.4079601990049751,
-            "5pct": 0.7888681592039801,
-            "10pct": 0.9704601990049752
+            "2pct": 0.486439842209073,
+            "5pct": 0.8505917159763313,
+            "10pct": 0.980276134122288
           },
-          "landmarkCount": 6432
+          "landmarkCount": 4056
         },
-        "coordinateMaeRelativeImprovement": 0.2876513170064193,
-        "p95Regression": -0.04441286828980283
+        "coordinateMaeRelativeImprovement": 0.2617614476439866,
+        "p95Regression": -0.038171759980599476
       },
       "selectedFinalHyperparameters": {
         "kernel": "rbf",
         "gammaFactor": 0.25,
-        "gamma": 0.0008426097333919872,
+        "gamma": 0.0008448562079972873,
         "lambda": 0.1
       },
       "promotionGate": {
@@ -332,13 +333,13 @@
           "unfamiliarFallbackEnabled": true
         },
         "observed": {
-          "coordinateMaeRelativeImprovement": 0.2876513170064193,
+          "coordinateMaeRelativeImprovement": 0.2617614476439866,
           "improvedFolds": 5,
           "foldCount": 5,
-          "p95Regression": -0.04441286828980283,
-          "unfamiliarAcceptedRate": 0.9402985074626866,
-          "unfamiliarFallbackCount": 16,
-          "nearestTrainingDistanceP95": 13.179659123097098
+          "p95Regression": -0.038171759980599476,
+          "unfamiliarAcceptedRate": 0.9349112426035503,
+          "unfamiliarFallbackCount": 11,
+          "nearestTrainingDistanceP95": 14.077747093178852
         },
         "required": {
           "coordinateMaeRelativeImprovement": 0.1,
