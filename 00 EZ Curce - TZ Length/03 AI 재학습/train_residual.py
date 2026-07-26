@@ -514,6 +514,62 @@ def predict_krr(model: Mapping[str, Any], x: np.ndarray, baseline: np.ndarray, m
     return prediction, accepted, nearest
 
 
+def clip_cumulative(prediction: np.ndarray, origin: np.ndarray, max_diag_fraction: float) -> np.ndarray:
+    """누적 이동량을 규칙엔진 초안(origin) 기준으로 제한.
+
+    다단 보정은 스테이지마다 per-stage cap을 지키지만 누적으로는 그 배수까지
+    이동할 수 있다. cap의 원래 취지("모델이 틀렸을 때 규칙엔진 초안을 멀리 끌고
+    가지 않는다")를 누적 기준으로도 보장하기 위한 두 번째 방어선이다.
+    """
+    return np.clip(origin + clip_corrections(prediction - origin, max_diag_fraction), 0.0, 1.0)
+
+
+def fit_stages(
+    x: np.ndarray,
+    baseline: np.ndarray,
+    target: np.ndarray,
+    stage_hyperparameters: Sequence[tuple[float, float]],
+    max_correction: float,
+    cumulative_cap: float,
+) -> list[dict[str, Any]]:
+    """다단(반복) 잔차 보정 학습.
+
+    스테이지 k는 스테이지 k-1까지 적용한 예측을 새 baseline으로 삼아 남은 잔차를
+    학습한다. 특징 x·프로토타입·거리게이트는 스테이지마다 동일하게 재계산되며
+    (같은 x이므로 값도 동일), alpha만 스테이지별로 달라진다.
+    """
+    stages: list[dict[str, Any]] = []
+    current = baseline
+    for gamma_factor, regularization in stage_hyperparameters:
+        model = fit_krr(x, current, target, gamma_factor, regularization)
+        stages.append(model)
+        current = predict_krr(model, x, current, max_correction)[0]
+        current = clip_cumulative(current, baseline, cumulative_cap)
+    return stages
+
+
+def predict_stages(
+    stages: Sequence[Mapping[str, Any]],
+    x: np.ndarray,
+    baseline: np.ndarray,
+    max_correction: float,
+    cumulative_cap: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """다단 보정 추론. 게이트는 1단계 기준으로 판정하고, 탈락 시 전 단계를 건너뛴다.
+
+    게이트를 스테이지마다 재판정하지 않는 이유: 미숙지 입력은 첫 판정에서 이미
+    규칙엔진 초안을 그대로 반환하므로 이후 단계도 적용 대상이 아니다. 단일
+    판정이 곧 "미숙지면 보정 없음"이라는 기존 계약과 정확히 일치한다.
+    """
+    prediction, accepted, nearest = predict_krr(stages[0], x, baseline, max_correction)
+    prediction = clip_cumulative(prediction, baseline, cumulative_cap)
+    for model in stages[1:]:
+        stepped = predict_krr(model, x, prediction, max_correction)[0]
+        stepped[~accepted] = baseline[~accepted]
+        prediction = clip_cumulative(stepped, baseline, cumulative_cap)
+    return prediction, accepted, nearest
+
+
 def error_metrics(target: np.ndarray, prediction: np.ndarray) -> dict[str, Any]:
     delta = prediction.reshape(-1, 2) - target.reshape(-1, 2)
     coordinate_abs = np.abs(delta)
@@ -563,10 +619,55 @@ def select_hyperparameters(
     return best
 
 
+def select_stage_hyperparameters(
+    x: np.ndarray,
+    baseline: np.ndarray,
+    target: np.ndarray,
+    groups: np.ndarray,
+    seed: int,
+    max_correction: float,
+    folds: int,
+    stages: int,
+    cumulative_cap: float,
+) -> list[tuple[float, float]]:
+    """스테이지별 하이퍼파라미터를 순차적(greedy)으로 내부 CV 선택.
+
+    스테이지 k의 baseline은 k-1까지 적용된 in-sample 예측이다. 내부 CV 자체는
+    그룹 분할이라 스테이지 내부 선택에 누출이 없고, 외부 폴드가 test 그룹을
+    이미 제외하고 있으므로 전체 절차도 out-of-fold 성질을 유지한다.
+    """
+    chosen: list[tuple[float, float]] = []
+    current = baseline
+    for stage_index in range(stages):
+        _, gamma_factor, regularization = select_hyperparameters(
+            x, current, target, groups, seed + stage_index * 31, max_correction, folds,
+        )
+        chosen.append((gamma_factor, regularization))
+        model = fit_krr(x, current, target, gamma_factor, regularization)
+        current = predict_krr(model, x, current, max_correction)[0]
+        current = clip_cumulative(current, baseline, cumulative_cap)
+    return chosen
+
+
+def case_mean_error(target: np.ndarray, prediction: np.ndarray) -> np.ndarray:
+    """케이스별 평균 랜드마크 오차(정규화 대각선 분율). 악화율 계산에 쓴다."""
+    delta = (prediction - target).reshape(prediction.shape[0], -1, 2)
+    return (np.linalg.norm(delta, axis=2) / math.sqrt(2.0)).mean(axis=1)
+
+
 def evaluate_task(
-    data: Mapping[str, np.ndarray], task: str, folds: int, seed: int, max_correction: float
+    data: Mapping[str, np.ndarray], task: str, folds: int, seed: int, max_correction: float,
+    stages: int = 1, cumulative_cap: float | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     x, baseline, target, groups = data["x"], data["baseline"], data["target"], data["groups"]
+    if stages < 1:
+        raise ValueError("stages must be at least 1")
+    # 누적 캡 기본값 = per-stage cap × 스테이지 수. 1단계면 per-stage cap과 같아
+    # 기존 동작이 비트 단위로 보존된다.
+    if cumulative_cap is None:
+        cumulative_cap = max_correction * stages
+    if cumulative_cap < max_correction - EPS:
+        raise ValueError("cumulative cap must be at least the per-stage cap")
     masks = grouped_folds(groups, folds, seed)
     corrected_oof = np.zeros_like(target)
     accepted_oof = np.zeros(x.shape[0], dtype=bool)
@@ -575,12 +676,17 @@ def evaluate_task(
 
     for fold_index, test_mask in enumerate(masks, start=1):
         train_mask = ~test_mask
-        _, gamma_factor, regularization = select_hyperparameters(
+        stage_hyperparameters = select_stage_hyperparameters(
             x[train_mask], baseline[train_mask], target[train_mask], groups[train_mask],
-            seed + fold_index * 1009, max_correction, min(4, folds),
+            seed + fold_index * 1009, max_correction, min(4, folds), stages, cumulative_cap,
         )
-        model = fit_krr(x[train_mask], baseline[train_mask], target[train_mask], gamma_factor, regularization)
-        prediction, accepted, nearest = predict_krr(model, x[test_mask], baseline[test_mask], max_correction)
+        stage_models = fit_stages(
+            x[train_mask], baseline[train_mask], target[train_mask],
+            stage_hyperparameters, max_correction, cumulative_cap,
+        )
+        prediction, accepted, nearest = predict_stages(
+            stage_models, x[test_mask], baseline[test_mask], max_correction, cumulative_cap,
+        )
         corrected_oof[test_mask] = prediction
         accepted_oof[test_mask] = accepted
         nearest_oof[test_mask] = nearest
@@ -593,13 +699,17 @@ def evaluate_task(
             "trainGroups": int(len(set(groups[train_mask].tolist()))),
             "testGroups": int(len(set(groups[test_mask].tolist()))),
             "hyperparameters": {
-                "gammaFactor": gamma_factor,
-                "gamma": model["gamma"],
-                "lambda": regularization,
+                "gammaFactor": stage_hyperparameters[0][0],
+                "gamma": stage_models[0]["gamma"],
+                "lambda": stage_hyperparameters[0][1],
             },
+            "stageHyperparameters": [
+                {"stage": index + 1, "gammaFactor": item["gammaFactor"], "gamma": item["gamma"], "lambda": item["lambda"]}
+                for index, item in enumerate(stage_models)
+            ],
             "distanceGate": {
-                "threshold": model["gateDistance"],
-                "kernelSimilarityFloor": model["gateKernelSimilarity"],
+                "threshold": stage_models[0]["gateDistance"],
+                "kernelSimilarityFloor": stage_models[0]["gateKernelSimilarity"],
                 "accepted": int(accepted.sum()),
                 "fallback": int((~accepted).sum()),
                 "acceptedRate": float(accepted.mean()),
@@ -615,11 +725,23 @@ def evaluate_task(
     improved_folds = sum(report["corrected"]["coordinateMAE"] < report["baseline"]["coordinateMAE"] for report in fold_reports)
     improvement = relative_improvement(base_overall["coordinateMAE"], corrected_overall["coordinateMAE"])
     p95_regression = corrected_overall["p95"] - base_overall["p95"]
+    # 다단 보정은 규칙엔진 초안에서 더 멀리 이동하므로 두 가지를 추가로 감시한다:
+    #  (1) 실제 누적 이동량이 선언된 누적 캡을 넘지 않는지(구현 검증)
+    #  (2) 규칙엔진보다 나빠진 케이스 비율이 허용치를 넘지 않는지(임상 안전)
+    cumulative_move = np.linalg.norm(
+        (corrected_oof - baseline).reshape(corrected_oof.shape[0], -1, 2), axis=2
+    ) / math.sqrt(2.0)
+    observed_cumulative_max = float(cumulative_move.max()) if cumulative_move.size else 0.0
+    worsened = case_mean_error(target, corrected_oof) > case_mean_error(target, baseline)
+    worsened_rate = float(worsened.mean())
     checks = {
         "coordinateMaeRelativeImprovementAtLeast10Pct": improvement >= 0.10,
         "atLeast4Of5FoldsImproved": folds == 5 and improved_folds >= 4,
         "p95DidNotRegress": p95_regression <= EPS,
-        "correctionCapIs5PctDiagonal": abs(max_correction - 0.05) <= EPS,
+        "perStageCorrectionCapIs5PctDiagonal": abs(max_correction - 0.05) <= EPS,
+        "cumulativeCorrectionWithinDeclaredCap": observed_cumulative_max <= cumulative_cap + 1e-9,
+        "cumulativeCapAtMost10PctDiagonal": cumulative_cap <= 0.10 + EPS,
+        "worsenedCaseRateAtMost25Pct": worsened_rate <= 0.25 + EPS,
         "unfamiliarFallbackEnabled": True,
     }
     task_gate = {
@@ -630,6 +752,13 @@ def evaluate_task(
             "improvedFolds": improved_folds,
             "foldCount": folds,
             "p95Regression": p95_regression,
+            "stages": stages,
+            "perStageCorrectionCap": max_correction,
+            "cumulativeCorrectionCap": cumulative_cap,
+            "observedCumulativeCorrectionMax": observed_cumulative_max,
+            "observedCumulativeCorrectionP95": float(np.quantile(cumulative_move, 0.95)) if cumulative_move.size else 0.0,
+            "worsenedCaseRate": worsened_rate,
+            "worsenedCaseCount": int(worsened.sum()),
             "unfamiliarAcceptedRate": float(accepted_oof.mean()),
             "unfamiliarFallbackCount": int((~accepted_oof).sum()),
             "nearestTrainingDistanceP95": float(np.quantile(nearest_oof, 0.95)),
@@ -639,15 +768,20 @@ def evaluate_task(
             "improvedFolds": 4,
             "foldCount": 5,
             "p95RegressionMaximum": 0.0,
-            "correctionCapDiagonalFraction": 0.05,
+            "perStageCorrectionCapDiagonalFraction": 0.05,
+            "cumulativeCorrectionCapMaximum": 0.10,
+            "worsenedCaseRateMaximum": 0.25,
             "unfamiliarFallback": True,
         },
     }
 
-    _, final_gamma_factor, final_regularization = select_hyperparameters(
-        x, baseline, target, groups, seed + 50021, max_correction, folds,
+    final_stage_hyperparameters = select_stage_hyperparameters(
+        x, baseline, target, groups, seed + 50021, max_correction, folds, stages, cumulative_cap,
     )
-    final_model = fit_krr(x, baseline, target, final_gamma_factor, final_regularization)
+    final_stages = fit_stages(
+        x, baseline, target, final_stage_hyperparameters, max_correction, cumulative_cap,
+    )
+    final_model = final_stages[0]
     model_json = {
         "output": "12_tooth_width_endpoints_xy" if task == "width" else "12_ez_points_xy",
         "outputShape": [24, 2] if task == "width" else [12, 2],
@@ -655,9 +789,9 @@ def evaluate_task(
         "trainingGroups": int(len(set(groups.tolist()))),
         "hyperparameters": {
             "kernel": "rbf",
-            "gammaFactor": final_gamma_factor,
+            "gammaFactor": final_model["gammaFactor"],
             "gamma": final_model["gamma"],
-            "lambda": final_regularization,
+            "lambda": final_model["lambda"],
         },
         "distanceGate": {
             "metric": "euclidean_in_standardized_feature_space",
@@ -669,11 +803,27 @@ def evaluate_task(
         "featureMean": final_model["featureMean"].tolist(),
         "featureScale": final_model["featureScale"].tolist(),
         "prototypes": final_model["prototypes"].tolist(),
+        # alpha는 1단계 계수(하위호환). 다단일 때 2단계 이후 계수는 stageAlphas에 담긴다.
         "alpha": final_model["alpha"].tolist(),
     }
+    if stages > 1:
+        # 프로토타입·특징 표준화·게이트는 모든 스테이지가 공유하므로(같은 x) 한 번만
+        # 저장하고, 스테이지별로 달라지는 alpha와 gamma만 나열한다.
+        model_json["stageCount"] = stages
+        model_json["stages"] = [
+            {
+                "stage": index + 1,
+                "gammaFactor": item["gammaFactor"],
+                "gamma": item["gamma"],
+                "lambda": item["lambda"],
+                "alpha": item["alpha"].tolist(),
+            }
+            for index, item in enumerate(final_stages)
+        ]
     metrics_json = {
         "samples": int(x.shape[0]),
         "groups": int(len(set(groups.tolist()))),
+        "stages": stages,
         "folds": fold_reports,
         "overallOutOfFold": {
             "baseline": base_overall,
@@ -682,6 +832,10 @@ def evaluate_task(
             "p95Regression": p95_regression,
         },
         "selectedFinalHyperparameters": model_json["hyperparameters"],
+        "selectedFinalStageHyperparameters": [
+            {"stage": index + 1, "gammaFactor": item["gammaFactor"], "gamma": item["gamma"], "lambda": item["lambda"]}
+            for index, item in enumerate(final_stages)
+        ],
         "promotionGate": task_gate,
     }
     return model_json, metrics_json
@@ -722,11 +876,19 @@ def run_training(
     folds: int = DEFAULT_FOLDS,
     seed: int = DEFAULT_SEED,
     max_correction: float = 0.05,
+    stages: int = 1,
+    cumulative_cap: float | None = None,
 ) -> tuple[Path, Path, dict[str, Any]]:
     if folds != 5:
         raise ValueError("promotion protocol requires exactly 5 folds")
     if not (0.0 < max_correction <= 0.25):
         raise ValueError("max correction must be in (0, 0.25]")
+    if not (1 <= stages <= 3):
+        raise ValueError("stages must be in [1, 3]")
+    if cumulative_cap is None:
+        cumulative_cap = max_correction * stages
+    if not (max_correction - EPS <= cumulative_cap <= 0.25):
+        raise ValueError("cumulative cap must be between the per-stage cap and 0.25")
     tasks, audit = build_samples(dataset_path, baseline_path)
     if not tasks:
         raise ValueError("no trainable width or EZ samples were matched")
@@ -739,6 +901,7 @@ def run_training(
             raise ValueError(f"{task} has fewer than {folds} unique groups")
         model_tasks[task], metric_tasks[task] = evaluate_task(
             tasks[task], task, folds, seed + offset * 100003, max_correction,
+            stages=stages, cumulative_cap=cumulative_cap,
         )
 
     all_pass = bool(metric_tasks) and all(item["promotionGate"]["pass"] for item in metric_tasks.values())
@@ -767,10 +930,17 @@ def run_training(
             "requires": ["12 tooth width lines", "12 EZ points", "12 tooth centers or derived width midpoints", "image aspect ratio"],
         },
         "correctionPolicy": {
-            "prediction": "rule_engine_baseline_plus_krr_residual",
+            "prediction": "rule_engine_baseline_plus_krr_residual"
+            if stages == 1 else "rule_engine_baseline_plus_staged_krr_residual",
             "maximumPerLandmarkCorrectionDiagonalFraction": max_correction,
+            "stageCount": stages,
+            # 누적 캡: 스테이지를 모두 적용한 뒤 규칙엔진 초안 기준 최대 이동량.
+            # 추론 측(residual_inference.js)은 스테이지마다 per-stage cap을 적용한 후
+            # 이 값으로 다시 한 번 잘라야 학습과 비트 단위로 일치한다.
+            "maximumCumulativeCorrectionDiagonalFraction": cumulative_cap,
             "clipCoordinatesToUnitSquare": True,
             "unfamiliarInputAction": "return_rule_engine_baseline",
+            "unfamiliarActionAppliesToAllStages": True,
         },
         "tasks": model_tasks,
         "promotionGate": promotion_gate,
@@ -881,7 +1051,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, help="directory for residual-model.json and residual-metrics.json")
     parser.add_argument("--folds", type=int, default=DEFAULT_FOLDS, help="grouped CV folds; promotion protocol requires 5")
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="deterministic split seed")
-    parser.add_argument("--max-correction", type=float, default=0.05, help="maximum correction per landmark, fraction of image diagonal")
+    parser.add_argument("--max-correction", type=float, default=0.05, help="maximum correction per landmark per stage, fraction of image diagonal")
+    parser.add_argument("--stages", type=int, default=1, help="staged (iterative) residual correction rounds, 1-3; 1 reproduces the single-stage model exactly")
+    parser.add_argument("--cumulative-cap", type=float, default=None, help="maximum cumulative correction from the rule-engine draft; defaults to max-correction x stages")
     parser.add_argument("--self-test", action="store_true", help="run deterministic synthetic end-to-end test")
     return parser.parse_args()
 
@@ -896,12 +1068,21 @@ def main() -> None:
     model_path, metrics_path, metrics = run_training(
         args.dataset_index.resolve(), args.baseline_predictions.resolve(), args.output_dir.resolve(),
         folds=args.folds, seed=args.seed, max_correction=args.max_correction,
+        stages=args.stages, cumulative_cap=args.cumulative_cap,
     )
     summary = {
         "model": str(model_path),
         "metrics": str(metrics_path),
         "taskSamples": metrics["inputSummary"]["taskSamples"],
+        "stages": args.stages,
         "promotionGatePass": metrics["promotionGate"]["pass"],
+        "taskGates": {
+            task: {
+                "pass": item["promotionGate"]["pass"],
+                "failed": [name for name, ok in item["promotionGate"]["checks"].items() if not ok],
+            }
+            for task, item in metrics["tasks"].items()
+        },
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 

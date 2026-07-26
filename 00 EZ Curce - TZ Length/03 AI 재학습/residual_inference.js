@@ -291,12 +291,44 @@
     const outputSize = TASK_POINT_COUNTS[taskName] * 2;
     if (!Array.isArray(task.alpha) || task.alpha.length !== prototypes.length) fail(`${taskName}.alpha row count must match prototypes`);
     const alpha = task.alpha.map((row, index) => numericArray(row, outputSize, `${taskName}.alpha[${index}]`));
+    const gamma = positiveNumber(task.hyperparameters && task.hyperparameters.gamma, `${taskName}.gamma`);
+    // 다단(반복) 보정 모델은 프로토타입·표준화·거리게이트를 모든 스테이지가 공유하고
+    // alpha/gamma만 스테이지별로 다르다. stages가 없으면 1단계 모델로 취급한다.
+    let stages;
+    if (task.stages == null) {
+      stages = [{ gamma, alpha }];
+    } else {
+      if (!Array.isArray(task.stages) || task.stages.length < 1) fail(`${taskName}.stages must be a non-empty array`);
+      if (task.stageCount != null && task.stageCount !== task.stages.length) {
+        fail(`${taskName}.stageCount does not match stages length`);
+      }
+      stages = task.stages.map((item, index) => {
+        if (!item || typeof item !== 'object') fail(`${taskName}.stages[${index}] must be an object`);
+        if (!Array.isArray(item.alpha) || item.alpha.length !== prototypes.length) {
+          fail(`${taskName}.stages[${index}].alpha row count must match prototypes`);
+        }
+        return {
+          gamma: positiveNumber(item.gamma, `${taskName}.stages[${index}].gamma`),
+          alpha: item.alpha.map((row, rowIndex) => numericArray(row, outputSize, `${taskName}.stages[${index}].alpha[${rowIndex}]`)),
+        };
+      });
+      // 하위호환 계약: 최상위 alpha/gamma는 1단계와 동일해야 한다.
+      if (stages[0].gamma !== gamma) fail(`${taskName}.stages[0].gamma must equal hyperparameters.gamma`);
+      for (let row = 0; row < alpha.length; row += 1) {
+        for (let column = 0; column < outputSize; column += 1) {
+          if (stages[0].alpha[row][column] !== alpha[row][column]) {
+            fail(`${taskName}.stages[0].alpha must equal the top-level alpha`);
+          }
+        }
+      }
+    }
     return {
       mean,
       scale,
       prototypes,
       alpha,
-      gamma: positiveNumber(task.hyperparameters && task.hyperparameters.gamma, `${taskName}.gamma`),
+      stages,
+      gamma,
       gateDistance: positiveNumber(task.distanceGate && task.distanceGate.threshold, `${taskName}.gateDistance`),
     };
   }
@@ -315,6 +347,18 @@
     const value = modelDocument && modelDocument.correctionPolicy &&
       modelDocument.correctionPolicy.maximumPerLandmarkCorrectionDiagonalFraction;
     return positiveNumber(value, 'maximumPerLandmarkCorrectionDiagonalFraction');
+  }
+
+  function cumulativeCorrectionCap(modelDocument, perStageCap, stageCount) {
+    // 누적 캡은 스테이지를 모두 적용한 뒤 규칙엔진 초안 기준 최대 이동량이다.
+    // 모델이 선언하지 않으면 perStageCap x stageCount로 두어 학습 기본값과 일치시킨다.
+    const declared = modelDocument && modelDocument.correctionPolicy &&
+      modelDocument.correctionPolicy.maximumCumulativeCorrectionDiagonalFraction;
+    if (declared == null) return perStageCap * stageCount;
+    const value = positiveNumber(declared, 'maximumCumulativeCorrectionDiagonalFraction');
+    if (value < perStageCap - EPS) fail('cumulative correction cap must be at least the per-stage cap');
+    if (value > 0.25) fail('cumulative correction cap must not exceed 0.25');
+    return value;
   }
 
   function sha256String(value, label) {
@@ -497,22 +541,40 @@
     const effectiveGateThreshold = model.gateDistance * taskPolicy.distanceGateMultiplier;
     const accepted = nearestDistance <= effectiveGateThreshold;
     const outputSize = TASK_POINT_COUNTS[taskName] * 2;
-    const correction = new Array(outputSize).fill(0);
-    for (let row = 0; row < distances.length; row += 1) {
-      const kernel = Math.exp(-model.gamma * distances[row]);
-      for (let column = 0; column < outputSize; column += 1) correction[column] += kernel * model.alpha[row][column];
-    }
-    const clippedCorrection = clipCorrectionPairs(
-      correction,
-      deploymentRuntime ? deploymentRuntime.maximumFraction : correctionCap(modelDocument),
-      canonical.width / canonical.height,
-      policy,
-    );
+    const perStageCap = deploymentRuntime ? deploymentRuntime.maximumFraction : correctionCap(modelDocument);
+    const aspect = canonical.width / canonical.height;
+    const cumulativeCap = cumulativeCorrectionCap(modelDocument, perStageCap, model.stages.length);
     const baseline = taskName === 'width' ? flattenPoints(canonical.widthPoints) : flattenPoints(canonical.ezPoints);
-    const prediction = baseline.map((value, index) => {
-      const corrected = value + (accepted ? clippedCorrection[index] * taskPolicy.blend : 0);
-      return Math.min(1, Math.max(0, corrected));
-    });
+
+    // 스테이지 k는 k-1까지 적용된 예측을 baseline으로 삼아 다시 잔차를 더한다.
+    // train_residual.py의 fit_stages/predict_stages와 같은 순서를 지킨다:
+    //   per-stage clip → 단위정사각 클램프 → 누적 clip → 클램프.
+    //
+    // 배포정책의 blend는 스테이지 안이 아니라 '누적 보정량'에 곱한다. 학습(fit_stages)은
+    // blend 개념 없이 스테이지를 쌓으므로, blend를 스테이지마다 곱하면 2단계 이후의
+    // baseline이 학습 때와 달라져 모델이 가정한 잔차 분포를 벗어난다. 누적 보정에
+    // 곱하면 blend=1에서 학습과 정확히 일치하고, blend<1은 그 보정을 축소만 하므로
+    // 누적 캡도 그대로 성립한다.
+    let staged = baseline.slice();
+    for (let stageIndex = 0; stageIndex < model.stages.length; stageIndex += 1) {
+      const stage = model.stages[stageIndex];
+      const correction = new Array(outputSize).fill(0);
+      for (let row = 0; row < distances.length; row += 1) {
+        const kernel = Math.exp(-stage.gamma * distances[row]);
+        for (let column = 0; column < outputSize; column += 1) correction[column] += kernel * stage.alpha[row][column];
+      }
+      const stageCorrection = clipCorrectionPairs(correction, perStageCap, aspect, policy);
+      const stepped = staged.map((value, index) => Math.min(1, Math.max(0, value + stageCorrection[index])));
+      const cumulative = clipCorrectionPairs(
+        stepped.map((value, index) => value - baseline[index]),
+        cumulativeCap,
+        aspect,
+        policy,
+      );
+      staged = baseline.map((value, index) => Math.min(1, Math.max(0, value + cumulative[index])));
+    }
+    const appliedCorrection = staged.map((value, index) => (accepted ? (value - baseline[index]) * taskPolicy.blend : 0));
+    const prediction = baseline.map((value, index) => Math.min(1, Math.max(0, value + appliedCorrection[index])));
     const normalizedPoints = unflattenPoints(prediction);
     const pixelPoints = pixelsFromNormalized(normalizedPoints, canonical.width, canonical.height);
     const maximumFraction = deploymentRuntime ? deploymentRuntime.maximumFraction : correctionCap(modelDocument);
@@ -531,6 +593,8 @@
         task: taskName,
         correctionCapPolicy: policy,
         maximumCorrectionFraction: maximumFraction,
+        stageCount: model.stages.length,
+        maximumCumulativeCorrectionFraction: cumulativeCap,
         axisNormalizedRadius: policy === CAP_POLICIES.LEGACY_AXIS_NORMALIZED ? maximumFraction * SQRT2 : null,
         blend: taskPolicy.blend,
         distanceGateMultiplier: taskPolicy.distanceGateMultiplier,

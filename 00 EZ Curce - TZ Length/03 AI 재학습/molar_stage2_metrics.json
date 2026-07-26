@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "molar-stage2-oof-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "동일한 grouped 5-fold out-of-fold 비교. 1단계 vs 2단계 모두 자기 정답 미학습 예측. 길이 mm 스케일은 정답 최외곽 스팬=54mm로 고정.",
+  "widthSamples": 268,
+  "stageCount": 2,
+  "perStageCap": 0.05,
+  "cumulativeCap": 0.1,
+  "molarTeeth": [
+    1,
+    2,
+    11,
+    12
+  ],
+  "results": {
+    "rule": {
+      "molarCoord": {
+        "mae": 0.06554812681784146,
+        "p95": 0.15065121697115744,
+        "n": 2144
+      },
+      "allCoord": {
+        "mae": 0.04678091129282407,
+        "p95": 0.1340437137375143,
+        "n": 6432
+      },
+      "molarLengthMm": {
+        "mae": 1.3405986898581932,
+        "p95": 3.430932218304744
+      },
+      "allLengthMm": {
+        "mae": 1.137236784559419,
+        "p95": 2.9000738612135417
+      },
+      "tzlSumMm": {
+        "mae": 10.560580828125977,
+        "p95": 22.90900293172715
+      }
+    },
+    "stage1": {
+      "molarCoord": {
+        "mae": 0.046737365596570955,
+        "p95": 0.10704948224373705,
+        "n": 2144
+      },
+      "allCoord": {
+        "mae": 0.03326229159080706,
+        "p95": 0.08963084544771148,
+        "n": 6432
+      },
+      "molarLengthMm": {
+        "mae": 1.2041486077499843,
+        "p95": 3.192770480925957
+      },
+      "allLengthMm": {
+        "mae": 0.9871591349225112,
+        "p95": 2.8573100223266086
+      },
+      "tzlSumMm": {
+        "mae": 8.199744915308798,
+        "p95": 19.128038182430327
+      }
+    },
+    "stage2": {
+      "molarCoord": {
+        "mae": 0.03966445898080212,
+        "p95": 0.08550765747424897,
+        "n": 2144
+      },
+      "allCoord": {
+        "mae": 0.030214093889473628,
+        "p95": 0.07263599100198768,
+        "n": 6432
+      },
+      "molarLengthMm": {
+        "mae": 1.179196315268391,
+        "p95": 3.080537494391559
+      },
+      "allLengthMm": {
+        "mae": 0.9332128456640042,
+        "p95": 2.66496399672746
+      },
+      "tzlSumMm": {
+        "mae": 7.18645280007228,
+        "p95": 17.36406090197872
+      }
+    }
+  },
+  "improvementPct": {
+    "molarCoord_rule_to_stage1": 28.697633531993517,
+    "molarCoord_rule_to_stage2": 39.488035880827184,
+    "molarCoord_stage1_to_stage2": 15.13330185706437,
+    "molarCoordP95_stage1_to_stage2": 20.123240503340575,
+    "molarLength_rule_to_stage1": 10.178294454594937,
+    "molarLength_rule_to_stage2": 12.039574244763363,
+    "molarLength_stage1_to_stage2": 2.0721937741735994,
+    "allCoord_stage1_to_stage2": 9.16412416448146
+  },
+  "molarLengthPairedBootstrap": {
+    "unit": "case",
+    "replicates": 5000,
+    "meanImprovementMm": 0.024952292481593273,
+    "ci95LowerMm": -0.005815206864907307,
+    "ci95UpperMm": 0.055036390618751846,
+    "probabilityImproved": 0.945,
+    "casesImproved": 128,
+    "casesWorsened": 124,
+    "cases": 268
+  },
+  "gatePassRate": {
+    "stage1": 0.9402985074626866,
+    "stage2": 0.9402985074626866
+  }
+}

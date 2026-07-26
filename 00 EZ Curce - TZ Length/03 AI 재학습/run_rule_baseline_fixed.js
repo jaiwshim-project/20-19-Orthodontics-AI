@@ -13,7 +13,10 @@ const { spawn } = require('child_process');
 const { createHash } = require('crypto');
 
 const PROJECT_DIR = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce - TZ Length';
-const APP_PATH = path.join(PROJECT_DIR, 'EZ Curve - TZ Length - 보정 후 알고리즘 적용.html');
+const DEFAULT_APP_PATH = path.join(PROJECT_DIR, 'EZ Curve - TZ Length - 보정 후 알고리즘 적용.html');
+// --app=<경로>로 다른 HTML 사본(예: 임베드 직전 .bak)을 지정할 수 있다. 같은 이미지
+// 집합을 두 사본에 통과시켜 짝지어진 실측 before/after를 얻기 위한 용도.
+let APP_PATH = DEFAULT_APP_PATH;
 // EZ 라벨 폴더 담당자 접미어("(김원장님)") 자동 탐지. 원본은 읽기 전용.
 function resolveDir(...prefixes) {
   for (const pre of prefixes) { const p = path.join(PROJECT_DIR, pre); if (fs.existsSync(p)) return p; }
@@ -38,6 +41,7 @@ function parseArgs(argv) {
     else if (arg.startsWith('--source=')) out.source = arg.slice(9);
     else if (arg.startsWith('--output=')) out.output = path.resolve(arg.slice(9));
     else if (arg.startsWith('--csv=')) out.csv = path.resolve(arg.slice(6));
+    else if (arg.startsWith('--app=')) out.app = path.resolve(arg.slice(6));
   }
   if (!Number.isInteger(out.from) || out.from < 1) throw new Error('--from must be a positive integer');
   if (out.limit != null && (!Number.isInteger(out.limit) || out.limit < 1)) throw new Error('--limit must be a positive integer');
@@ -159,7 +163,7 @@ function makeSummaryCsv(payload) {
   return [columns.join(','), ...rows.map((row) => columns.map((key) => csvCell(row[key])).join(','))].join('\r\n') + '\r\n';
 }
 
-function runnerHtml() {
+function runnerHtml(engineSource) {
   return `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><title>EZ rule baseline batch</title>
 <style>body{font:14px system-ui;margin:20px}progress{width:min(720px,90vw)}pre{white-space:pre-wrap}.app-frame{position:fixed;left:-10000px;top:0;width:800px;height:800px;border:0}</style>
@@ -167,6 +171,7 @@ function runnerHtml() {
 <h1>EZ rule baseline batch</h1><progress id="bar" max="1" value="0"></progress><pre id="status">Loading engine…</pre>
 <iframe id="app" class="app-frame" src="/app"></iframe>
 <script>
+const ENGINE_SOURCE=${JSON.stringify(engineSource)};
 const statusEl=document.getElementById('status'),bar=document.getElementById('bar'),frame=document.getElementById('app');
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const loadImage=src=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Image load failed: '+src));img.src=src;});
@@ -193,7 +198,7 @@ async function main(){
     await post('/api/progress',{index:i+1,total:manifest.length,caseId:item.caseId,status:record.status,runtimeMs:record.runtimeMs});
     await wait(0);
   }
-  const payload={schemaVersion:'ez-rule-baseline-v1',createdAt:new Date().toISOString(),engineSource:'EZ Curve - TZ Length - 보정 후 알고리즘 적용.html',sourceSet:manifest[0]?.sourceType||'empty',caseCount:results.length,results};
+  const payload={schemaVersion:'ez-rule-baseline-v1',createdAt:new Date().toISOString(),engineSource:ENGINE_SOURCE,sourceSet:manifest[0]?.sourceType||'empty',caseCount:results.length,results};
   await post('/api/results',payload);
   statusEl.textContent='Complete: '+results.length+' cases';
 }
@@ -203,6 +208,7 @@ main().catch(async error=>{statusEl.textContent='FATAL: '+String(error&&error.st
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+  if (options.app) APP_PATH = options.app;
   const browserPath = findBrowser();
   if (!browserPath) throw new Error('Chrome or Edge executable was not found.');
   if (!fs.existsSync(APP_PATH)) throw new Error(`Production HTML not found: ${APP_PATH}`);
@@ -219,7 +225,7 @@ async function main() {
       const url = new URL(req.url, 'http://127.0.0.1');
       if (req.method === 'GET' && url.pathname === '/runner') {
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
-        res.end(runnerHtml());
+        res.end(runnerHtml(path.basename(APP_PATH)));
         return;
       }
       if (req.method === 'GET' && url.pathname === '/app') {
@@ -232,7 +238,9 @@ async function main() {
           marker,
           "window.__ezBatchRunAutoEngine=runAutoEngine;window.__ezBatchEngineVersion=AUTO_ENGINE_VERSION;" + marker
         );
-        res.writeHead(200, { 'content-type': contentType(APP_PATH), 'cache-control': 'no-store' });
+        // --app으로 .bak 사본을 지정하면 확장자가 .html이 아니므로 확장자 추론에
+        // 맡기면 브라우저가 렌더 대신 다운로드한다. 이 경로는 항상 HTML로 낸다.
+        res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
         res.end(instrumented);
         return;
       }

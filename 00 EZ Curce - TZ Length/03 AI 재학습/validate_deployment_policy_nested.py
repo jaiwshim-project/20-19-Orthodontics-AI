@@ -34,6 +34,11 @@ OUTER_FOLDS = 5
 INNER_FOLDS = 4
 EPS = 1e-12
 CAP_FRACTION = 0.05
+# 다단(반복) 잔차보정. 스테이지마다 CAP_FRACTION을 독립 적용하지만 규칙엔진 초안
+# 기준 누적 이동은 CUMULATIVE_CAP_FRACTION으로 다시 제한한다. 두 값 모두
+# train_residual.py에 넣어 배포하는 값과 같아야 이 감사가 실제 파이프라인을 재현한다.
+STAGE_COUNT = 2
+CUMULATIVE_CAP_FRACTION = 0.10
 MIN_PAIRED_INNER = 20
 MIN_PAIRED_OUTER_TOTAL = 50
 BOOTSTRAP_REPLICATES = 5000
@@ -111,76 +116,190 @@ def raw_predict(model: Mapping[str, Any], x: np.ndarray) -> tuple[np.ndarray, np
     return raw, nearest, ratio
 
 
-def capped_raw_prediction(
-    model: Mapping[str, Any], data: Mapping[str, np.ndarray], aspects: np.ndarray
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
-    raw, nearest, ratio = raw_predict(model, data["x"])
-    capped, audit = gate.cap_actual_pixel_diagonal(raw, aspects, CAP_FRACTION)
-    return capped, nearest, ratio, audit
+def stage_step(
+    model: Mapping[str, Any],
+    origin: np.ndarray,
+    current: np.ndarray,
+    x: np.ndarray,
+    aspects: np.ndarray,
+    apply_gate: bool,
+) -> tuple[np.ndarray, dict[str, Any], dict[str, Any]]:
+    """한 스테이지 전진: per-stage 캡 → 단위정사각 클램프 → 누적 캡 → 클램프.
+
+    `origin`은 규칙엔진 초안이고 누적 캡의 기준점이다. `apply_gate`는 학습측
+    train_residual.fit_stages가 predict_krr(거리게이트 포함)로 전진하는 것을
+    그대로 재현하기 위한 것이며, 테스트측에서는 게이트를 blend 단계에서 한 번만
+    적용하므로 False로 둔다(탈락 행은 어차피 초안으로 되돌아간다).
+    """
+    raw, _, ratio = raw_predict(model, x)
+    capped, per_stage_audit = gate.cap_actual_pixel_diagonal(raw, aspects, CAP_FRACTION)
+    if apply_gate:
+        capped = capped * (ratio <= 1.0 + EPS)[:, None]
+    stepped = np.clip(current + capped, 0.0, 1.0)
+    cumulative, cumulative_audit = gate.cap_actual_pixel_diagonal(
+        stepped - origin, aspects, CUMULATIVE_CAP_FRACTION
+    )
+    return np.clip(origin + cumulative, 0.0, 1.0), per_stage_audit, cumulative_audit
+
+
+def fit_stage_models(
+    data: Mapping[str, np.ndarray],
+    aspects: np.ndarray,
+    stage_hyperparameters: Sequence[Mapping[str, float]],
+) -> list[dict[str, Any]]:
+    """스테이지별 KRR을 순차 학습. 스테이지 k의 baseline은 k-1까지의 예측이다."""
+    models: list[dict[str, Any]] = []
+    current = data["baseline"]
+    for item in stage_hyperparameters:
+        model = tr.fit_krr(
+            data["x"],
+            current,
+            data["target"],
+            float(item["gammaFactor"]),
+            float(item["lambda"]),
+        )
+        models.append(model)
+        current, _, _ = stage_step(
+            model, data["baseline"], current, data["x"], aspects, apply_gate=True
+        )
+    return models
+
+
+def staged_test_correction(
+    models: Sequence[Mapping[str, Any]],
+    data: Mapping[str, np.ndarray],
+    aspects: np.ndarray,
+) -> dict[str, Any]:
+    """미적용(blend 이전) 누적 보정량과 1단계 게이트 판정을 반환."""
+    _, nearest, ratio = raw_predict(models[0], data["x"])
+    current = data["baseline"]
+    per_stage_audits: list[dict[str, Any]] = []
+    cumulative_audit: dict[str, Any] = {}
+    for model in models:
+        current, per_stage_audit, cumulative_audit = stage_step(
+            model, data["baseline"], current, data["x"], aspects, apply_gate=False
+        )
+        per_stage_audits.append(per_stage_audit)
+    return {
+        "correction": current - data["baseline"],
+        "nearest": nearest,
+        "ratio": ratio,
+        "perStageCapAudits": per_stage_audits,
+        "cumulativeCapAudit": cumulative_audit,
+    }
 
 
 def select_krr_hyperparameters(
     data: Mapping[str, np.ndarray], masks: Sequence[np.ndarray], aspects: np.ndarray
 ) -> dict[str, Any]:
-    """Select KRR settings inside the outer-training set only."""
-    best: tuple[float, float, float] | None = None
-    for gamma_factor in tr.GAMMA_FACTORS:
-        for regularization in tr.LAMBDA_VALUES:
-            prediction = np.zeros_like(data["target"])
-            for validation_mask in masks:
-                training_mask = ~validation_mask
-                model = tr.fit_krr(
-                    data["x"][training_mask],
-                    data["baseline"][training_mask],
-                    data["target"][training_mask],
-                    gamma_factor,
-                    regularization,
-                )
-                capped, _, ratio, _ = capped_raw_prediction(
-                    model, subset(data, validation_mask), aspects[validation_mask]
-                )
-                accepted = ratio <= 1.0 + EPS
-                applied = capped * accepted[:, None]
-                prediction[validation_mask] = np.clip(
-                    data["baseline"][validation_mask] + applied, 0.0, 1.0
-                )
-            score = tr.error_metrics(data["target"], prediction)["coordinateMAE"]
-            candidate = (float(score), float(gamma_factor), float(regularization))
-            if best is None or candidate < best:
-                best = candidate
-    if best is None:
-        raise RuntimeError("KRR hyperparameter search failed")
-    return {"innerCoordinateMAE": best[0], "gammaFactor": best[1], "lambda": best[2]}
+    """Select staged KRR settings inside the outer-training set only.
+
+    스테이지 k의 하이퍼파라미터는 k-1까지 적용된 예측을 baseline으로 두고
+    같은 내부 그룹 CV로 고른다(train_residual.select_stage_hyperparameters와 동일한
+    greedy 절차). 스테이지 전진에 쓰는 in-sample 모델은 outer-training 안에서만
+    학습되므로 outer-test 누출은 없다.
+    """
+    stages: list[dict[str, Any]] = []
+    current = data["baseline"]
+    for stage_index in range(STAGE_COUNT):
+        best: tuple[float, float, float] | None = None
+        for gamma_factor in tr.GAMMA_FACTORS:
+            for regularization in tr.LAMBDA_VALUES:
+                prediction = np.zeros_like(data["target"])
+                for validation_mask in masks:
+                    training_mask = ~validation_mask
+                    model = tr.fit_krr(
+                        data["x"][training_mask],
+                        current[training_mask],
+                        data["target"][training_mask],
+                        gamma_factor,
+                        regularization,
+                    )
+                    raw, _, ratio = raw_predict(model, data["x"][validation_mask])
+                    capped, _ = gate.cap_actual_pixel_diagonal(
+                        raw, aspects[validation_mask], CAP_FRACTION
+                    )
+                    accepted = ratio <= 1.0 + EPS
+                    stepped = np.clip(
+                        current[validation_mask] + capped * accepted[:, None], 0.0, 1.0
+                    )
+                    bounded, _ = gate.cap_actual_pixel_diagonal(
+                        stepped - data["baseline"][validation_mask],
+                        aspects[validation_mask],
+                        CUMULATIVE_CAP_FRACTION,
+                    )
+                    prediction[validation_mask] = np.clip(
+                        data["baseline"][validation_mask] + bounded, 0.0, 1.0
+                    )
+                score = tr.error_metrics(data["target"], prediction)["coordinateMAE"]
+                candidate = (float(score), float(gamma_factor), float(regularization))
+                if best is None or candidate < best:
+                    best = candidate
+        if best is None:
+            raise RuntimeError("KRR hyperparameter search failed")
+        stages.append(
+            {
+                "stage": stage_index + 1,
+                "innerCoordinateMAE": best[0],
+                "gammaFactor": best[1],
+                "lambda": best[2],
+            }
+        )
+        model = tr.fit_krr(data["x"], current, data["target"], best[1], best[2])
+        current, _, _ = stage_step(
+            model, data["baseline"], current, data["x"], aspects, apply_gate=True
+        )
+    return {
+        "stageCount": STAGE_COUNT,
+        "stages": stages,
+        "innerCoordinateMAE": stages[-1]["innerCoordinateMAE"],
+        # 하위호환/가독성: 1단계 값을 최상위에도 남긴다.
+        "gammaFactor": stages[0]["gammaFactor"],
+        "lambda": stages[0]["lambda"],
+    }
 
 
 def inner_oof_replay(
     data: Mapping[str, np.ndarray],
     masks: Sequence[np.ndarray],
     aspects: np.ndarray,
-    hyperparameters: Mapping[str, float],
+    hyperparameters: Mapping[str, Any],
 ) -> dict[str, Any]:
-    raw = np.zeros_like(data["baseline"])
+    """내부 폴드별로 다단 모델을 재학습해 blend 이전 누적 보정량을 모은다."""
     capped = np.zeros_like(data["baseline"])
     ratio = np.zeros(data["x"].shape[0], dtype=np.float64)
+    per_stage_capped_counts = [0] * STAGE_COUNT
+    per_stage_landmarks = [0] * STAGE_COUNT
+    cumulative_maximum = 0.0
     for validation_mask in masks:
         training_mask = ~validation_mask
-        model = tr.fit_krr(
-            data["x"][training_mask],
-            data["baseline"][training_mask],
-            data["target"][training_mask],
-            float(hyperparameters["gammaFactor"]),
-            float(hyperparameters["lambda"]),
+        fold_models = fit_stage_models(
+            subset(data, training_mask), aspects[training_mask], hyperparameters["stages"]
         )
-        fold_raw, _, fold_ratio = raw_predict(model, data["x"][validation_mask])
-        fold_capped, _ = gate.cap_actual_pixel_diagonal(
-            fold_raw, aspects[validation_mask], CAP_FRACTION
+        fold = staged_test_correction(
+            fold_models, subset(data, validation_mask), aspects[validation_mask]
         )
-        raw[validation_mask] = fold_raw
-        capped[validation_mask] = fold_capped
-        ratio[validation_mask] = fold_ratio
-    verified_capped, cap_audit = gate.cap_actual_pixel_diagonal(raw, aspects, CAP_FRACTION)
-    if float(np.max(np.abs(verified_capped - capped))) > 1e-12:
-        raise AssertionError("inner cap replay mismatch")
+        capped[validation_mask] = fold["correction"]
+        ratio[validation_mask] = fold["ratio"]
+        for stage_index, audit in enumerate(fold["perStageCapAudits"]):
+            per_stage_capped_counts[stage_index] += int(audit["landmarkCorrectionsCapped"])
+            per_stage_landmarks[stage_index] += int(audit["landmarkCorrections"])
+        cumulative_maximum = max(
+            cumulative_maximum,
+            float(fold["cumulativeCapAudit"]["cappedMaximumPixelDiagonalFraction"]),
+        )
+    # 이미 스테이지마다/누적으로 캡을 적용했으므로 남은 검증은 "누적 이동이 선언한
+    # 상한을 넘지 않았는가"이다. 이것이 곧 게이트의 actualPixelDiagonalCapVerified다.
+    _, cap_audit = gate.cap_actual_pixel_diagonal(capped, aspects, CUMULATIVE_CAP_FRACTION)
+    cap_audit["stageCount"] = STAGE_COUNT
+    cap_audit["perStageMaximumFraction"] = CAP_FRACTION
+    cap_audit["cumulativeMaximumFraction"] = CUMULATIVE_CAP_FRACTION
+    cap_audit["perStageLandmarkCorrectionsCapped"] = per_stage_capped_counts
+    cap_audit["perStageLandmarkCorrections"] = per_stage_landmarks
+    cap_audit["observedCumulativeMaximumFraction"] = cumulative_maximum
+    cap_audit["verified"] = bool(
+        cap_audit["verified"] and cumulative_maximum <= CUMULATIVE_CAP_FRACTION + 1e-12
+    )
     return {"capped": capped, "ratio": ratio, "capAudit": cap_audit}
 
 
@@ -396,27 +515,31 @@ def select_inner_policy(
 
 def apply_outer_policy(
     train: Mapping[str, np.ndarray],
+    train_aspects: np.ndarray,
     test: Mapping[str, np.ndarray],
     test_aspects: np.ndarray,
-    hyperparameters: Mapping[str, float],
+    hyperparameters: Mapping[str, Any],
     policy: Mapping[str, float],
 ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
-    model = tr.fit_krr(
-        train["x"],
-        train["baseline"],
-        train["target"],
-        float(hyperparameters["gammaFactor"]),
-        float(hyperparameters["lambda"]),
-    )
-    capped, _, ratio, cap_audit = capped_raw_prediction(model, test, test_aspects)
+    models = fit_stage_models(train, train_aspects, hyperparameters["stages"])
+    staged = staged_test_correction(models, test, test_aspects)
+    ratio = staged["ratio"]
     accepted = ratio <= float(policy["gateMultiplier"]) + EPS
     if float(policy["blend"]) <= EPS:
         accepted[:] = False
+    # blend는 스테이지 안이 아니라 누적 보정량에 곱한다(residual_inference.js와 동일).
     prediction = np.clip(
-        test["baseline"] + float(policy["blend"]) * capped * accepted[:, None],
+        test["baseline"] + float(policy["blend"]) * staged["correction"] * accepted[:, None],
         0.0,
         1.0,
     )
+    _, cap_audit = gate.cap_actual_pixel_diagonal(
+        staged["correction"], test_aspects, CUMULATIVE_CAP_FRACTION
+    )
+    cap_audit["stageCount"] = STAGE_COUNT
+    cap_audit["perStageMaximumFraction"] = CAP_FRACTION
+    cap_audit["cumulativeMaximumFraction"] = CUMULATIVE_CAP_FRACTION
+    cap_audit["perStageCapAudits"] = staged["perStageCapAudits"]
     return prediction, accepted, cap_audit
 
 
@@ -591,6 +714,7 @@ def main() -> None:
         for task in ("width", "ez"):
             prediction, accepted, outer_cap = apply_outer_policy(
                 train_tasks[task],
+                aspects_for(train_tasks[task], aspect_lookup),
                 test_tasks[task],
                 aspects_for(test_tasks[task], aspect_lookup),
                 hyperparameters[task],
@@ -738,10 +862,21 @@ def main() -> None:
                 ),
             },
             "noStrictInnerCandidateAction": "return rule-engine baseline for that outer fold",
+            "stagedResidualCorrection": {
+                "stageCount": STAGE_COUNT,
+                "perStageBaseline": "the previous stage's prediction",
+                "hyperparameterSelection": "greedy per stage inside each outer-training partition",
+                "sharedAcrossStages": "feature standardization, prototypes, distance gate",
+                "distanceGateJudgedAtStage": 1,
+                "blendAppliedTo": "cumulative correction, not per stage",
+            },
             "actualPixelDiagonalCap": {
                 "maximumFraction": CAP_FRACTION,
                 "formula": "sqrt((dx*aspect)^2 + dy^2) <= 0.05*sqrt(aspect^2 + 1)",
                 "appliedBeforeBlend": True,
+                "appliedPerStage": True,
+                "cumulativeMaximumFraction": CUMULATIVE_CAP_FRACTION,
+                "cumulativeOrigin": "rule-engine draft",
             },
             "clinical": {
                 "calibrationMm": 54,

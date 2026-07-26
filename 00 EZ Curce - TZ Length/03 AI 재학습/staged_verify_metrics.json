@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "staged-correction-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "perStageCap": 0.05,
+  "cumulativeCap": 0.1,
+  "seeds": {
+    "20260711": {
+      "molarMae1": 0.046737365596570955,
+      "molarMae2": 0.03966445898080213,
+      "molarMaeImprovePct": 15.133301857064353,
+      "molarP951": 0.10704948224373705,
+      "molarP952": 0.08550765747424897,
+      "molarP95ImprovePct": 20.123240503340575,
+      "molarLenMm1": 1.2041486077499843,
+      "molarLenMm2": 1.179196315268391,
+      "molarLenImprovePct": 2.0721937741735994,
+      "widthAllMae1": 0.03326229159080706,
+      "widthAllMae2": 0.030214093889473628,
+      "widthAllImprovePct": 9.16412416448146,
+      "ezMae1": 0.031701894499289354,
+      "ezMae2": 0.030149337438133018,
+      "ezImprovePct": 4.897363661314119
+    },
+    "20260712": {
+      "molarMae1": 0.046684010606074584,
+      "molarMae2": 0.03952652288959926,
+      "molarMaeImprovePct": 15.331775534178263,
+      "molarP951": 0.10905862776008554,
+      "molarP952": 0.08746911520696231,
+      "molarP95ImprovePct": 19.796244457263196,
+      "molarLenMm1": 1.221833228644396,
+      "molarLenMm2": 1.1926489532401257,
+      "molarLenImprovePct": 2.38856455366252,
+      "widthAllMae1": 0.03328500420457482,
+      "widthAllMae2": 0.03019596539597522,
+      "widthAllImprovePct": 9.280572084695827,
+      "ezMae1": 0.03167251561844342,
+      "ezMae2": 0.02940681755936566,
+      "ezImprovePct": 7.153514695114421
+    },
+    "20260713": {
+      "molarMae1": 0.04642344259360245,
+      "molarMae2": 0.039279778309389425,
+      "molarMaeImprovePct": 15.38805371835453,
+      "molarP951": 0.10638667518135346,
+      "molarP952": 0.08404252005840035,
+      "molarP95ImprovePct": 21.002776038318565,
+      "molarLenMm1": 1.2187644917899922,
+      "molarLenMm2": 1.1896098608486159,
+      "molarLenImprovePct": 2.3921464021779255,
+      "widthAllMae1": 0.03302475261016228,
+      "widthAllMae2": 0.029946882789710246,
+      "widthAllImprovePct": 9.319887590936624,
+      "ezMae1": 0.03139243730022985,
+      "ezMae2": 0.029866259991120647,
+      "ezImprovePct": 4.861608210006775
+    },
+    "20260714": {
+      "molarMae1": 0.04688526240213391,
+      "molarMae2": 0.039618144672751175,
+      "molarMaeImprovePct": 15.499791100778793,
+      "molarP951": 0.1074356438091839,
+      "molarP952": 0.0860697880412017,
+      "molarP95ImprovePct": 19.887120335900832,
+      "molarLenMm1": 1.220091575366441,
+      "molarLenMm2": 1.1948300212538214,
+      "molarLenImprovePct": 2.070463776871217,
+      "widthAllMae1": 0.03339744423337973,
+      "widthAllMae2": 0.03027885381064332,
+      "widthAllImprovePct": 9.33781160301923,
+      "ezMae1": 0.031186149368424225,
+      "ezMae2": 0.029653524177732277,
+      "ezImprovePct": 4.914441897221593
+    }
+  },
+  "means": {
+    "molarMaeImprovePct": 15.338230552593984,
+    "molarP95ImprovePct": 20.202345333705793,
+    "molarLenImprovePct": 2.230842126721315,
+    "widthAllImprovePct": 9.275598860783285,
+    "ezImprovePct": 5.456732115914227
+  },
+  "allSeedsImproved": {
+    "molarMaeImprovePct": true,
+    "molarP95ImprovePct": true,
+    "molarLenImprovePct": true,
+    "widthAllImprovePct": true,
+    "ezImprovePct": true
+  }
+}

@@ -46,3 +46,15 @@ EZ-Case-*.md
 
 # HTML 백업본(각 2~3MB, 모델 임베드) — 로컬 롤백용, 커밋 제외
 EZ Curve*.bak-*
+
+# 스테이지(반복보정) 작업 임시 산출물 — 스크립트로 재생성 가능, 커밋 제외
+03 AI 재학습/_stage_seed_*
+03 AI 재학습/_stage_parity_*.json
+03 AI 재학습/_stage_test/
+03 AI 재학습/_stage2/
+03 AI 재학습/_pre_stage_*
+03 AI 재학습/_live_*
+03 AI 재학습/_cmp_engine.json
+03 AI 재학습/_old_engine_metrics.json
+03 AI 재학습/_molar_paired.json
+03 AI 재학습/.chrome-profile-*/
