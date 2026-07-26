@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "molar-leakfree-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "신규 클래스2 99건. A=구학습셋169만 학습한 모델의 out-of-sample 예측, B=268 전체 grouped 5-fold의 out-of-fold 예측. 둘 다 자기 정답 미학습.",
+  "evalCases": 99,
+  "molarTeeth": [
+    1,
+    2,
+    11,
+    12
+  ],
+  "normalizedCoordError": {
+    "rule": {
+      "mae": 0.08991877502352819,
+      "p95": 0.16095857120367243,
+      "coordMAE": 0.07421091033374598,
+      "n": 792
+    },
+    "old169_outOfSample": {
+      "mae": 0.062311986866431864,
+      "p95": 0.12354620853844016,
+      "coordMAE": 0.0531316669845592,
+      "n": 792
+    },
+    "new268_outOfFold": {
+      "mae": 0.06084002962331039,
+      "p95": 0.11590214367892747,
+      "coordMAE": 0.05151168173017815,
+      "n": 792
+    }
+  },
+  "molarLengthMm": {
+    "rule": {
+      "mae": 1.5528674472062116,
+      "p95": 3.783406757701642
+    },
+    "old169_outOfSample": {
+      "mae": 1.3997218920846082,
+      "p95": 3.36278182343578
+    },
+    "new268_outOfFold": {
+      "mae": 1.42622656172965,
+      "p95": 3.4600393907221494
+    }
+  },
+  "improvementPct": {
+    "molarCoord_rule_to_old": 30.701917535990365,
+    "molarCoord_rule_to_new": 32.33890296282287,
+    "molarCoord_old_to_new": 2.362237696378816,
+    "molarCoordP95_old_to_new": 6.1872112061895574,
+    "molarLength_old_to_new": -1.8935668431654142
+  }
+}
