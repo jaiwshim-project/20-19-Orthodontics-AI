@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "iterative-seed-robustness-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "seeds": [
+    {
+      "seed": 20260711,
+      "molar1": 0.046737365596570955,
+      "molar2": 0.03966445898080213,
+      "molarImprovePct": 15.133301857064353,
+      "p951": 0.10704948224373705,
+      "p952": 0.08550765747424897,
+      "p95ImprovePct": 20.123240503340575,
+      "all1": 0.03326229159080706,
+      "all2": 0.030214093889473628,
+      "allImprovePct": 9.16412416448146
+    },
+    {
+      "seed": 20260712,
+      "molar1": 0.046684010606074584,
+      "molar2": 0.03952652288959926,
+      "molarImprovePct": 15.331775534178263,
+      "p951": 0.10905862776008554,
+      "p952": 0.08746911520696231,
+      "p95ImprovePct": 19.796244457263196,
+      "all1": 0.03328500420457482,
+      "all2": 0.03019596539597522,
+      "allImprovePct": 9.280572084695827
+    },
+    {
+      "seed": 20260713,
+      "molar1": 0.04642344259360245,
+      "molar2": 0.039279778309389425,
+      "molarImprovePct": 15.38805371835453,
+      "p951": 0.10638667518135346,
+      "p952": 0.08404252005840035,
+      "p95ImprovePct": 21.002776038318565,
+      "all1": 0.03302475261016228,
+      "all2": 0.029946882789710246,
+      "allImprovePct": 9.319887590936624
+    },
+    {
+      "seed": 20260714,
+      "molar1": 0.04688526240213391,
+      "molar2": 0.039618144672751175,
+      "molarImprovePct": 15.499791100778793,
+      "p951": 0.1074356438091839,
+      "p952": 0.0860697880412017,
+      "p95ImprovePct": 19.887120335900832,
+      "all1": 0.03339744423337973,
+      "all2": 0.03027885381064332,
+      "allImprovePct": 9.33781160301923
+    }
+  ],
+  "meanMolarImprovePct": 15.338230552593984,
+  "meanP95ImprovePct": 20.202345333705793,
+  "meanAllImprovePct": 9.275598860783285,
+  "allSeedsImproved": true
+}

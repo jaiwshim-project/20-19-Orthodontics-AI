@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "iterative-correction-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "라운드마다 cap 5% 독립 적용 → 게이트 correctionCapIs5PctDiagonal 위반 없음. 누적 이동량은 별도 보고.",
+  "tasks": {
+    "width": {
+      "samples": 268,
+      "rounds": [
+        {
+          "rounds": 1,
+          "mae": 0.03326229159080706,
+          "p95": 0.08963084544771148,
+          "ruleMae": 0.04678091129282407,
+          "improvePctVsRule": 28.897726291387336,
+          "worseCasePct": 15.671641791044777,
+          "cumulativeMoveMean": 0.029604742098021677,
+          "cumulativeMoveP95": 0.050000000000000024,
+          "cumulativeMoveMax": 0.050000000000000065,
+          "cumulativeOver5PctOfLandmarks": 10.167910447761194,
+          "molarMae": 0.046737365596570955,
+          "molarP95": 0.10704948224373705,
+          "molarImprovePctVsRule": 28.697633531993528
+        },
+        {
+          "rounds": 2,
+          "mae": 0.030214093889473628,
+          "p95": 0.07263599100198768,
+          "ruleMae": 0.04678091129282407,
+          "improvePctVsRule": 35.41362693781406,
+          "worseCasePct": 21.641791044776117,
+          "cumulativeMoveMean": 0.039670822720910215,
+          "cumulativeMoveP95": 0.09747688036168206,
+          "cumulativeMoveMax": 0.0999999999085014,
+          "cumulativeOver5PctOfLandmarks": 32.680348258706466,
+          "molarMae": 0.03966445898080213,
+          "molarP95": 0.08550765747424897,
+          "molarImprovePctVsRule": 39.488035880827184
+        },
+        {
+          "rounds": 3,
+          "mae": 0.029392635417487767,
+          "p95": 0.07268196731570979,
+          "ruleMae": 0.04678091129282407,
+          "improvePctVsRule": 37.16959630498598,
+          "worseCasePct": 22.01492537313433,
+          "cumulativeMoveMean": 0.040961515147917314,
+          "cumulativeMoveP95": 0.10509881915843343,
+          "cumulativeMoveMax": 0.1499722372551827,
+          "cumulativeOver5PctOfLandmarks": 32.46268656716418,
+          "molarMae": 0.037544454515903346,
+          "molarP95": 0.08360158981701303,
+          "molarImprovePctVsRule": 42.72230750355453
+        }
+      ]
+    },
+    "ez": {
+      "samples": 113,
+      "rounds": [
+        {
+          "rounds": 1,
+          "mae": 0.031701894499289354,
+          "p95": 0.0846514085518992,
+          "ruleMae": 0.05038301263669949,
+          "improvePctVsRule": 37.078207831904486,
+          "worseCasePct": 8.849557522123893,
+          "cumulativeMoveMean": 0.03129114268016199,
+          "cumulativeMoveP95": 0.05000000000000002,
+          "cumulativeMoveMax": 0.05000000000000006,
+          "cumulativeOver5PctOfLandmarks": 9.587020648967552
+        },
+        {
+          "rounds": 2,
+          "mae": 0.030149337438133018,
+          "p95": 0.07644116582004114,
+          "ruleMae": 0.05038301263669949,
+          "improvePctVsRule": 40.15971681659238,
+          "worseCasePct": 14.15929203539823,
+          "cumulativeMoveMean": 0.03793784206800262,
+          "cumulativeMoveP95": 0.07915215207977196,
+          "cumulativeMoveMax": 0.09999978513173519,
+          "cumulativeOver5PctOfLandmarks": 31.41592920353982
+        },
+        {
+          "rounds": 3,
+          "mae": 0.0297881485298102,
+          "p95": 0.07643625455380357,
+          "ruleMae": 0.05038301263669949,
+          "improvePctVsRule": 40.87660310310182,
+          "worseCasePct": 13.274336283185843,
+          "cumulativeMoveMean": 0.03838739744258712,
+          "cumulativeMoveP95": 0.08384250092446377,
+          "cumulativeMoveMax": 0.12290788337773345,
+          "cumulativeOver5PctOfLandmarks": 31.710914454277283
+        }
+      ]
+    }
+  }
+}

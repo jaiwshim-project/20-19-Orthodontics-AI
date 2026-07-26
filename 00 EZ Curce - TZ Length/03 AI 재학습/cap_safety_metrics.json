@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "cap-safety-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "ruleTzl": {
+    "maeMm": 10.560580828125977,
+    "p95Mm": 22.90900293172715,
+    "maxMm": 31.153889256330032
+  },
+  "results": [
+    {
+      "cap": 0.05,
+      "worseCasePct": 15.671641791044777,
+      "maxWorsenAbs": 0.033713771902686276,
+      "meanWorsenAmongWorse": 0.008189360078963894,
+      "tzlMaeMm": 8.199744915308798,
+      "tzlP95Mm": 19.128038182430352,
+      "tzlMaxMm": 27.87520706379368,
+      "gateRate": 0.9402985074626866
+    },
+    {
+      "cap": 0.07,
+      "worseCasePct": 16.791044776119403,
+      "maxWorsenAbs": 0.04200255139265725,
+      "meanWorsenAmongWorse": 0.011552263084163922,
+      "tzlMaeMm": 7.71216781592079,
+      "tzlP95Mm": 17.561364700932238,
+      "tzlMaxMm": 27.87520706379368,
+      "gateRate": 0.9402985074626866
+    },
+    {
+      "cap": 0.1,
+      "worseCasePct": 16.791044776119403,
+      "maxWorsenAbs": 0.045640084957353645,
+      "meanWorsenAmongWorse": 0.01358116188279507,
+      "tzlMaeMm": 7.14808055106571,
+      "tzlP95Mm": 17.276512669193334,
+      "tzlMaxMm": 27.87520706379368,
+      "gateRate": 0.9402985074626866
+    },
+    {
+      "cap": 0.15,
+      "worseCasePct": 17.16417910447761,
+      "maxWorsenAbs": 0.04862796190179836,
+      "meanWorsenAmongWorse": 0.013677567799879184,
+      "tzlMaeMm": 6.64822719440157,
+      "tzlP95Mm": 15.989281188142073,
+      "tzlMaxMm": 27.87520706379368,
+      "gateRate": 0.9402985074626866
+    }
+  ]
+}

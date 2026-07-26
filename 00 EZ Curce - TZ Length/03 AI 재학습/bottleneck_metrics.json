@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "bottleneck-diagnosis-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "widthSamples": 268,
+  "capBinding": {
+    "molarNeedMean": 0.06554812681784146,
+    "molarNeedP95": 0.15065121697115744,
+    "molarPctNeedOverCap": 45.7089552238806,
+    "molarAppliedMean": 0.039283657114638076,
+    "molarPctSaturated": 49.057539682539684
+  },
+  "gate": {
+    "oofAppliedPct": 94.02985074626866
+  },
+  "learningCurve": [
+    {
+      "trainSamples": 53,
+      "molarMae": 0.04927772812515457,
+      "allMae": 0.036747586699886196,
+      "gateRate": 0.9056603773584906
+    },
+    {
+      "trainSamples": 107,
+      "molarMae": 0.04796750416737546,
+      "allMae": 0.035369300268326756,
+      "gateRate": 0.9245283018867925
+    },
+    {
+      "trainSamples": 161,
+      "molarMae": 0.04611130582979155,
+      "allMae": 0.03338137574872243,
+      "gateRate": 0.9622641509433962
+    },
+    {
+      "trainSamples": 215,
+      "molarMae": 0.04562412541070709,
+      "allMae": 0.033155509712872705,
+      "gateRate": 0.9433962264150944
+    }
+  ],
+  "powerLaw": {
+    "exponent": -0.05754953585169629,
+    "coefficient": 0.062153190151745474,
+    "pctDropPerDoubling": 3.9105155040962347
+  }
+}
