@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "next-gate-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "게이트 우회는 커널·alpha 직접 적용으로 구현(predict_krr는 비수락 행을 내부에서 0으로 만든다).",
+  "acceptedRate": 0.9402985074626866,
+  "fallbackCases": 16,
+  "allCases": {
+    "gateOn_molarMae": 0.03966445898080212,
+    "gateOpen_molarMae": 0.03811306428457502,
+    "gateOn_allMae": 0.030214093889473628,
+    "gateOpen_allMae": 0.02916883394905316
+  },
+  "fallbackCasesOnly": {
+    "ruleDraft_molarMae": 0.06080123810881362,
+    "forcedCorrection_molarMae": 0.03481537694700966,
+    "ruleDraft_allMae": 0.04996119442128929,
+    "forcedCorrection_allMae": 0.03245309041924649
+  },
+  "acceptedCasesOnly": {
+    "corrected_molarMae": 0.03832244125838869,
+    "rule_molarMae": 0.06584951657714483
+  },
+  "gateVerdict": "gate costs accuracy",
+  "fallbackMolarGainIfOpenedPct": 42.73903290472156
+}

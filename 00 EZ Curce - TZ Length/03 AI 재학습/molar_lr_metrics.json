@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "molar-lr-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "width 268건 grouped 5-fold OOF, 2단계(단계캡5%/누적10%). mm 스케일은 항상 정답 최외곽 스팬=54mm 고정. 집계값만 기록.",
+  "samples": 268,
+  "orientationConsistency": {
+    "teeth1n2_onImageLeft_cases": 268,
+    "teeth11n12_onImageLeft_cases": 0,
+    "majoritySharePct": 100.0,
+    "verdict": "consistent"
+  },
+  "perTooth": [
+    {
+      "tooth": 1,
+      "ruleCoordMae": 0.06905719993824327,
+      "stage2CoordMae": 0.041200053968590854,
+      "stage2LengthMaeMm": 1.2703240052446036,
+      "ruleLengthMaeMm": 1.5733732075727849,
+      "stage2LengthSignedBiasPct": -1.4339482650060846,
+      "truthLengthMeanMm": 14.922924613032738,
+      "truthLengthStdMm": 0.8315517409920735,
+      "meanImageX": 0.17731144768646082
+    },
+    {
+      "tooth": 2,
+      "ruleCoordMae": 0.061557702258987185,
+      "stage2CoordMae": 0.037599734968748244,
+      "stage2LengthMaeMm": 1.0735238663955653,
+      "ruleLengthMaeMm": 1.1440836293675376,
+      "stage2LengthSignedBiasPct": -3.4122802799169802,
+      "truthLengthMeanMm": 9.457040906422225,
+      "truthLengthStdMm": 0.7629029706193012,
+      "meanImageX": 0.21901461870818673
+    },
+    {
+      "tooth": 3,
+      "ruleCoordMae": 0.04928040378798163,
+      "stage2CoordMae": 0.030910288773972654,
+      "stage2LengthMaeMm": 1.1764624488381867,
+      "ruleLengthMaeMm": 1.4042743862916511,
+      "stage2LengthSignedBiasPct": 10.805583170366443,
+      "truthLengthMeanMm": 9.4405308904348,
+      "truthLengthStdMm": 1.0299260116648306,
+      "meanImageX": 0.25747166553836554
+    },
+    {
+      "tooth": 4,
+      "ruleCoordMae": 0.0372112778741527,
+      "stage2CoordMae": 0.026600797182516803,
+      "stage2LengthMaeMm": 1.1586592058451237,
+      "ruleLengthMaeMm": 1.3660775744596279,
+      "stage2LengthSignedBiasPct": -1.703285138278878,
+      "truthLengthMeanMm": 8.135888823798288,
+      "truthLengthStdMm": 0.8234878774606447,
+      "meanImageX": 0.30923235431292134
+    },
+    {
+      "tooth": 5,
+      "ruleCoordMae": 0.03245511239157908,
+      "stage2CoordMae": 0.0229944078069457,
+      "stage2LengthMaeMm": 0.6215505863393708,
+      "ruleLengthMaeMm": 0.7814293946875231,
+      "stage2LengthSignedBiasPct": -1.850807161753581,
+      "truthLengthMeanMm": 6.17000180184158,
+      "truthLengthStdMm": 0.5487845353265828,
+      "meanImageX": 0.38559371993148284
+    },
+    {
+      "tooth": 6,
+      "ruleCoordMae": 0.027443433218654875,
+      "stage2CoordMae": 0.02027038946712803,
+      "stage2LengthMaeMm": 0.4769989158155425,
+      "ruleLengthMaeMm": 0.7035085957070011,
+      "stage2LengthSignedBiasPct": -2.3169991057112878,
+      "truthLengthMeanMm": 5.324372384502329,
+      "truthLengthStdMm": 0.42166179075982346,
+      "meanImageX": 0.46621627220760925
+    },
+    {
+      "tooth": 7,
+      "ruleCoordMae": 0.028943832235033107,
+      "stage2CoordMae": 0.021136960065100126,
+      "stage2LengthMaeMm": 0.4714168250425666,
+      "ruleLengthMaeMm": 0.7068124067139105,
+      "stage2LengthSignedBiasPct": -2.815079076723818,
+      "truthLengthMeanMm": 5.331549465215787,
+      "truthLengthStdMm": 0.42318400227789,
+      "meanImageX": 0.5495662195016221
+    },
+    {
+      "tooth": 8,
+      "ruleCoordMae": 0.03499403249710252,
+      "stage2CoordMae": 0.024869926709388875,
+      "stage2LengthMaeMm": 0.7116395547750788,
+      "ruleLengthMaeMm": 0.8238814268437896,
+      "stage2LengthSignedBiasPct": -2.665523269972546,
+      "truthLengthMeanMm": 6.09607859895127,
+      "truthLengthStdMm": 0.5379320151211252,
+      "meanImageX": 0.6301347961119359
+    },
+    {
+      "tooth": 9,
+      "ruleCoordMae": 0.03936920557742152,
+      "stage2CoordMae": 0.026827130287210284,
+      "stage2LengthMaeMm": 1.04385321039888,
+      "ruleLengthMaeMm": 1.3187159759369311,
+      "stage2LengthSignedBiasPct": -0.6337330037790382,
+      "truthLengthMeanMm": 7.863771144596049,
+      "truthLengthStdMm": 0.8051023743806329,
+      "meanImageX": 0.7039796178836338
+    },
+    {
+      "tooth": 10,
+      "ruleCoordMae": 0.04948113066059753,
+      "stage2CoordMae": 0.03030139045821255,
+      "stage2LengthMaeMm": 0.8211881398397365,
+      "ruleLengthMaeMm": 1.1797468946398229,
+      "stage2LengthSignedBiasPct": -0.7556839494863614,
+      "truthLengthMeanMm": 9.268895532359233,
+      "truthLengthStdMm": 0.6454857923324572,
+      "meanImageX": 0.7573191725481557
+    },
+    {
+      "tooth": 11,
+      "ruleCoordMae": 0.060656210131601065,
+      "stage2CoordMae": 0.03732742839622103,
+      "stage2LengthMaeMm": 0.9829880557965135,
+      "ruleLengthMaeMm": 1.117132828012328,
+      "stage2LengthSignedBiasPct": -2.3800144476320066,
+      "truthLengthMeanMm": 9.369371809889769,
+      "truthLengthStdMm": 0.856854938163728,
+      "meanImageX": 0.796392034234006
+    },
+    {
+      "tooth": 12,
+      "ruleCoordMae": 0.07092139494253437,
+      "stage2CoordMae": 0.04253061858964835,
+      "stage2LengthMaeMm": 1.3899493336368818,
+      "ruleLengthMaeMm": 1.5278050944801218,
+      "stage2LengthSignedBiasPct": -2.376337208458639,
+      "truthLengthMeanMm": 14.74029295382606,
+      "truthLengthStdMm": 0.8345078050195343,
+      "meanImageX": 0.8361685788138493
+    }
+  ],
+  "byImageSide": {
+    "left": {
+      "label": "image-left molars",
+      "stage2CoordMae": 0.039399894468669545,
+      "ruleCoordMae": 0.06530745109861523,
+      "stage2LengthMaeMm": 1.1719239358200846,
+      "ruleLengthMaeMm": 1.3587284184701613,
+      "stage2LengthSignedBiasPct": -2.423114272461533,
+      "truthLengthMeanMm": 12.189982759727481
+    },
+    "right": {
+      "label": "image-right molars",
+      "stage2CoordMae": 0.03992902349293469,
+      "ruleCoordMae": 0.06578880253706772,
+      "stage2LengthMaeMm": 1.1864686947166976,
+      "ruleLengthMaeMm": 1.3224689612462248,
+      "stage2LengthSignedBiasPct": -2.3781758280453227,
+      "truthLengthMeanMm": 12.054832381857915
+    },
+    "rightMinusLeft_coordMae": 0.0005291290242651417,
+    "rightWorseByPct_coord": 1.3429706637562202,
+    "rightWorseByPct_lengthMm": 1.2411009325818505,
+    "ruleEngine_rightWorseByPct_coord": 0.737054394797371,
+    "pairedBootstrapCoord_rightMinusLeft": {
+      "meanDiff": 0.0005291290242651405,
+      "ci95Low": -0.0024136278554165776,
+      "ci95High": 0.0035974815906487934,
+      "probAGreaterThanB": 0.6348
+    },
+    "pairedBootstrapLengthMm_rightMinusLeft": {
+      "meanDiff": 0.014544758896613072,
+      "ci95Low": -0.08592467156938678,
+      "ci95High": 0.11344242222526685,
+      "probAGreaterThanB": 0.605
+    },
+    "pairedBootstrapRuleCoord_rightMinusLeft": {
+      "meanDiff": 0.0004813514384524902,
+      "ci95Low": -0.006010842234097347,
+      "ci95High": 0.007036447656898627,
+      "probAGreaterThanB": 0.5692
+    }
+  },
+  "byToothIndexEnd": {
+    "teeth1n2": {
+      "ruleCoordMae": 0.06530745109861524,
+      "stage2CoordMae": 0.039399894468669545,
+      "stage2LengthMaeMm": 1.1719239358200846,
+      "truthLengthMeanMm": 12.189982759727481
+    },
+    "teeth11n12": {
+      "ruleCoordMae": 0.06578880253706772,
+      "stage2CoordMae": 0.039929023492934694,
+      "stage2LengthMaeMm": 1.1864686947166976,
+      "truthLengthMeanMm": 12.054832381857917
+    }
+  },
+  "truthDispersion": {
+    "teeth1n2_lengthStdMm": 2.847054757782317,
+    "teeth11n12_lengthStdMm": 2.815492907901301,
+    "middleTeeth_lengthStdMm": 0.6321252644418942
+  },
+  "asymmetryOrigin": {
+    "ruleDraftAsymmetryPct": 0.737054394797371,
+    "afterCorrectionAsymmetryPct": 1.3429706637562202,
+    "verdict": "amplified by residual correction"
+  }
+}

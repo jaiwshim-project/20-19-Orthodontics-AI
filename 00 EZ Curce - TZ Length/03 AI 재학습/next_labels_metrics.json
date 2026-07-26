@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "next-labels-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "2단계(단계캡5%/누적10%) 체제에서의 학습곡선. train 파티션을 그룹 단위로 subsample, 동일 test 폴드로 평가. 오차 ~ N^slope.",
+  "stages": 2,
+  "width": {
+    "50pct": {
+      "meanTrainSamples": 107.4,
+      "allCoordMae": 0.032113929103542216,
+      "molarCoordMae": 0.0422954758683228,
+      "subsampleRuns": 3
+    },
+    "65pct": {
+      "meanTrainSamples": 139.4,
+      "allCoordMae": 0.03145747184675295,
+      "molarCoordMae": 0.04136345570028553,
+      "subsampleRuns": 3
+    },
+    "80pct": {
+      "meanTrainSamples": 171.4,
+      "allCoordMae": 0.030479136265614437,
+      "molarCoordMae": 0.03988451298132604,
+      "subsampleRuns": 3
+    },
+    "100pct": {
+      "meanTrainSamples": 214.4,
+      "allCoordMae": 0.030214093889473628,
+      "molarCoordMae": 0.03966445898080212,
+      "subsampleRuns": 1
+    },
+    "allSlope": -0.09381989599730142,
+    "allSlope_expectedGainPctFor100Labels": 3.527903940144117,
+    "allSlope_expectedGainPctFor200Labels": 5.995375693743387,
+    "allSlope_expectedGainPctFor500Labels": 10.677930459542996,
+    "molarSlope": -0.10020125646841001,
+    "molarSlope_expectedGainPctFor100Labels": 3.7632908074977323,
+    "molarSlope_expectedGainPctFor200Labels": 6.389857826962486,
+    "molarSlope_expectedGainPctFor500Labels": 11.361349910653274
+  },
+  "ez": {
+    "50pct": {
+      "meanTrainSamples": 45.4,
+      "allCoordMae": 0.033087607264381,
+      "molarCoordMae": null,
+      "subsampleRuns": 3
+    },
+    "65pct": {
+      "meanTrainSamples": 58.4,
+      "allCoordMae": 0.032050412882829026,
+      "molarCoordMae": null,
+      "subsampleRuns": 3
+    },
+    "80pct": {
+      "meanTrainSamples": 72.4,
+      "allCoordMae": 0.03088715570337706,
+      "molarCoordMae": null,
+      "subsampleRuns": 3
+    },
+    "100pct": {
+      "meanTrainSamples": 90.4,
+      "allCoordMae": 0.030149337438133018,
+      "molarCoordMae": null,
+      "subsampleRuns": 1
+    },
+    "allSlope": -0.13840995526400252,
+    "allSlope_expectedGainPctFor100Labels": 9.796251544964319,
+    "allSlope_expectedGainPctFor200Labels": 14.915601287644265,
+    "allSlope_expectedGainPctFor500Labels": 22.874331251071588
+  }
+}

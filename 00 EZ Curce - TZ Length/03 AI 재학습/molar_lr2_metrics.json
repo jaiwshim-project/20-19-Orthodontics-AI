@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "molar-lr2-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "width 268건 grouped 5-fold OOF, 2단계. 1차 측정에서 방향 규약은 268/268 일관. 영상 왼쪽 어금니=치아1·2, 오른쪽=치아11·12. 집계값·상관계수만 기록.",
+  "samples": 268,
+  "A_perCaseAsymmetry": {
+    "rightWorseCaseCount": 131,
+    "leftWorseCaseCount": 137,
+    "rightWorseSharePct": 48.88059701492538,
+    "meanAbsAsymmetryCoord": 0.018200848591745717,
+    "meanSignedAsymmetryCoord": 0.0005291290242651405,
+    "asymmetryQuantiles_rightMinusLeft": {
+      "p5": -0.039479052699975876,
+      "p25": -0.014050944857899077,
+      "p50": -0.0006661712648404483,
+      "p75": 0.012750745419092354,
+      "p95": 0.04244869003331753
+    },
+    "casesWhereOneSideIs2xWorse": 78,
+    "meanAbsAsymmetryAsPctOfMeanErr": 45.88704613506781,
+    "interpretation": "케이스별 좌우 격차는 크지만 방향이 랜덤에 가까우면 계통적 좌우 편향이 아니라 케이스별 변동이다."
+  },
+  "B_whatDrivesAsymmetry_correlationWithRightMinusLeft": {
+    "ruleDraftAsymmetry": 0.3049317791281439,
+    "archTiltDeg": 0.09126379344171869,
+    "verticalGapNormalized": 0.06389639427145723,
+    "truthLengthGapMm": 0.09701360874594939,
+    "absArchTiltDeg_vsAbsAsymmetry": 0.3389354321710762,
+    "archTiltDegStats": {
+      "mean": -0.3276690263541884,
+      "std": 3.6948748821447026,
+      "absMean": 2.824287135854146,
+      "absP95": 7.969458777503175
+    },
+    "truthLengthGapStats": {
+      "meanMm": -0.1351503778695665,
+      "absMeanMm": 0.4530891452176391,
+      "absP95Mm": 1.139406208586914
+    }
+  },
+  "C_toothLevelSignedBiasPct": {
+    "tooth1": -1.4339482650060846,
+    "tooth2": -3.4122802799169802,
+    "tooth3": 10.805583170366443,
+    "tooth4": -1.703285138278878,
+    "tooth5": -1.850807161753581,
+    "tooth6": -2.3169991057112878,
+    "tooth7": -2.815079076723818,
+    "tooth8": -2.665523269972546,
+    "tooth9": -0.6337330037790382,
+    "tooth10": -0.7556839494863614,
+    "tooth11": -2.3800144476320066,
+    "tooth12": -2.376337208458639
+  },
+  "D_withHtmlWidthBias1051": {
+    "left_lengthMaeMm": 1.2421416552173654,
+    "right_lengthMaeMm": 1.2440436686763732,
+    "left_signedBiasPct": 2.553306899642923,
+    "right_signedBiasPct": 2.595860512152184,
+    "noBias_left_lengthMaeMm": 1.1719239358200846,
+    "noBias_right_lengthMaeMm": 1.1864686947166976
+  },
+  "E_perTeethPairDetail": {
+    "tooth1_coordMae": 0.04120005396859086,
+    "tooth12_coordMae": 0.04253061858964835,
+    "tooth2_coordMae": 0.037599734968748244,
+    "tooth11_coordMae": 0.037327428396221024,
+    "tooth1_vs_tooth12_worseByPct": 3.2295215488597524
+  },
+  "verdict": {
+    "systematicSideBias": "no",
+    "dominantDriver": "ruleDraftAsymmetry"
+  }
+}

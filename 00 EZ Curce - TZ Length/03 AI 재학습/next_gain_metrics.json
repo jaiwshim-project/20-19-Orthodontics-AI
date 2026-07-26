@@ -1,0 +1,139 @@
+{
+  "variants": [
+    {
+      "mae": 0.06554812681784146,
+      "p95": 0.15065121697115744,
+      "allMae": 0.04678091129282407,
+      "molarLengthMaeMm": 1.3405986898581932,
+      "tzlSumMaeMm": 10.560580828125977,
+      "label": "rule"
+    },
+    {
+      "mae": 0.03966445898080212,
+      "p95": 0.08550765747424897,
+      "allMae": 0.030214093889473628,
+      "molarLengthMaeMm": 1.179196315268391,
+      "tzlSumMaeMm": 7.18645280007228,
+      "label": "stage2-cum10 (현행)"
+    },
+    {
+      "mae": 0.037544454515903346,
+      "p95": 0.08360158981701303,
+      "allMae": 0.029392635417487767,
+      "molarLengthMaeMm": 1.1658882351546025,
+      "tzlSumMaeMm": 7.005854312585773,
+      "label": "stage3-cum75"
+    },
+    {
+      "mae": 0.03714038814201598,
+      "p95": 0.08361855507942825,
+      "allMae": 0.029262931753138863,
+      "molarLengthMaeMm": 1.1762387683116942,
+      "tzlSumMaeMm": 6.974769157751152,
+      "label": "stage4-cum100"
+    },
+    {
+      "mae": 0.03966445898080212,
+      "p95": 0.08550765747424897,
+      "allMae": 0.030214093889473628,
+      "molarLengthMaeMm": 1.179196315268391,
+      "tzlSumMaeMm": 7.18645280007228,
+      "label": "stage2-cum15"
+    },
+    {
+      "mae": 0.03966445898080212,
+      "p95": 0.08550765747424897,
+      "allMae": 0.030214093889473628,
+      "molarLengthMaeMm": 1.179196315268391,
+      "tzlSumMaeMm": 7.18645280007228,
+      "label": "stage2-cum20"
+    }
+  ],
+  "widthBias": [
+    {
+      "factor": 1.0,
+      "molarCoordMae": 0.03966445898080212,
+      "molarLengthMaeMm": 1.179196315268391,
+      "molarLengthSignedBiasPct": -2.400645050253427,
+      "tzlSumMaeMm": 7.18645280007228
+    },
+    {
+      "factor": 1.02,
+      "molarCoordMae": 0.039676976515055265,
+      "molarLengthMaeMm": 1.1812183727862313,
+      "molarLengthSignedBiasPct": -0.44957529944624974,
+      "tzlSumMaeMm": 6.872890819068247
+    },
+    {
+      "factor": 1.051,
+      "molarCoordMae": 0.03975396729289558,
+      "molarLengthMaeMm": 1.2430926619468692,
+      "molarLengthSignedBiasPct": 2.574583705897554,
+      "tzlSumMaeMm": 7.225187303365137
+    },
+    {
+      "factor": 1.08,
+      "molarCoordMae": 0.039892937899200766,
+      "molarLengthMaeMm": 1.35393597533312,
+      "molarLengthSignedBiasPct": 5.403636620277589,
+      "tzlSumMaeMm": 8.325051307695404
+    },
+    {
+      "factor": 1.1,
+      "molarCoordMae": 0.040023607361753435,
+      "molarLengthMaeMm": 1.4594790971291898,
+      "molarLengthSignedBiasPct": 7.354419835355586,
+      "tzlSumMaeMm": 9.542418452122092
+    }
+  ],
+  "distanceGate": {
+    "acceptedRate": 0.9402985074626866,
+    "fallbackCount": 16,
+    "withGate": {
+      "mae": 0.03966445898080212,
+      "p95": 0.08550765747424897,
+      "allMae": 0.030214093889473628,
+      "molarLengthMaeMm": 1.179196315268391,
+      "tzlSumMaeMm": 7.18645280007228,
+      "label": "gate on"
+    },
+    "gateForcedOpen": {
+      "mae": 0.03966445898080212,
+      "p95": 0.08550765747424897,
+      "allMae": 0.030214093889473628,
+      "molarLengthMaeMm": 1.179196315268391,
+      "tzlSumMaeMm": 7.18645280007228,
+      "label": "gate forced open"
+    },
+    "fallbackCasesOnly": {
+      "ruleMae": 0.06080123810881362,
+      "forcedMae": 0.06080123810881362
+    }
+  },
+  "inSampleOracle2Stage": {
+    "mae": 0.010386867420298604,
+    "p95": 0.05065121697117289,
+    "allMae": 0.00433017553038965,
+    "molarLengthMaeMm": 0.526631733550721,
+    "tzlSumMaeMm": 2.7561487405106746,
+    "label": "in-sample fit (oracle)"
+  },
+  "perfectDirectionCum10": {
+    "mae": 0.010386771064942473,
+    "p95": 0.05065121697115744,
+    "allMae": 0.004330102628222486,
+    "molarLengthMaeMm": 0.5266272944340762,
+    "tzlSumMaeMm": 2.7561330161164372,
+    "label": "perfect direction, cum 10%"
+  },
+  "schemaVersion": "next-gain-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "전부 grouped 5-fold out-of-fold(오라클 2종만 in-sample 상한). 단계별 캡 5% 고정.",
+  "widthSamples": 268
+}
