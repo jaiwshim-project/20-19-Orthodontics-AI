@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "cohort-bias-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "전역 prior 재교정 실패 원인 규명. 라벨 코호트별 정답 폭 스케일과 초안 길이 부호오차를 비교하고, 코호트 격차를 순열검정으로 검정한다. 학습 없음. mm는 정답 최외곽 스팬=54mm 기준.",
+  "samples": 268,
+  "cohorts": [
+    {
+      "label": "root(초기 119장 라벨)",
+      "cases": 83,
+      "truthTzlMeanMm": 96.96814260939698,
+      "truthTzlStdMm": 4.7009761519637046,
+      "draftLengthSignedPct": 0.26922095861239115,
+      "draftLengthSignedPctMolar": -4.373544426778252,
+      "neededPriorFactor": 1.0347624961518849
+    },
+    {
+      "label": "nonRoot(추가 임베드 라벨)",
+      "cases": 185,
+      "truthTzlMeanMm": 99.19329946156452,
+      "truthTzlStdMm": 5.219567229563721,
+      "draftLengthSignedPct": -10.822672388268364,
+      "draftLengthSignedPctMolar": -10.30937763109312,
+      "neededPriorFactor": 1.125989426067897
+    }
+  ],
+  "gap": {
+    "truthTzlGapMm": 2.2251568521675438,
+    "truthTzlGapPct": 2.294729786803103,
+    "lengthBiasGapPp": 11.091893346880756,
+    "priorFactorRoot": 1.0347624961518849,
+    "priorFactorNonRoot": 1.125989426067897,
+    "permutationPValue": 0.0016,
+    "significant": true
+  },
+  "perTooth": [
+    {
+      "tooth": 1,
+      "rootTruthMm": 12.2,
+      "nonRootTruthMm": 12.43,
+      "gapPct": 1.9,
+      "rootNeededFactor": 1.02,
+      "nonRootNeededFactor": 1.118
+    },
+    {
+      "tooth": 2,
+      "rootTruthMm": 8.06,
+      "nonRootTruthMm": 8.19,
+      "gapPct": 1.6,
+      "rootNeededFactor": 1.073,
+      "nonRootNeededFactor": 1.123
+    },
+    {
+      "tooth": 3,
+      "rootTruthMm": 7.94,
+      "nonRootTruthMm": 8.3,
+      "gapPct": 4.6,
+      "rootNeededFactor": 1.012,
+      "nonRootNeededFactor": 1.117
+    },
+    {
+      "tooth": 4,
+      "rootTruthMm": 7.39,
+      "nonRootTruthMm": 7.62,
+      "gapPct": 3.1,
+      "rootNeededFactor": 1.002,
+      "nonRootNeededFactor": 1.122
+    },
+    {
+      "tooth": 5,
+      "rootTruthMm": 6.64,
+      "nonRootTruthMm": 6.86,
+      "gapPct": 3.3,
+      "rootNeededFactor": 1.023,
+      "nonRootNeededFactor": 1.132
+    },
+    {
+      "tooth": 6,
+      "rootTruthMm": 6.09,
+      "nonRootTruthMm": 6.31,
+      "gapPct": 3.6,
+      "rootNeededFactor": 1.03,
+      "nonRootNeededFactor": 1.155
+    },
+    {
+      "tooth": 7,
+      "rootTruthMm": 6.1,
+      "nonRootTruthMm": 6.32,
+      "gapPct": 3.6,
+      "rootNeededFactor": 1.057,
+      "nonRootNeededFactor": 1.158
+    },
+    {
+      "tooth": 8,
+      "rootTruthMm": 6.61,
+      "nonRootTruthMm": 6.8,
+      "gapPct": 2.9,
+      "rootNeededFactor": 1.028,
+      "nonRootNeededFactor": 1.129
+    },
+    {
+      "tooth": 9,
+      "rootTruthMm": 7.35,
+      "nonRootTruthMm": 7.52,
+      "gapPct": 2.4,
+      "rootNeededFactor": 1.013,
+      "nonRootNeededFactor": 1.117
+    },
+    {
+      "tooth": 10,
+      "rootTruthMm": 8.11,
+      "nonRootTruthMm": 8.25,
+      "gapPct": 1.8,
+      "rootNeededFactor": 1.053,
+      "nonRootNeededFactor": 1.103
+    },
+    {
+      "tooth": 11,
+      "rootTruthMm": 8.13,
+      "nonRootTruthMm": 8.17,
+      "gapPct": 0.6,
+      "rootNeededFactor": 1.07,
+      "nonRootNeededFactor": 1.121
+    },
+    {
+      "tooth": 12,
+      "rootTruthMm": 12.35,
+      "nonRootTruthMm": 12.4,
+      "gapPct": 0.4,
+      "rootNeededFactor": 1.037,
+      "nonRootNeededFactor": 1.117
+    }
+  ],
+  "confounders": {
+    "corrBiasVsImageDiagonal": 0.31849893012576974,
+    "corrBiasVsArchSpanFraction": -0.3655052859954021,
+    "corrBiasVsCohort": 0.32555665133660544,
+    "withinRootCorrBiasVsDiagonal": 0.0908656021137694,
+    "withinNonRootCorrBiasVsDiagonal": 0.5296163676880673,
+    "nonRootAtRootLikeResolution": {
+      "cases": 69,
+      "lengthSignedPct": -7.052793616308555,
+      "note": "해상도를 root 수준으로 맞춰도 부호오차가 남으면 해상도 교란이 아니라 라벨 관습 차이다."
+    }
+  },
+  "conclusion": {
+    "verdict": "cohort scale differs: a global 12-constant prior cannot fit both",
+    "implication": "정답 폭 스케일이 코호트마다 다르므로 전역 상수(prior) 조정은 한쪽을 맞추면 다른 쪽을 망친다. 케이스별 특징에 조건화되는 잔차보정(KRR)이 옳은 층이다."
+  }
+}

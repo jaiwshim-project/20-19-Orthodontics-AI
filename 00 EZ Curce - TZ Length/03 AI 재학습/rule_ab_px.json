@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "rule-ab-px-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "규칙엔진 후보 4종의 짝지어진 실측 A/B. **픽셀 등방 공간**에서 측정하며 v1의 prior 보정계수는 평가에 쓰지 않은 185건에서만 산출(홀드아웃). 정답 결합은 이미지 SHA-256만 사용. mm는 정답 최외곽 스팬=54mm 기준.",
+  "pairedCases": 83,
+  "candidates": {
+    "old": "운영 HTML 그대로",
+    "new": "정규화공간 교정 prior + 탐색범위 [0.72,1.28] (측정오류 기반 1차안)",
+    "v1": "prior x (정답/초안 폭 비율, 185건 홀드아웃 산출), 탐색범위 불변",
+    "v2": "findWidthBoundary prior 페널티 -.30 -> -.15, prior 불변"
+  },
+  "absolute": {
+    "old": {
+      "molarPositionMm": 4.107947107581312,
+      "allPositionMm": 3.0503561938272226,
+      "molarLengthAbsMm": 0.9325350701425572,
+      "allLengthAbsMm": 0.7367227289024102,
+      "allLengthSignedPct": 0.26922095861239115,
+      "molarLengthSignedPct": -4.373544426778252,
+      "allAngleDeg": 10.874623920466458,
+      "molarCoordMaeNorm": 0.04280579102409539,
+      "allCoordMaeNorm": 0.03248637729325259
+    },
+    "new": {
+      "molarPositionMm": 4.410339229382276,
+      "allPositionMm": 3.5172377542324984,
+      "molarLengthAbsMm": 1.5040169409902842,
+      "allLengthAbsMm": 1.0541019207733633,
+      "allLengthSignedPct": 6.155690986985288,
+      "molarLengthSignedPct": 9.13663713116442,
+      "allAngleDeg": 11.724009816352199,
+      "molarCoordMaeNorm": 0.047389109200518954,
+      "allCoordMaeNorm": 0.03816015882856458
+    },
+    "v1": {
+      "molarPositionMm": 4.12043426854213,
+      "allPositionMm": 3.0709406918862743,
+      "molarLengthAbsMm": 1.068051584414769,
+      "allLengthAbsMm": 0.9209048264540055,
+      "allLengthSignedPct": 10.25880399396144,
+      "molarLengthSignedPct": 3.997820308762259,
+      "allAngleDeg": 10.980534588886918,
+      "molarCoordMaeNorm": 0.04360662525977441,
+      "allCoordMaeNorm": 0.033070518974193816
+    },
+    "v2": {
+      "molarPositionMm": 4.102474070178536,
+      "allPositionMm": 3.0425238019562766,
+      "molarLengthAbsMm": 0.9374357150483917,
+      "allLengthAbsMm": 0.7570637687328869,
+      "allLengthSignedPct": -0.21020066443030327,
+      "molarLengthSignedPct": -4.850116607109404,
+      "allAngleDeg": 10.873378213100839,
+      "molarCoordMaeNorm": 0.04274786968386345,
+      "allCoordMaeNorm": 0.0324381655231629
+    }
+  },
+  "vsOld": {
+    "new": {
+      "molarPosition": {
+        "old": 4.107947107581312,
+        "new": 4.410339229382276,
+        "improvementPct": -7.361149349827131,
+        "ci95": [
+          -0.4659257946329715,
+          -0.14195491159401
+        ],
+        "significant": true,
+        "casesImproved": 22,
+        "casesWorsened": 61
+      },
+      "allPosition": {
+        "old": 3.050356193827222,
+        "new": 3.517237754232499,
+        "improvementPct": -15.305804658159925,
+        "ci95": [
+          -0.6291785300515879,
+          -0.3049763049144049
+        ],
+        "significant": true,
+        "casesImproved": 20,
+        "casesWorsened": 63
+      },
+      "molarLengthAbs": {
+        "old": 0.9325350701425574,
+        "new": 1.5040169409902842,
+        "improvementPct": -61.282614364343836,
+        "ci95": [
+          -0.7463834426091669,
+          -0.39522800787449985
+        ],
+        "significant": true,
+        "casesImproved": 26,
+        "casesWorsened": 57
+      },
+      "allLengthAbs": {
+        "old": 0.7367227289024103,
+        "new": 1.054101920773363,
+        "improvementPct": -43.07986972843813,
+        "ci95": [
+          -0.3936281221619617,
+          -0.24041187823920776
+        ],
+        "significant": true,
+        "casesImproved": 14,
+        "casesWorsened": 69
+      },
+      "molarCoordMaeNorm": {
+        "old": 0.04280579102409539,
+        "new": 0.047389109200518954,
+        "improvementPct": -10.707238592655875,
+        "ci95": [
+          -0.006160171559986909,
+          -0.002992137284544861
+        ],
+        "significant": true,
+        "casesImproved": 19,
+        "casesWorsened": 64
+      },
+      "allCoordMaeNorm": {
+        "old": 0.03248637729325259,
+        "new": 0.03816015882856458,
+        "improvementPct": -17.46511001856285,
+        "ci95": [
+          -0.007344619719625217,
+          -0.004009870362657826
+        ],
+        "significant": true,
+        "casesImproved": 18,
+        "casesWorsened": 65
+      }
+    },
+    "v1": {
+      "molarPosition": {
+        "old": 4.107947107581312,
+        "new": 4.12043426854213,
+        "improvementPct": -0.30397569963286036,
+        "ci95": [
+          -0.11241626145158892,
+          0.08482229914016652
+        ],
+        "significant": false,
+        "casesImproved": 38,
+        "casesWorsened": 45
+      },
+      "allPosition": {
+        "old": 3.050356193827222,
+        "new": 3.0709406918862743,
+        "improvementPct": -0.674822766623369,
+        "ci95": [
+          -0.07876298393751979,
+          0.037779158444313635
+        ],
+        "significant": false,
+        "casesImproved": 36,
+        "casesWorsened": 47
+      },
+      "molarLengthAbs": {
+        "old": 0.9325350701425574,
+        "new": 1.068051584414769,
+        "improvementPct": -14.53205553454361,
+        "ci95": [
+          -0.25377328167181146,
+          -0.017410432949151317
+        ],
+        "significant": true,
+        "casesImproved": 37,
+        "casesWorsened": 46
+      },
+      "allLengthAbs": {
+        "old": 0.7367227289024103,
+        "new": 0.9209048264540053,
+        "improvementPct": -25.000192111080178,
+        "ci95": [
+          -0.27364362515034324,
+          -0.09435555098518572
+        ],
+        "significant": true,
+        "casesImproved": 31,
+        "casesWorsened": 52
+      },
+      "molarCoordMaeNorm": {
+        "old": 0.04280579102409539,
+        "new": 0.04360662525977441,
+        "improvementPct": -1.8708548925733797,
+        "ci95": [
+          -0.0018615965726104275,
+          0.00025439819205786335
+        ],
+        "significant": false,
+        "casesImproved": 39,
+        "casesWorsened": 44
+      },
+      "allCoordMaeNorm": {
+        "old": 0.03248637729325259,
+        "new": 0.033070518974193816,
+        "improvementPct": -1.7981127155798606,
+        "ci95": [
+          -0.001206498984082018,
+          3.990751678348012e-05
+        ],
+        "significant": false,
+        "casesImproved": 27,
+        "casesWorsened": 56
+      }
+    },
+    "v2": {
+      "molarPosition": {
+        "old": 4.107947107581312,
+        "new": 4.102474070178536,
+        "improvementPct": 0.13323047399212254,
+        "ci95": [
+          -0.009900889887733544,
+          0.02142066385477673
+        ],
+        "significant": false,
+        "casesImproved": 41,
+        "casesWorsened": 31
+      },
+      "allPosition": {
+        "old": 3.050356193827222,
+        "new": 3.0425238019562766,
+        "improvementPct": 0.25676974665435326,
+        "ci95": [
+          0.0006556875152787134,
+          0.01528287342261788
+        ],
+        "significant": true,
+        "casesImproved": 49,
+        "casesWorsened": 34
+      },
+      "molarLengthAbs": {
+        "old": 0.9325350701425574,
+        "new": 0.9374357150483916,
+        "improvementPct": -0.5255185636165972,
+        "ci95": [
+          -0.04735590384423721,
+          0.036588780550105796
+        ],
+        "significant": false,
+        "casesImproved": 32,
+        "casesWorsened": 40
+      },
+      "allLengthAbs": {
+        "old": 0.7367227289024103,
+        "new": 0.7570637687328872,
+        "improvementPct": -2.7610170057847268,
+        "ci95": [
+          -0.039484296999378464,
+          -0.0006829938056631159
+        ],
+        "significant": true,
+        "casesImproved": 29,
+        "casesWorsened": 54
+      },
+      "molarCoordMaeNorm": {
+        "old": 0.04280579102409539,
+        "new": 0.04274786968386345,
+        "improvementPct": 0.135311925901174,
+        "ci95": [
+          -0.00014994237253281912,
+          0.00026421531152742163
+        ],
+        "significant": false,
+        "casesImproved": 38,
+        "casesWorsened": 34
+      },
+      "allCoordMaeNorm": {
+        "old": 0.03248637729325259,
+        "new": 0.0324381655231629,
+        "improvementPct": 0.14840611390580125,
+        "ci95": [
+          -3.72765066993264e-05,
+          0.00013960201215171278
+        ],
+        "significant": false,
+        "casesImproved": 40,
+        "casesWorsened": 43
+      }
+    }
+  },
+  "decisions": {
+    "new": {
+      "positionSignificantlyBetter": false,
+      "lengthSignificantlyBetter": false,
+      "noMetricWorsened": false,
+      "decision": "revert"
+    },
+    "v1": {
+      "positionSignificantlyBetter": false,
+      "lengthSignificantlyBetter": false,
+      "noMetricWorsened": false,
+      "decision": "revert"
+    },
+    "v2": {
+      "positionSignificantlyBetter": true,
+      "lengthSignificantlyBetter": false,
+      "noMetricWorsened": false,
+      "decision": "revert"
+    }
+  },
+  "finalVerdict": {
+    "promotable": [],
+    "recommended": null,
+    "rationale": "승격 조건: 위치 또는 길이 오차가 통계적으로 유의하게 개선되고 다른 지표가 악화되지 않을 때. 하나도 만족하지 못하면 운영 HTML 불변 유지."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "px-stage-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "2단계 잔차보정의 **out-of-fold** 예측을 픽셀 등방 공간에서 분해. grouped 5-fold, per-stage cap 0.05, stages 2. mm는 정답 최외곽 스팬=54mm 기준.",
+  "samples": 268,
+  "acceptedRate": 0.9402985074626866,
+  "ruleDraft": {
+    "molarPositionMm": 4.7740002734843925,
+    "allPositionMm": 3.518677943603976,
+    "molarLengthAbsMm": 1.187404866940925,
+    "allLengthAbsMm": 0.955630077622422,
+    "allLengthSignedPct": -7.387496463674697,
+    "allAngleDeg": 12.12837018802519
+  },
+  "stage2Oof": {
+    "molarPositionMm": 2.9173965608979,
+    "allPositionMm": 2.2592862832473037,
+    "molarLengthAbsMm": 0.9530824981284939,
+    "allLengthAbsMm": 0.7586272013882289,
+    "allLengthSignedPct": -1.0205946285648477,
+    "allAngleDeg": 9.247805900838799
+  },
+  "paired": {
+    "allPosition": {
+      "old": 3.518677943603976,
+      "new": 2.259286283247304,
+      "improvementPct": 35.79161493440774,
+      "ci95": [
+        1.0845501718422792,
+        1.4367764478686817
+      ],
+      "significant": true,
+      "casesImproved": 201,
+      "casesWorsened": 51
+    },
+    "molarPosition": {
+      "old": 4.7740002734843925,
+      "new": 2.9173965608979,
+      "improvementPct": 38.889895396495575,
+      "ci95": [
+        1.5688798173729657,
+        2.143759138491017
+      ],
+      "significant": true,
+      "casesImproved": 191,
+      "casesWorsened": 61
+    },
+    "allLengthAbs": {
+      "old": 0.955630077622422,
+      "new": 0.7586272013882289,
+      "improvementPct": 20.6149723462378,
+      "ci95": [
+        0.1574371069779376,
+        0.23582317834506872
+      ],
+      "significant": true,
+      "casesImproved": 187,
+      "casesWorsened": 65
+    },
+    "molarLengthAbs": {
+      "old": 1.187404866940925,
+      "new": 0.9530824981284938,
+      "improvementPct": 19.733990935720918,
+      "ci95": [
+        0.18045691993928253,
+        0.2872292750589669
+      ],
+      "significant": true,
+      "casesImproved": 181,
+      "casesWorsened": 71
+    }
+  },
+  "verdict": {
+    "residualLayerHelpsPosition": true,
+    "residualLayerHelpsLength": true,
+    "conclusion": "잔차보정이 픽셀 공간에서도 위치·길이를 모두 줄인다 → 전역 prior가 아니라 케이스별 조건화가 옳은 층"
+  }
+}

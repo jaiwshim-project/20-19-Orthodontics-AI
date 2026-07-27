@@ -1,0 +1,280 @@
+{
+  "schemaVersion": "px-decompose-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "섹션28 정정: 오차 분해를 **픽셀(등방) 공간**에서 재계산. 이전 측정은 정규화 좌표(x/W, y/H)에서 길이를 재어 종횡비만큼 방향 의존 왜곡이 있었다. mm는 정답 최외곽 스팬=54mm 기준. 규칙엔진 초안 vs 정답, 학습 없음.",
+  "samples": 268,
+  "ruleDraft": {
+    "molar": {
+      "positionShiftMm": 4.7740002734843925,
+      "positionShiftP95Mm": 9.682282859531893,
+      "lengthAbsErrorMm": 1.187404866940925,
+      "lengthSignedErrorMm": -0.8932997857388851,
+      "lengthSignedPct": -8.471041228264262,
+      "angleDeg": 9.970045141080554,
+      "alongAbsMm": 3.699233128027662,
+      "perpAbsMm": 2.0584965117743326,
+      "inwardSignedMm": 1.415008669859122,
+      "coherence": 0.36061921008639697,
+      "positionOverLengthRatio": 4.020532849746106,
+      "shiftAsPctOfToothWidth": 48.02575263996146,
+      "casesShiftedOverQuarterPct": 65.85820895522389,
+      "positionCi95": [
+        4.497262017670542,
+        5.054369479160651
+      ]
+    },
+    "middleTeeth5to8": {
+      "positionShiftMm": 2.556409305077833,
+      "positionShiftP95Mm": 6.455824664727843,
+      "lengthAbsErrorMm": 0.8030077675684313,
+      "lengthSignedErrorMm": -0.6317459740974953,
+      "lengthSignedPct": -9.364358413558339,
+      "angleDeg": 13.725243509672394,
+      "alongAbsMm": 2.0374474714369906,
+      "perpAbsMm": 1.046409712970753,
+      "inwardSignedMm": -0.40414900860658215,
+      "coherence": 0.32214254315445706,
+      "positionOverLengthRatio": 3.1835424367298906,
+      "shiftAsPctOfToothWidth": 39.181065945729436,
+      "casesShiftedOverQuarterPct": 54.850746268656714,
+      "positionCi95": [
+        2.373484689918003,
+        2.745419278703317
+      ]
+    },
+    "leftMolar_1_2": {
+      "positionShiftMm": 4.834784843375536,
+      "positionShiftP95Mm": 9.569262965556632,
+      "lengthAbsErrorMm": 1.1748956594197195,
+      "lengthSignedErrorMm": -0.8836504778654051,
+      "lengthSignedPct": -8.388916157172034,
+      "angleDeg": 9.102797729846442,
+      "alongAbsMm": 3.6047719787089316,
+      "perpAbsMm": 2.1924835621224723,
+      "inwardSignedMm": 1.1213748797138903,
+      "coherence": 0.7011438873444147,
+      "positionOverLengthRatio": 4.115075925774918,
+      "shiftAsPctOfToothWidth": 48.819682495253055,
+      "casesShiftedOverQuarterPct": 73.32089552238806,
+      "positionCi95": [
+        4.5084987009187785,
+        5.17038595407982
+      ]
+    },
+    "rightMolar_11_12": {
+      "positionShiftMm": 4.713215703593249,
+      "positionShiftP95Mm": 9.808082003447764,
+      "lengthAbsErrorMm": 1.1999140744621304,
+      "lengthSignedErrorMm": -0.9029490936123652,
+      "lengthSignedPct": -8.55316629935649,
+      "angleDeg": 10.837292552314668,
+      "alongAbsMm": 3.7936942773463915,
+      "perpAbsMm": 1.9245094614261926,
+      "inwardSignedMm": 1.7086424600043533,
+      "coherence": 0.7479823865541227,
+      "positionOverLengthRatio": 3.927961013130028,
+      "shiftAsPctOfToothWidth": 47.23182278466986,
+      "casesShiftedOverQuarterPct": 58.3955223880597,
+      "positionCi95": [
+        4.322090805206238,
+        5.10499074162788
+      ]
+    },
+    "allTeeth": {
+      "positionShiftMm": 3.518677943603976,
+      "positionShiftP95Mm": 8.950418926515473,
+      "lengthAbsErrorMm": 0.955630077622422,
+      "lengthSignedErrorMm": -0.711537197690395,
+      "lengthSignedPct": -7.3874964636746965,
+      "angleDeg": 12.128370188025192,
+      "alongAbsMm": 2.7755093307192165,
+      "perpAbsMm": 1.4474056159135744,
+      "inwardSignedMm": 0.4252469010956863,
+      "coherence": 0.315102461533509,
+      "positionOverLengthRatio": 3.6820502263368873,
+      "shiftAsPctOfToothWidth": 43.13577792060832,
+      "casesShiftedOverQuarterPct": 57.36940298507462,
+      "positionCi95": [
+        3.3322168171850834,
+        3.7070054020248078
+      ]
+    }
+  },
+  "perTooth": [
+    {
+      "tooth": 1,
+      "positionMm": 5.085,
+      "inwardSignedMm": 1.855,
+      "lengthSignedMm": -0.98,
+      "lengthSignedPct": -7.6,
+      "truthWidthMm": 12.36,
+      "priorMm": 12.19,
+      "priorVsTruthPct": -1.4,
+      "reachableMaxMm": 14.63,
+      "unreachablePct": 0.4,
+      "coherence": 0.73
+    },
+    {
+      "tooth": 2,
+      "positionMm": 4.585,
+      "inwardSignedMm": 0.388,
+      "lengthSignedMm": -0.788,
+      "lengthSignedPct": -9.2,
+      "truthWidthMm": 8.15,
+      "priorMm": 7.92,
+      "priorVsTruthPct": -2.9,
+      "reachableMaxMm": 9.5,
+      "unreachablePct": 2.2,
+      "coherence": 0.691
+    },
+    {
+      "tooth": 3,
+      "positionMm": 3.606,
+      "inwardSignedMm": -0.073,
+      "lengthSignedMm": -0.629,
+      "lengthSignedPct": 4.7,
+      "truthWidthMm": 8.19,
+      "priorMm": 8.13,
+      "priorVsTruthPct": -0.8,
+      "reachableMaxMm": 9.76,
+      "unreachablePct": 1.1,
+      "coherence": 0.618
+    },
+    {
+      "tooth": 4,
+      "positionMm": 2.747,
+      "inwardSignedMm": 0.126,
+      "lengthSignedMm": -0.577,
+      "lengthSignedPct": -7.0,
+      "truthWidthMm": 7.54,
+      "priorMm": 7.3,
+      "priorVsTruthPct": -3.2,
+      "reachableMaxMm": 8.76,
+      "unreachablePct": 1.9,
+      "coherence": 0.37
+    },
+    {
+      "tooth": 5,
+      "positionMm": 2.656,
+      "inwardSignedMm": -0.418,
+      "lengthSignedMm": -0.596,
+      "lengthSignedPct": -8.4,
+      "truthWidthMm": 6.79,
+      "priorMm": 6.49,
+      "priorVsTruthPct": -4.5,
+      "reachableMaxMm": 7.79,
+      "unreachablePct": 3.0,
+      "coherence": 0.411
+    },
+    {
+      "tooth": 6,
+      "positionMm": 2.262,
+      "inwardSignedMm": -0.607,
+      "lengthSignedMm": -0.642,
+      "lengthSignedPct": -9.9,
+      "truthWidthMm": 6.25,
+      "priorMm": 5.91,
+      "priorVsTruthPct": -5.4,
+      "reachableMaxMm": 7.09,
+      "unreachablePct": 1.9,
+      "coherence": 0.287
+    },
+    {
+      "tooth": 7,
+      "positionMm": 2.458,
+      "inwardSignedMm": -0.553,
+      "lengthSignedMm": -0.698,
+      "lengthSignedPct": -10.8,
+      "truthWidthMm": 6.26,
+      "priorMm": 5.91,
+      "priorVsTruthPct": -5.5,
+      "reachableMaxMm": 7.09,
+      "unreachablePct": 3.7,
+      "coherence": 0.413
+    },
+    {
+      "tooth": 8,
+      "positionMm": 2.85,
+      "inwardSignedMm": -0.039,
+      "lengthSignedMm": -0.591,
+      "lengthSignedPct": -8.4,
+      "truthWidthMm": 6.74,
+      "priorMm": 6.46,
+      "priorVsTruthPct": -4.1,
+      "reachableMaxMm": 7.75,
+      "unreachablePct": 2.2,
+      "coherence": 0.516
+    },
+    {
+      "tooth": 9,
+      "positionMm": 2.972,
+      "inwardSignedMm": 0.503,
+      "lengthSignedMm": -0.574,
+      "lengthSignedPct": -7.1,
+      "truthWidthMm": 7.47,
+      "priorMm": 7.21,
+      "priorVsTruthPct": -3.4,
+      "reachableMaxMm": 8.65,
+      "unreachablePct": 4.5,
+      "coherence": 0.562
+    },
+    {
+      "tooth": 10,
+      "positionMm": 3.578,
+      "inwardSignedMm": 0.503,
+      "lengthSignedMm": -0.659,
+      "lengthSignedPct": -7.8,
+      "truthWidthMm": 8.21,
+      "priorMm": 8.15,
+      "priorVsTruthPct": -0.7,
+      "reachableMaxMm": 9.78,
+      "unreachablePct": 0.0,
+      "coherence": 0.753
+    },
+    {
+      "tooth": 11,
+      "positionMm": 4.381,
+      "inwardSignedMm": 1.025,
+      "lengthSignedMm": -0.773,
+      "lengthSignedPct": -9.0,
+      "truthWidthMm": 8.16,
+      "priorMm": 8.04,
+      "priorVsTruthPct": -1.5,
+      "reachableMaxMm": 9.65,
+      "unreachablePct": 1.5,
+      "coherence": 0.748
+    },
+    {
+      "tooth": 12,
+      "positionMm": 5.046,
+      "inwardSignedMm": 2.392,
+      "lengthSignedMm": -1.033,
+      "lengthSignedPct": -8.1,
+      "truthWidthMm": 12.39,
+      "priorMm": 12.31,
+      "priorVsTruthPct": -0.6,
+      "reachableMaxMm": 14.77,
+      "unreachablePct": 0.0,
+      "coherence": 0.758
+    }
+  ],
+  "clampVerdict": {
+    "maxUnreachablePct": 4.5,
+    "meanUnreachablePct": 1.8666666666666665,
+    "maxAbsPriorErrorPct": 5.5,
+    "verdict": "clamp is NOT a bottleneck in pixel space",
+    "correctsPreviousClaim": "섹션28의 '최말단 치아 도달불가율 63.8%'는 정규화 좌표 측정 인공물. 픽셀 공간에서는 최대 4.5%다."
+  },
+  "dominantComponent": {
+    "molarPositionMm": 4.7740002734843925,
+    "molarLengthAbsMm": 1.187404866940925,
+    "positionOverLengthRatio": 4.020532849746106,
+    "verdict": "position dominates"
+  }
+}

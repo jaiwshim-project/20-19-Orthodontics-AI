@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "calibrate-prior-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "note": "width 268건 정답 폭에서 prior 재교정. mm는 정답 최외곽 스팬=54mm 기준. prior는 12개 전역 상수라 케이스별 적합이 불가능하므로 정답 평균이 곧 최적. 폴드별 prior 표준편차로 안정성을 확인한다.",
+  "samples": 268,
+  "perTooth": [
+    {
+      "tooth": 1,
+      "oldPriorMm": 12.19,
+      "newPriorMm": 14.92,
+      "medianPriorMm": 14.93,
+      "changePct": 22.4,
+      "foldStdMm": 0.02,
+      "foldStdAsPctOfPrior": 0.13,
+      "meanVsMedianDiffPct": -0.04,
+      "neededRatioLow": 0.872,
+      "neededRatioHigh": 1.129
+    },
+    {
+      "tooth": 2,
+      "oldPriorMm": 7.92,
+      "newPriorMm": 9.46,
+      "medianPriorMm": 9.44,
+      "changePct": 19.4,
+      "foldStdMm": 0.031,
+      "foldStdAsPctOfPrior": 0.32,
+      "meanVsMedianDiffPct": 0.15,
+      "neededRatioLow": 0.778,
+      "neededRatioHigh": 1.258
+    },
+    {
+      "tooth": 3,
+      "oldPriorMm": 8.13,
+      "newPriorMm": 9.44,
+      "medianPriorMm": 9.49,
+      "changePct": 16.1,
+      "foldStdMm": 0.033,
+      "foldStdAsPctOfPrior": 0.35,
+      "meanVsMedianDiffPct": -0.47,
+      "neededRatioLow": 0.769,
+      "neededRatioHigh": 1.181
+    },
+    {
+      "tooth": 4,
+      "oldPriorMm": 7.3,
+      "newPriorMm": 8.14,
+      "medianPriorMm": 8.08,
+      "changePct": 11.5,
+      "foldStdMm": 0.036,
+      "foldStdAsPctOfPrior": 0.45,
+      "meanVsMedianDiffPct": 0.69,
+      "neededRatioLow": 0.793,
+      "neededRatioHigh": 1.263
+    },
+    {
+      "tooth": 5,
+      "oldPriorMm": 6.49,
+      "newPriorMm": 6.17,
+      "medianPriorMm": 6.15,
+      "changePct": -4.9,
+      "foldStdMm": 0.017,
+      "foldStdAsPctOfPrior": 0.28,
+      "meanVsMedianDiffPct": 0.4,
+      "neededRatioLow": 0.823,
+      "neededRatioHigh": 1.242
+    },
+    {
+      "tooth": 6,
+      "oldPriorMm": 5.91,
+      "newPriorMm": 5.32,
+      "medianPriorMm": 5.28,
+      "changePct": -9.9,
+      "foldStdMm": 0.008,
+      "foldStdAsPctOfPrior": 0.16,
+      "meanVsMedianDiffPct": 0.88,
+      "neededRatioLow": 0.826,
+      "neededRatioHigh": 1.193
+    },
+    {
+      "tooth": 7,
+      "oldPriorMm": 5.91,
+      "newPriorMm": 5.33,
+      "medianPriorMm": 5.34,
+      "changePct": -9.8,
+      "foldStdMm": 0.014,
+      "foldStdAsPctOfPrior": 0.25,
+      "meanVsMedianDiffPct": -0.09,
+      "neededRatioLow": 0.837,
+      "neededRatioHigh": 1.206
+    },
+    {
+      "tooth": 8,
+      "oldPriorMm": 6.46,
+      "newPriorMm": 6.1,
+      "medianPriorMm": 6.06,
+      "changePct": -5.6,
+      "foldStdMm": 0.014,
+      "foldStdAsPctOfPrior": 0.23,
+      "meanVsMedianDiffPct": 0.52,
+      "neededRatioLow": 0.811,
+      "neededRatioHigh": 1.19
+    },
+    {
+      "tooth": 9,
+      "oldPriorMm": 7.21,
+      "newPriorMm": 7.86,
+      "medianPriorMm": 7.84,
+      "changePct": 9.1,
+      "foldStdMm": 0.026,
+      "foldStdAsPctOfPrior": 0.33,
+      "meanVsMedianDiffPct": 0.28,
+      "neededRatioLow": 0.742,
+      "neededRatioHigh": 1.271
+    },
+    {
+      "tooth": 10,
+      "oldPriorMm": 8.15,
+      "newPriorMm": 9.27,
+      "medianPriorMm": 9.24,
+      "changePct": 13.7,
+      "foldStdMm": 0.016,
+      "foldStdAsPctOfPrior": 0.17,
+      "meanVsMedianDiffPct": 0.32,
+      "neededRatioLow": 0.815,
+      "neededRatioHigh": 1.164
+    },
+    {
+      "tooth": 11,
+      "oldPriorMm": 8.04,
+      "newPriorMm": 9.37,
+      "medianPriorMm": 9.36,
+      "changePct": 16.5,
+      "foldStdMm": 0.034,
+      "foldStdAsPctOfPrior": 0.36,
+      "meanVsMedianDiffPct": 0.09,
+      "neededRatioLow": 0.784,
+      "neededRatioHigh": 1.372
+    },
+    {
+      "tooth": 12,
+      "oldPriorMm": 12.31,
+      "newPriorMm": 14.74,
+      "medianPriorMm": 14.71,
+      "changePct": 19.7,
+      "foldStdMm": 0.017,
+      "foldStdAsPctOfPrior": 0.12,
+      "meanVsMedianDiffPct": 0.22,
+      "neededRatioLow": 0.861,
+      "neededRatioHigh": 1.133
+    }
+  ],
+  "newPriorArray": [
+    14.92,
+    9.46,
+    9.44,
+    8.14,
+    6.17,
+    5.32,
+    5.33,
+    6.1,
+    7.86,
+    9.27,
+    9.37,
+    14.74
+  ],
+  "priorStability": {
+    "maxFoldStdMm": 0.036277380036607736,
+    "maxFoldStdAsPctOfPrior": 0.44589326160029097,
+    "verdict": "stable"
+  },
+  "meanVsMedian": {
+    "maxAbsDiffPct": 0.8752666814729878,
+    "verdict": "mean not outlier-driven"
+  },
+  "ratioRange": {
+    "old": [
+      0.74,
+      1.2
+    ],
+    "neededLowMin": 0.742,
+    "neededHighMax": 1.372
+  },
+  "unreachablePct": {
+    "oldPriorOldRatio": [
+      63.8,
+      46.3,
+      36.9,
+      20.1,
+      1.1,
+      1.1,
+      0.7,
+      0.7,
+      13.8,
+      20.5,
+      34.0,
+      47.0
+    ],
+    "newPriorOldRatio": [
+      0.4,
+      2.2,
+      2.2,
+      4.1,
+      1.9,
+      0.7,
+      1.1,
+      0.7,
+      5.2,
+      0.4,
+      1.9,
+      0.0
+    ]
+  },
+  "ratioCandidates": [
+    {
+      "ratioRange": [
+        0.74,
+        1.2
+      ],
+      "withOldPrior_maxUnreachablePct": 63.8,
+      "withOldPrior_meanUnreachablePct": 23.85,
+      "withNewPrior_maxUnreachablePct": 5.2,
+      "withNewPrior_meanUnreachablePct": 1.74,
+      "withNewPrior_perTooth": [
+        0.4,
+        2.2,
+        2.2,
+        4.1,
+        1.9,
+        0.7,
+        1.1,
+        0.7,
+        5.2,
+        0.4,
+        1.9,
+        0.0
+      ],
+      "searchWindowWidthPct": 46.0
+    },
+    {
+      "ratioRange": [
+        0.72,
+        1.28
+      ],
+      "withOldPrior_maxUnreachablePct": 18.7,
+      "withOldPrior_meanUnreachablePct": 6.22,
+      "withNewPrior_maxUnreachablePct": 1.9,
+      "withNewPrior_meanUnreachablePct": 0.75,
+      "withNewPrior_perTooth": [
+        0.4,
+        1.5,
+        1.1,
+        0.7,
+        1.1,
+        0.0,
+        0.4,
+        0.4,
+        1.5,
+        0.0,
+        1.9,
+        0.0
+      ],
+      "searchWindowWidthPct": 56.0
+    },
+    {
+      "ratioRange": [
+        0.7,
+        1.32
+      ],
+      "withOldPrior_maxUnreachablePct": 6.7,
+      "withOldPrior_meanUnreachablePct": 2.92,
+      "withNewPrior_maxUnreachablePct": 1.9,
+      "withNewPrior_meanUnreachablePct": 0.53,
+      "withNewPrior_perTooth": [
+        0.4,
+        1.1,
+        1.1,
+        0.4,
+        0.4,
+        0.0,
+        0.0,
+        0.4,
+        0.7,
+        0.0,
+        1.9,
+        0.0
+      ],
+      "searchWindowWidthPct": 62.0
+    },
+    {
+      "ratioRange": [
+        0.68,
+        1.4
+      ],
+      "withOldPrior_maxUnreachablePct": 1.9,
+      "withOldPrior_meanUnreachablePct": 0.68,
+      "withNewPrior_maxUnreachablePct": 1.5,
+      "withNewPrior_meanUnreachablePct": 0.19,
+      "withNewPrior_perTooth": [
+        0.0,
+        0.0,
+        0.7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5,
+        0.0
+      ],
+      "searchWindowWidthPct": 72.0
+    },
+    {
+      "ratioRange": [
+        0.65,
+        1.45
+      ],
+      "withOldPrior_maxUnreachablePct": 1.5,
+      "withOldPrior_meanUnreachablePct": 0.37,
+      "withNewPrior_maxUnreachablePct": 0.7,
+      "withNewPrior_meanUnreachablePct": 0.09,
+      "withNewPrior_perTooth": [
+        0.0,
+        0.0,
+        0.7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.4,
+        0.0
+      ],
+      "searchWindowWidthPct": 80.0
+    }
+  ],
+  "recommendation": {
+    "prior": [
+      14.92,
+      9.46,
+      9.44,
+      8.14,
+      6.17,
+      5.32,
+      5.33,
+      6.1,
+      7.86,
+      9.27,
+      9.37,
+      14.74
+    ],
+    "ratioRange": [
+      0.72,
+      1.28
+    ],
+    "rationale": "새 prior + 목표 도달불가율 2% 이하를 만족하는 가장 좁은 탐색범위. 범위를 넓히면 오검출 위험이 커지므로 필요한 만큼만 넓힌다."
+  }
+}
