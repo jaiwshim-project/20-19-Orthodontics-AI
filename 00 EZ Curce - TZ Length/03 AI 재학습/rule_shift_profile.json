@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "rule-shift-profile-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "규칙엔진 초안 vs 정답, width 268건 전수(학습 무관). inward>0 = 선분 중점이 아치 중앙 쪽으로 밀림. coherence 1에 가까울수록 항상 같은 방향으로 밀린다.",
+  "samples": 268,
+  "perTooth": [
+    {
+      "tooth": 1,
+      "alongSignedMm": 4.342742684533474,
+      "perpSignedMm": 1.2539521612303073,
+      "inwardSignedMm": 3.1717253053002077,
+      "inwardAbsMm": 4.112454659620731,
+      "shiftMagnitudeMm": 5.719001463036223,
+      "coherence": 0.7903750340236597,
+      "inwardCasesPct": 66.4179104477612,
+      "inwardAsPctOfToothWidth": 21.54149881744353,
+      "lengthSignedMm": -1.0701608059704417
+    },
+    {
+      "tooth": 2,
+      "alongSignedMm": 3.2896108020173447,
+      "perpSignedMm": 1.9199951718966788,
+      "inwardSignedMm": 1.4276935065618246,
+      "inwardAbsMm": 2.9573100470621245,
+      "shiftMagnitudeMm": 5.11586270764743,
+      "coherence": 0.744532577593445,
+      "inwardCasesPct": 43.656716417910445,
+      "inwardAsPctOfToothWidth": 15.267179652828855,
+      "lengthSignedMm": -0.8313978341133361
+    },
+    {
+      "tooth": 3,
+      "alongSignedMm": 2.551969457095007,
+      "perpSignedMm": 1.1119262659233249,
+      "inwardSignedMm": 0.11356926154423085,
+      "inwardAbsMm": 1.6756152802984692,
+      "shiftMagnitudeMm": 4.037223247049389,
+      "coherence": 0.6895060022753181,
+      "inwardCasesPct": 38.80597014925373,
+      "inwardAsPctOfToothWidth": 0.681382992892231,
+      "lengthSignedMm": -1.1358920786083435
+    },
+    {
+      "tooth": 4,
+      "alongSignedMm": 1.1658043743352207,
+      "perpSignedMm": 0.3611202020386406,
+      "inwardSignedMm": -0.20201876424320295,
+      "inwardAbsMm": 0.910288644538339,
+      "shiftMagnitudeMm": 2.9189061607510167,
+      "coherence": 0.4181202817061321,
+      "inwardCasesPct": 34.32835820895522,
+      "inwardAsPctOfToothWidth": -2.628939060438041,
+      "lengthSignedMm": -1.055934021843371
+    },
+    {
+      "tooth": 5,
+      "alongSignedMm": 0.871126252680468,
+      "perpSignedMm": 0.9381181923497207,
+      "inwardSignedMm": -0.865578245131699,
+      "inwardAbsMm": 1.125176601558203,
+      "shiftMagnitudeMm": 2.639471005481291,
+      "coherence": 0.4850235973241557,
+      "inwardCasesPct": 16.791044776119403,
+      "inwardAsPctOfToothWidth": -13.79576043100105,
+      "lengthSignedMm": -0.4801769054919736
+    },
+    {
+      "tooth": 6,
+      "alongSignedMm": 0.010730661434605769,
+      "perpSignedMm": 0.7921771196134513,
+      "inwardSignedMm": -0.8521662082220204,
+      "inwardAbsMm": 1.0088242595728285,
+      "shiftMagnitudeMm": 2.135450783620967,
+      "coherence": 0.37099885418861356,
+      "inwardCasesPct": 17.91044776119403,
+      "inwardAsPctOfToothWidth": -15.988352810041926,
+      "lengthSignedMm": -0.5106209719985499
+    },
+    {
+      "tooth": 7,
+      "alongSignedMm": -0.49675635646253485,
+      "perpSignedMm": 0.9647414579520728,
+      "inwardSignedMm": -0.9009748846259868,
+      "inwardAbsMm": 1.135032729487542,
+      "shiftMagnitudeMm": 2.3430152202649532,
+      "coherence": 0.4631312108909658,
+      "inwardCasesPct": 15.671641791044777,
+      "inwardAsPctOfToothWidth": -16.6840703505067,
+      "lengthSignedMm": -0.5927083479927887
+    },
+    {
+      "tooth": 8,
+      "alongSignedMm": -1.208554875236778,
+      "perpSignedMm": 0.9913279321478767,
+      "inwardSignedMm": -0.6485539149964882,
+      "inwardAbsMm": 0.9805517784980251,
+      "shiftMagnitudeMm": 2.8074332372344957,
+      "coherence": 0.5567781142794146,
+      "inwardCasesPct": 20.8955223880597,
+      "inwardAsPctOfToothWidth": -10.608682497275954,
+      "lengthSignedMm": -0.4481146031930263
+    },
+    {
+      "tooth": 9,
+      "alongSignedMm": -1.8413766021537243,
+      "perpSignedMm": 0.3037497432343055,
+      "inwardSignedMm": -0.0358911748011632,
+      "inwardAbsMm": 0.869692279017995,
+      "shiftMagnitudeMm": 3.130616629183733,
+      "coherence": 0.5961322140819554,
+      "inwardCasesPct": 37.3134328358209,
+      "inwardAsPctOfToothWidth": -0.6024387983331035,
+      "lengthSignedMm": -0.9288916768989229
+    },
+    {
+      "tooth": 10,
+      "alongSignedMm": -3.1245709033211875,
+      "perpSignedMm": 1.0802187245220665,
+      "inwardSignedMm": 0.5937542329579528,
+      "inwardAbsMm": 1.6657402597380788,
+      "shiftMagnitudeMm": 4.0429209067282255,
+      "coherence": 0.8177323456415542,
+      "inwardCasesPct": 42.53731343283582,
+      "inwardAsPctOfToothWidth": 6.590363410884674,
+      "lengthSignedMm": -0.9847916849133853
+    },
+    {
+      "tooth": 11,
+      "alongSignedMm": -3.664982572938137,
+      "perpSignedMm": 1.6665933974303289,
+      "inwardSignedMm": 1.9573225939868044,
+      "inwardAbsMm": 2.9898464187157408,
+      "shiftMagnitudeMm": 4.941833237281885,
+      "coherence": 0.8147014246944828,
+      "inwardCasesPct": 48.88059701492538,
+      "inwardAsPctOfToothWidth": 21.44597952088484,
+      "lengthSignedMm": -0.7744067373645606
+    },
+    {
+      "tooth": 12,
+      "alongSignedMm": -4.5186951019889845,
+      "perpSignedMm": 1.1316247739104468,
+      "inwardSignedMm": 3.603420282928216,
+      "inwardAbsMm": 4.434549956401631,
+      "shiftMagnitudeMm": 5.754881693042863,
+      "coherence": 0.8094411177295096,
+      "inwardCasesPct": 70.8955223880597,
+      "inwardAsPctOfToothWidth": 24.878620995808657,
+      "lengthSignedMm": -0.93447358484739
+    }
+  ],
+  "summary": {
+    "allTeethMeanInwardMm": 0.6135251659382229,
+    "terminalTeeth_1_2_11_12_meanInwardMm": 2.540040422194263,
+    "middleTeeth_5to8_meanInwardMm": -0.8168183132440485,
+    "teethWithInwardOver1mm": [
+      1,
+      2,
+      11,
+      12
+    ],
+    "teethWithCoherenceOver05": [
+      1,
+      2,
+      3,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "verdict": "terminal-teeth-specific"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "rule-clamp-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "규칙엔진 findWidthBoundary()의 탐색 범위(prior x 0.74~1.20)가 정답 폭에 도달 가능한지 268건 전수 검사. 학습 무관. mm는 정답 최외곽 스팬=54mm 기준.",
+  "samples": 268,
+  "searchRatioRange": [
+    0.74,
+    1.2
+  ],
+  "perTooth": [
+    {
+      "tooth": 1,
+      "priorMm": 12.19,
+      "reachableMinMm": 9.021,
+      "reachableMaxMm": 14.628,
+      "truthMeanMm": 14.922924613032738,
+      "truthP95Mm": 16.199571757595347,
+      "casesAboveReachableMaxPct": 63.80597014925373,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 63.80597014925373,
+      "meanShortfallWhenOverMm": 0.7534907952013905,
+      "priorVsTruthMeanErrorPct": -18.313599270252794
+    },
+    {
+      "tooth": 2,
+      "priorMm": 7.92,
+      "reachableMinMm": 5.861,
+      "reachableMaxMm": 9.504,
+      "truthMeanMm": 9.457040906422225,
+      "truthP95Mm": 10.491863764682813,
+      "casesAboveReachableMaxPct": 46.26865671641791,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 46.26865671641791,
+      "meanShortfallWhenOverMm": 0.5298181165225696,
+      "priorVsTruthMeanErrorPct": -16.252873616930525
+    },
+    {
+      "tooth": 3,
+      "priorMm": 8.13,
+      "reachableMinMm": 6.016,
+      "reachableMaxMm": 9.756,
+      "truthMeanMm": 9.4405308904348,
+      "truthP95Mm": 10.584331546570148,
+      "casesAboveReachableMaxPct": 36.19402985074627,
+      "casesBelowReachableMinPct": 0.7462686567164178,
+      "casesUnreachablePct": 36.940298507462686,
+      "meanShortfallWhenOverMm": 0.44905011087761937,
+      "priorVsTruthMeanErrorPct": -13.881961784189881
+    },
+    {
+      "tooth": 4,
+      "priorMm": 7.3,
+      "reachableMinMm": 5.402,
+      "reachableMaxMm": 8.76,
+      "truthMeanMm": 8.135888823798288,
+      "truthP95Mm": 9.620644389130955,
+      "casesAboveReachableMaxPct": 20.149253731343283,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 20.149253731343283,
+      "meanShortfallWhenOverMm": 0.552889609771661,
+      "priorVsTruthMeanErrorPct": -10.27409348752689
+    },
+    {
+      "tooth": 5,
+      "priorMm": 6.49,
+      "reachableMinMm": 4.803,
+      "reachableMaxMm": 7.788,
+      "truthMeanMm": 6.17000180184158,
+      "truthP95Mm": 7.105463740296387,
+      "casesAboveReachableMaxPct": 1.1194029850746268,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 1.1194029850746268,
+      "meanShortfallWhenOverMm": 0.3360330431759131,
+      "priorVsTruthMeanErrorPct": 5.18635501958702
+    },
+    {
+      "tooth": 6,
+      "priorMm": 5.91,
+      "reachableMinMm": 4.373,
+      "reachableMaxMm": 7.092,
+      "truthMeanMm": 5.324372384502329,
+      "truthP95Mm": 6.023456847918541,
+      "casesAboveReachableMaxPct": 0.0,
+      "casesBelowReachableMinPct": 1.1194029850746268,
+      "casesUnreachablePct": 1.1194029850746268,
+      "meanShortfallWhenOverMm": 0.0,
+      "priorVsTruthMeanErrorPct": 10.998998064114744
+    },
+    {
+      "tooth": 7,
+      "priorMm": 5.91,
+      "reachableMinMm": 4.373,
+      "reachableMaxMm": 7.092,
+      "truthMeanMm": 5.331549465215787,
+      "truthP95Mm": 6.075856890315376,
+      "casesAboveReachableMaxPct": 0.0,
+      "casesBelowReachableMinPct": 0.7462686567164178,
+      "casesUnreachablePct": 0.7462686567164178,
+      "meanShortfallWhenOverMm": 0.0,
+      "priorVsTruthMeanErrorPct": 10.849576442236039
+    },
+    {
+      "tooth": 8,
+      "priorMm": 6.46,
+      "reachableMinMm": 4.78,
+      "reachableMaxMm": 7.752,
+      "truthMeanMm": 6.09607859895127,
+      "truthP95Mm": 7.013797355936917,
+      "casesAboveReachableMaxPct": 0.3731343283582089,
+      "casesBelowReachableMinPct": 0.3731343283582089,
+      "casesUnreachablePct": 0.7462686567164178,
+      "meanShortfallWhenOverMm": 0.39604172828209894,
+      "priorVsTruthMeanErrorPct": 5.969762284747056
+    },
+    {
+      "tooth": 9,
+      "priorMm": 7.21,
+      "reachableMinMm": 5.335,
+      "reachableMaxMm": 8.652,
+      "truthMeanMm": 7.863771144596049,
+      "truthP95Mm": 9.229961075184487,
+      "casesAboveReachableMaxPct": 13.805970149253731,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 13.805970149253731,
+      "meanShortfallWhenOverMm": 0.5373518515837941,
+      "priorVsTruthMeanErrorPct": -8.313710210721451
+    },
+    {
+      "tooth": 10,
+      "priorMm": 8.15,
+      "reachableMinMm": 6.031,
+      "reachableMaxMm": 9.78,
+      "truthMeanMm": 9.268895532359233,
+      "truthP95Mm": 10.224242814509031,
+      "casesAboveReachableMaxPct": 20.522388059701495,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 20.522388059701495,
+      "meanShortfallWhenOverMm": 0.33744007994362707,
+      "priorVsTruthMeanErrorPct": -12.071508719167078
+    },
+    {
+      "tooth": 11,
+      "priorMm": 8.04,
+      "reachableMinMm": 5.95,
+      "reachableMaxMm": 9.648,
+      "truthMeanMm": 9.369371809889769,
+      "truthP95Mm": 10.42460107226314,
+      "casesAboveReachableMaxPct": 33.95522388059701,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 33.95522388059701,
+      "meanShortfallWhenOverMm": 0.5599513576954269,
+      "priorVsTruthMeanErrorPct": -14.188483890526804
+    },
+    {
+      "tooth": 12,
+      "priorMm": 12.31,
+      "reachableMinMm": 9.109,
+      "reachableMaxMm": 14.772,
+      "truthMeanMm": 14.74029295382606,
+      "truthP95Mm": 16.081325317100593,
+      "casesAboveReachableMaxPct": 47.01492537313433,
+      "casesBelowReachableMinPct": 0.0,
+      "casesUnreachablePct": 47.01492537313433,
+      "meanShortfallWhenOverMm": 0.6717794717423169,
+      "priorVsTruthMeanErrorPct": -16.487412844771455
+    }
+  ],
+  "summary": {
+    "worstTeethByUnreachableRate": [
+      1,
+      12,
+      2,
+      3
+    ],
+    "terminalTeeth_1_2_11_12_unreachablePct": [
+      63.80597014925373,
+      46.26865671641791,
+      33.95522388059701,
+      47.01492537313433
+    ],
+    "middleTeeth_5to8_unreachablePct": [
+      1.1194029850746268,
+      1.1194029850746268,
+      0.7462686567164178,
+      0.7462686567164178
+    ],
+    "meanUnreachablePctAllTeeth": 23.849502487562187
+  }
+}
