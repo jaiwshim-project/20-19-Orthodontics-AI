@@ -7,7 +7,7 @@
  * residual_inference.js의 스테이지 루프 출력을 비교한다. 캡 정책은
  * legacy-axis-normalized(=train_residual.clip_corrections와 동일 식)를 쓴다.
  *
- * 1단계 모델(stages 없음)과 2단계 모델을 모두 검사하므로 하위호환도 함께 확인된다.
+ * 1단계(stages 없음)·2단계·3단계 모델을 모두 검사하므로 하위호환도 함께 확인된다.
  */
 
 const fs = require('fs');
@@ -128,7 +128,7 @@ function runFixture(fixturePath, modelPath) {
 function guardTests() {
   const model = readJson(path.join(ROOT, 'residual-model.json'));
   // 게이트 계약 위반은 형상 파싱 이후 단계에서 걸러져야 하므로 유효한 입력을 쓴다.
-  const input = readJson(path.join(ROOT, '_stage_parity_two.json')).cases[0].input;
+  const input = readJson(path.join(ROOT, '_stage_parity_three.json')).cases[0].input;
 
   // 하위호환 계약: stages[0]는 최상위 alpha/gamma와 동일해야 한다.
   const brokenGamma = JSON.parse(JSON.stringify(model));
@@ -140,14 +140,15 @@ function guardTests() {
   );
   const brokenAlpha = JSON.parse(JSON.stringify(model));
   brokenAlpha.tasks.width.stages[0].alpha[0][0] += 1e-9;
-  brokenAlpha.tasks.width.stageCount = 2;
+  // stageCount는 stages 길이와 맞춰 둔다 — 어긋나면 alpha 계약 이전에 개수 검사가 먼저 걸린다.
+  brokenAlpha.tasks.width.stageCount = brokenAlpha.tasks.width.stages.length;
   assertThrows(
     () => inference.applyResidualModel(brokenAlpha, input),
     /stages\[0\]\.alpha must equal the top-level alpha/,
     'stage alpha contract',
   );
   const brokenCount = JSON.parse(JSON.stringify(model));
-  brokenCount.tasks.width.stageCount = 3;
+  brokenCount.tasks.width.stageCount = brokenCount.tasks.width.stages.length + 1;
   assertThrows(
     () => inference.applyResidualModel(brokenCount, input),
     /stageCount does not match stages length/,
@@ -173,7 +174,8 @@ function guardTests() {
 function main() {
   const results = [
     runFixture(path.join(ROOT, '_stage_parity_single.json'), path.join(ROOT, 'residual-model.before-stage2-20260727.json.bak')),
-    runFixture(path.join(ROOT, '_stage_parity_two.json'), path.join(ROOT, 'residual-model.json')),
+    runFixture(path.join(ROOT, '_stage_parity_two.json'), path.join(ROOT, 'residual-model.json.stage2-backup')),
+    runFixture(path.join(ROOT, '_stage_parity_three.json'), path.join(ROOT, 'residual-model.json')),
   ];
   const guards = guardTests();
   assert(state.maximumDifference <= TOLERANCE, `maximum parity difference exceeds ${TOLERANCE}`);

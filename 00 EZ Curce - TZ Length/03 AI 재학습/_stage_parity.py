@@ -222,7 +222,8 @@ def main() -> None:
         # 1단계 모델은 하위호환(stages 키 없음) 경로를 계속 검증하기 위해 스테이지 도입
         # 직전 백업을 쓴다. residual-model.json은 이제 2단계 모델이다.
         (HERE / "residual-model.before-stage2-20260727.json.bak", HERE / "_stage_parity_single.json", "single-stage-pre-stage2-backup"),
-        (HERE / "residual-model.json", HERE / "_stage_parity_two.json", "two-stage-shipped"),
+        (HERE / "residual-model.json.stage2-backup", HERE / "_stage_parity_two.json", "two-stage-previous"),
+        (HERE / "residual-model.json", HERE / "_stage_parity_three.json", "three-stage-shipped"),
     ]
     summary = []
     for model_path, output_path, label in targets:

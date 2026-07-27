@@ -23,7 +23,9 @@ const PROJECT_DIR = 'C:\\01 클로드코드\\20-19 Orthodontics AI\\00 EZ Curce 
 // --engine=after 로 KRR+편향보정 HTML을 대신 사용할 수 있다.
 const APP_RULE = path.join(PROJECT_DIR, 'EZ Curve - TZ Length - 보정 전 알고리즘 적용.html');
 const APP_KRR = path.join(PROJECT_DIR, 'EZ Curve - TZ Length - 보정 후 알고리즘 적용.html');
-const AFTER_DIR = path.join(PROJECT_DIR, '02 교정 후');
+// 교정 후 사진 폴더는 세션마다 이름이 바뀌어 왔다('02 교정 후' → '02 교정 후 사진만').
+// resolveDir 선언보다 위에 두면 TDZ에 걸리므로 아래로 옮겼다.
+let AFTER_DIR = null;
 // 라벨 폴더는 "(김원장님)" 접미어 유무가 세션마다 달라 실제 존재하는 폴더를 자동 탐지한다.
 function resolveDir(...candidates) {
   for (const c of candidates) { const p = path.join(PROJECT_DIR, c); if (fs.existsSync(p)) return p; }
@@ -35,10 +37,16 @@ function resolveDir(...candidates) {
   } catch { /* ignore */ }
   return path.join(PROJECT_DIR, candidates[0]);
 }
+AFTER_DIR = resolveDir('02 교정 후 사진만', '02 교정 후');
 const EZ_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기');
 const WIDTH_DIR = resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기');
 const SCRATCH_DIR = __dirname;
-const OUT_PRED = path.join(SCRATCH_DIR, 'corrected_after_predictions.json');
+// 규칙엔진(--engine=rule) 산출물과 연구용 엔진(--engine=after) 산출물은 파일을 분리한다.
+// 같은 파일에 쓰면 --engine=after 스모크 테스트 한 번으로 커밋된 114장 규칙엔진 기준값이
+// 덮여 사라진다(실제로 한 번 그랬다).
+const OUT_PRED_RULE = path.join(SCRATCH_DIR, 'corrected_after_predictions.json');
+const OUT_PRED_KRR = path.join(SCRATCH_DIR, 'corrected_after_predictions_krr.json');
+let OUT_PRED = OUT_PRED_RULE;
 const OUT_PAIR = path.join(SCRATCH_DIR, 'corrected_pairing_index.json');
 
 function parseArgs(argv) {
@@ -89,7 +97,7 @@ function contentType(filePath) {
   return 'application/octet-stream';
 }
 
-function runnerHtml() {
+function runnerHtml(engineSourceName) {
   return `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><title>corrected-after batch</title>
 <style>body{font:14px system-ui;margin:20px}progress{width:min(720px,90vw)}pre{white-space:pre-wrap}.app-frame{position:fixed;left:-10000px;top:0;width:800px;height:800px;border:0}</style>
@@ -123,7 +131,7 @@ async function main(){
     await post('/api/progress',{index:i+1,total:manifest.length,caseId:item.caseId,status:record.status});
     await wait(0);
   }
-  const payload={schemaVersion:'ez-corrected-after-v1',createdAt:new Date().toISOString(),engineSource:'EZ Curve - TZ Length.html',caseCount:results.length,results};
+  const payload={schemaVersion:'ez-corrected-after-v1',createdAt:new Date().toISOString(),engineSource:${JSON.stringify(engineSourceName)},caseCount:results.length,results};
   await post('/api/results',payload);
   statusEl.textContent='Complete: '+results.length+' cases';
 }
@@ -140,6 +148,7 @@ async function main() {
   ].find((p) => fs.existsSync(p));
   if (!browserPath) throw new Error('Chrome or Edge executable was not found.');
   const APP_PATH = options.engine === 'after' ? APP_KRR : APP_RULE;
+  OUT_PRED = options.engine === 'after' ? OUT_PRED_KRR : OUT_PRED_RULE;
   if (!fs.existsSync(APP_PATH)) throw new Error(`Engine HTML not found: ${APP_PATH}`);
   console.log(`[엔진] ${options.engine === 'after' ? 'KRR+편향보정(보정후)' : '규칙엔진(운영/보정전)'} <- ${path.basename(APP_PATH)}`);
 
@@ -195,7 +204,7 @@ async function main() {
       const url = new URL(req.url, 'http://127.0.0.1');
       if (req.method === 'GET' && url.pathname === '/runner') {
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
-        res.end(runnerHtml()); return;
+        res.end(runnerHtml(path.basename(APP_PATH))); return;
       }
       if (req.method === 'GET' && url.pathname === '/app') {
         const source = await fsp.readFile(APP_PATH, 'utf8');

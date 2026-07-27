@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ez-stage3-live-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "연구용 HTML을 헤드리스 브라우저로 실제 구동해 잔차보정이 몇 단계 도는지 확인. 좌표·파일명·환자 식별자는 남기지 않고 analysisMeta의 엔진 상태만 기록한다.",
+  "engineSource": "EZ Curve - TZ Length - 보정 후 알고리즘 적용.html",
+  "caseCount": 3,
+  "observed": [
+    {
+      "engineVersion": "rule+krr-residual/v1",
+      "krrApplied": true,
+      "widthBias": 1.013,
+      "residualStageCount": 3,
+      "residualCumulativeCap": 0.15
+    },
+    {
+      "engineVersion": "rule+krr-residual/v1",
+      "krrApplied": true,
+      "widthBias": 1.013,
+      "residualStageCount": 3,
+      "residualCumulativeCap": 0.15
+    },
+    {
+      "engineVersion": "rule+krr-residual/v1",
+      "krrApplied": true,
+      "widthBias": 1.013,
+      "residualStageCount": 3,
+      "residualCumulativeCap": 0.15
+    }
+  ],
+  "allCasesIdentical": true,
+  "verdict": "HTML에 박힌 엔진이 실제로 3단계를 돈다."
+}

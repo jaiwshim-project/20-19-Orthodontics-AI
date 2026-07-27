@@ -49,7 +49,7 @@
     "width": {
       "samples": 268,
       "groups": 268,
-      "stages": 2,
+      "stages": 3,
       "folds": [
         {
           "fold": 1,
@@ -74,6 +74,12 @@
               "gammaFactor": 0.25,
               "gamma": 0.0008391993989011543,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013427190382418469,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -97,20 +103,20 @@
             "landmarkCount": 1296
           },
           "corrected": {
-            "mae": 0.028607600798173323,
-            "rmse": 0.03481261191863638,
-            "coordinateMAE": 0.02512781806497222,
-            "coordinateRMSE": 0.03481261191863638,
-            "p95": 0.06395943942779814,
+            "mae": 0.028210919177282242,
+            "rmse": 0.034132733275464996,
+            "coordinateMAE": 0.024873607464571127,
+            "coordinateRMSE": 0.034132733275464996,
+            "p95": 0.0605357019460251,
             "pck": {
-              "2pct": 0.39274691358024694,
-              "5pct": 0.8634259259259259,
-              "10pct": 0.9938271604938271
+              "2pct": 0.3881172839506173,
+              "5pct": 0.8819444444444444,
+              "10pct": 0.9953703703703703
             },
             "landmarkCount": 1296
           },
-          "coordinateMaeRelativeImprovement": 0.3594111260184178,
-          "p95Regression": -0.07008384977954543
+          "coordinateMaeRelativeImprovement": 0.36589177156607566,
+          "p95Regression": -0.07350758726131847
         },
         {
           "fold": 2,
@@ -135,6 +141,12 @@
               "gammaFactor": 0.25,
               "gamma": 0.000849000776029525,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.0135840124164724,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -158,20 +170,20 @@
             "landmarkCount": 1296
           },
           "corrected": {
-            "mae": 0.03255880662352822,
-            "rmse": 0.04069735888184977,
-            "coordinateMAE": 0.02882994984704233,
-            "coordinateRMSE": 0.04069735888184978,
-            "p95": 0.0811384419971653,
+            "mae": 0.0318647453120176,
+            "rmse": 0.039978402354541746,
+            "coordinateMAE": 0.02824554383521051,
+            "coordinateRMSE": 0.039978402354541746,
+            "p95": 0.07989127952883546,
             "pck": {
-              "2pct": 0.37114197530864196,
-              "5pct": 0.808641975308642,
-              "10pct": 0.9791666666666666
+              "2pct": 0.3742283950617284,
+              "5pct": 0.8233024691358025,
+              "10pct": 0.9776234567901234
             },
             "landmarkCount": 1296
           },
-          "coordinateMaeRelativeImprovement": 0.33097102278639756,
-          "p95Regression": -0.05276858522778627
+          "coordinateMaeRelativeImprovement": 0.34453277223263995,
+          "p95Regression": -0.05401574769611611
         },
         {
           "fold": 3,
@@ -196,6 +208,12 @@
               "gammaFactor": 0.25,
               "gamma": 0.0008378536172288396,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013405657875661434,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -219,20 +237,20 @@
             "landmarkCount": 1296
           },
           "corrected": {
-            "mae": 0.03063789696673791,
-            "rmse": 0.038867949145288315,
-            "coordinateMAE": 0.02680802496431827,
-            "coordinateRMSE": 0.03886794914528832,
-            "p95": 0.0761675783529733,
+            "mae": 0.029233419014870022,
+            "rmse": 0.03753446919799468,
+            "coordinateMAE": 0.02562904291108484,
+            "coordinateRMSE": 0.03753446919799468,
+            "p95": 0.07556260258197742,
             "pck": {
-              "2pct": 0.41898148148148145,
-              "5pct": 0.8155864197530864,
-              "10pct": 0.9807098765432098
+              "2pct": 0.4506172839506173,
+              "5pct": 0.8425925925925926,
+              "10pct": 0.9814814814814815
             },
             "landmarkCount": 1296
           },
-          "coordinateMaeRelativeImprovement": 0.38244700257471737,
-          "p95Regression": -0.061838623108230156
+          "coordinateMaeRelativeImprovement": 0.40960617979325564,
+          "p95Regression": -0.06244359887922604
         },
         {
           "fold": 4,
@@ -257,6 +275,12 @@
               "gammaFactor": 2.0,
               "gamma": 0.006722770236701131,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008403462795876414,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -280,20 +304,20 @@
             "landmarkCount": 1272
           },
           "corrected": {
-            "mae": 0.030250049592478446,
-            "rmse": 0.03729464205511431,
-            "coordinateMAE": 0.026657425657212273,
-            "coordinateRMSE": 0.03729464205511432,
-            "p95": 0.07124043003493159,
+            "mae": 0.029688351328603594,
+            "rmse": 0.036712039845785145,
+            "coordinateMAE": 0.026228097399330012,
+            "coordinateRMSE": 0.036712039845785145,
+            "p95": 0.07217833357696449,
             "pck": {
-              "2pct": 0.38757861635220126,
-              "5pct": 0.8404088050314465,
-              "10pct": 0.9889937106918238
+              "2pct": 0.3915094339622642,
+              "5pct": 0.8490566037735849,
+              "10pct": 0.9897798742138365
             },
             "landmarkCount": 1272
           },
-          "coordinateMaeRelativeImprovement": 0.292538276589771,
-          "p95Regression": -0.05990928436051955
+          "coordinateMaeRelativeImprovement": 0.30393222412003146,
+          "p95Regression": -0.05897138081848666
         },
         {
           "fold": 5,
@@ -318,6 +342,12 @@
               "gammaFactor": 0.25,
               "gamma": 0.0008394250279094022,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013430800446550435,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -341,20 +371,20 @@
             "landmarkCount": 1272
           },
           "corrected": {
-            "mae": 0.028994190509468745,
-            "rmse": 0.03622041008420567,
-            "coordinateMAE": 0.025537414544168854,
-            "coordinateRMSE": 0.03622041008420567,
-            "p95": 0.07101397542148734,
+            "mae": 0.027944399287652043,
+            "rmse": 0.03540522319191034,
+            "coordinateMAE": 0.024736394778259195,
+            "coordinateRMSE": 0.03540522319191034,
+            "p95": 0.06914388663614043,
             "pck": {
-              "2pct": 0.4221698113207547,
-              "5pct": 0.8514150943396226,
-              "10pct": 0.9905660377358491
+              "2pct": 0.4441823899371069,
+              "5pct": 0.8647798742138365,
+              "10pct": 0.9882075471698113
             },
             "landmarkCount": 1272
           },
-          "coordinateMaeRelativeImprovement": 0.36408987658094644,
-          "p95Regression": -0.06241537455811154
+          "coordinateMaeRelativeImprovement": 0.38403616273766394,
+          "p95Regression": -0.06428546334345844
         }
       ],
       "overallOutOfFold": {
@@ -372,20 +402,20 @@
           "landmarkCount": 6432
         },
         "corrected": {
-          "mae": 0.030214093889473628,
-          "rmse": 0.03764078104886098,
-          "coordinateMAE": 0.026595818455205863,
-          "coordinateRMSE": 0.03764078104886098,
-          "p95": 0.07263599100198768,
+          "mae": 0.029392635417487767,
+          "rmse": 0.03681160851639529,
+          "coordinateMAE": 0.025945972286563503,
+          "coordinateRMSE": 0.0368116085163953,
+          "p95": 0.07268196731570979,
           "pck": {
-            "2pct": 0.39847636815920395,
-            "5pct": 0.835820895522388,
-            "10pct": 0.9866293532338308
+            "2pct": 0.40967039800995025,
+            "5pct": 0.8523009950248757,
+            "10pct": 0.9864738805970149
           },
           "landmarkCount": 6432
         },
-        "coordinateMaeRelativeImprovement": 0.34697198601860135,
-        "p95Regression": -0.061407722735526624
+        "coordinateMaeRelativeImprovement": 0.3629281692666065,
+        "p95Regression": -0.06136174642180452
       },
       "selectedFinalHyperparameters": {
         "kernel": "rbf",
@@ -405,6 +435,12 @@
           "gammaFactor": 0.25,
           "gamma": 0.0008426097333919872,
           "lambda": 1.0
+        },
+        {
+          "stage": 3,
+          "gammaFactor": 4.0,
+          "gamma": 0.013481755734271796,
+          "lambda": 1.0
         }
       ],
       "promotionGate": {
@@ -415,22 +451,22 @@
           "p95DidNotRegress": true,
           "perStageCorrectionCapIs5PctDiagonal": true,
           "cumulativeCorrectionWithinDeclaredCap": true,
-          "cumulativeCapAtMost10PctDiagonal": true,
+          "cumulativeCapAtMost15PctDiagonal": true,
           "worsenedCaseRateAtMost25Pct": true,
           "unfamiliarFallbackEnabled": true
         },
         "observed": {
-          "coordinateMaeRelativeImprovement": 0.34697198601860135,
+          "coordinateMaeRelativeImprovement": 0.3629281692666065,
           "improvedFolds": 5,
           "foldCount": 5,
-          "p95Regression": -0.061407722735526624,
-          "stages": 2,
+          "p95Regression": -0.06136174642180452,
+          "stages": 3,
           "perStageCorrectionCap": 0.05,
-          "cumulativeCorrectionCap": 0.1,
-          "observedCumulativeCorrectionMax": 0.0999999999085014,
-          "observedCumulativeCorrectionP95": 0.09747688036168206,
-          "worsenedCaseRate": 0.21641791044776118,
-          "worsenedCaseCount": 58,
+          "cumulativeCorrectionCap": 0.15,
+          "observedCumulativeCorrectionMax": 0.1499722372551827,
+          "observedCumulativeCorrectionP95": 0.10509881915843343,
+          "worsenedCaseRate": 0.22014925373134328,
+          "worsenedCaseCount": 59,
           "unfamiliarAcceptedRate": 0.9402985074626866,
           "unfamiliarFallbackCount": 16,
           "nearestTrainingDistanceP95": 13.179659123097098
@@ -441,7 +477,7 @@
           "foldCount": 5,
           "p95RegressionMaximum": 0.0,
           "perStageCorrectionCapDiagonalFraction": 0.05,
-          "cumulativeCorrectionCapMaximum": 0.1,
+          "cumulativeCorrectionCapMaximum": 0.15,
           "worsenedCaseRateMaximum": 0.25,
           "unfamiliarFallback": true
         }
@@ -450,7 +486,7 @@
     "ez": {
       "samples": 113,
       "groups": 113,
-      "stages": 2,
+      "stages": 3,
       "folds": [
         {
           "fold": 1,
@@ -475,6 +511,12 @@
               "gammaFactor": 0.5,
               "gamma": 0.0016834627150644544,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013467701720515635,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -498,20 +540,20 @@
             "landmarkCount": 276
           },
           "corrected": {
-            "mae": 0.02646304670947965,
-            "rmse": 0.03192525714436839,
-            "coordinateMAE": 0.022880523711062892,
-            "coordinateRMSE": 0.031925257144368384,
-            "p95": 0.05968047619563259,
+            "mae": 0.02547638521018464,
+            "rmse": 0.030805942673805986,
+            "coordinateMAE": 0.02205649965794423,
+            "coordinateRMSE": 0.030805942673805986,
+            "p95": 0.05925685795761622,
             "pck": {
-              "2pct": 0.44565217391304346,
+              "2pct": 0.47101449275362317,
               "5pct": 0.894927536231884,
               "10pct": 1.0
             },
             "landmarkCount": 276
           },
-          "coordinateMaeRelativeImprovement": 0.44748155195964934,
-          "p95Regression": -0.05733593283312481
+          "coordinateMaeRelativeImprovement": 0.4673800690008877,
+          "p95Regression": -0.05775955107114118
         },
         {
           "fold": 2,
@@ -536,6 +578,12 @@
               "gammaFactor": 1.0,
               "gamma": 0.0033701045896520447,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013480418358608179,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -559,20 +607,20 @@
             "landmarkCount": 276
           },
           "corrected": {
-            "mae": 0.028533832913672317,
-            "rmse": 0.03900208630906127,
-            "coordinateMAE": 0.024757144956375925,
-            "coordinateRMSE": 0.039002086309061275,
-            "p95": 0.07973075158068584,
+            "mae": 0.028776473149775467,
+            "rmse": 0.03923418150799432,
+            "coordinateMAE": 0.024919803819492013,
+            "coordinateRMSE": 0.03923418150799432,
+            "p95": 0.08079976568770902,
             "pck": {
-              "2pct": 0.463768115942029,
-              "5pct": 0.8804347826086957,
+              "2pct": 0.4601449275362319,
+              "5pct": 0.8731884057971014,
               "10pct": 0.9637681159420289
             },
             "landmarkCount": 276
           },
-          "coordinateMaeRelativeImprovement": 0.432038102023128,
-          "p95Regression": -0.041254102600158535
+          "coordinateMaeRelativeImprovement": 0.4283064909354617,
+          "p95Regression": -0.040185088493135346
         },
         {
           "fold": 3,
@@ -597,6 +645,12 @@
               "gammaFactor": 1.0,
               "gamma": 0.003303183730898632,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013212734923594528,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -620,19 +674,19 @@
             "landmarkCount": 276
           },
           "corrected": {
-            "mae": 0.033523464412354376,
-            "rmse": 0.03999996990581369,
-            "coordinateMAE": 0.028662195164279043,
-            "coordinateRMSE": 0.0399999699058137,
+            "mae": 0.03315853667505202,
+            "rmse": 0.039565732206526545,
+            "coordinateMAE": 0.028384587850040482,
+            "coordinateRMSE": 0.03956573220652655,
             "p95": 0.079103633905639,
             "pck": {
               "2pct": 0.3188405797101449,
-              "5pct": 0.8007246376811594,
+              "5pct": 0.8115942028985508,
               "10pct": 0.9963768115942029
             },
             "landmarkCount": 276
           },
-          "coordinateMaeRelativeImprovement": 0.34951047806018376,
+          "coordinateMaeRelativeImprovement": 0.35581078576833486,
           "p95Regression": -0.047222138717774795
         },
         {
@@ -658,6 +712,12 @@
               "gammaFactor": 0.25,
               "gamma": 0.0008417586305630907,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013468138089009452,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -681,20 +741,20 @@
             "landmarkCount": 264
           },
           "corrected": {
-            "mae": 0.02528375477807499,
-            "rmse": 0.030206031244404068,
-            "coordinateMAE": 0.022108164949697952,
-            "coordinateRMSE": 0.03020603124440407,
-            "p95": 0.06046438935097796,
+            "mae": 0.024415807983771222,
+            "rmse": 0.029103906466630528,
+            "coordinateMAE": 0.021404947699008525,
+            "coordinateRMSE": 0.02910390646663053,
+            "p95": 0.05547889022643147,
             "pck": {
-              "2pct": 0.44696969696969696,
-              "5pct": 0.9090909090909091,
+              "2pct": 0.4772727272727273,
+              "5pct": 0.9128787878787878,
               "10pct": 1.0
             },
             "landmarkCount": 264
           },
-          "coordinateMaeRelativeImprovement": 0.4571240486038227,
-          "p95Regression": -0.0547295712357177
+          "coordinateMaeRelativeImprovement": 0.4743918650361152,
+          "p95Regression": -0.059715070360264196
         },
         {
           "fold": 5,
@@ -719,6 +779,12 @@
               "gammaFactor": 0.5,
               "gamma": 0.0016420914160682417,
               "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013136731328545934,
+              "lambda": 1.0
             }
           ],
           "distanceGate": {
@@ -742,20 +808,20 @@
             "landmarkCount": 264
           },
           "corrected": {
-            "mae": 0.030151670811910093,
-            "rmse": 0.037921417227196885,
-            "coordinateMAE": 0.025950079993885208,
-            "coordinateRMSE": 0.03792141722719689,
-            "p95": 0.07591244685406441,
+            "mae": 0.029310707101775746,
+            "rmse": 0.03722704370755689,
+            "coordinateMAE": 0.025142610942459596,
+            "coordinateRMSE": 0.03722704370755689,
+            "p95": 0.07595195804370593,
             "pck": {
-              "2pct": 0.39015151515151514,
-              "5pct": 0.8636363636363636,
+              "2pct": 0.4128787878787879,
+              "5pct": 0.8674242424242424,
               "10pct": 0.9848484848484849
             },
             "landmarkCount": 264
           },
-          "coordinateMaeRelativeImprovement": 0.4048796401818321,
-          "p95Regression": -0.046782810224114665
+          "coordinateMaeRelativeImprovement": 0.4233975512071422,
+          "p95Regression": -0.04674329903447315
         }
       ],
       "overallOutOfFold": {
@@ -773,20 +839,20 @@
           "landmarkCount": 1356
         },
         "corrected": {
-          "mae": 0.028810152883153257,
-          "rmse": 0.03606022925685373,
-          "coordinateMAE": 0.02488653324679947,
-          "coordinateRMSE": 0.03606022925685374,
-          "p95": 0.07257418545175773,
+          "mae": 0.02825172936006471,
+          "rmse": 0.035494034343858616,
+          "coordinateMAE": 0.02440129903225012,
+          "coordinateRMSE": 0.035494034343858616,
+          "p95": 0.071804818388276,
           "pck": {
-            "2pct": 0.41297935103244837,
-            "5pct": 0.8694690265486725,
+            "2pct": 0.4277286135693215,
+            "5pct": 0.8716814159292036,
             "10pct": 0.9889380530973452
           },
           "landmarkCount": 1356
         },
-        "coordinateMaeRelativeImprovement": 0.41700702777880366,
-        "p95Regression": -0.050051186480126464
+        "coordinateMaeRelativeImprovement": 0.4283741448520474,
+        "p95Regression": -0.05082055354360819
       },
       "selectedFinalHyperparameters": {
         "kernel": "rbf",
@@ -806,6 +872,12 @@
           "gammaFactor": 1.0,
           "gamma": 0.003346615485849994,
           "lambda": 1.0
+        },
+        {
+          "stage": 3,
+          "gammaFactor": 4.0,
+          "gamma": 0.013386461943399977,
+          "lambda": 1.0
         }
       ],
       "promotionGate": {
@@ -816,22 +888,22 @@
           "p95DidNotRegress": true,
           "perStageCorrectionCapIs5PctDiagonal": true,
           "cumulativeCorrectionWithinDeclaredCap": true,
-          "cumulativeCapAtMost10PctDiagonal": true,
+          "cumulativeCapAtMost15PctDiagonal": true,
           "worsenedCaseRateAtMost25Pct": true,
           "unfamiliarFallbackEnabled": true
         },
         "observed": {
-          "coordinateMaeRelativeImprovement": 0.41700702777880366,
+          "coordinateMaeRelativeImprovement": 0.4283741448520474,
           "improvedFolds": 5,
           "foldCount": 5,
-          "p95Regression": -0.050051186480126464,
-          "stages": 2,
+          "p95Regression": -0.05082055354360819,
+          "stages": 3,
           "perStageCorrectionCap": 0.05,
-          "cumulativeCorrectionCap": 0.1,
-          "observedCumulativeCorrectionMax": 0.0999999741226143,
-          "observedCumulativeCorrectionP95": 0.08562977588482246,
-          "worsenedCaseRate": 0.12389380530973451,
-          "worsenedCaseCount": 14,
+          "cumulativeCorrectionCap": 0.15,
+          "observedCumulativeCorrectionMax": 0.11815771926257022,
+          "observedCumulativeCorrectionP95": 0.08938660701863774,
+          "worsenedCaseRate": 0.13274336283185842,
+          "worsenedCaseCount": 15,
           "unfamiliarAcceptedRate": 0.9380530973451328,
           "unfamiliarFallbackCount": 7,
           "nearestTrainingDistanceP95": 15.038535914636116
@@ -842,7 +914,7 @@
           "foldCount": 5,
           "p95RegressionMaximum": 0.0,
           "perStageCorrectionCapDiagonalFraction": 0.05,
-          "cumulativeCorrectionCapMaximum": 0.1,
+          "cumulativeCorrectionCapMaximum": 0.15,
           "worsenedCaseRateMaximum": 0.25,
           "unfamiliarFallback": true
         }

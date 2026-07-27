@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ez-embed-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "pass": true,
+  "embeddedModelMatchesFile": true,
+  "embeddedEngineMatchesFile": true,
+  "embedded": {
+    "schemaVersion": "ez-tzl-residual-krr/v1",
+    "stageCountWidth": 3,
+    "stageCountEz": 3,
+    "perStageCap": 0.05,
+    "declaredStageCount": 3,
+    "cumulativeCap": 0.15,
+    "widthSamples": 268,
+    "ezSamples": 113,
+    "widthBias": 1.013
+  },
+  "runtimeStageCountsObserved": [
+    3
+  ],
+  "parity": {
+    "comparedCoordinateValues": 1080,
+    "maximumAbsoluteDifference": 6.661338147750939e-15,
+    "tolerance": 1e-12,
+    "acceptance": {
+      "accepted": 26,
+      "fallback": 4
+    }
+  },
+  "productionHtmlUnchanged": true,
+  "productionHtmlBytes": 89330
+}

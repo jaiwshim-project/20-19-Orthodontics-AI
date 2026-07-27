@@ -1,0 +1,290 @@
+{
+  "schemaVersion": "upgrade-candidates-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "연구용 HTML 업그레이드 후보의 홀드아웃 A/B. 치아별 배율과 3단계 모델은 모두 폴드별 train에서만 뽑아 test에 적용(누출 없음). 짝지어 부트스트랩 5,000회. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm. 배율은 길이만 바꾸므로 위치 지표는 불변 확인용이다.",
+  "samples": 268,
+  "toothBiasVector": {
+    "foldMedian": [
+      1.0139,
+      1.031,
+      1.0397,
+      1.0275,
+      1.016,
+      1.0232,
+      1.0225,
+      1.0074,
+      1.0112,
+      1.0133,
+      1.0276,
+      1.024
+    ],
+    "foldSpread": [
+      0.0075,
+      0.0163,
+      0.0146,
+      0.0174,
+      0.0143,
+      0.0079,
+      0.0044,
+      0.0124,
+      0.0086,
+      0.0107,
+      0.0048,
+      0.0167
+    ],
+    "globalConstant": 1.013
+  },
+  "variants": {
+    "현행: 2단계+전역1.013": {
+      "positionMm": 2.2592862832473033,
+      "molarPositionMm": 2.9173965608979,
+      "lengthAbsMm": 0.7529013138047004,
+      "molarLengthAbsMm": 0.9438898009827118,
+      "lengthSignedPct": 0.26613764126380013,
+      "molarLengthSignedPct": -1.5778951683749984,
+      "tzlAbsErrorMm": 5.877856524392784
+    },
+    "A: 2단계+치아별벡터": {
+      "positionMm": 2.2592862832473037,
+      "molarPositionMm": 2.9173965608979,
+      "lengthAbsMm": 0.7575387833180776,
+      "molarLengthAbsMm": 0.9498022670697504,
+      "lengthSignedPct": 1.1093718722484116,
+      "molarLengthSignedPct": -0.5076371571514574,
+      "tzlAbsErrorMm": 5.832584684153843,
+      "vsCurrent": {
+        "lengthAbs": {
+          "old": 0.7529013138047004,
+          "new": 0.7575387833180776,
+          "improvementPct": -0.6159465295580717,
+          "ci95": [
+            -0.009743920314476448,
+            0.0006115844438940853
+          ],
+          "significant": false,
+          "casesImproved": 135,
+          "casesWorsened": 133
+        },
+        "molarLengthAbs": {
+          "old": 0.9438898009827117,
+          "new": 0.9498022670697505,
+          "improvementPct": -0.6263936829154342,
+          "ci95": [
+            -0.014798881371061876,
+            0.0030139187047949377
+          ],
+          "significant": false,
+          "casesImproved": 127,
+          "casesWorsened": 141
+        },
+        "tzlAbsError": {
+          "old": 5.877856524392784,
+          "new": 5.832584684153843,
+          "improvementPct": 0.7702100255606016,
+          "ci95": [
+            -0.0502979943249529,
+            0.14238811401927481
+          ],
+          "significant": false,
+          "casesImproved": 147,
+          "casesWorsened": 121
+        },
+        "position": {
+          "old": 2.259286283247304,
+          "new": 2.259286283247304,
+          "improvementPct": 0.0,
+          "ci95": [
+            -4.440892098500626e-16,
+            4.440892098500626e-16
+          ],
+          "significant": false,
+          "casesImproved": 77,
+          "casesWorsened": 76
+        },
+        "molarPosition": {
+          "old": 2.9173965608979,
+          "new": 2.9173965608979,
+          "improvementPct": 0.0,
+          "ci95": [
+            -4.440892098500626e-16,
+            4.440892098500626e-16
+          ],
+          "significant": false,
+          "casesImproved": 62,
+          "casesWorsened": 60
+        }
+      }
+    },
+    "B: 3단계+전역1.013": {
+      "positionMm": 2.2038874330776625,
+      "molarPositionMm": 2.781115693483299,
+      "lengthAbsMm": 0.7488621475016344,
+      "molarLengthAbsMm": 0.9376895907362673,
+      "lengthSignedPct": 0.4980738602465511,
+      "molarLengthSignedPct": -0.7855652989245892,
+      "tzlAbsErrorMm": 5.731757426177522,
+      "vsCurrent": {
+        "lengthAbs": {
+          "old": 0.7529013138047004,
+          "new": 0.7488621475016344,
+          "improvementPct": 0.5364801772830673,
+          "ci95": [
+            -0.004464087393150634,
+            0.012636647540697212
+          ],
+          "significant": false,
+          "casesImproved": 139,
+          "casesWorsened": 113
+        },
+        "molarLengthAbs": {
+          "old": 0.9438898009827117,
+          "new": 0.9376895907362673,
+          "improvementPct": 0.6568786144303207,
+          "ci95": [
+            -0.014029377278624893,
+            0.027138720889148878
+          ],
+          "significant": false,
+          "casesImproved": 132,
+          "casesWorsened": 120
+        },
+        "tzlAbsError": {
+          "old": 5.877856524392784,
+          "new": 5.731757426177522,
+          "improvementPct": 2.485584627813878,
+          "ci95": [
+            0.004028824373813271,
+            0.2860555642062679
+          ],
+          "significant": true,
+          "casesImproved": 138,
+          "casesWorsened": 114
+        },
+        "position": {
+          "old": 2.259286283247304,
+          "new": 2.2038874330776625,
+          "improvementPct": 2.4520509233569143,
+          "ci95": [
+            0.03318369878782901,
+            0.07716089648140874
+          ],
+          "significant": true,
+          "casesImproved": 157,
+          "casesWorsened": 95
+        },
+        "molarPosition": {
+          "old": 2.9173965608979,
+          "new": 2.781115693483299,
+          "improvementPct": 4.671317888050742,
+          "ci95": [
+            0.09190473172006015,
+            0.17886226661162766
+          ],
+          "significant": true,
+          "casesImproved": 163,
+          "casesWorsened": 89
+        }
+      }
+    },
+    "C: 3단계+치아별벡터": {
+      "positionMm": 2.2038874330776625,
+      "molarPositionMm": 2.7811156934832995,
+      "lengthAbsMm": 0.7515775741118504,
+      "molarLengthAbsMm": 0.9408684098908269,
+      "lengthSignedPct": 1.1005869689321337,
+      "molarLengthSignedPct": -0.5864787582488432,
+      "tzlAbsErrorMm": 5.721708449141331,
+      "vsCurrent": {
+        "lengthAbs": {
+          "old": 0.7529013138047004,
+          "new": 0.7515775741118503,
+          "improvementPct": 0.17581848624498728,
+          "ci95": [
+            -0.008633170613585395,
+            0.011403839644880542
+          ],
+          "significant": false,
+          "casesImproved": 142,
+          "casesWorsened": 126
+        },
+        "molarLengthAbs": {
+          "old": 0.9438898009827117,
+          "new": 0.940868409890827,
+          "improvementPct": 0.32009998293646635,
+          "ci95": [
+            -0.018261491562566796,
+            0.02471213940777959
+          ],
+          "significant": false,
+          "casesImproved": 134,
+          "casesWorsened": 134
+        },
+        "tzlAbsError": {
+          "old": 5.877856524392784,
+          "new": 5.721708449141331,
+          "improvementPct": 2.656547920206066,
+          "ci95": [
+            -0.010177432085805746,
+            0.31953923602335904
+          ],
+          "significant": false,
+          "casesImproved": 151,
+          "casesWorsened": 117
+        },
+        "position": {
+          "old": 2.259286283247304,
+          "new": 2.2038874330776625,
+          "improvementPct": 2.4520509233569143,
+          "ci95": [
+            0.03318369878782901,
+            0.07716089648140874
+          ],
+          "significant": true,
+          "casesImproved": 157,
+          "casesWorsened": 96
+        },
+        "molarPosition": {
+          "old": 2.9173965608979,
+          "new": 2.781115693483299,
+          "improvementPct": 4.671317888050742,
+          "ci95": [
+            0.09190473172005971,
+            0.17886226661162763
+          ],
+          "significant": true,
+          "casesImproved": 163,
+          "casesWorsened": 89
+        }
+      }
+    }
+  },
+  "decision": {
+    "A: 2단계+치아별벡터": {
+      "anySignificantGain": false,
+      "significantRegressions": [],
+      "accepted": false
+    },
+    "B: 3단계+전역1.013": {
+      "anySignificantGain": true,
+      "significantRegressions": [],
+      "accepted": true
+    },
+    "C: 3단계+치아별벡터": {
+      "anySignificantGain": false,
+      "significantRegressions": [],
+      "accepted": false
+    }
+  },
+  "verdict": {
+    "acceptedCandidates": [
+      "B: 3단계+전역1.013"
+    ],
+    "conclusion": "채택: B: 3단계+전역1.013"
+  }
+}

@@ -73,3 +73,13 @@ EZ Curve*.bak-*
 03 AI 재학습/_label_need.log
 03 AI 재학습/_scale_*.log
 03 AI 재학습/_ez_scale_link.log
+
+# 3단계 승격 작업 임시 산출물 — 스크립트로 재생성 가능, 커밋 제외
+03 AI 재학습/_stage3_seeds.json
+03 AI 재학습/_stage3_cap_seeds.json
+03 AI 재학습/_stage3_model/
+03 AI 재학습/residual-model.json.stage2-backup
+
+# 연구용 엔진 실구동 예측(파일명·좌표 포함) — 하네스로 재생성 가능, 커밋 제외.
+# PHI 없는 요약만 _stage3_live_verify.json으로 커밋한다.
+03 AI 재학습/corrected_after_predictions_krr.json
