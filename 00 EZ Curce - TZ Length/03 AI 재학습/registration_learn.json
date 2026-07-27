@@ -1,0 +1,589 @@
+{
+  "schemaVersion": "registration-learn-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "아치 경로 정합의 4 DOF(이동 2·스케일·회전)를 기존 특징으로 예측해 오라클 여력을 실제 회수할 수 있는지 검증. 그룹 5-fold OOF, 하이퍼파라미터는 train 안쪽 CV로만 선택. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, WIDTH_BIAS 1.013 적용. 오라클은 배포 불가한 상한.",
+  "samples": 268,
+  "baseline": {
+    "positionMm": 2.2592862832473033,
+    "molarPositionMm": 2.9173965608979
+  },
+  "oracleSimilarity": {
+    "positionMm": 1.2467948831548543,
+    "molarPositionMm": 1.3689832931579335
+  },
+  "oracleDofDistribution": {
+    "dxRel": {
+      "mean": 0.003897687316952136,
+      "sd": 0.054100143266586166,
+      "p05": -0.07824878525542192,
+      "p95": 0.10247816104112045
+    },
+    "dyRel": {
+      "mean": -0.006864509740530643,
+      "sd": 0.07241013054005618,
+      "p05": -0.11959738130598124,
+      "p95": 0.10974628823550975
+    },
+    "logScale": {
+      "mean": -0.0011250773137584827,
+      "sd": 0.057475124116772636,
+      "p05": -0.10305884219686726,
+      "p95": 0.08767731868206541
+    },
+    "rotationRad": {
+      "mean": -0.0026452872059887886,
+      "sd": 0.05346987365544287,
+      "p05": -0.0967696075876541,
+      "p95": 0.07108199000959163
+    }
+  },
+  "learners": {
+    "ridge": {
+      "dofR2": {
+        "dxRel": {
+          "r2FromResiduals": -0.27775206943047515,
+          "pearsonR": -0.0005878664361926766,
+          "pearsonR2": 3.4558694680187836e-07
+        },
+        "dyRel": {
+          "r2FromResiduals": -0.2933424625610641,
+          "pearsonR": 0.03729704085752729,
+          "pearsonR2": 0.00139106925672806
+        },
+        "logScale": {
+          "r2FromResiduals": -0.42612501878019127,
+          "pearsonR": -0.08253894020625892,
+          "pearsonR2": 0.006812676650372385
+        },
+        "rotationRad": {
+          "r2FromResiduals": -0.2768555979732523,
+          "pearsonR": 0.04773339442358658,
+          "pearsonR2": 0.0022784769431976864
+        }
+      },
+      "variants": {
+        "translationOnly@raw": {
+          "positionMm": 2.4458936448045168,
+          "molarPositionMm": 2.9872115755995816,
+          "positionGainPct": -8.259571305368176,
+          "recoveredShareOfOraclePct": -18.430513240919836,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.4458936448045163,
+            "improvementPct": -8.259571305368116,
+            "ci95": [
+              -0.23550136515053927,
+              -0.138712061910276
+            ],
+            "significant": true,
+            "casesImproved": 83,
+            "casesWorsened": 185
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.9872115755995816,
+            "improvementPct": -2.393058785268279,
+            "ci95": [
+              -0.13382661058593606,
+              -0.0050309446846009695
+            ],
+            "significant": true,
+            "casesImproved": 100,
+            "casesWorsened": 168
+          }
+        },
+        "scaleOnly@raw": {
+          "positionMm": 2.3565847800726303,
+          "molarPositionMm": 3.0445349406253266,
+          "positionGainPct": -4.306603264349417,
+          "recoveredShareOfOraclePct": -9.609809704699005,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.3565847800726307,
+            "improvementPct": -4.306603264349396,
+            "ci95": [
+              -0.1250658627000158,
+              -0.06921485692045956
+            ],
+            "significant": true,
+            "casesImproved": 98,
+            "casesWorsened": 170
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 3.044534940625327,
+            "improvementPct": -4.3579395900945785,
+            "ci95": [
+              -0.1839898174862485,
+              -0.0680883525632539
+            ],
+            "significant": true,
+            "casesImproved": 114,
+            "casesWorsened": 154
+          }
+        },
+        "rotationOnly@raw": {
+          "positionMm": 2.315746900772539,
+          "molarPositionMm": 2.9913335112258306,
+          "positionGainPct": -2.499046621222529,
+          "recoveredShareOfOraclePct": -5.5764046509511545,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.315746900772539,
+            "improvementPct": -2.4990466212224884,
+            "ci95": [
+              -0.08633050611169624,
+              -0.02589841970720012
+            ],
+            "significant": true,
+            "casesImproved": 94,
+            "casesWorsened": 174
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.9913335112258297,
+            "improvementPct": -2.5343469351720223,
+            "ci95": [
+              -0.11156332599180777,
+              -0.036190018353808376
+            ],
+            "significant": true,
+            "casesImproved": 101,
+            "casesWorsened": 167
+          }
+        },
+        "similarityAll@raw": {
+          "positionMm": 2.542428633986047,
+          "molarPositionMm": 3.171901855336907,
+          "positionGainPct": -12.532380373317684,
+          "recoveredShareOfOraclePct": -27.964914142766084,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.542428633986047,
+            "improvementPct": -12.53238037331764,
+            "ci95": [
+              -0.3549777203065576,
+              -0.2079609401564626
+            ],
+            "significant": true,
+            "casesImproved": 83,
+            "casesWorsened": 185
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 3.171901855336907,
+            "improvementPct": -8.723712705024825,
+            "ci95": [
+              -0.358545828456287,
+              -0.1437222222432578
+            ],
+            "significant": true,
+            "casesImproved": 108,
+            "casesWorsened": 160
+          }
+        },
+        "translationOnly@clamped5to95": {
+          "positionMm": 2.4460643035310734,
+          "molarPositionMm": 2.986900374276406,
+          "positionGainPct": -8.26712496192875,
+          "recoveredShareOfOraclePct": -18.447368566954317,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.4460643035310734,
+            "improvementPct": -8.267124961928708,
+            "ci95": [
+              -0.2351269694395154,
+              -0.13983612644683852
+            ],
+            "significant": true,
+            "casesImproved": 83,
+            "casesWorsened": 185
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.986900374276406,
+            "improvementPct": -2.3823916950500186,
+            "ci95": [
+              -0.13325120220675574,
+              -0.004485682290471761
+            ],
+            "significant": true,
+            "casesImproved": 100,
+            "casesWorsened": 168
+          }
+        },
+        "scaleOnly@clamped5to95": {
+          "positionMm": 2.3565629099557985,
+          "molarPositionMm": 3.044708766266155,
+          "positionGainPct": -4.305635254363524,
+          "recoveredShareOfOraclePct": -9.607649674813343,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.3565629099557985,
+            "improvementPct": -4.305635254363483,
+            "ci95": [
+              -0.1250569281272594,
+              -0.06920372309962357
+            ],
+            "significant": true,
+            "casesImproved": 98,
+            "casesWorsened": 170
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 3.044708766266155,
+            "improvementPct": -4.363897835303944,
+            "ci95": [
+              -0.18416288689901894,
+              -0.0680959071413679
+            ],
+            "significant": true,
+            "casesImproved": 114,
+            "casesWorsened": 154
+          }
+        },
+        "rotationOnly@clamped5to95": {
+          "positionMm": 2.316724903546575,
+          "molarPositionMm": 2.991201818270986,
+          "positionGainPct": -2.5423347508096454,
+          "recoveredShareOfOraclePct": -5.672998337963878,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.3167249035465756,
+            "improvementPct": -2.542334750809625,
+            "ci95": [
+              -0.08574306985264459,
+              -0.029554888994363794
+            ],
+            "significant": true,
+            "casesImproved": 94,
+            "casesWorsened": 174
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.9912018182709854,
+            "improvementPct": -2.5298328777891705,
+            "ci95": [
+              -0.11151743826550284,
+              -0.0365925519237574
+            ],
+            "significant": true,
+            "casesImproved": 102,
+            "casesWorsened": 166
+          }
+        },
+        "similarityAll@clamped5to95": {
+          "positionMm": 2.543853296751583,
+          "molarPositionMm": 3.1734027442394233,
+          "positionGainPct": -12.59543846277274,
+          "recoveredShareOfOraclePct": -28.105622771541185,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.5438532967515823,
+            "improvementPct": -12.595438462772677,
+            "ci95": [
+              -0.35374714716707356,
+              -0.21313527372045582
+            ],
+            "significant": true,
+            "casesImproved": 83,
+            "casesWorsened": 185
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 3.1734027442394233,
+            "improvementPct": -8.775158878734379,
+            "ci95": [
+              -0.3599902162301117,
+              -0.14586588280087265
+            ],
+            "significant": true,
+            "casesImproved": 108,
+            "casesWorsened": 160
+          }
+        }
+      }
+    },
+    "krr": {
+      "dofR2": {
+        "dxRel": {
+          "r2FromResiduals": -0.021115459193315367,
+          "pearsonR": -0.052856733853587995,
+          "pearsonR2": 0.002793834313669035
+        },
+        "dyRel": {
+          "r2FromResiduals": -0.005745268917401569,
+          "pearsonR": 0.0599879664583654,
+          "pearsonR2": 0.003598556119809972
+        },
+        "logScale": {
+          "r2FromResiduals": -0.04545461069826673,
+          "pearsonR": -0.06848842150487988,
+          "pearsonR2": 0.004690663880230093
+        },
+        "rotationRad": {
+          "r2FromResiduals": -0.0049580891957814455,
+          "pearsonR": 0.073581254557177,
+          "pearsonR2": 0.00541420102220808
+        }
+      },
+      "variants": {
+        "translationOnly@raw": {
+          "positionMm": 2.271707694818299,
+          "molarPositionMm": 2.9002556951697787,
+          "positionGainPct": -0.5497936079681889,
+          "recoveredShareOfOraclePct": -1.2268165013413017,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.271707694818299,
+            "improvementPct": -0.5497936079681494,
+            "ci95": [
+              -0.025922985813180043,
+              0.001189191401364696
+            ],
+            "significant": false,
+            "casesImproved": 122,
+            "casesWorsened": 146
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.900255695169779,
+            "improvementPct": 0.5875397934535564,
+            "ci95": [
+              -0.0009007246731564944,
+              0.03534940776299744
+            ],
+            "significant": false,
+            "casesImproved": 143,
+            "casesWorsened": 125
+          }
+        },
+        "scaleOnly@raw": {
+          "positionMm": 2.269729095364035,
+          "molarPositionMm": 2.931138621693523,
+          "positionGainPct": -0.4622173026130326,
+          "recoveredShareOfOraclePct": -1.0313976114541228,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.2697290953640348,
+            "improvementPct": -0.4622173026129735,
+            "ci95": [
+              -0.01818976839672074,
+              -0.0032845038587423995
+            ],
+            "significant": true,
+            "casesImproved": 121,
+            "casesWorsened": 147
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.9311386216935227,
+            "improvementPct": -0.4710384930115037,
+            "ci95": [
+              -0.031333474507769445,
+              0.0033328276497958747
+            ],
+            "significant": false,
+            "casesImproved": 131,
+            "casesWorsened": 137
+          }
+        },
+        "rotationOnly@raw": {
+          "positionMm": 2.262265516400499,
+          "molarPositionMm": 2.9116108173525888,
+          "positionGainPct": -0.13186611963640177,
+          "recoveredShareOfOraclePct": -0.2942477489609961,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.262265516400499,
+            "improvementPct": -0.1318661196363624,
+            "ci95": [
+              -0.011125095504954807,
+              0.005490913271337106
+            ],
+            "significant": false,
+            "casesImproved": 115,
+            "casesWorsened": 153
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.911610817352589,
+            "improvementPct": 0.19831872097394537,
+            "ci95": [
+              -0.005365201187288726,
+              0.01761850687449171
+            ],
+            "significant": false,
+            "casesImproved": 138,
+            "casesWorsened": 130
+          }
+        },
+        "similarityAll@raw": {
+          "positionMm": 2.281445006688337,
+          "molarPositionMm": 2.9047450040575473,
+          "positionGainPct": -0.9807842239977145,
+          "recoveredShareOfOraclePct": -2.1885344842445664,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.281445006688337,
+            "improvementPct": -0.9807842239976747,
+            "ci95": [
+              -0.04254846933860431,
+              -0.001654874006076749
+            ],
+            "significant": true,
+            "casesImproved": 119,
+            "casesWorsened": 149
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.904745004057547,
+            "improvementPct": 0.43365914013620016,
+            "ci95": [
+              -0.019416988014279955,
+              0.04549913661450187
+            ],
+            "significant": false,
+            "casesImproved": 137,
+            "casesWorsened": 131
+          }
+        },
+        "translationOnly@clamped5to95": {
+          "positionMm": 2.271707694818299,
+          "molarPositionMm": 2.9002556951697787,
+          "positionGainPct": -0.5497936079681889,
+          "recoveredShareOfOraclePct": -1.2268165013413017,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.271707694818299,
+            "improvementPct": -0.5497936079681494,
+            "ci95": [
+              -0.025922985813180043,
+              0.001189191401364696
+            ],
+            "significant": false,
+            "casesImproved": 122,
+            "casesWorsened": 146
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.900255695169779,
+            "improvementPct": 0.5875397934535564,
+            "ci95": [
+              -0.0009007246731564944,
+              0.03534940776299744
+            ],
+            "significant": false,
+            "casesImproved": 143,
+            "casesWorsened": 125
+          }
+        },
+        "scaleOnly@clamped5to95": {
+          "positionMm": 2.269729095364035,
+          "molarPositionMm": 2.931138621693523,
+          "positionGainPct": -0.4622173026130326,
+          "recoveredShareOfOraclePct": -1.0313976114541228,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.2697290953640348,
+            "improvementPct": -0.4622173026129735,
+            "ci95": [
+              -0.01818976839672074,
+              -0.0032845038587423995
+            ],
+            "significant": true,
+            "casesImproved": 121,
+            "casesWorsened": 147
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.9311386216935227,
+            "improvementPct": -0.4710384930115037,
+            "ci95": [
+              -0.031333474507769445,
+              0.0033328276497958747
+            ],
+            "significant": false,
+            "casesImproved": 131,
+            "casesWorsened": 137
+          }
+        },
+        "rotationOnly@clamped5to95": {
+          "positionMm": 2.262265516400499,
+          "molarPositionMm": 2.9116108173525888,
+          "positionGainPct": -0.13186611963640177,
+          "recoveredShareOfOraclePct": -0.2942477489609961,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.262265516400499,
+            "improvementPct": -0.1318661196363624,
+            "ci95": [
+              -0.011125095504954807,
+              0.005490913271337106
+            ],
+            "significant": false,
+            "casesImproved": 115,
+            "casesWorsened": 153
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.911610817352589,
+            "improvementPct": 0.19831872097394537,
+            "ci95": [
+              -0.005365201187288726,
+              0.01761850687449171
+            ],
+            "significant": false,
+            "casesImproved": 138,
+            "casesWorsened": 130
+          }
+        },
+        "similarityAll@clamped5to95": {
+          "positionMm": 2.281445006688337,
+          "molarPositionMm": 2.9047450040575473,
+          "positionGainPct": -0.9807842239977145,
+          "recoveredShareOfOraclePct": -2.1885344842445664,
+          "pairedPosition": {
+            "old": 2.259286283247304,
+            "new": 2.281445006688337,
+            "improvementPct": -0.9807842239976747,
+            "ci95": [
+              -0.04254846933860431,
+              -0.001654874006076749
+            ],
+            "significant": true,
+            "casesImproved": 119,
+            "casesWorsened": 149
+          },
+          "pairedMolar": {
+            "old": 2.9173965608979,
+            "new": 2.904745004057547,
+            "improvementPct": 0.43365914013620016,
+            "ci95": [
+              -0.019416988014279955,
+              0.04549913661450187
+            ],
+            "significant": false,
+            "casesImproved": 137,
+            "casesWorsened": 131
+          }
+        }
+      }
+    }
+  },
+  "verdict": {
+    "bestLearner": "krr",
+    "bestVariant": "rotationOnly@raw",
+    "bestPositionGainPct": -0.13186611963640177,
+    "bestMolarGainPct": 0.19831872097394537,
+    "significant": false,
+    "recoveredShareOfOraclePct": -0.2942477489609961,
+    "conclusion": "정합 DOF도 기존 특징으로는 예측되지 않는다. 오라클 +44.8%는 현재 입력으로 회수 불가이며, 새 입력(EZ 예측 기하·아치 끝점 검출 개선)이 선행돼야 한다."
+  }
+}

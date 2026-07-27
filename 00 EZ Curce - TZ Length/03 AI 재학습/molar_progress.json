@@ -1,0 +1,236 @@
+{
+  "schemaVersion": "molar-progress-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "어금니(치아 1·2·11·12) 개선의 단계별 기여를 픽셀 등방 공간에서 분리. 모두 그룹 5-fold OOF, mm는 정답 최외곽 스팬=54mm. 짝지어 부트스트랩으로 직전 단계 대비/원안 대비 유의성 확인. 운영 HTML은 ①에 해당한다.",
+  "samples": 268,
+  "stages": {
+    "① 규칙엔진 원안(운영HTML)": {
+      "molarPositionMm": 4.7740002734843925,
+      "allPositionMm": 3.518677943603976,
+      "molarLengthAbsMm": 1.187404866940925,
+      "allLengthAbsMm": 0.955630077622422,
+      "molarLengthSignedPct": -8.47104122826426,
+      "allLengthSignedPct": -7.3874964636746965,
+      "terminalPositionMm": 5.065194555446875,
+      "centralPositionMm": 2.3601100433281585,
+      "molarOverAllRatio": 1.3567596551887506,
+      "terminalOverCentralRatio": 2.1461688067324545
+    },
+    "② +1단계 잔차보정": {
+      "molarPositionMm": 3.3503237076372963,
+      "allPositionMm": 2.4509584962105446,
+      "molarLengthAbsMm": 0.999712714127811,
+      "allLengthAbsMm": 0.8133623000657344,
+      "molarLengthSignedPct": -4.924071464365879,
+      "allLengthSignedPct": -3.262086622341748,
+      "terminalPositionMm": 3.546656991047205,
+      "centralPositionMm": 1.6458732549786825,
+      "molarOverAllRatio": 1.3669442843757944,
+      "terminalOverCentralRatio": 2.154878560860473,
+      "vsPreviousStage": {
+        "molarPosition": {
+          "old": 4.7740002734843925,
+          "new": 3.3503237076372963,
+          "improvementPct": 29.821459662548357,
+          "ci95": [
+            1.2757299074767379,
+            1.569460834071911
+          ],
+          "significant": true,
+          "casesImproved": 220,
+          "casesWorsened": 32
+        },
+        "molarLengthAbs": {
+          "old": 1.187404866940925,
+          "new": 0.999712714127811,
+          "improvementPct": 15.806921298601335,
+          "ci95": [
+            0.14903200907338812,
+            0.22721235442750717
+          ],
+          "significant": true,
+          "casesImproved": 189,
+          "casesWorsened": 63
+        }
+      },
+      "vsRuleDraft": {
+        "molarPosition": {
+          "old": 4.7740002734843925,
+          "new": 3.3503237076372963,
+          "improvementPct": 29.821459662548357,
+          "ci95": [
+            1.2757299074767379,
+            1.569460834071911
+          ],
+          "significant": true,
+          "casesImproved": 220,
+          "casesWorsened": 32
+        },
+        "molarLengthAbs": {
+          "old": 1.187404866940925,
+          "new": 0.999712714127811,
+          "improvementPct": 15.806921298601335,
+          "ci95": [
+            0.14903200907338812,
+            0.22721235442750717
+          ],
+          "significant": true,
+          "casesImproved": 189,
+          "casesWorsened": 63
+        }
+      }
+    },
+    "③ +2단계 반복보정": {
+      "molarPositionMm": 2.9173965608979,
+      "allPositionMm": 2.2592862832473037,
+      "molarLengthAbsMm": 0.9530824981284938,
+      "allLengthAbsMm": 0.7586272013882289,
+      "molarLengthSignedPct": -2.8409626538746213,
+      "allLengthSignedPct": -1.0205946285648484,
+      "terminalPositionMm": 3.0762624204240754,
+      "centralPositionMm": 1.653355489472717,
+      "molarOverAllRatio": 1.2912912287966822,
+      "terminalOverCentralRatio": 1.8606176590644445,
+      "vsPreviousStage": {
+        "molarPosition": {
+          "old": 3.3503237076372963,
+          "new": 2.9173965608979,
+          "improvementPct": 12.92194977316696,
+          "ci95": [
+            0.2822951759873457,
+            0.5813718135439433
+          ],
+          "significant": true,
+          "casesImproved": 139,
+          "casesWorsened": 113
+        },
+        "molarLengthAbs": {
+          "old": 0.999712714127811,
+          "new": 0.9530824981284939,
+          "improvementPct": 4.6643616051236485,
+          "ci95": [
+            0.019022923050239293,
+            0.07300388784943894
+          ],
+          "significant": true,
+          "casesImproved": 138,
+          "casesWorsened": 114
+        }
+      },
+      "vsRuleDraft": {
+        "molarPosition": {
+          "old": 4.7740002734843925,
+          "new": 2.9173965608979,
+          "improvementPct": 38.889895396495575,
+          "ci95": [
+            1.5688798173729657,
+            2.143759138491017
+          ],
+          "significant": true,
+          "casesImproved": 191,
+          "casesWorsened": 61
+        },
+        "molarLengthAbs": {
+          "old": 1.187404866940925,
+          "new": 0.9530824981284939,
+          "improvementPct": 19.73399093572091,
+          "ci95": [
+            0.18045691993928276,
+            0.2872292750589669
+          ],
+          "significant": true,
+          "casesImproved": 181,
+          "casesWorsened": 71
+        }
+      }
+    },
+    "④ +WIDTH_BIAS 1.013(현행)": {
+      "molarPositionMm": 2.9173965608979,
+      "allPositionMm": 2.2592862832473033,
+      "molarLengthAbsMm": 0.9438898009827118,
+      "allLengthAbsMm": 0.7529013138047004,
+      "molarLengthSignedPct": -1.5778951683749984,
+      "allLengthSignedPct": 0.26613764126380013,
+      "terminalPositionMm": 3.0762624204240754,
+      "centralPositionMm": 1.653355489472717,
+      "molarOverAllRatio": 1.2912912287966825,
+      "terminalOverCentralRatio": 1.8606176590644445,
+      "vsPreviousStage": {
+        "molarPosition": {
+          "old": 2.9173965608979,
+          "new": 2.9173965608979,
+          "improvementPct": 0.0,
+          "ci95": [
+            -4.440892098500626e-16,
+            4.440892098500626e-16
+          ],
+          "significant": false,
+          "casesImproved": 48,
+          "casesWorsened": 62
+        },
+        "molarLengthAbs": {
+          "old": 0.9530824981284939,
+          "new": 0.9438898009827117,
+          "improvementPct": 0.9645227106607553,
+          "ci95": [
+            -0.001491550524862664,
+            0.019293366352958852
+          ],
+          "significant": false,
+          "casesImproved": 143,
+          "casesWorsened": 125
+        }
+      },
+      "vsRuleDraft": {
+        "molarPosition": {
+          "old": 4.7740002734843925,
+          "new": 2.9173965608979,
+          "improvementPct": 38.889895396495575,
+          "ci95": [
+            1.5688798173729657,
+            2.143759138491017
+          ],
+          "significant": true,
+          "casesImproved": 191,
+          "casesWorsened": 61
+        },
+        "molarLengthAbs": {
+          "old": 1.187404866940925,
+          "new": 0.9438898009827117,
+          "improvementPct": 20.508174822086904,
+          "ci95": [
+            0.1845318261354087,
+            0.3007768515521045
+          ],
+          "significant": true,
+          "casesImproved": 184,
+          "casesWorsened": 84
+        }
+      }
+    }
+  },
+  "verdict": {
+    "molarPositionMm": {
+      "ruleDraft": 4.7740002734843925,
+      "current": 2.9173965608979,
+      "improvementPct": 38.889895396495575
+    },
+    "molarLengthAbsMm": {
+      "ruleDraft": 1.187404866940925,
+      "current": 0.9438898009827118,
+      "improvementPct": 20.508174822086893
+    },
+    "molarStillWorseThanAverageBy": 1.2912912287966825,
+    "terminalOverCentralRatio": {
+      "ruleDraft": 2.1461688067324545,
+      "current": 1.8606176590644445
+    },
+    "note": "이 개선은 연구용 HTML에만 반영돼 있다. 운영 HTML은 ① 상태이므로 환자에게 보이는 어금니 정확도는 아직 개선 전이다."
+  }
+}
