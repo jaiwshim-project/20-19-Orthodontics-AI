@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "wb-live-ab-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "연구용 HTML WIDTH_BIAS 변경의 실구동 짝지은 A/B. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm. 정답 결합은 이미지 SHA-256만 사용. 라이브 root 코호트는 임베드 모델의 학습 범위이므로 개선폭 근거는 px_width_bias.json의 폴드 홀드아웃 수치다.",
+  "pairedCases": 83,
+  "absolute": {
+    "before": {
+      "allPositionMm": 1.6233754190148733,
+      "molarPositionMm": 2.2031729326036964,
+      "allLengthAbsMm": 0.7100146970558232,
+      "molarLengthAbsMm": 0.8862178996488338,
+      "allLengthSignedPct": 8.464967890046594,
+      "tzlSumMm": 102.83860896008794,
+      "allAngleDeg": 5.944285102786533
+    },
+    "after": {
+      "allPositionMm": 1.6235065639064283,
+      "molarPositionMm": 2.2035994009136797,
+      "allLengthAbsMm": 0.574340078124818,
+      "molarLengthAbsMm": 0.7324378244726266,
+      "allLengthSignedPct": 4.547773445433705,
+      "tzlSumMm": 99.12410237256056,
+      "allAngleDeg": 5.947311343256716
+    },
+    "truthTzlSumMm": 96.96814260939698
+  },
+  "paired": {
+    "allLengthAbs": {
+      "old": 0.7100146970558232,
+      "new": 0.5743400781248181,
+      "improvementPct": 19.108705706177513,
+      "ci95": [
+        0.10759279481989255,
+        0.16326889092983515
+      ],
+      "significant": true,
+      "casesImproved": 68,
+      "casesWorsened": 15
+    },
+    "molarLengthAbs": {
+      "old": 0.8862178996488338,
+      "new": 0.7324378244726265,
+      "improvementPct": 17.352400040344822,
+      "ci95": [
+        0.10699421331101099,
+        0.1983915193936351
+      ],
+      "significant": true,
+      "casesImproved": 62,
+      "casesWorsened": 21
+    },
+    "allPosition": {
+      "old": 1.623375419014873,
+      "new": 1.6235065639064283,
+      "improvementPct": -0.008078531313162626,
+      "ci95": [
+        -0.0004802737758919928,
+        0.00018480671735563407
+      ],
+      "significant": false,
+      "casesImproved": 39,
+      "casesWorsened": 44
+    },
+    "tzlAbsError": {
+      "old": 6.151844019466982,
+      "new": 4.150655508969014,
+      "improvementPct": 32.529896794609535,
+      "ci95": [
+        1.3824725853111215,
+        2.591159632339667
+      ],
+      "significant": true,
+      "casesImproved": 62,
+      "casesWorsened": 21
+    }
+  },
+  "verdict": {
+    "codePathEffective": true,
+    "lengthImproved": true,
+    "lengthSignificant": true,
+    "positionUnchanged": true,
+    "promote": true
+  }
+}

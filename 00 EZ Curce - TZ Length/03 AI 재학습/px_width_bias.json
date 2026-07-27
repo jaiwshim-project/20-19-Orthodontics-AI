@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "px-width-bias-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "연구용 HTML WIDTH_BIAS 재교정. 2단계 OOF 예측 위에서 픽셀 등방 공간으로 측정. WIDTH_BIAS는 중점 고정 확대이므로 위치에는 영향이 없어야 한다(확인 포함). mm는 정답 최외곽 스팬=54mm 기준.",
+  "samples": 268,
+  "currentBias": 1.051,
+  "sweepGrid": [
+    0.98,
+    1.12
+  ],
+  "keyPoints": {
+    "bias1_000": {
+      "bias": 1.0,
+      "lengthAbsMm": 0.7586272013882289,
+      "lengthSignedPct": -1.0205946285648484,
+      "molarLengthAbsMm": 0.9530824981284939,
+      "positionMm": 2.2592862832473037
+    },
+    "bestByLengthAbs": {
+      "bias": 1.014,
+      "lengthAbsMm": 0.7529286632653205,
+      "lengthSignedPct": 0.36511704663524486,
+      "molarLengthAbsMm": 0.9437916947535557,
+      "positionMm": 2.2592862832473037
+    },
+    "zeroSignedBias": {
+      "bias": 1.01,
+      "lengthAbsMm": 0.7532493865169146,
+      "lengthSignedPct": -0.030800574850495966,
+      "molarLengthAbsMm": 0.9447129064145,
+      "positionMm": 2.2592862832473037
+    },
+    "current1_051": {
+      "bias": 1.05,
+      "lengthAbsMm": 0.7921414545553028,
+      "lengthSignedPct": 3.9283756400069114,
+      "molarLengthAbsMm": 0.9864657701581748,
+      "positionMm": 2.2592862832473037
+    }
+  },
+  "positionInvariance": {
+    "positionAtNeutral": 2.2592862832473037,
+    "positionAtCurrent": 2.2592862832473037,
+    "positionAtBest": 2.2592862832473037,
+    "verdict": "position unaffected by WIDTH_BIAS (as expected)"
+  },
+  "holdout": {
+    "foldBiases": [
+      1.014,
+      1.012,
+      1.01,
+      1.014,
+      1.016
+    ],
+    "biasSpread": 0.006000000000000005,
+    "holdoutVsCurrent": {
+      "old": 0.7942105210284462,
+      "new": 0.7541158423879076,
+      "improvementPct": 5.048369113597092,
+      "ci95": [
+        0.021116774341986593,
+        0.05942636079463566
+      ],
+      "significant": true,
+      "casesImproved": 154,
+      "casesWorsened": 114
+    },
+    "neutralVsCurrent": {
+      "old": 0.7942105210284462,
+      "new": 0.7586272013882289,
+      "improvementPct": 4.480338486845962,
+      "ci95": [
+        0.010126647391156197,
+        0.06173853422125476
+      ],
+      "significant": true,
+      "casesImproved": 148,
+      "casesWorsened": 120
+    }
+  },
+  "cohortDependence": {
+    "root": {
+      "cases": 83,
+      "bestBias": 0.98,
+      "lengthSignedPctAtCurrent": 10.391377031952084,
+      "lengthSignedPctAtNeutral": 5.034611828688952
+    },
+    "nonRoot": {
+      "cases": 185,
+      "bestBias": 1.03,
+      "lengthSignedPctAtCurrent": 1.1721451811317416,
+      "lengthSignedPctAtNeutral": -3.737254822900337
+    },
+    "biasGap": 0.050000000000000044,
+    "verdict": "best bias differs by cohort — a single global constant is a compromise"
+  },
+  "recommendation": {
+    "keepCurrent": false,
+    "suggestedBias": 1.013,
+    "expectedLengthGainPct": 5.048369113597092,
+    "rationale": "폴드별 train에서 뽑은 최적 배율을 test에 적용해 현행 1.051과 짝지어 비교. 유의한 개선이 없으면 현행 유지.",
+    "caveat": "WIDTH_BIAS는 길이만 바꾸고 위치(오차의 지배 성분)는 못 고친다. 코호트별 최적값이 갈리면 전역 상수는 타협값일 뿐이다."
+  }
+}

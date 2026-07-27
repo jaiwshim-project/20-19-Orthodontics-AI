@@ -58,3 +58,13 @@ EZ Curve*.bak-*
 03 AI 재학습/_old_engine_metrics.json
 03 AI 재학습/_molar_paired.json
 03 AI 재학습/.chrome-profile-*/
+
+# 규칙엔진 후보 A/B 예측 산출물(파일명 포함, 각 650KB) — 하네스로 재생성 가능, 커밋 제외
+03 AI 재학습/_cand_*.json
+03 AI 재학습/_prior_px_calib.json
+
+# WIDTH_BIAS 재교정 실구동 산출물(파일명 포함) — 하네스로 재생성 가능, 커밋 제외
+03 AI 재학습/_wb_*.json
+03 AI 재학습/_wb_*.csv
+03 AI 재학습/_wb_*.log
+03 AI 재학습/_sha__wb_*
