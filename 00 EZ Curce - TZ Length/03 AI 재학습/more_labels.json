@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "more-labels-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "이미 확보된 정답 중 학습에 들어가지 않는 부분(치아 12개 미만 주석 케이스)의 가치를 실측. 치아 단위 다단 KRR로 A(완전 주석만) vs B(A+부분 주석 치아)를 비교한다. 평가는 양쪽 모두 완전 주석 케이스의 그룹 5-fold OOF 예측이며 부분 주석 케이스는 train에만 들어간다. 하이퍼파라미터는 배포 모델 값으로 고정해 차이를 학습 데이터로만 한정했다. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, 짝지어 부트스트랩 5,000회, WIDTH_BIAS 1.013 적용.",
+  "inventory": {
+    "fullyAnnotatedCasesUsedNow": 268,
+    "partiallyAnnotatedCasesDiscardedNow": 31,
+    "salvageableToothTruths": 319,
+    "equivalentFullCases": 26.6,
+    "toothCoverageAmongPartialCases": {
+      "1": 31,
+      "2": 31,
+      "3": 31,
+      "4": 31,
+      "5": 31,
+      "6": 31,
+      "7": 31,
+      "8": 31,
+      "9": 31,
+      "10": 30,
+      "11": 9,
+      "12": 1
+    },
+    "ezSamplesUsedNow": 113,
+    "casesWithoutAnyEzTruth": 222
+  },
+  "variants": {
+    "ruleDraft": {
+      "positionMm": 3.518677943603976,
+      "molarPositionMm": 4.7740002734843925,
+      "terminalPositionMm": 5.065194555446875,
+      "lengthAbsMm": 0.9030043684259297,
+      "molarLengthAbsMm": 1.1188437426381692,
+      "tzlAbsErrorMm": 8.930166756409815
+    },
+    "A": {
+      "positionMm": 2.196920081269589,
+      "molarPositionMm": 2.770145427834713,
+      "terminalPositionMm": 2.9108056880134177,
+      "lengthAbsMm": 0.7453776994601049,
+      "molarLengthAbsMm": 0.9328078934246559,
+      "tzlAbsErrorMm": 5.692516347652897
+    },
+    "B": {
+      "positionMm": 2.4156714966099733,
+      "molarPositionMm": 2.86730340707025,
+      "terminalPositionMm": 2.9807526304497087,
+      "lengthAbsMm": 0.7574420618925742,
+      "molarLengthAbsMm": 0.919784272944251,
+      "tzlAbsErrorMm": 5.560604243391507
+    }
+  },
+  "bVersusA": {
+    "position": {
+      "old": 2.1969200812695884,
+      "new": 2.4156714966099733,
+      "improvementPct": -9.957185844191912,
+      "ci95": [
+        -0.2885477333726583,
+        -0.1511286380416549
+      ],
+      "significant": true,
+      "casesImproved": 87,
+      "casesWorsened": 167
+    },
+    "molarPosition": {
+      "old": 2.770145427834713,
+      "new": 2.86730340707025,
+      "improvementPct": -3.507324137544681,
+      "ci95": [
+        -0.16126560534474255,
+        -0.03255950006379923
+      ],
+      "significant": true,
+      "casesImproved": 103,
+      "casesWorsened": 151
+    },
+    "terminalPosition": {
+      "old": 2.9108056880134177,
+      "new": 2.9807526304497087,
+      "improvementPct": -2.4030096795650016,
+      "ci95": [
+        -0.13171664158468913,
+        -0.004739205427937734
+      ],
+      "significant": true,
+      "casesImproved": 113,
+      "casesWorsened": 141
+    },
+    "lengthAbs": {
+      "old": 0.7453776994601048,
+      "new": 0.7574420618925742,
+      "improvementPct": -1.6185569331102816,
+      "ci95": [
+        -0.023849587611151482,
+        0.001089890642874465
+      ],
+      "significant": false,
+      "casesImproved": 118,
+      "casesWorsened": 136
+    },
+    "molarLengthAbs": {
+      "old": 0.932807893424656,
+      "new": 0.9197842729442509,
+      "improvementPct": 1.3961739145013996,
+      "ci95": [
+        -0.004053854843523874,
+        0.030348171727480208
+      ],
+      "significant": false,
+      "casesImproved": 132,
+      "casesWorsened": 122
+    },
+    "tzlAbsError": {
+      "old": 5.692516347652897,
+      "new": 5.560604243391507,
+      "improvementPct": 2.3172898627823812,
+      "ci95": [
+        -0.05836463124185669,
+        0.33216806185786935
+      ],
+      "significant": false,
+      "casesImproved": 137,
+      "casesWorsened": 117
+    }
+  },
+  "perTooth": [
+    {
+      "toothNo": 1,
+      "addedTruths": 31,
+      "positionMmA": 2.893470937838811,
+      "positionMmB": 3.017344089675797,
+      "improvementPct": -4.281126525829544,
+      "significant": false
+    },
+    {
+      "toothNo": 2,
+      "addedTruths": 31,
+      "positionMmA": 2.622551407501351,
+      "positionMmB": 2.8035963026025303,
+      "improvementPct": -6.903387845261376,
+      "significant": true
+    },
+    {
+      "toothNo": 3,
+      "addedTruths": 31,
+      "positionMmA": 2.138468406229773,
+      "positionMmB": 2.3990026972281586,
+      "improvementPct": -12.18321908518259,
+      "significant": true
+    },
+    {
+      "toothNo": 4,
+      "addedTruths": 31,
+      "positionMmA": 1.9145307697731013,
+      "positionMmB": 2.1843011593008046,
+      "improvementPct": -14.090679229964783,
+      "significant": true
+    },
+    {
+      "toothNo": 5,
+      "addedTruths": 31,
+      "positionMmA": 1.802660112441997,
+      "positionMmB": 2.033069925583837,
+      "improvementPct": -12.78165592900995,
+      "significant": true
+    },
+    {
+      "toothNo": 6,
+      "addedTruths": 31,
+      "positionMmA": 1.6162139772234172,
+      "positionMmB": 1.8366292743872341,
+      "improvementPct": -13.637754670484936,
+      "significant": true
+    },
+    {
+      "toothNo": 7,
+      "addedTruths": 31,
+      "positionMmA": 1.690095842240157,
+      "positionMmB": 1.920100304279789,
+      "improvementPct": -13.608959698686077,
+      "significant": true
+    },
+    {
+      "toothNo": 8,
+      "addedTruths": 31,
+      "positionMmA": 1.9114301452361186,
+      "positionMmB": 2.1599636552216217,
+      "improvementPct": -13.002489816587136,
+      "significant": true
+    },
+    {
+      "toothNo": 9,
+      "addedTruths": 31,
+      "positionMmA": 2.0156790343581275,
+      "positionMmB": 2.367495174963167,
+      "improvementPct": -17.453976283335795,
+      "significant": true
+    },
+    {
+      "toothNo": 10,
+      "addedTruths": 30,
+      "positionMmA": 2.19338097639352,
+      "positionMmB": 2.618282140074065,
+      "improvementPct": -19.371972687535166,
+      "significant": true
+    },
+    {
+      "toothNo": 11,
+      "addedTruths": 9,
+      "positionMmA": 2.636418927810664,
+      "positionMmB": 2.7041120647790526,
+      "improvementPct": -2.567616862946839,
+      "significant": true
+    },
+    {
+      "toothNo": 12,
+      "addedTruths": 1,
+      "positionMmA": 2.9281404381880254,
+      "positionMmB": 2.944161171223621,
+      "improvementPct": -0.5471299404447054,
+      "significant": false
+    }
+  ],
+  "gateRejections": {
+    "A": 192,
+    "B": 181
+  },
+  "verdict": {
+    "significantGains": [],
+    "significantRegressions": [
+      "position",
+      "molarPosition",
+      "terminalPosition"
+    ],
+    "worthAdopting": false,
+    "conclusion": "부분 주석 라벨을 살려도 유의한 개선이 없다 — 이미 확보된 폭 정답은 사실상 소진 상태이며, 추가 이득은 다른 종류의 라벨(EZ)에서 와야 한다."
+  }
+}

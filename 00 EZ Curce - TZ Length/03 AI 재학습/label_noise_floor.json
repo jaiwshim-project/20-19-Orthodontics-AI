@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "label-noise-floor-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "같은 이미지의 폭 주석 2개 이상을 이용해 정답의 재현오차를 재고, 3단계 OOF 오차와 비교한다. mm는 정답 최외곽 스팬=54mm, 픽셀 등방 공간. 재현오차는 공통 편향을 잡지 못하며, 재주석 케이스는 어려운 쪽으로 치우쳤을 수 있어 하한을 과대추정할 수 있다.",
+  "labelNoise": {
+    "multiAnnotatedCases": 53,
+    "annotationPairs": 55,
+    "betweenAnnotationPositionMm": 0.4741873464859367,
+    "betweenAnnotationPositionMolarMm": 0.7305790387553028,
+    "betweenAnnotationLengthMm": 0.4464493326333134,
+    "betweenAnnotationTzlMm": 4.820446939684618,
+    "toConsensusPositionMm": 0.23943419162958485,
+    "toConsensusPositionMolarMm": 0.37049373200985825,
+    "toConsensusLengthMm": 0.24973645583146692,
+    "toConsensusTzlMm": 2.6408714200416834
+  },
+  "modelError": {
+    "oofPositionMmAllCases": 2.196920081269588,
+    "oofPositionMmMultiAnnotatedOnly": 2.304401357470712,
+    "oofPositionMolarMmMultiAnnotatedOnly": 2.752063155477866,
+    "oofLengthMmAllCases": 0.7453776994601062,
+    "oofLengthMmMultiAnnotatedOnly": 0.736251279212489,
+    "oofTzlMmMultiAnnotatedOnly": 5.216670122196116
+  },
+  "errorOverNoiseRatio": {
+    "positionErrorOverLabelNoise": 9.62,
+    "molarPositionErrorOverLabelNoise": 7.43,
+    "lengthErrorOverLabelNoise": 2.95,
+    "tzlErrorOverLabelNoise": 1.98
+  },
+  "verdict": {
+    "modelIsAtLabelNoiseFloor": false,
+    "tzlIsNearLabelNoiseFloor": true,
+    "tzlNote": "TZL 총합은 다르다. 같은 이미지에 두 번 주석하면 총합이 서로 4.82mm(합의값 대비 2.64mm) 흔들리는데, 모델 오차는 5.22mm로 1.98배에 불과하다. TZL 정확도를 더 올리려면 학습량이 아니라 **주석 규약의 일관성**을 먼저 잡아야 한다 — 정답이 흔들리는 폭만큼은 어떤 모델도 맞출 수 없다.",
+    "conclusion": "모델 위치오차가 라벨 재현오차의 9.62배다. 아직 바닥보다 충분히 크다 — 원리적으로는 배울 여지가 남아 있지만, 그 여지가 '기존 특징으로 회수 가능한가'는 별개 문제다."
+  }
+}

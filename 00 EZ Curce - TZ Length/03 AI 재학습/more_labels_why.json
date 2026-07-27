@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "more-labels-why-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "부분 주석 라벨 추가가 악화를 낸 원인 분리. H1=적합 교란(표준화·gamma·게이트가 행 추가로 흔들림), H2=라벨 규약 불일치(치아 번호 밀림). C는 커널 기하를 완전 주석 집합에서 고정하고 alpha 해에만 추가 정답을 참여시킨 변형이다. 평가는 A와 동일한 그룹 5-fold OOF, 픽셀 등방, mm=최외곽 스팬 54mm.",
+  "h2NumberingAlignment": {
+    "comparableFullCases": 268,
+    "comparablePartialCases": 30,
+    "meanAbsoluteZByAssumedShift": {
+      "-2": 3.084,
+      "-1": 2.231,
+      "0": 1.164,
+      "1": 1.103,
+      "2": 1.447
+    },
+    "bestShift": 1,
+    "numberingLikelyShifted": true,
+    "interpretation": "치아 번호가 밀려 있다 — 이 라벨은 그대로 쓰면 안 된다."
+  },
+  "h1FrozenKernel": {
+    "variants": {
+      "A": {
+        "positionMm": 2.196920081269589,
+        "molarPositionMm": 2.770145427834713,
+        "terminalPositionMm": 2.9108056880134177,
+        "lengthAbsMm": 0.7453776994601049,
+        "molarLengthAbsMm": 0.9328078934246559,
+        "tzlAbsErrorMm": 5.692516347652897
+      },
+      "C": {
+        "positionMm": 2.409008467089054,
+        "molarPositionMm": 2.8560622170605967,
+        "terminalPositionMm": 2.9689836166607035,
+        "lengthAbsMm": 0.7562212194186227,
+        "molarLengthAbsMm": 0.9190507370508396,
+        "tzlAbsErrorMm": 5.539080602330872
+      }
+    },
+    "cVersusA": {
+      "position": {
+        "old": 2.1969200812695884,
+        "new": 2.4090084670890546,
+        "improvementPct": -9.653896271770682,
+        "ci95": [
+          -0.27996808412134044,
+          -0.1453460762792841
+        ],
+        "significant": true,
+        "casesImproved": 86,
+        "casesWorsened": 168
+      },
+      "molarPosition": {
+        "old": 2.770145427834713,
+        "new": 2.8560622170605967,
+        "improvementPct": -3.101526308423483,
+        "ci95": [
+          -0.14637840659635176,
+          -0.025459551396618846
+        ],
+        "significant": true,
+        "casesImproved": 105,
+        "casesWorsened": 149
+      },
+      "lengthAbs": {
+        "old": 0.7453776994601048,
+        "new": 0.7562212194186227,
+        "improvementPct": -1.4547684974171056,
+        "ci95": [
+          -0.022441803376310014,
+          0.002217773733680461
+        ],
+        "significant": false,
+        "casesImproved": 118,
+        "casesWorsened": 136
+      },
+      "tzlAbsError": {
+        "old": 5.692516347652897,
+        "new": 5.539080602330872,
+        "improvementPct": 2.695394021754353,
+        "ci95": [
+          -0.037019405460305105,
+          0.3521157231120877
+        ],
+        "significant": false,
+        "casesImproved": 137,
+        "casesWorsened": 117
+      }
+    },
+    "recoveredByFreezing": false,
+    "interpretation": "커널 기하를 고정해도 도움이 없다 — 추가 정답 자체에 얻을 정보가 없다."
+  },
+  "verdict": {
+    "moreTrainingOnExistingWidthTruthHelps": false
+  }
+}

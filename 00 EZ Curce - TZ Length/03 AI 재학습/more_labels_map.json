@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "more-labels-map-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "10개만 주석된 케이스의 번호 1~10이 정본 12개 중 어느 자리인지 추정. 단조 10-of-12 매핑 66가지를 상대폭 z 적합도로 비교. 상대폭은 조합별 스팬으로 재정규화해 공정 비교. 통계적 추정이며 사람 확인이 필요하다.",
+  "tenToothCasesCompared": 21,
+  "bestFit": {
+    "missingTeeth": [
+      6,
+      7
+    ],
+    "meanAbsoluteZ": 0.25028040455226463,
+    "maxAbsoluteZ": 0.4828741484385212
+  },
+  "currentImplicitAssumption": {
+    "missingTeeth": [
+      11,
+      12
+    ],
+    "meanAbsoluteZ": 1.4011180135150805,
+    "maxAbsoluteZ": 4.911780564543362
+  },
+  "topCandidates": [
+    {
+      "missingTeeth": [
+        6,
+        7
+      ],
+      "meanAbsoluteZ": 0.25028040455226463,
+      "maxAbsoluteZ": 0.4828741484385212
+    },
+    {
+      "missingTeeth": [
+        5,
+        6
+      ],
+      "meanAbsoluteZ": 0.33403481530335155,
+      "maxAbsoluteZ": 1.0274420076421393
+    },
+    {
+      "missingTeeth": [
+        5,
+        7
+      ],
+      "meanAbsoluteZ": 0.33964682606037067,
+      "maxAbsoluteZ": 1.0835621152123305
+    },
+    {
+      "missingTeeth": [
+        2,
+        6
+      ],
+      "meanAbsoluteZ": 0.3437315726163377,
+      "maxAbsoluteZ": 1.0274420076421393
+    },
+    {
+      "missingTeeth": [
+        3,
+        6
+      ],
+      "meanAbsoluteZ": 0.34502839910137373,
+      "maxAbsoluteZ": 1.0274420076421393
+    }
+  ],
+  "worstCandidate": {
+    "missingTeeth": [
+      11,
+      12
+    ],
+    "meanAbsoluteZ": 1.4011180135150805,
+    "maxAbsoluteZ": 4.911780564543362
+  },
+  "conclusion": "가장 잘 맞는 해석은 정본 치아 [6, 7]가 빠진 배열(z=0.250)이다. 반면 지금 코드가 암묵적으로 가정하는 '11·12번이 빠졌다'는 z=1.401로 더 나쁘다 — 번호를 그대로 믿고 학습하면 다른 치아의 정답을 배우게 된다."
+}

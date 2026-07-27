@@ -1,0 +1,391 @@
+{
+  "schemaVersion": "grid-edge-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "배포 하이퍼파라미터가 탐색 격자 경계(gammaFactor 4.0, lambda 1.0)에 붙어 있어, 격자를 위아래로 넓히면 남은 여력이 있는지 확인. 선택은 폴드 train 내부 CV에서만 수행. 시드 4종 전부 재현되는지까지 본다. 픽셀 등방, mm=최외곽 스팬 54mm, 짝지어 부트스트랩 5,000회, WIDTH_BIAS 1.013.",
+  "grids": {
+    "narrow": {
+      "gammaFactors": [
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0
+      ],
+      "lambdas": [
+        0.0001,
+        0.001,
+        0.01,
+        0.1,
+        1.0
+      ]
+    },
+    "wide": {
+      "gammaFactors": [
+        0.0625,
+        0.125,
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        8.0,
+        16.0
+      ],
+      "lambdas": [
+        1e-05,
+        0.0001,
+        0.001,
+        0.01,
+        0.1,
+        1.0,
+        10.0,
+        100.0
+      ]
+    }
+  },
+  "edgeSelectionRate": {
+    "narrow": 1.0,
+    "wide": 0.233
+  },
+  "wideChoicesOutsideNarrowGridTotal": 40,
+  "perSeed": [
+    {
+      "seed": 20260711,
+      "comparison": {
+        "position": {
+          "old": 2.2038874330776625,
+          "new": 2.2257841876972346,
+          "improvementPct": -0.9935514078862876,
+          "ci95": [
+            -0.03804357632902374,
+            -0.005578917907649155
+          ],
+          "significant": true,
+          "casesImproved": 105,
+          "casesWorsened": 147
+        },
+        "molarPosition": {
+          "old": 2.781115693483299,
+          "new": 2.8500532893797734,
+          "improvementPct": -2.478774833352268,
+          "ci95": [
+            -0.10118042037496794,
+            -0.03659453993273643
+          ],
+          "significant": true,
+          "casesImproved": 93,
+          "casesWorsened": 159
+        },
+        "terminalPosition": {
+          "old": 2.918750137250826,
+          "new": 3.0021659939940912,
+          "improvementPct": -2.857930717626783,
+          "ci95": [
+            -0.12103548830892995,
+            -0.04595398839584505
+          ],
+          "significant": true,
+          "casesImproved": 91,
+          "casesWorsened": 161
+        },
+        "lengthAbs": {
+          "old": 0.7488621475016344,
+          "new": 0.7428690393751737,
+          "improvementPct": 0.800295240780296,
+          "ci95": [
+            -0.0017534258340756947,
+            0.01390062385796229
+          ],
+          "significant": false,
+          "casesImproved": 137,
+          "casesWorsened": 115
+        },
+        "tzlAbsError": {
+          "old": 5.731757426177522,
+          "new": 5.791769749576674,
+          "improvementPct": -1.0470143611638183,
+          "ci95": [
+            -0.1736502008264839,
+            0.0612321339595927
+          ],
+          "significant": false,
+          "casesImproved": 117,
+          "casesWorsened": 135
+        }
+      },
+      "wideChoicesOutsideNarrowGrid": 10
+    },
+    {
+      "seed": 20260712,
+      "comparison": {
+        "position": {
+          "old": 2.2026444834308943,
+          "new": 2.216600320621851,
+          "improvementPct": -0.6335946311780083,
+          "ci95": [
+            -0.032932701495106534,
+            0.004620419681946219
+          ],
+          "significant": false,
+          "casesImproved": 120,
+          "casesWorsened": 132
+        },
+        "molarPosition": {
+          "old": 2.7727238762487856,
+          "new": 2.8308948197390427,
+          "improvementPct": -2.097971023676417,
+          "ci95": [
+            -0.09529297145005236,
+            -0.022569734955497276
+          ],
+          "significant": true,
+          "casesImproved": 102,
+          "casesWorsened": 150
+        },
+        "terminalPosition": {
+          "old": 2.909384974260256,
+          "new": 2.987478578310947,
+          "improvementPct": -2.6841963075219,
+          "ci95": [
+            -0.11995483781425582,
+            -0.036219633704242866
+          ],
+          "significant": true,
+          "casesImproved": 97,
+          "casesWorsened": 155
+        },
+        "lengthAbs": {
+          "old": 0.7527654254479823,
+          "new": 0.7473379920473323,
+          "improvementPct": 0.7209992936936557,
+          "ci95": [
+            -0.0023345310341923,
+            0.0130368581651634
+          ],
+          "significant": false,
+          "casesImproved": 137,
+          "casesWorsened": 115
+        },
+        "tzlAbsError": {
+          "old": 5.785155150552003,
+          "new": 5.875477503337218,
+          "improvementPct": -1.5612779680869324,
+          "ci95": [
+            -0.21166758277331524,
+            0.03492408190726681
+          ],
+          "significant": false,
+          "casesImproved": 119,
+          "casesWorsened": 133
+        }
+      },
+      "wideChoicesOutsideNarrowGrid": 10
+    },
+    {
+      "seed": 20260713,
+      "comparison": {
+        "position": {
+          "old": 2.1844537772065666,
+          "new": 2.2118923821054395,
+          "improvementPct": -1.2560853969618324,
+          "ci95": [
+            -0.0460805232571783,
+            -0.00970175588388041
+          ],
+          "significant": true,
+          "casesImproved": 127,
+          "casesWorsened": 130
+        },
+        "molarPosition": {
+          "old": 2.7536850544062323,
+          "new": 2.843546790688412,
+          "improvementPct": -3.2633265789923898,
+          "ci95": [
+            -0.127970367554956,
+            -0.051997489225237684
+          ],
+          "significant": true,
+          "casesImproved": 114,
+          "casesWorsened": 143
+        },
+        "terminalPosition": {
+          "old": 2.887432976920035,
+          "new": 3.0044511097191506,
+          "improvementPct": -4.052670096049688,
+          "ci95": [
+            -0.16213078198032302,
+            -0.07263393652232035
+          ],
+          "significant": true,
+          "casesImproved": 102,
+          "casesWorsened": 155
+        },
+        "lengthAbs": {
+          "old": 0.7452919029663304,
+          "new": 0.7400783790152997,
+          "improvementPct": 0.6995277863989118,
+          "ci95": [
+            -0.002603969330759687,
+            0.01288114127208094
+          ],
+          "significant": false,
+          "casesImproved": 142,
+          "casesWorsened": 115
+        },
+        "tzlAbsError": {
+          "old": 5.6298152802162065,
+          "new": 5.764176514743156,
+          "improvementPct": -2.386601119917902,
+          "ci95": [
+            -0.256570327985883,
+            -0.010165932385342344
+          ],
+          "significant": true,
+          "casesImproved": 122,
+          "casesWorsened": 135
+        }
+      },
+      "wideChoicesOutsideNarrowGrid": 10
+    },
+    {
+      "seed": 20260714,
+      "comparison": {
+        "position": {
+          "old": 2.2179043150630573,
+          "new": 2.242328607935131,
+          "improvementPct": -1.101232938959275,
+          "ci95": [
+            -0.0447203865033826,
+            -0.005258593354429944
+          ],
+          "significant": true,
+          "casesImproved": 113,
+          "casesWorsened": 137
+        },
+        "molarPosition": {
+          "old": 2.7754649952285697,
+          "new": 2.869545686518841,
+          "improvementPct": -3.3897271791216843,
+          "ci95": [
+            -0.1337070932057621,
+            -0.05620841244813759
+          ],
+          "significant": true,
+          "casesImproved": 97,
+          "casesWorsened": 153
+        },
+        "terminalPosition": {
+          "old": 2.9171860274352466,
+          "new": 3.040987775363155,
+          "improvementPct": -4.243875665233228,
+          "ci95": [
+            -0.17044898373693107,
+            -0.07882090458261115
+          ],
+          "significant": true,
+          "casesImproved": 93,
+          "casesWorsened": 157
+        },
+        "lengthAbs": {
+          "old": 0.7502933710401057,
+          "new": 0.7455612172892677,
+          "improvementPct": 0.6307071251713178,
+          "ci95": [
+            -0.0035152492941309173,
+            0.012896556348693326
+          ],
+          "significant": false,
+          "casesImproved": 138,
+          "casesWorsened": 112
+        },
+        "tzlAbsError": {
+          "old": 5.696549591407802,
+          "new": 5.855157220164073,
+          "improvementPct": -2.784275397084253,
+          "ci95": [
+            -0.28799802532551577,
+            -0.023528548480700805
+          ],
+          "significant": true,
+          "casesImproved": 112,
+          "casesWorsened": 138
+        }
+      },
+      "wideChoicesOutsideNarrowGrid": 10
+    }
+  ],
+  "summary": {
+    "position": {
+      "improvementPctBySeed": [
+        -0.99,
+        -0.63,
+        -1.26,
+        -1.1
+      ],
+      "meanImprovementPct": -1.0,
+      "seedsImproved": 0,
+      "seedsWorsened": 3
+    },
+    "molarPosition": {
+      "improvementPctBySeed": [
+        -2.48,
+        -2.1,
+        -3.26,
+        -3.39
+      ],
+      "meanImprovementPct": -2.81,
+      "seedsImproved": 0,
+      "seedsWorsened": 4
+    },
+    "terminalPosition": {
+      "improvementPctBySeed": [
+        -2.86,
+        -2.68,
+        -4.05,
+        -4.24
+      ],
+      "meanImprovementPct": -3.46,
+      "seedsImproved": 0,
+      "seedsWorsened": 4
+    },
+    "lengthAbs": {
+      "improvementPctBySeed": [
+        0.8,
+        0.72,
+        0.7,
+        0.63
+      ],
+      "meanImprovementPct": 0.71,
+      "seedsImproved": 0,
+      "seedsWorsened": 0
+    },
+    "tzlAbsError": {
+      "improvementPctBySeed": [
+        -1.05,
+        -1.56,
+        -2.39,
+        -2.78
+      ],
+      "meanImprovementPct": -1.94,
+      "seedsImproved": 0,
+      "seedsWorsened": 2
+    }
+  },
+  "verdict": {
+    "consistentGains": [],
+    "anySeedWorsened": [
+      "position",
+      "molarPosition",
+      "terminalPosition",
+      "tzlAbsError"
+    ],
+    "worthAdopting": false,
+    "conclusion": "격자 확장은 재현되는 개선을 주지 않는다 — 현행 격자가 병목이 아니다."
+  }
+}
