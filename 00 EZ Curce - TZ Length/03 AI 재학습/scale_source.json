@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "scale-source-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "TZL 오차 중 '스케일' 성분이 정의 불일치(상수로 회수 가능)인지 케이스별 추정 실패(검출 개선 필요)인지 판별. 전역 상수는 폴드별 train 중앙값을 test에 적용해 홀드아웃 평가. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm.",
+  "samples": 268,
+  "requiredFactor": {
+    "all": {
+      "cases": 268,
+      "meanFactor": 1.0033291667432567,
+      "medianFactor": 0.9966746119527599,
+      "sdFactor": 0.06228826527600579,
+      "coefficientOfVariationPct": 6.208158532676727,
+      "p05": 0.9168681038164832,
+      "p95": 1.1155134289715438,
+      "shareWithin2Pct": 31.343283582089555,
+      "shareOver5Pct": 38.43283582089552
+    },
+    "root": {
+      "cases": 83,
+      "meanFactor": 0.9835883003336496,
+      "medianFactor": 0.9830927312112574,
+      "sdFactor": 0.049816550795151564,
+      "coefficientOfVariationPct": 5.064776673152065,
+      "p05": 0.9160275194191206,
+      "p95": 1.0566745731522948,
+      "shareWithin2Pct": 34.93975903614458,
+      "shareOver5Pct": 28.915662650602407
+    },
+    "nonRoot": {
+      "cases": 185,
+      "meanFactor": 1.0121858797810803,
+      "medianFactor": 1.0069185424562084,
+      "sdFactor": 0.065340192324749,
+      "coefficientOfVariationPct": 6.455355051868638,
+      "p05": 0.9187244465544419,
+      "p95": 1.1314738880695272,
+      "shareWithin2Pct": 29.72972972972973,
+      "shareOver5Pct": 42.7027027027027
+    }
+  },
+  "holdoutGlobalConstant": {
+    "foldConstants": [
+      0.9946,
+      0.9954,
+      1.0004,
+      1.002,
+      0.9954
+    ],
+    "constantSpread": 0.007399999999999962,
+    "tzlAbsError": {
+      "old": 5.877856524392786,
+      "new": 5.918960187036258,
+      "improvementPct": -0.6992968010174158,
+      "ci95": [
+        -0.08585452893181955,
+        0.005294043480616341
+      ],
+      "significant": false,
+      "casesImproved": 125,
+      "casesWorsened": 143
+    }
+  },
+  "oracleCaseWise": {
+    "tzlAbsError": {
+      "old": 5.877856524392786,
+      "new": 5.4641992184316805,
+      "improvementPct": 7.037553642972565,
+      "ci95": [
+        -0.13220857639752784,
+        0.9597197584760059
+      ],
+      "significant": false,
+      "casesImproved": 140,
+      "casesWorsened": 128
+    }
+  },
+  "recoveredByConstantPct": -9.936646120143,
+  "verdict": {
+    "systematicBiasPct": 0.3329166743256673,
+    "caseVariationPct": 6.208158532676727,
+    "dominantComponent": "case-wise estimation",
+    "conclusion": "스케일 여력의 대부분은 케이스별 아치 끝점 검출 오차다. 전역 상수로는 오라클 대비 -10%만 회수된다. 상수 보정이 아니라 끝점 검출/정합 개선 또는 스케일 예측 항이 필요하다."
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "label-need-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "픽셀 등방 공간 학습곡선에서 필요 라벨 수를 역산. train 파티션을 그룹 단위로 subsample하고 동일 test 폴드로 2단계 OOF 평가. width에는 현행 WIDTH_BIAS 1.013을 적용해 사용자가 보는 값 기준으로 잰다. mm는 정답 최외곽 스팬=54mm (EZ는 앱과 동일하게 EZ 양끝 현=54mm). 외삽은 오차~N^slope 가정이며 라벨 관습이 균일하다는 전제가 필요하다.",
+  "config": {
+    "stages": 2,
+    "perStageCap": 0.05,
+    "cumulativeCap": 0.1,
+    "folds": 5,
+    "fractions": [
+      0.4,
+      0.55,
+      0.7,
+      0.85,
+      1.0
+    ],
+    "subsampleSeeds": [
+      11,
+      23
+    ],
+    "widthBias": 1.013
+  },
+  "curves": {
+    "width": [
+      {
+        "positionMm": 2.436255731512138,
+        "molarPositionMm": 3.1224854320261413,
+        "lengthAbsMm": 0.8139534183693484,
+        "tzlAbsErrorMm": 6.146393047286912,
+        "meanTrainSamples": 86.0,
+        "fraction": 0.4
+      },
+      {
+        "positionMm": 2.404477886970385,
+        "molarPositionMm": 3.1021304665840543,
+        "lengthAbsMm": 0.8075268069086408,
+        "tzlAbsErrorMm": 6.313675246701525,
+        "meanTrainSamples": 118.0,
+        "fraction": 0.55
+      },
+      {
+        "positionMm": 2.2907807055843454,
+        "molarPositionMm": 2.935506441145808,
+        "lengthAbsMm": 0.7879583342874757,
+        "tzlAbsErrorMm": 5.987757662980733,
+        "meanTrainSamples": 150.0,
+        "fraction": 0.7
+      },
+      {
+        "positionMm": 2.3067245292180623,
+        "molarPositionMm": 2.9724542382256,
+        "lengthAbsMm": 0.7586187618042881,
+        "tzlAbsErrorMm": 5.868026996207821,
+        "meanTrainSamples": 182.4,
+        "fraction": 0.85
+      },
+      {
+        "positionMm": 2.2592862832473033,
+        "molarPositionMm": 2.9173965608979,
+        "lengthAbsMm": 0.7529013138047004,
+        "tzlAbsErrorMm": 5.877856524392784,
+        "meanTrainSamples": 214.4,
+        "fraction": 1.0
+      }
+    ],
+    "widthRootCohort": [
+      {
+        "positionMm": 2.416569365339914,
+        "molarPositionMm": 3.0499519933394548,
+        "lengthAbsMm": 0.8146146714305083,
+        "tzlAbsErrorMm": 5.644893030968917,
+        "meanTrainSamples": 86.0
+      },
+      {
+        "positionMm": 2.421533756862712,
+        "molarPositionMm": 3.0700071839449894,
+        "lengthAbsMm": 0.8008532985575814,
+        "tzlAbsErrorMm": 5.853602857500841,
+        "meanTrainSamples": 118.0
+      },
+      {
+        "positionMm": 2.312371210592215,
+        "molarPositionMm": 2.9552367229602154,
+        "lengthAbsMm": 0.7754372955716066,
+        "tzlAbsErrorMm": 5.542403119443563,
+        "meanTrainSamples": 150.0
+      },
+      {
+        "positionMm": 2.307449636942982,
+        "molarPositionMm": 2.960993187526766,
+        "lengthAbsMm": 0.7436464902896942,
+        "tzlAbsErrorMm": 5.281876049036205,
+        "meanTrainSamples": 182.4
+      },
+      {
+        "positionMm": 2.236316261128762,
+        "molarPositionMm": 2.8653798936380697,
+        "lengthAbsMm": 0.7345026115959842,
+        "tzlAbsErrorMm": 5.2284753263897965,
+        "meanTrainSamples": 214.4
+      }
+    ],
+    "ez": [
+      {
+        "pointMm": 2.925365675453695,
+        "ezlAbsErrorMm": 5.944401112020289,
+        "meanTrainSamples": 36.0,
+        "fraction": 0.4
+      },
+      {
+        "pointMm": 2.7511231973700125,
+        "ezlAbsErrorMm": 5.828090463508628,
+        "meanTrainSamples": 50.0,
+        "fraction": 0.55
+      },
+      {
+        "pointMm": 2.6223943152587132,
+        "ezlAbsErrorMm": 5.476921663503678,
+        "meanTrainSamples": 63.4,
+        "fraction": 0.7
+      },
+      {
+        "pointMm": 2.5537320407691624,
+        "ezlAbsErrorMm": 5.344032872741003,
+        "meanTrainSamples": 76.4,
+        "fraction": 0.85
+      },
+      {
+        "pointMm": 2.4803913645068074,
+        "ezlAbsErrorMm": 5.374951881012648,
+        "meanTrainSamples": 90.4,
+        "fraction": 1.0
+      }
+    ]
+  },
+  "analysis": {
+    "width": {
+      "positionMm": {
+        "slope": -0.08529784820038203,
+        "currentMm": 2.2592862832473033,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 1.772120688069756,
+          "100": 3.212656255746149,
+          "200": 5.465967185309728,
+          "500": 9.75702724399168
+        },
+        "targets": [
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 895,
+            "additionalLabels": 681,
+            "feasible": true
+          },
+          {
+            "targetMm": 1.5,
+            "requiredTotalSamples": 26099,
+            "additionalLabels": 25885,
+            "feasible": false
+          }
+        ]
+      },
+      "molarPositionMm": {
+        "slope": -0.07938154110914991,
+        "currentMm": 2.9173965608979,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 1.65022541749007,
+          "100": 2.9931945287831607,
+          "200": 5.096680664341491,
+          "500": 9.112125828431516
+        },
+        "targets": [
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 24932,
+            "additionalLabels": 24718,
+            "feasible": false
+          },
+          {
+            "targetMm": 1.5,
+            "requiredTotalSamples": 934680,
+            "additionalLabels": 934466,
+            "feasible": false
+          }
+        ]
+      },
+      "lengthAbsMm": {
+        "slope": -0.09387104371236554,
+        "currentMm": 0.7529013138047004,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 1.9484885166237143,
+          "100": 3.5297928938043843,
+          "200": 5.998544136132611,
+          "500": 10.683429079209494
+        },
+        "targets": []
+      },
+      "tzlAbsErrorMm": {
+        "slope": -0.06883128685765239,
+        "currentMm": 5.877856524392784,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 1.4324801802795162,
+          "100": 2.6006037821924677,
+          "200": 4.434566929852412,
+          "500": 7.950647205464733
+        },
+        "targets": [
+          {
+            "targetMm": 3.0,
+            "requiredTotalSamples": 3757521,
+            "additionalLabels": 3757307,
+            "feasible": false
+          },
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 1358951745,
+            "additionalLabels": 1358951531,
+            "feasible": false
+          }
+        ]
+      }
+    },
+    "widthRootCohort": {
+      "positionMm": {
+        "slope": -0.08692521092273346,
+        "currentMm": 2.236316261128762,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 1.805623179891358,
+          "100": 3.2729351483073432,
+          "200": 5.567292363653298,
+          "500": 9.93361253940498
+        },
+        "targets": [
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 775,
+            "additionalLabels": 560,
+            "feasible": true
+          },
+          {
+            "targetMm": 1.5,
+            "requiredTotalSamples": 21209,
+            "additionalLabels": 20995,
+            "feasible": false
+          }
+        ]
+      },
+      "tzlAbsErrorMm": {
+        "slope": -0.10590103713388369,
+        "currentMm": 5.2284753263897965,
+        "currentTrainSamples": 214.4,
+        "gainPctFor": {
+          "50": 2.1954358060593315,
+          "100": 3.973050859299998,
+          "200": 6.7408063010543255,
+          "500": 11.967352498201523
+        },
+        "targets": [
+          {
+            "targetMm": 3.0,
+            "requiredTotalSamples": 40675,
+            "additionalLabels": 40461,
+            "feasible": false
+          },
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 1871206,
+            "additionalLabels": 1870992,
+            "feasible": false
+          }
+        ]
+      }
+    },
+    "ez": {
+      "pointMm": {
+        "slope": -0.17956750558245588,
+        "currentMm": 2.4803913645068074,
+        "currentTrainSamples": 90.4,
+        "gainPctFor": {
+          "50": 7.60107246372328,
+          "100": 12.519717092426564,
+          "200": 18.905737658790155,
+          "500": 28.606865809499084
+        },
+        "targets": []
+      },
+      "ezlAbsErrorMm": {
+        "slope": -0.1281176158846149,
+        "currentMm": 5.374951881012648,
+        "currentTrainSamples": 90.4,
+        "gainPctFor": {
+          "50": 5.484272544356283,
+          "100": 9.102038926492906,
+          "200": 13.88746352492085,
+          "500": 21.370236012597644
+        },
+        "targets": [
+          {
+            "targetMm": 3.0,
+            "requiredTotalSamples": 8568,
+            "additionalLabels": 8478,
+            "feasible": false
+          },
+          {
+            "targetMm": 2.0,
+            "requiredTotalSamples": 202929,
+            "additionalLabels": 202838,
+            "feasible": false
+          }
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "widthSlopePosition": -0.08529784820038203,
+    "ezSlopeEzl": -0.1281176158846149,
+    "widthGainPer100": 3.212656255746149,
+    "ezGainPer100": 9.102038926492906,
+    "perLabelValueRatio_ezOverWidth": 2.8331817044581165,
+    "verdict": "EZ 라벨이 라벨 1건당 가치가 더 크다"
+  }
+}

@@ -1,0 +1,556 @@
+{
+  "schemaVersion": "scale-learn-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "케이스별 등방 배율(스칼라 1개)을 기존 특징으로 예측해 오라클 여력을 실제로 회수할 수 있는지 측정. 그룹 5-fold OOF, 하이퍼파라미터는 train 안쪽 CV로만 선택. cap은 예측 배율의 최대 허용 편차. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, WIDTH_BIAS 1.013 적용.",
+  "samples": 268,
+  "oracleFactor": {
+    "mean": 1.0035196973827039,
+    "sd": 0.06029602400633032,
+    "p05": 0.9021535195281734,
+    "p95": 1.0987678342393352
+  },
+  "logFactorCorrelation": {
+    "ridge": {
+      "pearsonR": -0.07839852002587609,
+      "r2": 0.006146327942247695,
+      "mae": 0.057547829175802964,
+      "maeOfConstant": 0.048806846990801234,
+      "chosenHyperparameters": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "krr": {
+      "pearsonR": 0.0284864664789455,
+      "r2": 0.0008114787724560857,
+      "mae": 0.04820011115620296,
+      "maeOfConstant": 0.048806846990801234,
+      "chosenHyperparameters": [
+        [
+          1.0,
+          0.05
+        ],
+        [
+          1.0,
+          0.05
+        ],
+        [
+          1.0,
+          0.05
+        ],
+        [
+          1.0,
+          0.05
+        ],
+        [
+          3.0,
+          0.1
+        ]
+      ]
+    }
+  },
+  "baseline": {
+    "positionMm": 2.2592862832473033,
+    "molarPositionMm": 2.9173965608979,
+    "lengthAbsMm": 0.7529013138047004,
+    "tzlAbsErrorMm": 5.877856524392784
+  },
+  "variants": {
+    "oracle@cap0.02": {
+      "positionMm": 2.1756802626226075,
+      "molarPositionMm": 2.7066343081391464,
+      "lengthAbsMm": 0.7176907010689065,
+      "tzlAbsErrorMm": 5.0696001284300465,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.0696001284300465,
+        "improvementPct": 13.750869770442975,
+        "ci95": [
+          0.6252816563007505,
+          0.9859182952307399
+        ],
+        "significant": true,
+        "casesImproved": 188,
+        "casesWorsened": 80
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.1756802626226075,
+        "improvementPct": 3.700550091621349,
+        "ci95": [
+          0.07358207211216136,
+          0.09313703223362399
+        ],
+        "significant": true,
+        "casesImproved": 225,
+        "casesWorsened": 43
+      }
+    },
+    "oracle@cap0.04": {
+      "positionMm": 2.1328167605825863,
+      "molarPositionMm": 2.563720978802908,
+      "lengthAbsMm": 0.701601875964373,
+      "tzlAbsErrorMm": 4.617957094247984,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.617957094247984,
+        "improvementPct": 21.4346747818067,
+        "ci95": [
+          0.9388412331401078,
+          1.5758343164881783
+        ],
+        "significant": true,
+        "casesImproved": 180,
+        "casesWorsened": 88
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.1328167605825863,
+        "improvementPct": 5.597764373753531,
+        "ci95": [
+          0.1089523449681145,
+          0.14353966785808647
+        ],
+        "significant": true,
+        "casesImproved": 217,
+        "casesWorsened": 51
+      }
+    },
+    "oracle@cap0.06": {
+      "positionMm": 2.1121161433995175,
+      "molarPositionMm": 2.472486371204099,
+      "lengthAbsMm": 0.697597198434488,
+      "tzlAbsErrorMm": 4.462056789768222,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.462056789768222,
+        "improvementPct": 24.087007376737933,
+        "ci95": [
+          0.9961767587673845,
+          1.8331696057958722
+        ],
+        "significant": true,
+        "casesImproved": 175,
+        "casesWorsened": 93
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.112116143399518,
+        "improvementPct": 6.5140102402718325,
+        "ci95": [
+          0.12498673040871547,
+          0.1695552660825222
+        ],
+        "significant": true,
+        "casesImproved": 214,
+        "casesWorsened": 54
+      }
+    },
+    "oracle@capnone": {
+      "positionMm": 2.10413783782373,
+      "molarPositionMm": 2.382731895432029,
+      "lengthAbsMm": 0.7023095737834281,
+      "tzlAbsErrorMm": 4.527052028727517,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.527052028727517,
+        "improvementPct": 22.981243078314385,
+        "ci95": [
+          0.8201949536028448,
+          1.8913006799243717
+        ],
+        "significant": true,
+        "casesImproved": 166,
+        "casesWorsened": 102
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.10413783782373,
+        "improvementPct": 6.867144131932543,
+        "ci95": [
+          0.12880552891993638,
+          0.18210638529834042
+        ],
+        "significant": true,
+        "casesImproved": 212,
+        "casesWorsened": 56
+      }
+    },
+    "globalConstant@cap0.02": {
+      "positionMm": 2.2711746896725824,
+      "molarPositionMm": 2.93024411012037,
+      "lengthAbsMm": 0.7556106360418039,
+      "tzlAbsErrorMm": 5.818605374280319,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.818605374280319,
+        "improvementPct": 1.008040088535257,
+        "ci95": [
+          -0.05496536621623102,
+          0.17053418645128132
+        ],
+        "significant": false,
+        "casesImproved": 147,
+        "casesWorsened": 121
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.271174689672583,
+        "improvementPct": -0.5262018591194777,
+        "ci95": [
+          -0.020132706058785275,
+          -0.003720392471722841
+        ],
+        "significant": true,
+        "casesImproved": 127,
+        "casesWorsened": 141
+      }
+    },
+    "globalConstant@cap0.04": {
+      "positionMm": 2.2711746896725824,
+      "molarPositionMm": 2.93024411012037,
+      "lengthAbsMm": 0.7556106360418039,
+      "tzlAbsErrorMm": 5.818605374280319,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.818605374280319,
+        "improvementPct": 1.008040088535257,
+        "ci95": [
+          -0.05496536621623102,
+          0.17053418645128132
+        ],
+        "significant": false,
+        "casesImproved": 147,
+        "casesWorsened": 121
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.271174689672583,
+        "improvementPct": -0.5262018591194777,
+        "ci95": [
+          -0.020132706058785275,
+          -0.003720392471722841
+        ],
+        "significant": true,
+        "casesImproved": 127,
+        "casesWorsened": 141
+      }
+    },
+    "globalConstant@cap0.06": {
+      "positionMm": 2.2711746896725824,
+      "molarPositionMm": 2.93024411012037,
+      "lengthAbsMm": 0.7556106360418039,
+      "tzlAbsErrorMm": 5.818605374280319,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.818605374280319,
+        "improvementPct": 1.008040088535257,
+        "ci95": [
+          -0.05496536621623102,
+          0.17053418645128132
+        ],
+        "significant": false,
+        "casesImproved": 147,
+        "casesWorsened": 121
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.271174689672583,
+        "improvementPct": -0.5262018591194777,
+        "ci95": [
+          -0.020132706058785275,
+          -0.003720392471722841
+        ],
+        "significant": true,
+        "casesImproved": 127,
+        "casesWorsened": 141
+      }
+    },
+    "globalConstant@capnone": {
+      "positionMm": 2.2711746896725824,
+      "molarPositionMm": 2.93024411012037,
+      "lengthAbsMm": 0.7556106360418039,
+      "tzlAbsErrorMm": 5.818605374280319,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.818605374280319,
+        "improvementPct": 1.008040088535257,
+        "ci95": [
+          -0.05496536621623102,
+          0.17053418645128132
+        ],
+        "significant": false,
+        "casesImproved": 147,
+        "casesWorsened": 121
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.271174689672583,
+        "improvementPct": -0.5262018591194777,
+        "ci95": [
+          -0.020132706058785275,
+          -0.003720392471722841
+        ],
+        "significant": true,
+        "casesImproved": 127,
+        "casesWorsened": 141
+      }
+    },
+    "learned:ridge@cap0.02": {
+      "positionMm": 2.2913381990192274,
+      "molarPositionMm": 2.9611967902746605,
+      "lengthAbsMm": 0.7590768661580115,
+      "tzlAbsErrorMm": 5.854505440774859,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.854505440774859,
+        "improvementPct": 0.39727209265859426,
+        "ci95": [
+          -0.1612579270837297,
+          0.2136867927528672
+        ],
+        "significant": false,
+        "casesImproved": 136,
+        "casesWorsened": 132
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.2913381990192274,
+        "improvementPct": -1.4186743844544818,
+        "ci95": [
+          -0.04517461326181699,
+          -0.017881390386778283
+        ],
+        "significant": true,
+        "casesImproved": 108,
+        "casesWorsened": 160
+      }
+    },
+    "learned:ridge@cap0.04": {
+      "positionMm": 2.3349214128564153,
+      "molarPositionMm": 3.017420633413939,
+      "lengthAbsMm": 0.7687805635946235,
+      "tzlAbsErrorMm": 5.977716418402567,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.977716418402567,
+        "improvementPct": -1.6989168346551144,
+        "ci95": [
+          -0.39358122595815165,
+          0.1888439402033296
+        ],
+        "significant": false,
+        "casesImproved": 131,
+        "casesWorsened": 137
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.3349214128564157,
+        "improvementPct": -3.3477443814867107,
+        "ci95": [
+          -0.09828730107794584,
+          -0.05173856420216043
+        ],
+        "significant": true,
+        "casesImproved": 103,
+        "casesWorsened": 165
+      }
+    },
+    "learned:ridge@cap0.06": {
+      "positionMm": 2.3571409612226337,
+      "molarPositionMm": 3.0422881544785176,
+      "lengthAbsMm": 0.7735328851782904,
+      "tzlAbsErrorMm": 6.032243598724214,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 6.032243598724214,
+        "improvementPct": -2.62658800347936,
+        "ci95": [
+          -0.493405858455917,
+          0.1842771887040174
+        ],
+        "significant": false,
+        "casesImproved": 130,
+        "casesWorsened": 138
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.3571409612226337,
+        "improvementPct": -4.331220824068459,
+        "ci95": [
+          -0.12486271771556326,
+          -0.06943517993515444
+        ],
+        "significant": true,
+        "casesImproved": 96,
+        "casesWorsened": 172
+      }
+    },
+    "learned:ridge@capnone": {
+      "positionMm": 2.367255888232221,
+      "molarPositionMm": 3.053946283930228,
+      "lengthAbsMm": 0.7752578276129111,
+      "tzlAbsErrorMm": 6.07494736802894,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 6.07494736802894,
+        "improvementPct": -3.3531074264613228,
+        "ci95": [
+          -0.556921369196277,
+          0.16487832871065522
+        ],
+        "significant": false,
+        "casesImproved": 130,
+        "casesWorsened": 138
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.3672558882322208,
+        "improvementPct": -4.778925352909696,
+        "ci95": [
+          -0.13773546339832632,
+          -0.07770483521232073
+        ],
+        "significant": true,
+        "casesImproved": 95,
+        "casesWorsened": 173
+      }
+    },
+    "learned:krr@cap0.02": {
+      "positionMm": 2.2663280139492272,
+      "molarPositionMm": 2.9210462478911268,
+      "lengthAbsMm": 0.7520390760869123,
+      "tzlAbsErrorMm": 5.812058668627406,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.812058668627406,
+        "improvementPct": 1.1194192218255081,
+        "ci95": [
+          -0.029367617995004737,
+          0.1600640164070278
+        ],
+        "significant": false,
+        "casesImproved": 140,
+        "casesWorsened": 128
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.2663280139492272,
+        "improvementPct": -0.31167943408224763,
+        "ci95": [
+          -0.01353110375936748,
+          -0.0006978776908970018
+        ],
+        "significant": true,
+        "casesImproved": 132,
+        "casesWorsened": 136
+      }
+    },
+    "learned:krr@cap0.04": {
+      "positionMm": 2.266391865967343,
+      "molarPositionMm": 2.920734741566103,
+      "lengthAbsMm": 0.7519929291427361,
+      "tzlAbsErrorMm": 5.81085221425171,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.81085221425171,
+        "improvementPct": 1.1399446356509269,
+        "ci95": [
+          -0.03008325096065649,
+          0.16319311010622578
+        ],
+        "significant": false,
+        "casesImproved": 140,
+        "casesWorsened": 128
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.266391865967343,
+        "improvementPct": -0.31450563714422564,
+        "ci95": [
+          -0.01362386962458314,
+          -0.0007148497567086243
+        ],
+        "significant": true,
+        "casesImproved": 132,
+        "casesWorsened": 136
+      }
+    },
+    "learned:krr@cap0.06": {
+      "positionMm": 2.266391865967343,
+      "molarPositionMm": 2.920734741566103,
+      "lengthAbsMm": 0.7519929291427361,
+      "tzlAbsErrorMm": 5.81085221425171,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.81085221425171,
+        "improvementPct": 1.1399446356509269,
+        "ci95": [
+          -0.03008325096065649,
+          0.16319311010622578
+        ],
+        "significant": false,
+        "casesImproved": 140,
+        "casesWorsened": 128
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.266391865967343,
+        "improvementPct": -0.31450563714422564,
+        "ci95": [
+          -0.01362386962458314,
+          -0.0007148497567086243
+        ],
+        "significant": true,
+        "casesImproved": 132,
+        "casesWorsened": 136
+      }
+    },
+    "learned:krr@capnone": {
+      "positionMm": 2.266391865967343,
+      "molarPositionMm": 2.920734741566103,
+      "lengthAbsMm": 0.7519929291427361,
+      "tzlAbsErrorMm": 5.81085221425171,
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.81085221425171,
+        "improvementPct": 1.1399446356509269,
+        "ci95": [
+          -0.03008325096065649,
+          0.16319311010622578
+        ],
+        "significant": false,
+        "casesImproved": 140,
+        "casesWorsened": 128
+      },
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.266391865967343,
+        "improvementPct": -0.31450563714422564,
+        "ci95": [
+          -0.01362386962458314,
+          -0.0007148497567086243
+        ],
+        "significant": true,
+        "casesImproved": 132,
+        "casesWorsened": 136
+      }
+    }
+  },
+  "verdict": {
+    "bestLearnedVariant": "learned:krr@cap0.04",
+    "bestLearnedTzlGainPct": 1.1399446356509269,
+    "bestLearnedSignificant": false,
+    "recoveredShareOfOraclePct": 4.960326261578966,
+    "conclusion": "스케일은 스칼라 1개라도 기존 특징으로는 예측되지 않는다. 오라클 여력은 라벨이 아니라 아치 끝점/경로 검출 자체를 고쳐야 회수된다."
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "ez-scale-link-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "EZ 곡선 기하가 치아폭 스케일 오차(log f)를 설명하는지 검증. 치아폭·EZ 정답을 모두 가진 케이스만, 이미지 SHA-256으로 결합. EZ 정답 특징은 낙관적 상한이고 EZ OOF 예측 특징이 실제 배포 조건이다. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, WIDTH_BIAS 1.013 적용.",
+  "joinedCases": 104,
+  "logFactor": {
+    "sd": 0.06107899251538666,
+    "meanAbs": 0.0486428968641822
+  },
+  "sources": {
+    "nullSharedDenominatorControl": {
+      "pearsonR": 0.17692280295698543,
+      "r2": 0.03130167820615629,
+      "mae": 0.04796036918756736,
+      "maeOfMeanBaseline": 0.048528618333606326,
+      "tzlAbsError": {
+        "old": 5.314570522468063,
+        "new": 5.075015898252098,
+        "improvementPct": 4.507506734612246,
+        "ci95": [
+          -0.05812063757901718,
+          0.5643327657166757
+        ],
+        "significant": false,
+        "casesImproved": 52,
+        "casesWorsened": 52
+      },
+      "perFeaturePearsonR": [
+        0.23914419091913933
+      ]
+    },
+    "ezTruthFeatures": {
+      "pearsonR": 0.8603973450318783,
+      "r2": 0.740283591337905,
+      "mae": 0.023176481027640923,
+      "maeOfMeanBaseline": 0.048528618333606326,
+      "tzlAbsError": {
+        "old": 5.314570522468063,
+        "new": 4.654220367437599,
+        "improvementPct": 12.425277870314167,
+        "ci95": [
+          -0.14073329893578856,
+          1.417938937718638
+        ],
+        "significant": false,
+        "casesImproved": 60,
+        "casesWorsened": 44
+      },
+      "perFeaturePearsonR": [
+        0.6513239609543552,
+        0.8622333503318579,
+        0.33238615610038114,
+        0.8590702841839459,
+        0.47635915431266973,
+        0.7953696317182014,
+        0.3296578482722071,
+        0.6513239609543552
+      ]
+    },
+    "ezOofPredictionFeatures": {
+      "pearsonR": 0.17322047818698774,
+      "r2": 0.030005334063328695,
+      "mae": 0.0491093541966472,
+      "maeOfMeanBaseline": 0.048528618333606326,
+      "tzlAbsError": {
+        "old": 5.314570522468063,
+        "new": 5.6986457188639115,
+        "improvementPct": -7.226834130286136,
+        "ci95": [
+          -0.6966881147946664,
+          -0.05966313505593155
+        ],
+        "significant": true,
+        "casesImproved": 40,
+        "casesWorsened": 64
+      },
+      "perFeaturePearsonR": [
+        0.2377550810976814,
+        0.19009280013460148,
+        -0.10594379429677292,
+        0.24691031099829946,
+        0.2172133073882879,
+        0.09448152436549087,
+        -0.14363455131664166,
+        0.23775508109768126
+      ]
+    }
+  },
+  "oracleOnJoinedSubset": {
+    "tzlAbsError": {
+      "old": 5.314570522468063,
+      "new": 5.187530786870976,
+      "improvementPct": 2.3904045502832174,
+      "ci95": [
+        -0.8049506330196514,
+        0.9996690054495952
+      ],
+      "significant": false,
+      "casesImproved": 51,
+      "casesWorsened": 53
+    }
+  },
+  "verdict": {
+    "ezTruthExplainsScaleR2": 0.740283591337905,
+    "nullControlR2": 0.03130167820615629,
+    "ezR2AboveNullControl": 0.7089819131317487,
+    "ezPredictionExplainsScaleR2": 0.030005334063328695,
+    "ezTruthTzlGainPct": 12.425277870314167,
+    "ezTruthSignificant": false,
+    "conclusion": "EZ 정답은 대조군을 넘어 스케일 오차를 실제로 설명한다. 단 EZ **예측**의 설명력은 아직 낮으므로, EZ 라벨을 늘려 EZ 예측 정확도를 올리는 것이 치아폭 TZL 여력 회수의 경로가 된다."
+  }
+}

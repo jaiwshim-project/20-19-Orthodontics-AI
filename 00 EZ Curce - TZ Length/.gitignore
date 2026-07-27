@@ -68,3 +68,8 @@ EZ Curve*.bak-*
 03 AI 재학습/_wb_*.csv
 03 AI 재학습/_wb_*.log
 03 AI 재학습/_sha__wb_*
+
+# 라벨 필요량/여력 측정 로그 — 리포트 JSON만 커밋
+03 AI 재학습/_label_need.log
+03 AI 재학습/_scale_*.log
+03 AI 재학습/_ez_scale_link.log

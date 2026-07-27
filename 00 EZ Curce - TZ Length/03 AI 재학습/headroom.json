@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "headroom-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsModelParameters": false
+  },
+  "note": "오라클 상한 측정. 케이스별 최적 변환을 정답에 맞춰 적용했을 때 남는 오차이므로 배포 가능한 방법이 아니라 '정합을 고치면 최대 이만큼'의 상한이다. 라벨 환산은 label_need.json의 학습곡선 기울기를 사용. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, WIDTH_BIAS 1.013 적용.",
+  "samples": 268,
+  "curveSlopes": {
+    "positionMm": -0.08529784820038203,
+    "tzlAbsErrorMm": -0.06883128685765239,
+    "currentTrainSamples": 214.4
+  },
+  "variants": {
+    "current(2단계+bias)": {
+      "positionMm": 2.2592862832473033,
+      "molarPositionMm": 2.9173965608979,
+      "lengthAbsMm": 0.7529013138047004,
+      "tzlAbsErrorMm": 5.877856524392784,
+      "positionGainPct": 0.0,
+      "tzlGainPct": 0.0,
+      "equivalentLabelsForPosition": null,
+      "equivalentLabelsForTzl": null
+    },
+    "oracleTranslation": {
+      "positionMm": 1.8439114226475009,
+      "molarPositionMm": 2.236677083884588,
+      "lengthAbsMm": 0.7529013138047004,
+      "tzlAbsErrorMm": 5.877856524392783,
+      "positionGainPct": 18.38522473578596,
+      "tzlGainPct": 1.5110583526736885e-14,
+      "equivalentLabelsForPosition": 2106,
+      "equivalentLabelsForTzl": 0,
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 1.843911422647501,
+        "improvementPct": 18.385224735785982,
+        "ci95": [
+          0.37220272304799,
+          0.46007701810031404
+        ],
+        "significant": true,
+        "casesImproved": 255,
+        "casesWorsened": 13
+      },
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 5.877856524392783,
+        "improvementPct": 1.5110583526736885e-14,
+        "ci95": [
+          -1.7763568394002505e-15,
+          1.7763568394002505e-15
+        ],
+        "significant": false,
+        "casesImproved": 37,
+        "casesWorsened": 35
+      }
+    },
+    "oracleScaleOnly": {
+      "positionMm": 2.10413783782373,
+      "molarPositionMm": 2.382731895432029,
+      "lengthAbsMm": 0.7023095737834281,
+      "tzlAbsErrorMm": 4.527052028727516,
+      "positionGainPct": 6.8671441319325055,
+      "tzlGainPct": 22.9812430783144,
+      "equivalentLabelsForPosition": 279,
+      "equivalentLabelsForTzl": 9309,
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 2.10413783782373,
+        "improvementPct": 6.867144131932543,
+        "ci95": [
+          0.12880552891993638,
+          0.18210638529833997
+        ],
+        "significant": true,
+        "casesImproved": 212,
+        "casesWorsened": 56
+      },
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.527052028727516,
+        "improvementPct": 22.9812430783144,
+        "ci95": [
+          0.8201949536028449,
+          1.8913006799243717
+        ],
+        "significant": true,
+        "casesImproved": 166,
+        "casesWorsened": 102
+      }
+    },
+    "oracleSimilarity": {
+      "positionMm": 1.2467948831548543,
+      "molarPositionMm": 1.3689832931579335,
+      "lengthAbsMm": 0.701646230385081,
+      "tzlAbsErrorMm": 4.514002759220371,
+      "positionGainPct": 44.81465707113404,
+      "tzlGainPct": 23.203250360271547,
+      "equivalentLabelsForPosition": 227813,
+      "equivalentLabelsForTzl": 9717,
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 1.2467948831548543,
+        "improvementPct": 44.81465707113406,
+        "ci95": [
+          0.9195561313080124,
+          1.1097362089746232
+        ],
+        "significant": true,
+        "casesImproved": 264,
+        "casesWorsened": 4
+      },
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.514002759220371,
+        "improvementPct": 23.203250360271547,
+        "ci95": [
+          0.851213964952955,
+          1.8788000536920664
+        ],
+        "significant": true,
+        "casesImproved": 167,
+        "casesWorsened": 101
+      }
+    },
+    "oracleSimilarity+arcRepar": {
+      "positionMm": 1.2101460162456545,
+      "molarPositionMm": 1.267923541248913,
+      "lengthAbsMm": 0.7016462303850811,
+      "tzlAbsErrorMm": 4.5140027592203715,
+      "positionGainPct": 46.43680062952026,
+      "tzlGainPct": 23.203250360271532,
+      "equivalentLabelsForPosition": 323299,
+      "equivalentLabelsForTzl": 9717,
+      "pairedPosition": {
+        "old": 2.259286283247304,
+        "new": 1.2101460162456545,
+        "improvementPct": 46.436800629520285,
+        "ci95": [
+          0.9574712783267039,
+          1.14685601805357
+        ],
+        "significant": true,
+        "casesImproved": 265,
+        "casesWorsened": 3
+      },
+      "pairedTzl": {
+        "old": 5.877856524392784,
+        "new": 4.5140027592203715,
+        "improvementPct": 23.203250360271532,
+        "ci95": [
+          0.851213964952955,
+          1.8788000536920664
+        ],
+        "significant": true,
+        "casesImproved": 167,
+        "casesWorsened": 101
+      }
+    }
+  },
+  "verdict": {
+    "arch_registration_headroom_positionPct": 44.81465707113404,
+    "arch_registration_equivalentLabels": 227813,
+    "labels_per_100_positionPct": 3.212656255746149,
+    "conclusion": "아치 경로 정합(전역 이동·회전·스케일) 개선이 라벨 수천 건에 상당하는 여력을 갖고 있다면 코드가 우선, 아니면 라벨이 우선."
+  }
+}
