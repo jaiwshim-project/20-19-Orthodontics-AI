@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "metric-panel-provenance-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "오른쪽 '측정 결과' 패널은 calculateEZL()이 갱신하며 전역 ezPoints/toothWidths를 읽는다 — 하단 상세 수치와 동일 상태. showTruth()가 정답을 그 전역에 써넣으므로 정답 확인 후에는 측정 결과 패널도 정답이 된다.",
+  "screenValues": {
+    "ezl": 83.4,
+    "pxPerMm": 51.76,
+    "tzl": 87.9,
+    "difference": -4.5,
+    "toothCount": 12,
+    "ezCount": 12,
+    "widthCount": 12
+  },
+  "matchCounts": {
+    "tzlMatches": 1,
+    "scaleMatches": 1,
+    "correctedEzlMatches": 1,
+    "tzlAndScaleMatches": 1,
+    "tripleMatches": 1
+  },
+  "matchedRecords": [
+    {
+      "cohortIndex": 6,
+      "ezlCorrectedMm": 83.36,
+      "ezlFullCurveMm": 88.44,
+      "tzlMm": 87.88,
+      "pxPerMm": 51.76,
+      "differenceMm": -4.52,
+      "ezCount": 12,
+      "widthCount": 12
+    }
+  ]
+}

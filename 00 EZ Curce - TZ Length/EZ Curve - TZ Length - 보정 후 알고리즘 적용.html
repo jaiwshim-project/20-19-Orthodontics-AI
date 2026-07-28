@@ -77,6 +77,10 @@
   .coord-source[data-source="truth"] { border-color: rgba(251,191,36,.7); background: rgba(180,120,10,.3); color: #fde68a; }
   .coord-source[data-source="manual"] { border-color: rgba(96,165,250,.6); background: rgba(37,99,235,.22); color: #bfdbfe; }
   .build-badge { padding: 2px 7px; border-radius: 999px; border: 1px solid rgba(148,163,184,.45); background: rgba(30,41,59,.85); color: #94a3b8; font: 700 9px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: nowrap; }
+  /* 측정 결과 카드도 출처를 말해야 한다 — 이 패널은 '자동분석 전용'이 아니라 현재 측정 상태다. */
+  .metric-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
+  .metric-head h3 { margin: 0; }
+  .card[data-metric-source="truth"] { border-color: rgba(251,191,36,.75); box-shadow: 0 0 0 1px rgba(251,191,36,.25) inset; }
   .coord-hint { font-size: 8px; color: #94a3b8; text-align: right; }
   .coord-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
   .coord-section { min-width: 0; padding: 7px; border: 1px solid #334155; border-radius: 8px; background: rgba(30,41,59,.78); }
@@ -298,8 +302,8 @@
       <button class="btn btn-danger" id="clearBtn" style="margin-top:8px;">전체 초기화</button>
     </div>
 
-    <div class="card">
-      <h3>측정 결과</h3>
+    <div class="card" id="metricCard" data-metric-source="none">
+      <div class="metric-head"><h3>측정 결과</h3><span class="coord-source" id="metricSource" data-source="none">데이터 없음</span></div>
       <div class="metric"><span class="label">EZL (보정·치아 점유 구간)</span><span class="value" id="ezlValue">-</span></div>
       <div class="metric"><span class="label">px/mm</span><span class="value" id="scaleValue" style="font-size:14px;">-</span></div>
       <div class="metric"><span class="label">치아 좌표 수</span><span class="value" id="toothCount" style="font-size:14px;">0</span></div>
@@ -176189,7 +176193,9 @@ window.EZ_RESIDUAL_MODEL={
   //    측정상 정확한 쪽은 **오른쪽**(위치 −8.01% / 길이 −11.26%, 시드 4/4 유의)이고
   //    이는 육안 관찰과 방향이 반대다. 좌우 전용 대책을 짜기 전에 ⑪을 읽을 것.
   // ⚠️ **화면 수치를 엔진 성능으로 읽기 전에 출처 배지를 볼 것**(⑫). `✔ 정답 확인`을
-  //    누르면 정답 좌표가 측정값으로 들어가서 하단 상세 수치가 **정답과 완전히 같아진다**
+  //    누르면 정답 좌표가 측정값으로 들어가서 하단 상세 수치는 물론 **오른쪽 '측정 결과'
+  //    패널(EZL·px/mm·TZL·차이)까지 정답과 완전히 같아진다**(⑫h, 실측 확정). 정답을
+  //    표시하는 화면 영역은 **3곳**이다: 캔버스 정답 줄 / 상세 수치 / 측정 결과 패널.
   //    (자동분석 자체는 정답을 투영하지 않는다 — USE_TRUTH_LOOKUP=false).
   // 자동배포가 아니라 사람 검토 대상이므로 여기서도 "연구·초안" 모드로만 적용한다.
   //
@@ -176413,6 +176419,22 @@ window.EZ_RESIDUAL_MODEL={
   //        ⚠️ 앱 스크립트는 IIFE 안이라 `analysisState` 등 내부 변수를 page.evaluate로
   //        읽을 수 없다(첫 시도 180초 타임아웃 = 테스트 결함). DOM 신호
   //        `document.documentElement.dataset.analysisState`를 쓸 것.
+  //    (h) ⭐️ **'측정 결과' 패널도 정답을 표시한다**(2026-07-29 추가 실측). (f)에서 하단
+  //        상세 수치만 다뤘는데, 오른쪽 `측정 결과` 카드(EZL / px/mm / TZL / 공간 차이)도
+  //        **같은 전역 상태**를 읽는다 — `calculateEZL()`이 `ezPoints`·`toothWidths`를
+  //        읽고, `showTruth()`가 그 전역에 정답 좌표를 **써넣는다**. 그래서 이 패널은
+  //        "자동분석 전용 표시"가 아니라 **현재 측정 상태의 표시**다. 실측:
+  //          초안 적용 후 : EZL 92.7 / TZL 97.0  (정답과 EZL 1.8mm · TZL 1.3mm 차이)
+  //          정답 확인 후 : EZL 94.5 / TZL 98.3  (정답과 **0.00mm** = 완전 동일)
+  //          적용전 복원  : EZL 92.7 / TZL 97.0  (자동분석 값으로 정상 복귀)
+  //        룩업 442건 전수 대조로도 확정했다 — 사용자가 본 조합(EZL 83.4 / TZL 87.9 /
+  //        px/mm 51.76)은 **EZL·TZL·px/mm 3중 일치 정답이 정확히 1건**이었다(다른 441건은
+  //        불일치). 즉 그 화면은 정답이었고 자동분석 값이 아니었다.
+  //        → `updateMetricSourceBadge()`로 이 패널에도 출처 배지를 붙였고, 정답 표시 중
+  //        일 때는 카드 테두리가 호박색이 된다. 검증 `_metric_panel_repro.mjs`(11/11),
+  //        전수 대조 `_metric_panel_provenance.py`.
+  //        ⚠️ 교훈: 정답이 전역 측정 상태로 들어가므로 **그 상태를 읽는 모든 표시 영역**이
+  //        정답을 보여준다. 새 수치 표시를 추가하면 출처 배지도 같이 붙여야 한다.
   // 다음 과제: (a) **EZ 라벨 100~200건 — 1순위로 복귀**(⑩d·e). 여력이 남은 곳은 위치
   //               (상한의 3.22배)이고, 위치를 지배하는 아치 경로 정합은 기존 특징 회수율이
   //               0%인데 **EZ 정답만이** 설명했다(dyRel R²0.63 / logScale R²0.73).
@@ -176591,7 +176613,28 @@ window.EZ_RESIDUAL_MODEL={
   document.getElementById('reviewAutoBtn').addEventListener('click',()=>{clickMode='none';widthTemp=null;updateModeIndicator();updateGuide('수동 보정 모드: 노란 EZ점 또는 녹색 폭선 끝점을 드래그해 확인·보정하세요.');});
   document.getElementById('truthCheckBtn').addEventListener('click',showTruth);
 
+  // 측정 결과 패널의 출처를 화면에 명시한다.
+  // ⚠️ 이 패널은 자동분석 전용 표시가 **아니다**. calculateEZL()이 전역 ezPoints/
+  //    toothWidths를 읽어 갱신하고, showTruth()가 그 전역에 정답 좌표를 써넣으므로
+  //    `✔ 정답 확인` 이후에는 EZL·TZL·차이가 **정답 그대로** 나온다(실측 확인).
+  //    상세 수치 배지(updateCoordSourceBadge)와 같은 규칙을 쓴다.
+  function updateMetricSourceBadge() {
+    const badge = document.getElementById('metricSource');
+    const card = document.getElementById('metricCard');
+    if (!badge) return;
+    const hasData = (toothWidths && toothWidths.length) || (ezPoints && ezPoints.length);
+    let source = 'none', text = '데이터 없음';
+    if (!hasData) { source = 'none'; text = '데이터 없음'; }
+    else if (autoMeta && autoMeta.truthMatch) { source = 'truth'; text = '전문가 정답 표시 중'; }
+    else if (autoMeta) { source = 'auto'; text = '자동 분석 결과'; }
+    else { source = 'manual'; text = '수동 입력'; }
+    badge.dataset.source = source;
+    badge.textContent = text;
+    if (card) card.dataset.metricSource = source;
+  }
+
   function calculateEZL() {
+    updateMetricSourceBadge();
     document.getElementById('toothCount').textContent = toothCenters.length;
     document.getElementById('ezCount').textContent = ezPoints.length;
     document.getElementById('widthCount').textContent = toothWidths.length;

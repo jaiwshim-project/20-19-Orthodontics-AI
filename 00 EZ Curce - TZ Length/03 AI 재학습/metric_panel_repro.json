@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "metric-panel-repro-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "오른쪽 \"측정 결과\" 패널의 출처 확인. 이 패널은 calculateEZL()이 전역 측정 상태를 읽어 갱신하므로 정답 확인 후에는 정답을 표시한다. 사진은 SHA-256 일치로만 선택했고 파일명·SHA·좌표는 기록하지 않는다. 길이(mm)는 좌표가 아닌 파생 계측값이다.",
+  "independentTruth": {
+    "ezl": 94.5,
+    "tzl": 98.3,
+    "difference": -3.8,
+    "pxPerMm": 48.44
+  },
+  "stages": {
+    "afterApply": {
+      "analysisState": "applied",
+      "ezl": 92.7,
+      "pxPerMm": 48.48,
+      "tzl": 97,
+      "difference": -4.3,
+      "toothCount": 12,
+      "ezCount": 12,
+      "widthCount": 12,
+      "metricSourceBadge": "자동 분석 결과",
+      "metricSourceKind": "auto",
+      "detailSourceKind": "auto",
+      "canvasTruthTzl": "정답 TZL 98.3 mm",
+      "canvasAutoTzl": "TZL 97.0 mm",
+      "buildBadge": "정답 442건 · 치아별표기 ON"
+    },
+    "afterTruth": {
+      "analysisState": "applied",
+      "ezl": 94.5,
+      "pxPerMm": 48.44,
+      "tzl": 98.3,
+      "difference": -3.8,
+      "toothCount": 12,
+      "ezCount": 12,
+      "widthCount": 12,
+      "metricSourceBadge": "전문가 정답 표시 중",
+      "metricSourceKind": "truth",
+      "detailSourceKind": "truth",
+      "canvasTruthTzl": "정답 TZL 98.3 mm",
+      "canvasAutoTzl": "TZL 98.3 mm",
+      "buildBadge": "정답 442건 · 치아별표기 ON"
+    },
+    "afterRestore": {
+      "analysisState": "applied",
+      "ezl": 92.7,
+      "pxPerMm": 48.48,
+      "tzl": 97,
+      "difference": -4.3,
+      "toothCount": 12,
+      "ezCount": 12,
+      "widthCount": 12,
+      "metricSourceBadge": "자동 분석 결과",
+      "metricSourceKind": "auto",
+      "detailSourceKind": "auto",
+      "canvasTruthTzl": "정답 TZL 98.3 mm",
+      "canvasAutoTzl": "TZL 97.0 mm",
+      "buildBadge": "정답 442건 · 치아별표기 ON"
+    }
+  },
+  "distances": {
+    "panelVsTruthAfterApplyTzlMm": 1.3,
+    "panelVsTruthAfterApplyEzlMm": 1.8,
+    "panelVsTruthAfterTruthTzlMm": 0,
+    "panelVsTruthAfterTruthEzlMm": 0
+  },
+  "pageErrors": [],
+  "checks": {
+    "noPageErrors": true,
+    "panelAfterApplyIsNotTruthTzl": true,
+    "panelAfterApplyIsNotTruthEzl": true,
+    "panelAfterTruthMatchesTruthTzl": true,
+    "panelAfterTruthMatchesTruthEzl": true,
+    "panelAfterTruthMatchesTruthScale": true,
+    "metricBadgeAutoAfterApply": true,
+    "metricBadgeTruthAfterTruth": true,
+    "metricBadgeAgreesWithDetailBadge": true,
+    "restoreReturnsToAuto": true,
+    "restoreBadgeNotTruth": true
+  },
+  "pass": true
+}

@@ -22,6 +22,7 @@ HERE = Path(__file__).resolve().parent
 TARGETS = [
     "truth_lookup_rebuild.json", "truth_strip_coverage.json", "truth_strip_repro.json",
     "truth_strip_repro_prev.json", "detail_provenance.json", "truth_strip_viewports.json",
+    "metric_panel_provenance.json", "metric_panel_repro.json",
 ]
 
 PATTERNS = [
