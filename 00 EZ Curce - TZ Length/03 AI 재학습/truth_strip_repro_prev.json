@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "truth-strip-repro-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "자동 분석 전/후 정답 스트립 표시 상태 단계별 재현. 이미지는 SHA-256 일치로만 선택하고 파일명·SHA는 기록하지 않는다.",
+  "lookupEntries": 113,
+  "testedCases": [
+    "withEzTruth"
+  ],
+  "results": [
+    {
+      "case": "withEzTruth",
+      "stages": [
+        {
+          "stage": "afterUpload",
+          "analysisState": "idle",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "flex",
+          "truthVisibleRect": {
+            "top": 952,
+            "bottom": 982,
+            "h": 30
+          },
+          "truthItems": null,
+          "truthFirstItem": null,
+          "truthLastItem": null,
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "scaleRef": null,
+          "widthHidden": true,
+          "widthTzl": "TZL -",
+          "stackRect": {
+            "top": 952,
+            "bottom": 982,
+            "h": 30
+          },
+          "canvasAreaRect": {
+            "top": 271,
+            "bottom": 991,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterAnalyze",
+          "analysisState": "preview",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "flex",
+          "truthVisibleRect": {
+            "top": 911,
+            "bottom": 941,
+            "h": 30
+          },
+          "truthItems": null,
+          "truthFirstItem": null,
+          "truthLastItem": null,
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "scaleRef": null,
+          "widthHidden": false,
+          "widthTzl": "예상 TZL 97.0 mm",
+          "stackRect": {
+            "top": 911,
+            "bottom": 1019,
+            "h": 108
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterApply",
+          "analysisState": "applied",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "flex",
+          "truthVisibleRect": {
+            "top": 911,
+            "bottom": 941,
+            "h": 30
+          },
+          "truthItems": null,
+          "truthFirstItem": null,
+          "truthLastItem": null,
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "scaleRef": null,
+          "widthHidden": false,
+          "widthTzl": "TZL 97.0 mm",
+          "stackRect": {
+            "top": 911,
+            "bottom": 1019,
+            "h": 108
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        }
+      ]
+    }
+  ],
+  "consoleWarnings": [],
+  "pageErrors": [],
+  "problems": [
+    "withEzTruth: 치아별 항목이 비어 있음"
+  ],
+  "pass": false
+}

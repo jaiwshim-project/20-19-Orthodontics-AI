@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "truth-lookup-rebuild-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "정답 룩업 재생성. 폭·EZ 정답을 이미지 SHA-256 동일 기준으로만 합쳤고, 폭 정답만 있는 케이스도 포함한다(EZL은 UI에서 '-'). 좌표는 원본 이미지 픽셀.",
+  "entries": {
+    "before": 113,
+    "after": 442,
+    "oldEntriesRetained": 113
+  },
+  "composition": {
+    "cases": 452,
+    "widthOnly": 329,
+    "widthAndEz": 113,
+    "ezOnly": 0,
+    "skippedNoTruth": 10,
+    "skippedWidthTooFew": 0,
+    "multiVersionWidthCases": 65,
+    "incompleteWidthKept": 57
+  },
+  "toothNoCoverage": {
+    "1": 442,
+    "2": 442,
+    "3": 442,
+    "4": 442,
+    "5": 442,
+    "6": 442,
+    "7": 442,
+    "8": 442,
+    "9": 442,
+    "10": 440,
+    "11": 400,
+    "12": 385,
+    "13": 1
+  },
+  "htmlBytes": {
+    "before": 6064870,
+    "after": 6388529
+  },
+  "productionShaUnchanged": true
+}

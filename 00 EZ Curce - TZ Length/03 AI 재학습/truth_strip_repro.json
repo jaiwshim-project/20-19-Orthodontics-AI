@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "truth-strip-repro-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "자동 분석 전/후 정답 스트립 표시 상태 단계별 재현. 이미지는 SHA-256 일치로만 선택하고 파일명·SHA는 기록하지 않는다.",
+  "lookupEntries": 442,
+  "testedCases": [
+    "withEzTruth",
+    "widthOnlyTruth"
+  ],
+  "results": [
+    {
+      "case": "withEzTruth",
+      "stages": [
+        {
+          "stage": "afterUpload",
+          "analysisState": "idle",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 910,
+            "bottom": 982,
+            "h": 72
+          },
+          "truthItems": 12,
+          "truthFirstItem": "1번12.9 mm",
+          "truthLastItem": "12번12.8 mm",
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 12개",
+          "scaleRef": "ezChord",
+          "widthHidden": true,
+          "widthTzl": "TZL -",
+          "stackRect": {
+            "top": 910,
+            "bottom": 982,
+            "h": 72
+          },
+          "canvasAreaRect": {
+            "top": 271,
+            "bottom": 991,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterAnalyze",
+          "analysisState": "preview",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 869,
+            "bottom": 941,
+            "h": 72
+          },
+          "truthItems": 12,
+          "truthFirstItem": "1번12.9 mm",
+          "truthLastItem": "12번12.8 mm",
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 12개",
+          "scaleRef": "ezChord",
+          "widthHidden": false,
+          "widthTzl": "예상 TZL 97.0 mm",
+          "stackRect": {
+            "top": 869,
+            "bottom": 1019,
+            "h": 151
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterApply",
+          "analysisState": "applied",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 869,
+            "bottom": 941,
+            "h": 72
+          },
+          "truthItems": 12,
+          "truthFirstItem": "1번12.9 mm",
+          "truthLastItem": "12번12.8 mm",
+          "truthTzl": "정답 TZL 98.3 mm",
+          "truthEzl": "정답 EZL 94.5 mm",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 12개",
+          "scaleRef": "ezChord",
+          "widthHidden": false,
+          "widthTzl": "TZL 97.0 mm",
+          "stackRect": {
+            "top": 869,
+            "bottom": 1019,
+            "h": 151
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        }
+      ]
+    },
+    {
+      "case": "widthOnlyTruth",
+      "stages": [
+        {
+          "stage": "afterUpload",
+          "analysisState": "idle",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 910,
+            "bottom": 982,
+            "h": 72
+          },
+          "truthItems": 11,
+          "truthFirstItem": "1번13.3 mm",
+          "truthLastItem": "11번13.6 mm",
+          "truthTzl": "정답 TZL 93.7 mm",
+          "truthEzl": "정답 EZL -",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 11개 · 폭 최외곽 스팬 기준(EZ 정답 없음)",
+          "scaleRef": "widthOuterSpan",
+          "widthHidden": true,
+          "widthTzl": "TZL -",
+          "stackRect": {
+            "top": 910,
+            "bottom": 982,
+            "h": 72
+          },
+          "canvasAreaRect": {
+            "top": 271,
+            "bottom": 991,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterAnalyze",
+          "analysisState": "preview",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 869,
+            "bottom": 941,
+            "h": 72
+          },
+          "truthItems": 11,
+          "truthFirstItem": "1번13.3 mm",
+          "truthLastItem": "11번13.6 mm",
+          "truthTzl": "정답 TZL 93.7 mm",
+          "truthEzl": "정답 EZL -",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 11개 · 폭 최외곽 스팬 기준(EZ 정답 없음)",
+          "scaleRef": "widthOuterSpan",
+          "widthHidden": false,
+          "widthTzl": "예상 TZL 98.5 mm",
+          "stackRect": {
+            "top": 869,
+            "bottom": 1019,
+            "h": 151
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        },
+        {
+          "stage": "afterApply",
+          "analysisState": "applied",
+          "canvasShown": true,
+          "truthHidden": false,
+          "truthDisplay": "grid",
+          "truthVisibleRect": {
+            "top": 869,
+            "bottom": 941,
+            "h": 72
+          },
+          "truthItems": 11,
+          "truthFirstItem": "1번13.3 mm",
+          "truthLastItem": "11번13.6 mm",
+          "truthTzl": "정답 TZL 93.7 mm",
+          "truthEzl": "정답 EZL -",
+          "truthLabel": "정답(전문가) · 치아별 좌우폭 11개 · 폭 최외곽 스팬 기준(EZ 정답 없음)",
+          "scaleRef": "widthOuterSpan",
+          "widthHidden": false,
+          "widthTzl": "TZL 98.5 mm",
+          "stackRect": {
+            "top": 869,
+            "bottom": 1019,
+            "h": 151
+          },
+          "canvasAreaRect": {
+            "top": 308,
+            "bottom": 1028,
+            "h": 720
+          }
+        }
+      ]
+    }
+  ],
+  "consoleWarnings": [],
+  "pageErrors": [],
+  "problems": [],
+  "pass": true
+}

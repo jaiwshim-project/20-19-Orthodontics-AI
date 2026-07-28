@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "detail-provenance-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "하단 \"자동 분석 상세 수치\"가 정답을 투영하고 있는지 확인. 사진은 SHA-256 일치로만 선택했고 파일명·SHA·좌표는 기록하지 않는다. 폭 길이(mm)는 좌표가 아닌 파생 계측값이다.",
+  "toothCount": 12,
+  "distances": {
+    "detailVsTruthAfterApplyMaxMm": 0.8,
+    "detailVsAutoCanvasAfterApplyMaxMm": 0,
+    "truthCanvasVsIndependentTruthMaxMm": 0,
+    "detailVsTruthAfterTruthButtonMaxMm": 0
+  },
+  "summaries": {
+    "afterPreview": {
+      "state": "preview",
+      "width": "TZL -",
+      "canvasAuto": "예상 TZL 97.0 mm",
+      "canvasTruth": "정답 TZL 98.3 mm",
+      "badge": "데이터 없음"
+    },
+    "afterApply": {
+      "state": "applied",
+      "width": "TZL 97.0 mm",
+      "canvasAuto": "TZL 97.0 mm",
+      "canvasTruth": "정답 TZL 98.3 mm",
+      "badge": "자동 분석 결과",
+      "build": "정답 442건 · 치아별표기 ON"
+    },
+    "afterTruthButton": {
+      "state": "applied",
+      "width": "TZL 98.3 mm",
+      "canvasAuto": "TZL 98.3 mm",
+      "canvasTruth": "정답 TZL 98.3 mm",
+      "badge": "전문가 정답 표시 중"
+    }
+  },
+  "pageErrors": [],
+  "checks": {
+    "noPageErrors": true,
+    "detailAfterApplyIsNotTruth": true,
+    "detailAfterApplyMatchesAutoCanvas": true,
+    "truthCanvasItemsMatchIndependentTruth": true,
+    "detailAfterTruthButtonIsTruth": true,
+    "badgeSaysAutoAfterApply": true,
+    "badgeSaysTruthAfterTruthButton": true,
+    "badgeNotTruthDuringPreview": true,
+    "badgeMatchesEmptyDetailDuringPreview": true,
+    "buildBadgeShowsLookupCount": true
+  },
+  "pass": true
+}

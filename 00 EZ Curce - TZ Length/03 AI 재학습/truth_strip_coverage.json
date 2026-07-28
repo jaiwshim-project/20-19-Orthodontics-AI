@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "truth-strip-coverage-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "정답 스트립 커버리지 회계. TRUTH_LOOKUP은 이미지 SHA-256 키로만 조회되므로, 룩업에 없는 사진에서는 정답 줄이 뜨지 않는다. 폴더는 익명 코드로 표기.",
+  "truthLookup": {
+    "entries": 442,
+    "ezPointsMin": 0,
+    "ezPointsMax": 13,
+    "toothWidthsMin": 9,
+    "toothWidthsMax": 13,
+    "entriesWithTwelveWidths": 384
+  },
+  "datasetIndex": {
+    "cases": 452,
+    "casesWithWidthTruth": 442,
+    "casesWithEzTruth": 113,
+    "casesWithBoth": 113
+  },
+  "diskImages": {
+    "scanned": 801,
+    "matchedInLookup": 218,
+    "matchRatePercent": 27.2
+  },
+  "perCohort": {
+    "A_photo_pool": {
+      "images": 568,
+      "inLookup": 0,
+      "coveragePercent": 0.0
+    },
+    "B_postortho_photos": {
+      "images": 114,
+      "inLookup": 109,
+      "coveragePercent": 95.6
+    },
+    "C_project_root": {
+      "images": 119,
+      "inLookup": 109,
+      "coveragePercent": 91.6
+    }
+  }
+}

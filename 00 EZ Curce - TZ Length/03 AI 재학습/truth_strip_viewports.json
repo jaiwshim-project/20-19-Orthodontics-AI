@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "truth-strip-viewports-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "해상도별로 자동분석 전/후 정답 스트립이 캔버스 영역(overflow:hidden) 밖으로 잘리는지 실측.",
+  "lookupEntries": 442,
+  "rows": [
+    {
+      "viewport": "1920x1080",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 688,
+        "truthHeight": 72,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 72,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 688,
+        "truthHeight": 72,
+        "widthHeight": 72,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 151,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "1600x900",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 518,
+        "truthHeight": 72,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 72,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 518,
+        "truthHeight": 72,
+        "widthHeight": 72,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 151,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "1366x768",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 72,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 72,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 151,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "1280x720",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 72,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 72,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 151,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "1024x768",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 72,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 420,
+        "truthHeight": 72,
+        "widthHeight": 72,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 72,
+        "stackHeight": 151,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "768 tablet",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 752,
+        "truthHeight": 95,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 95,
+        "stackHeight": 95,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 752,
+        "truthHeight": 95,
+        "widthHeight": 75,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 95,
+        "stackHeight": 176,
+        "truthItems": 12
+      },
+      "regression": false
+    },
+    {
+      "viewport": "414 mobile",
+      "before": {
+        "truthHidden": false,
+        "widthHidden": true,
+        "areaHeight": 398,
+        "truthHeight": 95,
+        "widthHeight": 0,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 95,
+        "stackHeight": 95,
+        "truthItems": 12
+      },
+      "after": {
+        "truthHidden": false,
+        "widthHidden": false,
+        "areaHeight": 398,
+        "truthHeight": 95,
+        "widthHeight": 75,
+        "clippedTopPx": 0,
+        "truthVisibleHeight": 95,
+        "stackHeight": 176,
+        "truthItems": 12
+      },
+      "regression": false
+    }
+  ],
+  "viewportsWithClippingAfterAnalyze": [],
+  "pageErrors": [],
+  "pass": true
+}
