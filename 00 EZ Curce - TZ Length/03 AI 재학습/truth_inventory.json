@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "truth-inventory-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "제공된 폭 정답 md 파일이 dataset-index를 거쳐 학습 표본까지 몇 건 살아남는지 층별 회계. 코호트는 라벨 md SHA-256으로 역추적하며 산출물에는 익명 코드만 담는다.",
+  "ledger": {
+    "A_width_1st": {
+      "mdFilesOnDisk": 70,
+      "emptyFiles": 0,
+      "labelsReachingIndex": 70,
+      "labelsNotInIndex": 0,
+      "casesInIndex": 70,
+      "casesInTraining": 58
+    },
+    "B_width_2nd": {
+      "mdFilesOnDisk": 114,
+      "emptyFiles": 1,
+      "labelsReachingIndex": 113,
+      "labelsNotInIndex": 0,
+      "casesInIndex": 112,
+      "casesInTraining": 103
+    },
+    "C_postortho": {
+      "mdFilesOnDisk": 114,
+      "emptyFiles": 5,
+      "labelsReachingIndex": 109,
+      "labelsNotInIndex": 0,
+      "casesInIndex": 109,
+      "casesInTraining": 62
+    },
+    "D_class2_a": {
+      "mdFilesOnDisk": 101,
+      "emptyFiles": 2,
+      "labelsReachingIndex": 99,
+      "labelsNotInIndex": 0,
+      "casesInIndex": 99,
+      "casesInTraining": 99
+    },
+    "E_class2_b": {
+      "mdFilesOnDisk": 118,
+      "emptyFiles": 1,
+      "labelsReachingIndex": 117,
+      "labelsNotInIndex": 0,
+      "casesInIndex": 117,
+      "casesInTraining": 116
+    }
+  },
+  "totals": {
+    "mdFilesOnDisk": 517,
+    "widthTrainingSamples": 384,
+    "distinctCasesInTraining": 384,
+    "casesAttributableToCohorts": 384
+  },
+  "sharedImages": {
+    "pairCaseCounts": {
+      "A_width_1st|C_postortho": 9,
+      "A_width_1st|B_width_2nd": 56
+    },
+    "neededBiasOnSharedImages": {
+      "A_width_1st|B_width_2nd": {
+        "cases": 51,
+        "medianNeededBias": 1.06
+      },
+      "A_width_1st|C_postortho": {
+        "cases": 3,
+        "medianNeededBias": 1.0117
+      }
+    }
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "accuracy-ceiling-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "384건 전체를 쓴 3단계 KRR의 OOF 오차를 (1) 규칙엔진 초안, (2) 정답-정답 허용 오차, (3) 학습곡선 기울기와 함께 본다. 픽셀 등방 공간, mm는 정답 최외곽 스팬=54mm, 시드 [20260711, 20260712, 20260713, 20260714] 평균, WIDTH_BIAS 1.013, 3단계 캡 0.05/0.15.",
+  "counts": {
+    "widthSamples": 384,
+    "class2": 215,
+    "other": 169
+  },
+  "ruleEngineDraft": {
+    "all": {
+      "position": 3.6874,
+      "molar": 5.075,
+      "terminal": 5.4002,
+      "lengthAbs": 1.0419,
+      "tzl": 11.0827
+    },
+    "class2": {
+      "position": 4.1412,
+      "molar": 5.8684,
+      "terminal": 6.2748,
+      "lengthAbs": 1.2207,
+      "tzl": 14.1381
+    },
+    "other": {
+      "position": 3.1101,
+      "molar": 4.0656,
+      "terminal": 4.2875,
+      "lengthAbs": 0.8144,
+      "tzl": 7.1956
+    }
+  },
+  "krrOutOfFold": {
+    "all": {
+      "position": 2.1723,
+      "molar": 2.7521,
+      "terminal": 2.9033,
+      "lengthAbs": 0.7781,
+      "tzl": 5.8738
+    },
+    "class2": {
+      "position": 2.1588,
+      "molar": 2.6928,
+      "terminal": 2.8518,
+      "lengthAbs": 0.7728,
+      "tzl": 6.1288
+    },
+    "other": {
+      "position": 2.1895,
+      "molar": 2.8275,
+      "terminal": 2.9688,
+      "lengthAbs": 0.7848,
+      "tzl": 5.5493
+    }
+  },
+  "learningCurve": {
+    "0.40": {
+      "meanTrainSamples": 123.0,
+      "all": {
+        "position": 2.3786,
+        "molar": 3.002,
+        "terminal": 3.171,
+        "lengthAbs": 0.8311,
+        "tzl": 6.2007
+      },
+      "class2": {
+        "position": 2.3764,
+        "molar": 2.9606,
+        "terminal": 3.1251,
+        "lengthAbs": 0.8197,
+        "tzl": 6.3912
+      },
+      "other": {
+        "position": 2.3813,
+        "molar": 3.0548,
+        "terminal": 3.2292,
+        "lengthAbs": 0.8456,
+        "tzl": 5.9584
+      }
+    },
+    "0.55": {
+      "meanTrainSamples": 169.0,
+      "all": {
+        "position": 2.2881,
+        "molar": 2.9007,
+        "terminal": 3.0668,
+        "lengthAbs": 0.8255,
+        "tzl": 6.064
+      },
+      "class2": {
+        "position": 2.2684,
+        "molar": 2.8321,
+        "terminal": 2.9981,
+        "lengthAbs": 0.8123,
+        "tzl": 6.333
+      },
+      "other": {
+        "position": 2.3132,
+        "molar": 2.988,
+        "terminal": 3.1542,
+        "lengthAbs": 0.8423,
+        "tzl": 5.722
+      }
+    },
+    "0.70": {
+      "meanTrainSamples": 215.2,
+      "all": {
+        "position": 2.2546,
+        "molar": 2.8437,
+        "terminal": 2.9983,
+        "lengthAbs": 0.8016,
+        "tzl": 5.997
+      },
+      "class2": {
+        "position": 2.2307,
+        "molar": 2.7787,
+        "terminal": 2.9396,
+        "lengthAbs": 0.7926,
+        "tzl": 6.1801
+      },
+      "other": {
+        "position": 2.2851,
+        "molar": 2.9265,
+        "terminal": 3.0729,
+        "lengthAbs": 0.813,
+        "tzl": 5.7642
+      }
+    },
+    "0.85": {
+      "meanTrainSamples": 261.2,
+      "all": {
+        "position": 2.2051,
+        "molar": 2.7897,
+        "terminal": 2.9407,
+        "lengthAbs": 0.7857,
+        "tzl": 5.9156
+      },
+      "class2": {
+        "position": 2.1898,
+        "molar": 2.7328,
+        "terminal": 2.8909,
+        "lengthAbs": 0.7797,
+        "tzl": 6.1646
+      },
+      "other": {
+        "position": 2.2247,
+        "molar": 2.8621,
+        "terminal": 3.004,
+        "lengthAbs": 0.7932,
+        "tzl": 5.5989
+      }
+    },
+    "1.00": {
+      "meanTrainSamples": 307.2,
+      "all": {
+        "position": 2.1723,
+        "molar": 2.7521,
+        "terminal": 2.9033,
+        "lengthAbs": 0.7781,
+        "tzl": 5.8738
+      },
+      "class2": {
+        "position": 2.1588,
+        "molar": 2.6928,
+        "terminal": 2.8518,
+        "lengthAbs": 0.7728,
+        "tzl": 6.1288
+      },
+      "other": {
+        "position": 2.1895,
+        "molar": 2.8275,
+        "terminal": 2.9688,
+        "lengthAbs": 0.7848,
+        "tzl": 5.5493
+      }
+    }
+  },
+  "learningCurveSlopes": {
+    "all": {
+      "position": -0.097,
+      "molar": -0.094,
+      "terminal": -0.097,
+      "lengthAbs": -0.078,
+      "tzl": -0.059
+    },
+    "class2": {
+      "position": -0.102,
+      "molar": -0.101,
+      "terminal": -0.098,
+      "lengthAbs": -0.069,
+      "tzl": -0.049
+    },
+    "other": {
+      "position": -0.09,
+      "molar": -0.087,
+      "terminal": -0.095,
+      "lengthAbs": -0.09,
+      "tzl": -0.073
+    }
+  },
+  "slopeInterpretation": "기울기가 0에 가까우면 라벨을 더 넣어도 오차가 안 준다 = 병목은 라벨 수가 아니라 모델·특징이다. -0.5는 교과서적 학습곡선, -0.1보다 완만하면 포화.",
+  "truthTolerance": {
+    "casesCompared": 53,
+    "endpointMm": 0.674,
+    "lengthDiffMm": 0.4639,
+    "tzlAbsDiffMm": 5.0387,
+    "tzlOwnScaleAbsMm": 2.9136
+  },
+  "krrErrorOverTolerance": {
+    "lengthAbs_over_truthLengthDiff": 1.68,
+    "tzl_over_truthTzlAbsDiff": 1.17,
+    "tzl_over_truthTzlOwnScale": 2.02,
+    "position_over_truthEndpoint": 3.22
+  },
+  "ratioInterpretation": "1.0이면 AI 오차가 정답끼리의 차이와 같다 = 정의상 상한 도달. 1보다 크면 그 배수만큼 남아 있다."
+}
