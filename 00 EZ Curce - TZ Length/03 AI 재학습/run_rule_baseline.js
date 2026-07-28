@@ -32,13 +32,21 @@ const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클
 // baseline_predictions_all.json에 아직 없는 SHA만 골라 규칙엔진을 돌린다.
 // dataset 케이스 수와 baseline 케이스 수가 어긋나 evaluate_baseline의
 // all_dataset_cases_have_successful_prediction 검사가 깨지는 것을 막는 보충 경로.
-const ALL_LABEL_DIRS = [
+// 클래스2 치아폭 2차(2026-07-27 신규 118건, 유라쌤). 감사 결과 116건이 12개 완전 라벨이고
+// 임베디드 SHA가 기존 라벨 폴더/번호 root와 중복 0건인 완전 신규 케이스다. dataset에서
+// width_embedded_only가 되므로 이 경로에 넣어 규칙 baseline을 반드시 생성해야 한다.
+// ⚠️ resolveDir는 접두어 폴백('03 치아 좌우폭 찍기')이 있어 김원장님-클래스2와 같은 경로로
+// 해석될 수 있다. 아래 Set 중복 제거로 같은 폴더를 두 번 훑지 않게 한다(훑어도 byHash가
+// 걸러내지만, 스킵 로그가 두 배로 늘어 진단을 흐린다).
+const CLASS2B_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(유라쌤-클래스2)');
+const ALL_LABEL_DIRS = [...new Set([
   CLASS2_WIDTH_DIR,
+  CLASS2B_WIDTH_DIR,
   resolveDir('02 교정 후 치아폭 찍기(김원장님)', '02 교정 후 치아폭 찍기'),
   resolveDir('02 치아 좌우폭 찍기(김원장님)', '02 치아 좌우폭 찍기'),
   resolveDir('01 치아 좌우폭 찍기 (유라쌤)', '01 치아 좌우폭 찍기'),
   resolveDir('02 이퀼리브리엄 찍기(김원장님)', '02 이퀼리브리엄 찍기'),
-];
+])];
 const SCRATCH_DIR = __dirname;
 const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
 const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');

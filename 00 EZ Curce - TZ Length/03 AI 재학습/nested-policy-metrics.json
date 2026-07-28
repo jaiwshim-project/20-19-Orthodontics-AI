@@ -103,15 +103,15 @@
     "seed": 20260711
   },
   "inputSummary": {
-    "datasetCases": 335,
-    "baselineRecords": 335,
-    "matchedUsableBaselines": 335,
+    "datasetCases": 452,
+    "baselineRecords": 452,
+    "matchedUsableBaselines": 452,
     "taskSamples": {
-      "width": 268,
+      "width": 384,
       "ez": 113
     },
     "taskGroups": {
-      "width": 268,
+      "width": 384,
       "ez": 113
     }
   },
@@ -122,8 +122,8 @@
         "mode": "strict_inner_candidate",
         "pairedInnerCases": 83,
         "candidateCount": 3136,
-        "strictPassingCandidateCount": 313,
-        "referenceP95PreferredCandidateCount": 313,
+        "strictPassingCandidateCount": 383,
+        "referenceP95PreferredCandidateCount": 383,
         "selected": {
           "widthBlend": 0.6,
           "widthGateMultiplier": 1.0,
@@ -132,19 +132,19 @@
           "pass": true,
           "failedChecks": [],
           "ranking": {
-            "appScaleMaeRelativeImprovementSum": 0.5510331132855912,
-            "coordinateImprovementBalanceMinimum": 0.2858115698905357,
-            "score": 0.8368446831761269
+            "appScaleMaeRelativeImprovementSum": 0.5124467477215033,
+            "coordinateImprovementBalanceMinimum": 0.3131005430998137,
+            "score": 0.8255472908213171
           },
           "coordinate": {
             "width": {
-              "coordinateMaeRelativeImprovement": 0.2858115698905357,
-              "p95Regression": -0.04823453865571381,
+              "coordinateMaeRelativeImprovement": 0.3131005430998137,
+              "p95Regression": -0.05208521892572032,
               "improvedFolds": 4
             },
             "ez": {
-              "coordinateMaeRelativeImprovement": 0.39496991016935284,
-              "p95Regression": -0.04988886153764217,
+              "coordinateMaeRelativeImprovement": 0.3914167090269121,
+              "p95Regression": -0.04909426729647755,
               "improvedFolds": 4
             }
           }
@@ -153,25 +153,25 @@
       },
       "tasks": {
         "width": {
-          "trainSamples": 214,
-          "testSamples": 54,
+          "trainSamples": 307,
+          "testSamples": 77,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.028430271335235076,
+                "innerCoordinateMAE": 0.029641144244772405,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.020635799456843427,
-                "gammaFactor": 0.25,
+                "innerCoordinateMAE": 0.02139373040586197,
+                "gammaFactor": 0.5,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.020635799456843427,
+            "innerCoordinateMAE": 0.02139373040586197,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -180,30 +180,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 5136,
+            "landmarkCorrections": 7368,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999810515740304,
-            "cappedMaximumPixelDiagonalFraction": 0.09999810515740304,
+            "rawMaximumPixelDiagonalFraction": 0.09999996148988849,
+            "cappedMaximumPixelDiagonalFraction": 0.09999996148988849,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              1231,
-              12
+              2062,
+              98
             ],
             "perStageLandmarkCorrections": [
-              5136,
-              5136
+              7368,
+              7368
             ],
-            "observedCumulativeMaximumFraction": 0.09999810515740304
+            "observedCumulativeMaximumFraction": 0.09999996148988849
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 1296,
+            "landmarkCorrections": 1848,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999894798989759,
-            "cappedMaximumPixelDiagonalFraction": 0.09999894798989759,
+            "rawMaximumPixelDiagonalFraction": 0.09999999124697607,
+            "cappedMaximumPixelDiagonalFraction": 0.09999999124697607,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -211,27 +211,27 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 292,
-                "rawMaximumPixelDiagonalFraction": 0.14575905610598325,
-                "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 519,
+                "rawMaximumPixelDiagonalFraction": 0.14027465813834616,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 2,
-                "rawMaximumPixelDiagonalFraction": 0.05847482840135766,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000001,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 27,
+                "rawMaximumPixelDiagonalFraction": 0.0646518738863661,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 44,
-          "outerTestFallback": 10,
-          "outerTestCoordinateMaeRelativeImprovement": 0.26004124107553916,
-          "outerTestP95Regression": -0.043379751362917246
+          "outerTestAccepted": 74,
+          "outerTestFallback": 3,
+          "outerTestCoordinateMaeRelativeImprovement": 0.3296517622556801,
+          "outerTestP95Regression": -0.053117054370358574
         },
         "ez": {
           "trainSamples": 90,
@@ -241,18 +241,18 @@
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.02580411311208978,
+                "innerCoordinateMAE": 0.025481802985467344,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.016794724815836916,
-                "gammaFactor": 0.5,
+                "innerCoordinateMAE": 0.016496741031955114,
+                "gammaFactor": 0.25,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.016794724815836916,
+            "innerCoordinateMAE": 0.016496741031955114,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -263,28 +263,28 @@
           "innerActualPixelDiagonalCap": {
             "landmarkCorrections": 1080,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09184786048209224,
-            "cappedMaximumPixelDiagonalFraction": 0.09184786048209224,
+            "rawMaximumPixelDiagonalFraction": 0.08911055938839413,
+            "cappedMaximumPixelDiagonalFraction": 0.08911055938839413,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              189,
+              175,
               0
             ],
             "perStageLandmarkCorrections": [
               1080,
               1080
             ],
-            "observedCumulativeMaximumFraction": 0.09184786048209224
+            "observedCumulativeMaximumFraction": 0.08911055938839413
           },
           "outerTestActualPixelDiagonalCap": {
             "landmarkCorrections": 276,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.08411421342477426,
-            "cappedMaximumPixelDiagonalFraction": 0.08411421342477426,
+            "rawMaximumPixelDiagonalFraction": 0.08101231415646709,
+            "cappedMaximumPixelDiagonalFraction": 0.08101231415646709,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -293,8 +293,8 @@
             "perStageCapAudits": [
               {
                 "landmarkCorrections": 276,
-                "landmarkCorrectionsCapped": 53,
-                "rawMaximumPixelDiagonalFraction": 0.09322913753045965,
+                "landmarkCorrectionsCapped": 46,
+                "rawMaximumPixelDiagonalFraction": 0.09325433918490708,
                 "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
@@ -302,8 +302,8 @@
               {
                 "landmarkCorrections": 276,
                 "landmarkCorrectionsCapped": 0,
-                "rawMaximumPixelDiagonalFraction": 0.03412633661823676,
-                "cappedMaximumPixelDiagonalFraction": 0.03412633661823676,
+                "rawMaximumPixelDiagonalFraction": 0.031076410349549322,
+                "cappedMaximumPixelDiagonalFraction": 0.031076410349549322,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
@@ -311,8 +311,8 @@
           },
           "outerTestAccepted": 21,
           "outerTestFallback": 2,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3449188577250379,
-          "outerTestP95Regression": -0.03922890903038091
+          "outerTestCoordinateMaeRelativeImprovement": 0.33695342843177845,
+          "outerTestP95Regression": -0.040407415682728084
         }
       },
       "pairedOuterTestCases": 21,
@@ -320,34 +320,34 @@
         "referenceScale": {
           "ezlMm": {
             "baselineMaeMm": 7.902220871798373,
-            "candidateMaeMm": 7.037013401397641,
-            "maeRelativeImprovement": 0.10948915304158402,
-            "maeRegressionMm": -0.8652074704007315,
+            "candidateMaeMm": 6.887954309567557,
+            "maeRelativeImprovement": 0.12835208970816717,
+            "maeRegressionMm": -1.0142665622308158,
             "baselineP95AbsoluteErrorMm": 16.61184250815998,
-            "candidateP95AbsoluteErrorMm": 14.67275796884229,
-            "p95RegressionMm": -1.9390845393176903,
+            "candidateP95AbsoluteErrorMm": 14.652250511812483,
+            "p95RegressionMm": -1.9595919963474984,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 7.2004503949679455,
-            "candidateMaeMm": 4.4784552250873855,
-            "maeRelativeImprovement": 0.37803123701578917,
-            "maeRegressionMm": -2.72199516988056,
+            "candidateMaeMm": 4.264054593630321,
+            "maeRelativeImprovement": 0.40780723986234707,
+            "maeRegressionMm": -2.936395801337625,
             "baselineP95AbsoluteErrorMm": 17.27866923501503,
-            "candidateP95AbsoluteErrorMm": 11.417437174112692,
-            "p95RegressionMm": -5.8612320609023385,
+            "candidateP95AbsoluteErrorMm": 11.567563429191836,
+            "p95RegressionMm": -5.711105805823195,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.062240561939488,
-            "candidateMaeMm": 4.707401739016798,
-            "maeRelativeImprovement": 0.22348813265985562,
-            "maeRegressionMm": -1.35483882292269,
+            "candidateMaeMm": 5.085822498357028,
+            "maeRelativeImprovement": 0.16106554228690576,
+            "maeRegressionMm": -0.97641806358246,
             "baselineP95AbsoluteErrorMm": 17.962464410847744,
-            "candidateP95AbsoluteErrorMm": 8.900611817668562,
-            "p95RegressionMm": -9.061852593179182,
+            "candidateP95AbsoluteErrorMm": 10.246323051059491,
+            "p95RegressionMm": -7.716141359788253,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -355,34 +355,34 @@
         "appScale": {
           "ezlMm": {
             "baselineMaeMm": 5.2934651462660876,
-            "candidateMaeMm": 5.008775086825109,
-            "maeRelativeImprovement": 0.053781417573287284,
-            "maeRegressionMm": -0.2846900594409787,
+            "candidateMaeMm": 4.8883687381842496,
+            "maeRelativeImprovement": 0.07652764245885052,
+            "maeRegressionMm": -0.405096408081838,
             "baselineP95AbsoluteErrorMm": 9.15198050494267,
-            "candidateP95AbsoluteErrorMm": 8.18014504056228,
-            "p95RegressionMm": -0.9718354643803906,
+            "candidateP95AbsoluteErrorMm": 8.241247006070054,
+            "p95RegressionMm": -0.9107334988726166,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 6.2353872647344755,
-            "candidateMaeMm": 3.437335488009104,
-            "maeRelativeImprovement": 0.4487374493241716,
-            "maeRegressionMm": -2.7980517767253716,
+            "candidateMaeMm": 3.3792510540163723,
+            "maeRelativeImprovement": 0.45805273825918935,
+            "maeRegressionMm": -2.856136210718103,
             "baselineP95AbsoluteErrorMm": 12.823320176004529,
-            "candidateP95AbsoluteErrorMm": 8.16559052130198,
-            "p95RegressionMm": -4.65772965470255,
+            "candidateP95AbsoluteErrorMm": 8.126913682490866,
+            "p95RegressionMm": -4.696406493513663,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 5.900898400838016,
-            "candidateMaeMm": 4.695752686541192,
-            "maeRelativeImprovement": 0.20423088696556368,
-            "maeRegressionMm": -1.2051457142968243,
+            "candidateMaeMm": 5.09900733772047,
+            "maeRelativeImprovement": 0.13589304689666673,
+            "maeRegressionMm": -0.8018910631175462,
             "baselineP95AbsoluteErrorMm": 17.61974835435136,
-            "candidateP95AbsoluteErrorMm": 8.731097444654011,
-            "p95RegressionMm": -8.888650909697347,
+            "candidateP95AbsoluteErrorMm": 10.188438941167519,
+            "p95RegressionMm": -7.43130941318384,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -395,29 +395,29 @@
         "mode": "strict_inner_candidate",
         "pairedInnerCases": 83,
         "candidateCount": 3136,
-        "strictPassingCandidateCount": 297,
-        "referenceP95PreferredCandidateCount": 297,
+        "strictPassingCandidateCount": 280,
+        "referenceP95PreferredCandidateCount": 280,
         "selected": {
           "widthBlend": 0.6,
           "widthGateMultiplier": 1.0,
-          "ezBlend": 0.6,
+          "ezBlend": 0.7,
           "ezGateMultiplier": 0.9,
           "pass": true,
           "failedChecks": [],
           "ranking": {
-            "appScaleMaeRelativeImprovementSum": 0.5083091522225006,
-            "coordinateImprovementBalanceMinimum": 0.289254514318876,
-            "score": 0.7975636665413766
+            "appScaleMaeRelativeImprovementSum": 0.49150185744418295,
+            "coordinateImprovementBalanceMinimum": 0.304169075732521,
+            "score": 0.795670933176704
           },
           "coordinate": {
             "width": {
-              "coordinateMaeRelativeImprovement": 0.289254514318876,
-              "p95Regression": -0.048168106865988755,
+              "coordinateMaeRelativeImprovement": 0.304169075732521,
+              "p95Regression": -0.05091527518248058,
               "improvedFolds": 4
             },
             "ez": {
-              "coordinateMaeRelativeImprovement": 0.3213148541170084,
-              "p95Regression": -0.04305256642462657,
+              "coordinateMaeRelativeImprovement": 0.3333485303927781,
+              "p95Regression": -0.04015573047410881,
               "improvedFolds": 4
             }
           }
@@ -426,25 +426,25 @@
       },
       "tasks": {
         "width": {
-          "trainSamples": 214,
-          "testSamples": 54,
+          "trainSamples": 307,
+          "testSamples": 77,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.027986981799872183,
+                "innerCoordinateMAE": 0.029326323805590696,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.020210105684258132,
+                "innerCoordinateMAE": 0.021432462267188517,
                 "gammaFactor": 0.25,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.020210105684258132,
+            "innerCoordinateMAE": 0.021432462267188517,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -453,30 +453,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 5136,
+            "landmarkCorrections": 7368,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999998717695648,
-            "cappedMaximumPixelDiagonalFraction": 0.09999998717695648,
+            "rawMaximumPixelDiagonalFraction": 0.09999999977787227,
+            "cappedMaximumPixelDiagonalFraction": 0.09999999977787227,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              1224,
-              13
+              2012,
+              60
             ],
             "perStageLandmarkCorrections": [
-              5136,
-              5136
+              7368,
+              7368
             ],
-            "observedCumulativeMaximumFraction": 0.09999998717695648
+            "observedCumulativeMaximumFraction": 0.09999999977787227
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 1296,
+            "landmarkCorrections": 1848,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999968586571588,
-            "cappedMaximumPixelDiagonalFraction": 0.09999968586571588,
+            "rawMaximumPixelDiagonalFraction": 0.0999999982738344,
+            "cappedMaximumPixelDiagonalFraction": 0.0999999982738344,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -484,27 +484,27 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 279,
-                "rawMaximumPixelDiagonalFraction": 0.1494494939414328,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 513,
+                "rawMaximumPixelDiagonalFraction": 0.14686271442501891,
+                "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 7,
-                "rawMaximumPixelDiagonalFraction": 0.06624488579748562,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 19,
+                "rawMaximumPixelDiagonalFraction": 0.06617929933344092,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000001,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 50,
-          "outerTestFallback": 4,
-          "outerTestCoordinateMaeRelativeImprovement": 0.29185744311917494,
-          "outerTestP95Regression": -0.04881511553624504
+          "outerTestAccepted": 72,
+          "outerTestFallback": 5,
+          "outerTestCoordinateMaeRelativeImprovement": 0.3152068241898948,
+          "outerTestP95Regression": -0.05290714881525452
         },
         "ez": {
           "trainSamples": 90,
@@ -514,50 +514,50 @@
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.026567808831287815,
+                "innerCoordinateMAE": 0.02675112534033885,
                 "gammaFactor": 0.25,
                 "lambda": 0.01
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.011324887655444482,
-                "gammaFactor": 0.5,
+                "innerCoordinateMAE": 0.01166319493876279,
+                "gammaFactor": 4.0,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.011324887655444482,
+            "innerCoordinateMAE": 0.01166319493876279,
             "gammaFactor": 0.25,
             "lambda": 0.01
           },
           "selectedPolicy": {
-            "blend": 0.6,
+            "blend": 0.7,
             "gateMultiplier": 0.9
           },
           "innerActualPixelDiagonalCap": {
             "landmarkCorrections": 1080,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09937823079848666,
-            "cappedMaximumPixelDiagonalFraction": 0.09937823079848666,
+            "rawMaximumPixelDiagonalFraction": 0.09432187193873685,
+            "cappedMaximumPixelDiagonalFraction": 0.09432187193873685,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              273,
+              274,
               0
             ],
             "perStageLandmarkCorrections": [
               1080,
               1080
             ],
-            "observedCumulativeMaximumFraction": 0.09937823079848666
+            "observedCumulativeMaximumFraction": 0.09432187193873685
           },
           "outerTestActualPixelDiagonalCap": {
             "landmarkCorrections": 276,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09444289395098547,
-            "cappedMaximumPixelDiagonalFraction": 0.09444289395098547,
+            "rawMaximumPixelDiagonalFraction": 0.08106591778597719,
+            "cappedMaximumPixelDiagonalFraction": 0.08106591778597719,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -566,26 +566,26 @@
             "perStageCapAudits": [
               {
                 "landmarkCorrections": 276,
-                "landmarkCorrectionsCapped": 47,
-                "rawMaximumPixelDiagonalFraction": 0.15152743964707424,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "landmarkCorrectionsCapped": 57,
+                "rawMaximumPixelDiagonalFraction": 0.15624472770481934,
+                "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
                 "landmarkCorrections": 276,
                 "landmarkCorrectionsCapped": 0,
-                "rawMaximumPixelDiagonalFraction": 0.04444425018176919,
-                "cappedMaximumPixelDiagonalFraction": 0.04444425018176919,
+                "rawMaximumPixelDiagonalFraction": 0.031067300785762968,
+                "cappedMaximumPixelDiagonalFraction": 0.031067300785762968,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 21,
-          "outerTestFallback": 2,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3676700712872766,
-          "outerTestP95Regression": -0.030406375079681705
+          "outerTestAccepted": 20,
+          "outerTestFallback": 3,
+          "outerTestCoordinateMaeRelativeImprovement": 0.3626159808587709,
+          "outerTestP95Regression": -0.02895656879696111
         }
       },
       "pairedOuterTestCases": 21,
@@ -593,31 +593,31 @@
         "referenceScale": {
           "ezlMm": {
             "baselineMaeMm": 6.402641755088844,
-            "candidateMaeMm": 4.253259038174528,
-            "maeRelativeImprovement": 0.33570248018421117,
-            "maeRegressionMm": -2.1493827169143156,
+            "candidateMaeMm": 4.064903616412427,
+            "maeRelativeImprovement": 0.36512087168056434,
+            "maeRegressionMm": -2.337738138676417,
             "baselineP95AbsoluteErrorMm": 12.348380871447773,
-            "candidateP95AbsoluteErrorMm": 8.034879448944764,
-            "p95RegressionMm": -4.313501422503009,
+            "candidateP95AbsoluteErrorMm": 7.86624684902921,
+            "p95RegressionMm": -4.482134022418563,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 9.039720134128912,
-            "candidateMaeMm": 7.04861343628531,
-            "maeRelativeImprovement": 0.2202619846964399,
-            "maeRegressionMm": -1.9911066978436018,
+            "candidateMaeMm": 7.278836438032026,
+            "maeRelativeImprovement": 0.19479405003355987,
+            "maeRegressionMm": -1.7608836960968857,
             "baselineP95AbsoluteErrorMm": 16.404202025934794,
-            "candidateP95AbsoluteErrorMm": 15.268230518821895,
-            "p95RegressionMm": -1.1359715071128988,
+            "candidateP95AbsoluteErrorMm": 14.996863610315216,
+            "p95RegressionMm": -1.4073384156195772,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.899367843153082,
-            "candidateMaeMm": 5.699475501630922,
-            "maeRelativeImprovement": 0.17391337421049824,
-            "maeRegressionMm": -1.19989234152216,
+            "candidateMaeMm": 5.562831572343185,
+            "maeRelativeImprovement": 0.19371865672248112,
+            "maeRegressionMm": -1.336536270809897,
             "baselineP95AbsoluteErrorMm": 13.073575738534629,
             "candidateP95AbsoluteErrorMm": 13.073575738534629,
             "p95RegressionMm": 0.0,
@@ -628,31 +628,31 @@
         "appScale": {
           "ezlMm": {
             "baselineMaeMm": 3.575656211434924,
-            "candidateMaeMm": 3.2511234165856124,
-            "maeRelativeImprovement": 0.0907617443230303,
-            "maeRegressionMm": -0.32453279484931175,
+            "candidateMaeMm": 3.1536668448032814,
+            "maeRelativeImprovement": 0.11801732092758908,
+            "maeRegressionMm": -0.42198936663164277,
             "baselineP95AbsoluteErrorMm": 7.73821070712016,
-            "candidateP95AbsoluteErrorMm": 6.8550651921185874,
-            "p95RegressionMm": -0.8831455150015728,
+            "candidateP95AbsoluteErrorMm": 7.245052787319921,
+            "p95RegressionMm": -0.4931579198002396,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 6.931291859910878,
-            "candidateMaeMm": 5.89999504928863,
-            "maeRelativeImprovement": 0.14878854208795486,
-            "maeRegressionMm": -1.0312968106222486,
+            "candidateMaeMm": 6.050156508951031,
+            "maeRelativeImprovement": 0.1271242603498126,
+            "maeRegressionMm": -0.8811353509598474,
             "baselineP95AbsoluteErrorMm": 18.194234795730324,
-            "candidateP95AbsoluteErrorMm": 16.9334768213498,
-            "p95RegressionMm": -1.2607579743805246,
+            "candidateP95AbsoluteErrorMm": 17.058985274028373,
+            "p95RegressionMm": -1.135249521701951,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.802872662213309,
-            "candidateMaeMm": 5.690634787330586,
-            "maeRelativeImprovement": 0.16349532471196623,
-            "maeRegressionMm": -1.112237874882723,
+            "candidateMaeMm": 5.558281990945305,
+            "maeRelativeImprovement": 0.18295075228750157,
+            "maeRegressionMm": -1.2445906712680035,
             "baselineP95AbsoluteErrorMm": 13.135078396098393,
             "candidateP95AbsoluteErrorMm": 13.135078396098393,
             "p95RegressionMm": 0.0,
@@ -668,8 +668,8 @@
         "mode": "strict_inner_candidate",
         "pairedInnerCases": 83,
         "candidateCount": 3136,
-        "strictPassingCandidateCount": 310,
-        "referenceP95PreferredCandidateCount": 310,
+        "strictPassingCandidateCount": 314,
+        "referenceP95PreferredCandidateCount": 314,
         "selected": {
           "widthBlend": 0.6,
           "widthGateMultiplier": 1.0,
@@ -678,19 +678,19 @@
           "pass": true,
           "failedChecks": [],
           "ranking": {
-            "appScaleMaeRelativeImprovementSum": 0.6385281781420363,
-            "coordinateImprovementBalanceMinimum": 0.28419795501917633,
-            "score": 0.9227261331612127
+            "appScaleMaeRelativeImprovementSum": 0.5901538339349599,
+            "coordinateImprovementBalanceMinimum": 0.30953208274277594,
+            "score": 0.8996859166777358
           },
           "coordinate": {
             "width": {
-              "coordinateMaeRelativeImprovement": 0.28419795501917633,
-              "p95Regression": -0.0460786144765189,
+              "coordinateMaeRelativeImprovement": 0.30953208274277594,
+              "p95Regression": -0.05034450784142348,
               "improvedFolds": 4
             },
             "ez": {
-              "coordinateMaeRelativeImprovement": 0.37408374515200093,
-              "p95Regression": -0.043102062367457186,
+              "coordinateMaeRelativeImprovement": 0.3641909535328726,
+              "p95Regression": -0.04053996629782197,
               "improvedFolds": 4
             }
           }
@@ -699,25 +699,25 @@
       },
       "tasks": {
         "width": {
-          "trainSamples": 214,
-          "testSamples": 54,
+          "trainSamples": 307,
+          "testSamples": 77,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.02795815021452506,
+                "innerCoordinateMAE": 0.029737680463117363,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.020522909414277028,
-                "gammaFactor": 0.25,
+                "innerCoordinateMAE": 0.02152098376885124,
+                "gammaFactor": 2.0,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.020522909414277028,
+            "innerCoordinateMAE": 0.02152098376885124,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -726,30 +726,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 5136,
+            "landmarkCorrections": 7368,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999961610599162,
-            "cappedMaximumPixelDiagonalFraction": 0.09999961610599162,
+            "rawMaximumPixelDiagonalFraction": 0.09999998782054378,
+            "cappedMaximumPixelDiagonalFraction": 0.09999998782054378,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              1213,
-              7
+              2084,
+              110
             ],
             "perStageLandmarkCorrections": [
-              5136,
-              5136
+              7368,
+              7368
             ],
-            "observedCumulativeMaximumFraction": 0.09999961610599162
+            "observedCumulativeMaximumFraction": 0.09999998782054378
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 1296,
+            "landmarkCorrections": 1848,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999981016945578,
-            "cappedMaximumPixelDiagonalFraction": 0.09999981016945578,
+            "rawMaximumPixelDiagonalFraction": 0.0999999382351129,
+            "cappedMaximumPixelDiagonalFraction": 0.0999999382351129,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -757,48 +757,48 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 326,
-                "rawMaximumPixelDiagonalFraction": 0.16516096433853278,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 491,
+                "rawMaximumPixelDiagonalFraction": 0.15851851034420808,
                 "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 1296,
-                "landmarkCorrectionsCapped": 6,
-                "rawMaximumPixelDiagonalFraction": 0.0681163451364178,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 27,
+                "rawMaximumPixelDiagonalFraction": 0.07427730908190372,
                 "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 53,
-          "outerTestFallback": 1,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3042863375083713,
-          "outerTestP95Regression": -0.05421571411381104
+          "outerTestAccepted": 74,
+          "outerTestFallback": 3,
+          "outerTestCoordinateMaeRelativeImprovement": 0.30871170302719375,
+          "outerTestP95Regression": -0.05277257391517827
         },
         "ez": {
-          "trainSamples": 91,
-          "testSamples": 22,
+          "trainSamples": 90,
+          "testSamples": 23,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.02626384347391054,
+                "innerCoordinateMAE": 0.026840314244704927,
                 "gammaFactor": 1.0,
                 "lambda": 0.01
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.008485046057926536,
+                "innerCoordinateMAE": 0.00856620741479377,
                 "gammaFactor": 4.0,
                 "lambda": 0.01
               }
             ],
-            "innerCoordinateMAE": 0.008485046057926536,
+            "innerCoordinateMAE": 0.00856620741479377,
             "gammaFactor": 1.0,
             "lambda": 0.01
           },
@@ -807,30 +807,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 1092,
+            "landmarkCorrections": 1080,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999999993913294,
-            "cappedMaximumPixelDiagonalFraction": 0.09999999993913294,
+            "rawMaximumPixelDiagonalFraction": 0.09999994409519797,
+            "cappedMaximumPixelDiagonalFraction": 0.09999994409519797,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              213,
+              207,
               2
             ],
             "perStageLandmarkCorrections": [
-              1092,
-              1092
+              1080,
+              1080
             ],
-            "observedCumulativeMaximumFraction": 0.09999999993913294
+            "observedCumulativeMaximumFraction": 0.09999994409519797
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 264,
+            "landmarkCorrections": 276,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09997192596402735,
-            "cappedMaximumPixelDiagonalFraction": 0.09997192596402735,
+            "rawMaximumPixelDiagonalFraction": 0.09997336935575284,
+            "cappedMaximumPixelDiagonalFraction": 0.09997336935575284,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -838,27 +838,27 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 264,
-                "landmarkCorrectionsCapped": 53,
-                "rawMaximumPixelDiagonalFraction": 0.12912387705876624,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "landmarkCorrections": 276,
+                "landmarkCorrectionsCapped": 52,
+                "rawMaximumPixelDiagonalFraction": 0.12952929612807404,
+                "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 264,
+                "landmarkCorrections": 276,
                 "landmarkCorrectionsCapped": 1,
-                "rawMaximumPixelDiagonalFraction": 0.054327508765758835,
+                "rawMaximumPixelDiagonalFraction": 0.054618389658488135,
                 "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 19,
-          "outerTestFallback": 3,
-          "outerTestCoordinateMaeRelativeImprovement": 0.32486642078991135,
-          "outerTestP95Regression": -0.045463795407905475
+          "outerTestAccepted": 21,
+          "outerTestFallback": 2,
+          "outerTestCoordinateMaeRelativeImprovement": 0.33748698280152406,
+          "outerTestP95Regression": -0.05199253608454105
         }
       },
       "pairedOuterTestCases": 21,
@@ -866,34 +866,34 @@
         "referenceScale": {
           "ezlMm": {
             "baselineMaeMm": 8.87956706804155,
-            "candidateMaeMm": 5.151570296054728,
-            "maeRelativeImprovement": 0.4198399250121389,
-            "maeRegressionMm": -3.727996771986823,
+            "candidateMaeMm": 5.101671228352153,
+            "maeRelativeImprovement": 0.42545946336577856,
+            "maeRegressionMm": -3.777895839689398,
             "baselineP95AbsoluteErrorMm": 17.41833400840325,
-            "candidateP95AbsoluteErrorMm": 12.523987357488878,
-            "p95RegressionMm": -4.894346650914372,
+            "candidateP95AbsoluteErrorMm": 12.258828114232486,
+            "p95RegressionMm": -5.159505894170763,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 7.923493501064554,
-            "candidateMaeMm": 6.4423535026743775,
-            "maeRelativeImprovement": 0.18693017141885448,
-            "maeRegressionMm": -1.4811399983901765,
+            "candidateMaeMm": 5.805110588263085,
+            "maeRelativeImprovement": 0.2673546602287053,
+            "maeRegressionMm": -2.1183829128014686,
             "baselineP95AbsoluteErrorMm": 19.17822276601511,
-            "candidateP95AbsoluteErrorMm": 15.301926613933475,
-            "p95RegressionMm": -3.876296152081636,
+            "candidateP95AbsoluteErrorMm": 17.89353390955685,
+            "p95RegressionMm": -1.28468885645826,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 7.086369572431687,
-            "candidateMaeMm": 5.893421590238057,
-            "maeRelativeImprovement": 0.16834402580901106,
-            "maeRegressionMm": -1.1929479821936306,
+            "candidateMaeMm": 6.074126383821739,
+            "maeRelativeImprovement": 0.14284369143657247,
+            "maeRegressionMm": -1.0122431886099479,
             "baselineP95AbsoluteErrorMm": 23.37087020456586,
-            "candidateP95AbsoluteErrorMm": 13.196890459731137,
-            "p95RegressionMm": -10.173979744834725,
+            "candidateP95AbsoluteErrorMm": 14.091251275209316,
+            "p95RegressionMm": -9.279618929356545,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -901,34 +901,34 @@
         "appScale": {
           "ezlMm": {
             "baselineMaeMm": 3.8350352810629422,
-            "candidateMaeMm": 3.4403584840954977,
-            "maeRelativeImprovement": 0.10291347224791461,
-            "maeRegressionMm": -0.3946767969674445,
+            "candidateMaeMm": 3.4489517216759205,
+            "maeRelativeImprovement": 0.10067275294531644,
+            "maeRegressionMm": -0.38608355938702177,
             "baselineP95AbsoluteErrorMm": 10.133924783368613,
-            "candidateP95AbsoluteErrorMm": 7.603379892425295,
-            "p95RegressionMm": -2.530544890943318,
+            "candidateP95AbsoluteErrorMm": 7.465192253974507,
+            "p95RegressionMm": -2.6687325293941058,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 6.595410360606838,
-            "candidateMaeMm": 5.758269256312845,
-            "maeRelativeImprovement": 0.1269278268557907,
-            "maeRegressionMm": -0.8371411042939929,
+            "candidateMaeMm": 5.573743718825715,
+            "maeRelativeImprovement": 0.1549056974351965,
+            "maeRegressionMm": -1.021666641781123,
             "baselineP95AbsoluteErrorMm": 17.77574353722008,
-            "candidateP95AbsoluteErrorMm": 18.303854810538724,
-            "p95RegressionMm": 0.5281112733186433,
+            "candidateP95AbsoluteErrorMm": 18.605374161123592,
+            "p95RegressionMm": 0.8296306239035118,
             "maeDidNotRegress": true,
             "p95DidNotRegress": false
           },
           "differenceMm": {
             "baselineMaeMm": 6.846274245939133,
-            "candidateMaeMm": 5.875858699850194,
-            "maeRelativeImprovement": 0.14174359823002142,
-            "maeRegressionMm": -0.9704155460889394,
+            "candidateMaeMm": 6.072125807146614,
+            "maeRelativeImprovement": 0.11307587323889415,
+            "maeRegressionMm": -0.774148438792519,
             "baselineP95AbsoluteErrorMm": 22.392154515300362,
-            "candidateP95AbsoluteErrorMm": 13.35250366033425,
-            "p95RegressionMm": -9.039650854966112,
+            "candidateP95AbsoluteErrorMm": 14.865459416077456,
+            "p95RegressionMm": -7.526695099222906,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -941,29 +941,29 @@
         "mode": "strict_inner_candidate",
         "pairedInnerCases": 83,
         "candidateCount": 3136,
-        "strictPassingCandidateCount": 275,
-        "referenceP95PreferredCandidateCount": 274,
+        "strictPassingCandidateCount": 328,
+        "referenceP95PreferredCandidateCount": 325,
         "selected": {
           "widthBlend": 0.6,
           "widthGateMultiplier": 1.0,
           "ezBlend": 0.7,
-          "ezGateMultiplier": 1.0,
+          "ezGateMultiplier": 0.9,
           "pass": true,
           "failedChecks": [],
           "ranking": {
-            "appScaleMaeRelativeImprovementSum": 0.4814626717817106,
-            "coordinateImprovementBalanceMinimum": 0.2811610734625687,
-            "score": 0.7626237452442792
+            "appScaleMaeRelativeImprovementSum": 0.4438717728947537,
+            "coordinateImprovementBalanceMinimum": 0.2997683575271754,
+            "score": 0.7436401304219291
           },
           "coordinate": {
             "width": {
-              "coordinateMaeRelativeImprovement": 0.2811610734625687,
-              "p95Regression": -0.04763940482316424,
+              "coordinateMaeRelativeImprovement": 0.2997683575271754,
+              "p95Regression": -0.051484896387436224,
               "improvedFolds": 4
             },
             "ez": {
-              "coordinateMaeRelativeImprovement": 0.35993616882351986,
-              "p95Regression": -0.044682788051963504,
+              "coordinateMaeRelativeImprovement": 0.33264015799030483,
+              "p95Regression": -0.04186844783434521,
               "improvedFolds": 4
             }
           }
@@ -972,25 +972,25 @@
       },
       "tasks": {
         "width": {
-          "trainSamples": 215,
-          "testSamples": 53,
+          "trainSamples": 307,
+          "testSamples": 77,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.028926305929497118,
+                "innerCoordinateMAE": 0.030253670291142988,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.020658921167606727,
+                "innerCoordinateMAE": 0.021972589448975198,
                 "gammaFactor": 0.25,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.020658921167606727,
+            "innerCoordinateMAE": 0.021972589448975198,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -999,30 +999,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 5160,
+            "landmarkCorrections": 7368,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999997861063992,
-            "cappedMaximumPixelDiagonalFraction": 0.09999997861063992,
+            "rawMaximumPixelDiagonalFraction": 0.09999996366480589,
+            "cappedMaximumPixelDiagonalFraction": 0.09999996366480589,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              1236,
-              22
+              2048,
+              67
             ],
             "perStageLandmarkCorrections": [
-              5160,
-              5160
+              7368,
+              7368
             ],
-            "observedCumulativeMaximumFraction": 0.09999997861063992
+            "observedCumulativeMaximumFraction": 0.09999996366480589
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 1272,
+            "landmarkCorrections": 1848,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999966148285624,
-            "cappedMaximumPixelDiagonalFraction": 0.09999966148285624,
+            "rawMaximumPixelDiagonalFraction": 0.09999962364587117,
+            "cappedMaximumPixelDiagonalFraction": 0.09999962364587117,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -1030,108 +1030,108 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 1272,
-                "landmarkCorrectionsCapped": 313,
-                "rawMaximumPixelDiagonalFraction": 0.12297691776981405,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 553,
+                "rawMaximumPixelDiagonalFraction": 0.15608822322115687,
                 "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 1272,
-                "landmarkCorrectionsCapped": 3,
-                "rawMaximumPixelDiagonalFraction": 0.0570494117963947,
+                "landmarkCorrections": 1848,
+                "landmarkCorrectionsCapped": 18,
+                "rawMaximumPixelDiagonalFraction": 0.07535579396921063,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "requiredMaximumPixelDiagonalFraction": 0.05,
+                "verified": true
+              }
+            ]
+          },
+          "outerTestAccepted": 74,
+          "outerTestFallback": 3,
+          "outerTestCoordinateMaeRelativeImprovement": 0.3379560138953143,
+          "outerTestP95Regression": -0.05255428618787582
+        },
+        "ez": {
+          "trainSamples": 91,
+          "testSamples": 22,
+          "selectedKrr": {
+            "stageCount": 2,
+            "stages": [
+              {
+                "stage": 1,
+                "innerCoordinateMAE": 0.027557720481044365,
+                "gammaFactor": 0.5,
+                "lambda": 0.1
+              },
+              {
+                "stage": 2,
+                "innerCoordinateMAE": 0.014568879844144015,
+                "gammaFactor": 2.0,
+                "lambda": 1.0
+              }
+            ],
+            "innerCoordinateMAE": 0.014568879844144015,
+            "gammaFactor": 0.5,
+            "lambda": 0.1
+          },
+          "selectedPolicy": {
+            "blend": 0.7,
+            "gateMultiplier": 0.9
+          },
+          "innerActualPixelDiagonalCap": {
+            "landmarkCorrections": 1092,
+            "landmarkCorrectionsCapped": 0,
+            "rawMaximumPixelDiagonalFraction": 0.09999999221102257,
+            "cappedMaximumPixelDiagonalFraction": 0.09999999221102257,
+            "requiredMaximumPixelDiagonalFraction": 0.1,
+            "verified": true,
+            "stageCount": 2,
+            "perStageMaximumFraction": 0.05,
+            "cumulativeMaximumFraction": 0.1,
+            "perStageLandmarkCorrectionsCapped": [
+              190,
+              1
+            ],
+            "perStageLandmarkCorrections": [
+              1092,
+              1092
+            ],
+            "observedCumulativeMaximumFraction": 0.09999999221102257
+          },
+          "outerTestActualPixelDiagonalCap": {
+            "landmarkCorrections": 264,
+            "landmarkCorrectionsCapped": 0,
+            "rawMaximumPixelDiagonalFraction": 0.09999997553837466,
+            "cappedMaximumPixelDiagonalFraction": 0.09999997553837466,
+            "requiredMaximumPixelDiagonalFraction": 0.1,
+            "verified": true,
+            "stageCount": 2,
+            "perStageMaximumFraction": 0.05,
+            "cumulativeMaximumFraction": 0.1,
+            "perStageCapAudits": [
+              {
+                "landmarkCorrections": 264,
+                "landmarkCorrectionsCapped": 64,
+                "rawMaximumPixelDiagonalFraction": 0.1087803836596808,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "requiredMaximumPixelDiagonalFraction": 0.05,
+                "verified": true
+              },
+              {
+                "landmarkCorrections": 264,
+                "landmarkCorrectionsCapped": 1,
+                "rawMaximumPixelDiagonalFraction": 0.05092741059277115,
                 "cappedMaximumPixelDiagonalFraction": 0.05,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 51,
+          "outerTestAccepted": 20,
           "outerTestFallback": 2,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3202812758557444,
-          "outerTestP95Regression": -0.050014054017433626
-        },
-        "ez": {
-          "trainSamples": 90,
-          "testSamples": 23,
-          "selectedKrr": {
-            "stageCount": 2,
-            "stages": [
-              {
-                "stage": 1,
-                "innerCoordinateMAE": 0.02771871155336355,
-                "gammaFactor": 0.5,
-                "lambda": 0.1
-              },
-              {
-                "stage": 2,
-                "innerCoordinateMAE": 0.01452193393823542,
-                "gammaFactor": 1.0,
-                "lambda": 1.0
-              }
-            ],
-            "innerCoordinateMAE": 0.01452193393823542,
-            "gammaFactor": 0.5,
-            "lambda": 0.1
-          },
-          "selectedPolicy": {
-            "blend": 0.7,
-            "gateMultiplier": 1.0
-          },
-          "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 1080,
-            "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999936283344982,
-            "cappedMaximumPixelDiagonalFraction": 0.09999936283344982,
-            "requiredMaximumPixelDiagonalFraction": 0.1,
-            "verified": true,
-            "stageCount": 2,
-            "perStageMaximumFraction": 0.05,
-            "cumulativeMaximumFraction": 0.1,
-            "perStageLandmarkCorrectionsCapped": [
-              194,
-              4
-            ],
-            "perStageLandmarkCorrections": [
-              1080,
-              1080
-            ],
-            "observedCumulativeMaximumFraction": 0.09999936283344982
-          },
-          "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 276,
-            "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09894863129053053,
-            "cappedMaximumPixelDiagonalFraction": 0.09894863129053053,
-            "requiredMaximumPixelDiagonalFraction": 0.1,
-            "verified": true,
-            "stageCount": 2,
-            "perStageMaximumFraction": 0.05,
-            "cumulativeMaximumFraction": 0.1,
-            "perStageCapAudits": [
-              {
-                "landmarkCorrections": 276,
-                "landmarkCorrectionsCapped": 66,
-                "rawMaximumPixelDiagonalFraction": 0.10685788905134576,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
-                "requiredMaximumPixelDiagonalFraction": 0.05,
-                "verified": true
-              },
-              {
-                "landmarkCorrections": 276,
-                "landmarkCorrectionsCapped": 0,
-                "rawMaximumPixelDiagonalFraction": 0.04895595526016579,
-                "cappedMaximumPixelDiagonalFraction": 0.04895595526016579,
-                "requiredMaximumPixelDiagonalFraction": 0.05,
-                "verified": true
-              }
-            ]
-          },
-          "outerTestAccepted": 22,
-          "outerTestFallback": 1,
-          "outerTestCoordinateMaeRelativeImprovement": 0.39298394641271484,
-          "outerTestP95Regression": -0.04572819510589229
+          "outerTestCoordinateMaeRelativeImprovement": 0.3814666047383552,
+          "outerTestP95Regression": -0.042056157413851075
         }
       },
       "pairedOuterTestCases": 21,
@@ -1139,34 +1139,34 @@
         "referenceScale": {
           "ezlMm": {
             "baselineMaeMm": 6.342763897962207,
-            "candidateMaeMm": 4.037869532858503,
-            "maeRelativeImprovement": 0.3633895888579768,
-            "maeRegressionMm": -2.3048943651037046,
+            "candidateMaeMm": 4.210846676411718,
+            "maeRelativeImprovement": 0.3361180166639071,
+            "maeRegressionMm": -2.1319172215504896,
             "baselineP95AbsoluteErrorMm": 11.245788829246976,
-            "candidateP95AbsoluteErrorMm": 8.63814246574971,
-            "p95RegressionMm": -2.607646363497267,
+            "candidateP95AbsoluteErrorMm": 7.556860881735389,
+            "p95RegressionMm": -3.688927947511587,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 7.967645106696606,
-            "candidateMaeMm": 7.0805355650523705,
-            "maeRelativeImprovement": 0.11133898783953648,
-            "maeRegressionMm": -0.8871095416442358,
+            "candidateMaeMm": 6.872862807785325,
+            "maeRelativeImprovement": 0.13740349679871458,
+            "maeRegressionMm": -1.094782298911281,
             "baselineP95AbsoluteErrorMm": 15.15641869595612,
-            "candidateP95AbsoluteErrorMm": 13.799627405640408,
-            "p95RegressionMm": -1.3567912903157122,
+            "candidateP95AbsoluteErrorMm": 13.961305151920612,
+            "p95RegressionMm": -1.1951135440355074,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.065013450195484,
-            "candidateMaeMm": 5.041991704891883,
-            "maeRelativeImprovement": 0.16867592359100664,
-            "maeRegressionMm": -1.023021745303601,
+            "candidateMaeMm": 4.94113368480164,
+            "maeRelativeImprovement": 0.18530540362736042,
+            "maeRegressionMm": -1.123879765393844,
             "baselineP95AbsoluteErrorMm": 12.918951620091946,
-            "candidateP95AbsoluteErrorMm": 10.733410537004204,
-            "p95RegressionMm": -2.1855410830877418,
+            "candidateP95AbsoluteErrorMm": 10.443558592325445,
+            "p95RegressionMm": -2.4753930277665006,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -1174,34 +1174,34 @@
         "appScale": {
           "ezlMm": {
             "baselineMaeMm": 4.580417938437456,
-            "candidateMaeMm": 3.5469528778230686,
-            "maeRelativeImprovement": 0.2256268040394016,
-            "maeRegressionMm": -1.0334650606143878,
+            "candidateMaeMm": 3.609914284096229,
+            "maeRelativeImprovement": 0.21188102644456516,
+            "maeRegressionMm": -0.9705036543412273,
             "baselineP95AbsoluteErrorMm": 8.430292630421505,
-            "candidateP95AbsoluteErrorMm": 7.177764868228223,
-            "p95RegressionMm": -1.2525277621932815,
+            "candidateP95AbsoluteErrorMm": 7.107793037327923,
+            "p95RegressionMm": -1.322499593093582,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 7.520410898286273,
-            "candidateMaeMm": 6.283999793167273,
-            "maeRelativeImprovement": 0.16440738702199761,
-            "maeRegressionMm": -1.236411105119,
+            "candidateMaeMm": 5.830455002710126,
+            "maeRelativeImprovement": 0.2247158989625485,
+            "maeRegressionMm": -1.689955895576147,
             "baselineP95AbsoluteErrorMm": 13.936690301315508,
-            "candidateP95AbsoluteErrorMm": 13.025969840995458,
-            "p95RegressionMm": -0.91072046032005,
+            "candidateP95AbsoluteErrorMm": 12.631892158168412,
+            "p95RegressionMm": -1.3047981431470959,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 5.976511384313012,
-            "candidateMaeMm": 5.032742351016254,
-            "maeRelativeImprovement": 0.15791303196944254,
-            "maeRegressionMm": -0.9437690332967579,
+            "candidateMaeMm": 4.950692973152432,
+            "maeRelativeImprovement": 0.1716416727412452,
+            "maeRegressionMm": -1.0258184111605804,
             "baselineP95AbsoluteErrorMm": 12.886175486391991,
-            "candidateP95AbsoluteErrorMm": 10.736622793649673,
-            "p95RegressionMm": -2.1495526927423185,
+            "candidateP95AbsoluteErrorMm": 10.448787871650907,
+            "p95RegressionMm": -2.437387614741084,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -1214,29 +1214,29 @@
         "mode": "strict_inner_candidate",
         "pairedInnerCases": 84,
         "candidateCount": 3136,
-        "strictPassingCandidateCount": 393,
-        "referenceP95PreferredCandidateCount": 393,
+        "strictPassingCandidateCount": 382,
+        "referenceP95PreferredCandidateCount": 382,
         "selected": {
           "widthBlend": 0.6,
           "widthGateMultiplier": 1.0,
           "ezBlend": 0.8,
-          "ezGateMultiplier": 1.0,
+          "ezGateMultiplier": 0.9,
           "pass": true,
           "failedChecks": [],
           "ranking": {
-            "appScaleMaeRelativeImprovementSum": 0.627698112493087,
-            "coordinateImprovementBalanceMinimum": 0.2941497282438272,
-            "score": 0.9218478407369142
+            "appScaleMaeRelativeImprovementSum": 0.5611728553122298,
+            "coordinateImprovementBalanceMinimum": 0.30891625984438253,
+            "score": 0.8700891151566124
           },
           "coordinate": {
             "width": {
-              "coordinateMaeRelativeImprovement": 0.2941497282438272,
-              "p95Regression": -0.048089873943391204,
+              "coordinateMaeRelativeImprovement": 0.30891625984438253,
+              "p95Regression": -0.05076684592636395,
               "improvedFolds": 4
             },
             "ez": {
-              "coordinateMaeRelativeImprovement": 0.3634583006253752,
-              "p95Regression": -0.0373347895431476,
+              "coordinateMaeRelativeImprovement": 0.32483615752388495,
+              "p95Regression": -0.03299363820535177,
               "improvedFolds": 4
             }
           }
@@ -1245,25 +1245,25 @@
       },
       "tasks": {
         "width": {
-          "trainSamples": 215,
-          "testSamples": 53,
+          "trainSamples": 308,
+          "testSamples": 76,
           "selectedKrr": {
             "stageCount": 2,
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.02814980004677957,
+                "innerCoordinateMAE": 0.029631521477413332,
                 "gammaFactor": 0.25,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.02037855892331124,
+                "innerCoordinateMAE": 0.02147374260677567,
                 "gammaFactor": 2.0,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.02037855892331124,
+            "innerCoordinateMAE": 0.02147374260677567,
             "gammaFactor": 0.25,
             "lambda": 0.1
           },
@@ -1272,30 +1272,30 @@
             "gateMultiplier": 1.0
           },
           "innerActualPixelDiagonalCap": {
-            "landmarkCorrections": 5160,
+            "landmarkCorrections": 7392,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999853466373007,
-            "cappedMaximumPixelDiagonalFraction": 0.09999853466373007,
+            "rawMaximumPixelDiagonalFraction": 0.09999998493910739,
+            "cappedMaximumPixelDiagonalFraction": 0.09999998493910739,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              1243,
-              35
+              2051,
+              106
             ],
             "perStageLandmarkCorrections": [
-              5160,
-              5160
+              7392,
+              7392
             ],
-            "observedCumulativeMaximumFraction": 0.09999853466373007
+            "observedCumulativeMaximumFraction": 0.09999998493910739
           },
           "outerTestActualPixelDiagonalCap": {
-            "landmarkCorrections": 1272,
+            "landmarkCorrections": 1824,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.09999997391520968,
-            "cappedMaximumPixelDiagonalFraction": 0.09999997391520968,
+            "rawMaximumPixelDiagonalFraction": 0.09999986387786093,
+            "cappedMaximumPixelDiagonalFraction": 0.09999986387786093,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -1303,27 +1303,27 @@
             "cumulativeMaximumFraction": 0.1,
             "perStageCapAudits": [
               {
-                "landmarkCorrections": 1272,
-                "landmarkCorrectionsCapped": 330,
-                "rawMaximumPixelDiagonalFraction": 0.12643751166316217,
+                "landmarkCorrections": 1824,
+                "landmarkCorrectionsCapped": 505,
+                "rawMaximumPixelDiagonalFraction": 0.15236310530039546,
                 "cappedMaximumPixelDiagonalFraction": 0.050000000000000024,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               },
               {
-                "landmarkCorrections": 1272,
-                "landmarkCorrectionsCapped": 10,
-                "rawMaximumPixelDiagonalFraction": 0.06702122012517334,
-                "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
+                "landmarkCorrections": 1824,
+                "landmarkCorrectionsCapped": 24,
+                "rawMaximumPixelDiagonalFraction": 0.08499460112185601,
+                "cappedMaximumPixelDiagonalFraction": 0.05000000000000001,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 52,
-          "outerTestFallback": 1,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3111617158070579,
-          "outerTestP95Regression": -0.053151041412425076
+          "outerTestAccepted": 69,
+          "outerTestFallback": 7,
+          "outerTestCoordinateMaeRelativeImprovement": 0.2914640054702524,
+          "outerTestP95Regression": -0.04873056379234565
         },
         "ez": {
           "trainSamples": 91,
@@ -1333,50 +1333,50 @@
             "stages": [
               {
                 "stage": 1,
-                "innerCoordinateMAE": 0.025702926472857743,
+                "innerCoordinateMAE": 0.02664409408963443,
                 "gammaFactor": 0.5,
                 "lambda": 0.1
               },
               {
                 "stage": 2,
-                "innerCoordinateMAE": 0.013467056271529358,
+                "innerCoordinateMAE": 0.013546589443281451,
                 "gammaFactor": 4.0,
                 "lambda": 1.0
               }
             ],
-            "innerCoordinateMAE": 0.013467056271529358,
+            "innerCoordinateMAE": 0.013546589443281451,
             "gammaFactor": 0.5,
             "lambda": 0.1
           },
           "selectedPolicy": {
             "blend": 0.8,
-            "gateMultiplier": 1.0
+            "gateMultiplier": 0.9
           },
           "innerActualPixelDiagonalCap": {
             "landmarkCorrections": 1092,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.07778989937256073,
-            "cappedMaximumPixelDiagonalFraction": 0.07778989937256073,
+            "rawMaximumPixelDiagonalFraction": 0.07743863908709231,
+            "cappedMaximumPixelDiagonalFraction": 0.07743863908709231,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
             "perStageMaximumFraction": 0.05,
             "cumulativeMaximumFraction": 0.1,
             "perStageLandmarkCorrectionsCapped": [
-              179,
+              188,
               0
             ],
             "perStageLandmarkCorrections": [
               1092,
               1092
             ],
-            "observedCumulativeMaximumFraction": 0.07778989937256073
+            "observedCumulativeMaximumFraction": 0.07743863908709231
           },
           "outerTestActualPixelDiagonalCap": {
             "landmarkCorrections": 264,
             "landmarkCorrectionsCapped": 0,
-            "rawMaximumPixelDiagonalFraction": 0.07716235816910598,
-            "cappedMaximumPixelDiagonalFraction": 0.07716235816910598,
+            "rawMaximumPixelDiagonalFraction": 0.07653260364425502,
+            "cappedMaximumPixelDiagonalFraction": 0.07653260364425502,
             "requiredMaximumPixelDiagonalFraction": 0.1,
             "verified": true,
             "stageCount": 2,
@@ -1385,8 +1385,8 @@
             "perStageCapAudits": [
               {
                 "landmarkCorrections": 264,
-                "landmarkCorrectionsCapped": 56,
-                "rawMaximumPixelDiagonalFraction": 0.1039566740710162,
+                "landmarkCorrectionsCapped": 52,
+                "rawMaximumPixelDiagonalFraction": 0.10581691823892161,
                 "cappedMaximumPixelDiagonalFraction": 0.05000000000000002,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
@@ -1394,17 +1394,17 @@
               {
                 "landmarkCorrections": 264,
                 "landmarkCorrectionsCapped": 0,
-                "rawMaximumPixelDiagonalFraction": 0.02717920425340827,
-                "cappedMaximumPixelDiagonalFraction": 0.02717920425340827,
+                "rawMaximumPixelDiagonalFraction": 0.026554696332504235,
+                "cappedMaximumPixelDiagonalFraction": 0.026554696332504235,
                 "requiredMaximumPixelDiagonalFraction": 0.05,
                 "verified": true
               }
             ]
           },
-          "outerTestAccepted": 21,
-          "outerTestFallback": 1,
-          "outerTestCoordinateMaeRelativeImprovement": 0.3785290480606111,
-          "outerTestP95Regression": -0.05020413072472525
+          "outerTestAccepted": 20,
+          "outerTestFallback": 2,
+          "outerTestCoordinateMaeRelativeImprovement": 0.3568784737878137,
+          "outerTestP95Regression": -0.039075742512446984
         }
       },
       "pairedOuterTestCases": 20,
@@ -1412,34 +1412,34 @@
         "referenceScale": {
           "ezlMm": {
             "baselineMaeMm": 10.118255622095704,
-            "candidateMaeMm": 7.187694029986195,
-            "maeRelativeImprovement": 0.2896311085193287,
-            "maeRegressionMm": -2.930561592109509,
+            "candidateMaeMm": 7.202837777553785,
+            "maeRelativeImprovement": 0.28813443279446177,
+            "maeRegressionMm": -2.9154178445419197,
             "baselineP95AbsoluteErrorMm": 15.691564762753828,
-            "candidateP95AbsoluteErrorMm": 11.338394315800235,
-            "p95RegressionMm": -4.353170446953593,
+            "candidateP95AbsoluteErrorMm": 11.46762738913823,
+            "p95RegressionMm": -4.223937373615598,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 10.223187645317406,
-            "candidateMaeMm": 6.632196534959263,
-            "maeRelativeImprovement": 0.3512594344292358,
-            "maeRegressionMm": -3.590991110358143,
+            "candidateMaeMm": 6.219472762730353,
+            "maeRelativeImprovement": 0.3916307732472171,
+            "maeRegressionMm": -4.003714882587053,
             "baselineP95AbsoluteErrorMm": 15.788859121037186,
-            "candidateP95AbsoluteErrorMm": 14.113567939127245,
-            "p95RegressionMm": -1.675291181909941,
+            "candidateP95AbsoluteErrorMm": 10.71689339668392,
+            "p95RegressionMm": -5.071965724353266,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.475867056361233,
-            "candidateMaeMm": 5.6837662462633585,
-            "maeRelativeImprovement": 0.12231579234162865,
-            "maeRegressionMm": -0.7921008100978746,
+            "candidateMaeMm": 5.750617041485196,
+            "maeRelativeImprovement": 0.11199272754736764,
+            "maeRegressionMm": -0.7252500148760372,
             "baselineP95AbsoluteErrorMm": 19.353126177074728,
-            "candidateP95AbsoluteErrorMm": 18.43473511920597,
-            "p95RegressionMm": -0.9183910578687566,
+            "candidateP95AbsoluteErrorMm": 15.248592591798925,
+            "p95RegressionMm": -4.104533585275803,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -1447,34 +1447,34 @@
         "appScale": {
           "ezlMm": {
             "baselineMaeMm": 5.071612086302524,
-            "candidateMaeMm": 4.418826065720731,
-            "maeRelativeImprovement": 0.12871371261710768,
-            "maeRegressionMm": -0.652786020581793,
+            "candidateMaeMm": 4.27724907571684,
+            "maeRelativeImprovement": 0.1566292920413038,
+            "maeRegressionMm": -0.794363010585684,
             "baselineP95AbsoluteErrorMm": 10.002718865645399,
-            "candidateP95AbsoluteErrorMm": 10.411395555316433,
-            "p95RegressionMm": 0.40867668967103477,
+            "candidateP95AbsoluteErrorMm": 9.819458518937504,
+            "p95RegressionMm": -0.18326034670789504,
             "maeDidNotRegress": true,
-            "p95DidNotRegress": false
+            "p95DidNotRegress": true
           },
           "tzlMm": {
             "baselineMaeMm": 7.158141631816633,
-            "candidateMaeMm": 5.782248276721612,
-            "maeRelativeImprovement": 0.192213765229152,
-            "maeRegressionMm": -1.3758933550950214,
+            "candidateMaeMm": 5.397760804082098,
+            "maeRelativeImprovement": 0.24592707413191772,
+            "maeRegressionMm": -1.7603808277345356,
             "baselineP95AbsoluteErrorMm": 15.380180566226374,
-            "candidateP95AbsoluteErrorMm": 13.744801788565344,
-            "p95RegressionMm": -1.63537877766103,
+            "candidateP95AbsoluteErrorMm": 14.50003215582921,
+            "p95RegressionMm": -0.8801484103971635,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           },
           "differenceMm": {
             "baselineMaeMm": 6.409449352779896,
-            "candidateMaeMm": 5.728197636430068,
-            "maeRelativeImprovement": 0.10628864959426765,
-            "maeRegressionMm": -0.681251716349828,
+            "candidateMaeMm": 5.845468222276495,
+            "maeRelativeImprovement": 0.0879921346533134,
+            "maeRegressionMm": -0.563981130503401,
             "baselineP95AbsoluteErrorMm": 19.288063749936427,
-            "candidateP95AbsoluteErrorMm": 18.43226133708975,
-            "p95RegressionMm": -0.8558024128466784,
+            "candidateP95AbsoluteErrorMm": 15.31240442946229,
+            "p95RegressionMm": -3.9756593204741364,
             "maeDidNotRegress": true,
             "p95DidNotRegress": true
           }
@@ -1486,23 +1486,23 @@
     "coordinate": {
       "width": {
         "baseline": {
-          "coordinateMAE": 0.04072691811957004,
-          "p95": 0.1340437137375143
+          "coordinateMAE": 0.04365314964689875,
+          "p95": 0.13738032157510904
         },
         "candidate": {
-          "coordinateMAE": 0.02861127906470668,
-          "p95": 0.08451861685175482
+          "coordinateMAE": 0.029834143187305262,
+          "p95": 0.08553060322700921
         },
-        "coordinateMaeRelativeImprovement": 0.2974847991024779,
-        "p95Regression": -0.049525096885759484,
+        "coordinateMaeRelativeImprovement": 0.316563789127991,
+        "p95Regression": -0.05184971834809983,
         "improvedFolds": 5,
         "foldCount": 5,
         "foldCoordinateMaeRelativeImprovements": [
-          0.26004124107553916,
-          0.29185744311917494,
-          0.3042863375083713,
-          0.3202812758557444,
-          0.3111617158070579
+          0.3296517622556801,
+          0.3152068241898948,
+          0.30871170302719375,
+          0.3379560138953143,
+          0.2914640054702524
         ],
         "checks": {
           "coordinateMaeRelativeImprovementAtLeast10Pct": true,
@@ -1517,19 +1517,19 @@
           "p95": 0.12262537193188419
         },
         "candidate": {
-          "coordinateMAE": 0.027250054467718738,
-          "p95": 0.08075738676912504
+          "coordinateMAE": 0.027567569018439413,
+          "p95": 0.08197151086580229
         },
-        "coordinateMaeRelativeImprovement": 0.3616390804706424,
-        "p95Regression": -0.04186798516275915,
+        "coordinateMaeRelativeImprovement": 0.3542009712807282,
+        "p95Regression": -0.0406538610660819,
         "improvedFolds": 5,
         "foldCount": 5,
         "foldCoordinateMaeRelativeImprovements": [
-          0.3449188577250379,
-          0.3676700712872766,
-          0.32486642078991135,
-          0.39298394641271484,
-          0.3785290480606111
+          0.33695342843177845,
+          0.3626159808587709,
+          0.33748698280152406,
+          0.3814666047383552,
+          0.3568784737878137
         ],
         "checks": {
           "coordinateMaeRelativeImprovementAtLeast10Pct": true,
@@ -1543,18 +1543,18 @@
       "width": {
         "unit": "case",
         "replicates": 5000,
-        "meanImprovement": 0.012115639054863361,
-        "ci95Lower": 0.010887170614614514,
-        "ci95Upper": 0.013338355207672452,
+        "meanImprovement": 0.013819006459593492,
+        "ci95Lower": 0.012743559259081902,
+        "ci95Upper": 0.014875185343293601,
         "probabilityImprovement": 1.0,
         "unitOfMeanImprovement": "axis-normalized coordinate MAE reduction"
       },
       "ez": {
         "unit": "case",
         "replicates": 5000,
-        "meanImprovement": 0.015437481116084393,
-        "ci95Lower": 0.013329979191931473,
-        "ci95Upper": 0.017610146780294454,
+        "meanImprovement": 0.01511996656536372,
+        "ci95Lower": 0.012929539632016733,
+        "ci95Upper": 0.01727630338645232,
         "probabilityImprovement": 1.0,
         "unitOfMeanImprovement": "axis-normalized coordinate MAE reduction"
       }
@@ -1564,34 +1564,34 @@
       "referenceScale": {
         "ezlMm": {
           "baselineMaeMm": 7.908040172044466,
-          "candidateMaeMm": 5.517575367672283,
-          "maeRelativeImprovement": 0.30228283523680893,
-          "maeRegressionMm": -2.3904648043721837,
+          "candidateMaeMm": 5.47720815381439,
+          "maeRelativeImprovement": 0.3073874139920604,
+          "maeRegressionMm": -2.4308320182300767,
           "baselineP95AbsoluteErrorMm": 16.110730300521382,
-          "candidateP95AbsoluteErrorMm": 12.356658493791393,
-          "p95RegressionMm": -3.754071806729989,
+          "candidateP95AbsoluteErrorMm": 12.219646383574565,
+          "p95RegressionMm": -3.891083916946817,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         },
         "tzlMm": {
           "baselineMaeMm": 8.454050430580448,
-          "candidateMaeMm": 6.333586952021861,
-          "maeRelativeImprovement": 0.2508221941624966,
-          "maeRegressionMm": -2.1204634785585874,
+          "candidateMaeMm": 6.08680392535128,
+          "maeRelativeImprovement": 0.2800132935883889,
+          "maeRegressionMm": -2.3672465052291685,
           "baselineP95AbsoluteErrorMm": 17.713701139838115,
-          "candidateP95AbsoluteErrorMm": 15.083587626299598,
-          "p95RegressionMm": -2.6301135135385163,
+          "candidateP95AbsoluteErrorMm": 14.913836827547616,
+          "p95RegressionMm": -2.7998643122904987,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         },
         "differenceMm": {
           "baselineMaeMm": 6.518174626051339,
-          "candidateMaeMm": 5.402532944005751,
-          "maeRelativeImprovement": 0.17115860590581253,
-          "maeRegressionMm": -1.1156416820455881,
+          "candidateMaeMm": 5.480332093802878,
+          "maeRelativeImprovement": 0.15922287937799207,
+          "maeRegressionMm": -1.0378425322484608,
           "baselineP95AbsoluteErrorMm": 19.160688918341897,
-          "candidateP95AbsoluteErrorMm": 13.17839325155166,
-          "p95RegressionMm": -5.982295666790238,
+          "candidateP95AbsoluteErrorMm": 13.944028003184604,
+          "p95RegressionMm": -5.216660915157293,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         }
@@ -1599,34 +1599,34 @@
       "appScale": {
         "ezlMm": {
           "baselineMaeMm": 4.4654644985315395,
-          "candidateMaeMm": 3.928537773907016,
-          "maeRelativeImprovement": 0.12023983726689368,
-          "maeRegressionMm": -0.5369267246245233,
+          "candidateMaeMm": 3.871768412291251,
+          "maeRelativeImprovement": 0.13295281743601917,
+          "maeRegressionMm": -0.5936960862402887,
           "baselineP95AbsoluteErrorMm": 9.70144815619509,
-          "candidateP95AbsoluteErrorMm": 8.931175077761628,
-          "p95RegressionMm": -0.7702730784334619,
+          "candidateP95AbsoluteErrorMm": 9.115820106710283,
+          "p95RegressionMm": -0.5856280494848072,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         },
         "tzlMm": {
           "baselineMaeMm": 6.885532122025388,
-          "candidateMaeMm": 5.429005354391991,
-          "maeRelativeImprovement": 0.21153437988826884,
-          "maeRegressionMm": -1.4565267676333962,
+          "candidateMaeMm": 5.244816808232789,
+          "maeRelativeImprovement": 0.23828446149343935,
+          "maeRegressionMm": -1.6407153137925983,
           "baselineP95AbsoluteErrorMm": 17.577292169797623,
-          "candidateP95AbsoluteErrorMm": 16.890742279797763,
-          "p95RegressionMm": -0.6865498899998599,
+          "candidateP95AbsoluteErrorMm": 16.485490819089076,
+          "p95RegressionMm": -1.091801350708547,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         },
         "differenceMm": {
           "baselineMaeMm": 6.386987284759335,
-          "candidateMaeMm": 5.401526074501001,
-          "maeRelativeImprovement": 0.1542920263219948,
-          "maeRegressionMm": -0.9854612102583333,
+          "candidateMaeMm": 5.501842641671069,
+          "maeRelativeImprovement": 0.13858562787503945,
+          "maeRegressionMm": -0.8851446430882657,
           "baselineP95AbsoluteErrorMm": 19.104452362623046,
-          "candidateP95AbsoluteErrorMm": 13.319889870698871,
-          "p95RegressionMm": -5.784562491924175,
+          "candidateP95AbsoluteErrorMm": 14.605902263080587,
+          "p95RegressionMm": -4.498550099542459,
           "maeDidNotRegress": true,
           "p95DidNotRegress": true
         }
@@ -1637,28 +1637,28 @@
         "ezlMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 2.390464804372185,
-          "ci95Lower": 1.6646210759763984,
-          "ci95Upper": 3.1033956350514535,
+          "meanImprovement": 2.430832018230076,
+          "ci95Lower": 1.70970866597484,
+          "ci95Upper": 3.1392198831481197,
           "probabilityImprovement": 1.0,
           "unitOfMeanImprovement": "mm MAE reduction"
         },
         "tzlMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 2.120463478558586,
-          "ci95Lower": 1.4613324760936586,
-          "ci95Upper": 2.7571444816392723,
+          "meanImprovement": 2.3672465052291685,
+          "ci95Lower": 1.7272096826432128,
+          "ci95Upper": 2.9913243951344533,
           "probabilityImprovement": 1.0,
           "unitOfMeanImprovement": "mm MAE reduction"
         },
         "differenceMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 1.1156416820455883,
-          "ci95Lower": 0.4734442384768665,
-          "ci95Upper": 1.795102221767686,
-          "probabilityImprovement": 0.9996,
+          "meanImprovement": 1.0378425322484603,
+          "ci95Lower": 0.343587308786123,
+          "ci95Upper": 1.7774100852207404,
+          "probabilityImprovement": 0.9984,
           "unitOfMeanImprovement": "mm MAE reduction"
         }
       },
@@ -1666,39 +1666,39 @@
         "ezlMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 0.5369267246245234,
-          "ci95Lower": 0.12536290863201385,
-          "ci95Upper": 0.9535926735741984,
-          "probabilityImprovement": 0.9944,
+          "meanImprovement": 0.5936960862402886,
+          "ci95Lower": 0.18232224991231524,
+          "ci95Upper": 1.0107245605703663,
+          "probabilityImprovement": 0.9978,
           "unitOfMeanImprovement": "mm MAE reduction"
         },
         "tzlMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 1.4565267676333966,
-          "ci95Lower": 0.8912644815445908,
-          "ci95Upper": 2.043011133700705,
+          "meanImprovement": 1.6407153137925994,
+          "ci95Lower": 1.069785854876016,
+          "ci95Upper": 2.246470865586774,
           "probabilityImprovement": 1.0,
           "unitOfMeanImprovement": "mm MAE reduction"
         },
         "differenceMm": {
           "unit": "case",
           "replicates": 5000,
-          "meanImprovement": 0.9854612102583337,
-          "ci95Lower": 0.3439249317527924,
-          "ci95Upper": 1.6478037116087867,
-          "probabilityImprovement": 0.9986,
+          "meanImprovement": 0.8851446430882661,
+          "ci95Lower": 0.17738406328203532,
+          "ci95Upper": 1.5996962660743972,
+          "probabilityImprovement": 0.995,
           "unitOfMeanImprovement": "mm MAE reduction"
         }
       }
     },
     "accepted": {
-      "width": 250,
-      "ez": 104
+      "width": 363,
+      "ez": 102
     },
     "fallback": {
-      "width": 18,
-      "ez": 9
+      "width": 21,
+      "ez": 11
     }
   },
   "promotionGate": {

@@ -13,6 +13,9 @@ const INPUTS = [
   { json: 'baseline_corrected_width_predictions.json', csv: 'baseline_corrected_width_predictions.csv', optional: true },
   // 클래스2 치아폭(2026-07-26 신규 99건) 규칙 baseline. 완전 신규 SHA라 중복 없음. 있을 때만 포함.
   { json: 'baseline_class2_width_predictions.json', csv: 'baseline_class2_width_predictions.csv', optional: true },
+  // 클래스2 치아폭 2차(2026-07-27 신규 118건, 유라쌤) 규칙 baseline. 기존 라벨/root와 SHA 중복
+  // 0건인 완전 신규 케이스라 --source=embedded-missing으로 생성한다. 있을 때만 포함.
+  { json: 'baseline_class2b_width_predictions.json', csv: 'baseline_class2b_width_predictions.csv', optional: true },
   // 위 소스들이 훑지 못한 임베디드 이미지 보충분(--source=embedded-missing). dataset ↔ baseline
   // 케이스 수 일치를 보장해 evaluate_baseline의 전수 예측 검사를 통과시킨다.
   { json: 'baseline_missing_predictions.json', csv: 'baseline_missing_predictions.csv', optional: true }

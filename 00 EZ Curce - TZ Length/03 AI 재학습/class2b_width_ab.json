@@ -1,0 +1,342 @@
+{
+  "schemaVersion": "class2b-width-ab-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsModelParameters": false
+  },
+  "note": "신규 클래스2 폭 정답 116건의 가치를 out-of-fold로 실측. 평가 케이스는 기존 268건으로 고정하고, 신규는 train에만 넣는다 → in-sample 이득이 섞이지 않는다. mm는 정답 최외곽 스팬=54mm, 픽셀 등방 공간. 짝지어진 케이스 부트스트랩 5,000회.",
+  "samples": {
+    "widthSamplesTotal": 384,
+    "legacySamples": 268,
+    "freshSamples": 116,
+    "ezSamples": 113,
+    "datasetCases": 452
+  },
+  "hyperparameters": {
+    "stages": 3,
+    "perStageCap": 0.05,
+    "cumulativeCap": 0.15,
+    "widthBias": 1.013,
+    "folds": 5,
+    "seeds": [
+      20260711,
+      20260712,
+      20260713,
+      20260714
+    ]
+  },
+  "acrossSeeds": {
+    "position": {
+      "meanGainPercent": 1.42,
+      "perSeedGainPercent": [
+        1.48,
+        1.5,
+        0.99,
+        1.7
+      ],
+      "seedsImproved": "4/4",
+      "seedsSignificant": "1/4"
+    },
+    "molar": {
+      "meanGainPercent": 0.76,
+      "perSeedGainPercent": [
+        0.58,
+        1.33,
+        0.35,
+        0.77
+      ],
+      "seedsImproved": "4/4",
+      "seedsSignificant": "0/4"
+    },
+    "terminal": {
+      "meanGainPercent": 0.55,
+      "perSeedGainPercent": [
+        0.6,
+        1.32,
+        -0.16,
+        0.44
+      ],
+      "seedsImproved": "3/4",
+      "seedsSignificant": "0/4"
+    },
+    "lengthAbs": {
+      "meanGainPercent": -3.82,
+      "perSeedGainPercent": [
+        -3.1,
+        -3.07,
+        -4.87,
+        -4.23
+      ],
+      "seedsImproved": "0/4",
+      "seedsSignificant": "4/4"
+    },
+    "tzl": {
+      "meanGainPercent": -0.14,
+      "perSeedGainPercent": [
+        0.56,
+        2.08,
+        -2.63,
+        -0.59
+      ],
+      "seedsImproved": "2/4",
+      "seedsSignificant": "0/4"
+    }
+  },
+  "perSeed": [
+    {
+      "seed": 20260711,
+      "comparison": {
+        "position": {
+          "aMm": 2.1969,
+          "bMm": 2.1643,
+          "gainPercent": 1.48,
+          "ci95": [
+            -0.01,
+            2.92
+          ],
+          "significant": false
+        },
+        "molar": {
+          "aMm": 2.7701,
+          "bMm": 2.754,
+          "gainPercent": 0.58,
+          "ci95": [
+            -1.35,
+            2.39
+          ],
+          "significant": false
+        },
+        "terminal": {
+          "aMm": 2.9108,
+          "bMm": 2.8933,
+          "gainPercent": 0.6,
+          "ci95": [
+            -1.55,
+            2.67
+          ],
+          "significant": false
+        },
+        "lengthAbs": {
+          "aMm": 0.7454,
+          "bMm": 0.7685,
+          "gainPercent": -3.1,
+          "ci95": [
+            -5.59,
+            -0.65
+          ],
+          "significant": true
+        },
+        "tzl": {
+          "aMm": 5.6925,
+          "bMm": 5.6606,
+          "gainPercent": 0.56,
+          "ci95": [
+            -4.11,
+            5.16
+          ],
+          "significant": false
+        }
+      }
+    },
+    {
+      "seed": 20260712,
+      "comparison": {
+        "position": {
+          "aMm": 2.2026,
+          "bMm": 2.1695,
+          "gainPercent": 1.5,
+          "ci95": [
+            -0.44,
+            3.34
+          ],
+          "significant": false
+        },
+        "molar": {
+          "aMm": 2.7727,
+          "bMm": 2.7359,
+          "gainPercent": 1.33,
+          "ci95": [
+            -0.9,
+            3.58
+          ],
+          "significant": false
+        },
+        "terminal": {
+          "aMm": 2.9094,
+          "bMm": 2.8711,
+          "gainPercent": 1.32,
+          "ci95": [
+            -1.23,
+            3.84
+          ],
+          "significant": false
+        },
+        "lengthAbs": {
+          "aMm": 0.7528,
+          "bMm": 0.7758,
+          "gainPercent": -3.07,
+          "ci95": [
+            -6.01,
+            -0.04
+          ],
+          "significant": true
+        },
+        "tzl": {
+          "aMm": 5.7852,
+          "bMm": 5.6648,
+          "gainPercent": 2.08,
+          "ci95": [
+            -3.13,
+            7.49
+          ],
+          "significant": false
+        }
+      }
+    },
+    {
+      "seed": 20260713,
+      "comparison": {
+        "position": {
+          "aMm": 2.1845,
+          "bMm": 2.1629,
+          "gainPercent": 0.99,
+          "ci95": [
+            -0.78,
+            2.65
+          ],
+          "significant": false
+        },
+        "molar": {
+          "aMm": 2.7537,
+          "bMm": 2.744,
+          "gainPercent": 0.35,
+          "ci95": [
+            -1.64,
+            2.39
+          ],
+          "significant": false
+        },
+        "terminal": {
+          "aMm": 2.8874,
+          "bMm": 2.8922,
+          "gainPercent": -0.16,
+          "ci95": [
+            -2.32,
+            1.94
+          ],
+          "significant": false
+        },
+        "lengthAbs": {
+          "aMm": 0.7453,
+          "bMm": 0.7816,
+          "gainPercent": -4.87,
+          "ci95": [
+            -7.48,
+            -2.33
+          ],
+          "significant": true
+        },
+        "tzl": {
+          "aMm": 5.6298,
+          "bMm": 5.7776,
+          "gainPercent": -2.63,
+          "ci95": [
+            -7.52,
+            1.98
+          ],
+          "significant": false
+        }
+      }
+    },
+    {
+      "seed": 20260714,
+      "comparison": {
+        "position": {
+          "aMm": 2.2134,
+          "bMm": 2.1757,
+          "gainPercent": 1.7,
+          "ci95": [
+            0.4,
+            3.0
+          ],
+          "significant": true
+        },
+        "molar": {
+          "aMm": 2.7727,
+          "bMm": 2.7514,
+          "gainPercent": 0.77,
+          "ci95": [
+            -1.05,
+            2.57
+          ],
+          "significant": false
+        },
+        "terminal": {
+          "aMm": 2.9165,
+          "bMm": 2.9038,
+          "gainPercent": 0.44,
+          "ci95": [
+            -1.52,
+            2.5
+          ],
+          "significant": false
+        },
+        "lengthAbs": {
+          "aMm": 0.7454,
+          "bMm": 0.7769,
+          "gainPercent": -4.23,
+          "ci95": [
+            -6.83,
+            -1.55
+          ],
+          "significant": true
+        },
+        "tzl": {
+          "aMm": 5.6799,
+          "bMm": 5.7135,
+          "gainPercent": -0.59,
+          "ci95": [
+            -5.63,
+            4.19
+          ],
+          "significant": false
+        }
+      }
+    }
+  ],
+  "freshCohortHoldout": {
+    "note": "신규 116건을 기존 268건 학습 모델로 예측한 성적(완전 홀드아웃). 신규 코호트가 기존 분포와 같은지 확인용.",
+    "ruleDraftMm": {
+      "position": 4.0771,
+      "molar": 5.7703,
+      "terminal": 6.1741,
+      "lengthAbs": 1.162,
+      "tzl": 13.2872
+    },
+    "modelMm": {
+      "position": 2.306,
+      "molar": 2.9262,
+      "terminal": 3.138,
+      "lengthAbs": 0.7932,
+      "tzl": 6.3197
+    },
+    "gainOverRulePercent": {
+      "position": 43.44,
+      "molar": 49.29,
+      "terminal": 49.17,
+      "lengthAbs": 31.74,
+      "tzl": 52.44
+    },
+    "legacyRuleDraftMm": {
+      "position": 3.5187,
+      "molar": 4.774,
+      "terminal": 5.0652,
+      "lengthAbs": 0.903,
+      "tzl": 8.9302
+    }
+  }
+}

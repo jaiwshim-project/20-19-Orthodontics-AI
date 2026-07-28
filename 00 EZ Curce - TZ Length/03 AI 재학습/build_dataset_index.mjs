@@ -35,6 +35,13 @@ const CORRECTED_WIDTH_DIR = resolveDir('02 교정 후 치아폭 찍기(김원장
 // 중복 0건인 완전 신규 케이스다. EZ 라벨은 없어 width_embedded_only 케이스로 편입되며,
 // 어금니 잔차 분산(TZL P95 꼬리)을 줄이기 위한 표본 확대분이다.
 const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클래스2)', '03 치아 좌우폭 찍기');
+// 클래스2 치아폭 정답 2차(2026-07-27 신규 118건, 유라쌤). 감사(`_audit_new_labels.mjs`) 결과
+// ① 117건 파싱(빈 파일 1건) 중 **116건이 치아 12개 완전 라벨** ② 임베디드 이미지 SHA-256이
+// 기존 모든 라벨 폴더 및 번호 root와 **중복 0건**인 완전 신규 케이스 ③ 상대폭 프로파일이
+// 기존 완전 라벨 322건과 통계적으로 동일(평균 |z| 0.253, 최대 0.354).
+// 남은 1건(11개 라벨)은 번호 규약 진단에서 "위치가 정본을 가리키지 않음"으로 나왔고
+// len==12 필터에서 자동 제외된다. EZ 라벨은 없어 width_embedded_only로 편입된다.
+const CLASS2B_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(유라쌤-클래스2)');
 
 function sha256Buffer(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
@@ -629,7 +636,13 @@ async function main() {
   const widthsClass2 = !class2Dirs.has(CLASS2_WIDTH_DIR)
     ? await readAnnotations(CLASS2_WIDTH_DIR, 'tooth_width', skippedAnnotations)
     : [];
-  const widths = [...widths01, ...widthsTs, ...widthsCorrected, ...widthsClass2];
+  // resolveDir는 접두어 폴백이 있어 두 클래스2 폴더가 같은 경로로 해석될 수 있다.
+  // 같은 폴더를 두 번 읽으면 동일 정답이 중복 주석으로 잡히므로 경로로 방어한다.
+  const class2bDirs = new Set([...class2Dirs, CLASS2_WIDTH_DIR]);
+  const widthsClass2b = !class2bDirs.has(CLASS2B_WIDTH_DIR)
+    ? await readAnnotations(CLASS2B_WIDTH_DIR, 'tooth_width', skippedAnnotations)
+    : [];
+  const widths = [...widths01, ...widthsTs, ...widthsCorrected, ...widthsClass2, ...widthsClass2b];
   const ez = await readAnnotations(EZ_DIR, 'ez_curve', skippedAnnotations);
   const rootByHash = groupBy(roots, item => item.sha256);
   const rootByNumber = new Map(roots.map(item => [item.caseNumber, item]));

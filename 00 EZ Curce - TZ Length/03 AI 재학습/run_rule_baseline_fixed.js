@@ -29,8 +29,23 @@ const EZ_ANNOTATION_DIR = resolveDir('02 이퀼리브리엄 찍기(김원장님)
 // KRR 적용 엔진 예측을 생성해 신규 데이터에서의 개선 여부를 측정한다.
 const CLASS2_WIDTH_DIR = resolveDir('03 치아 좌우폭 찍기(김원장님-클래스2)', '03 치아 좌우폭 찍기');
 const SCRATCH_DIR = __dirname;
-const DEFAULT_JSON = path.join(SCRATCH_DIR, 'baseline_predictions.json');
-const DEFAULT_CSV = path.join(SCRATCH_DIR, 'baseline_predictions.csv');
+// ⚠️ 기본 출력을 `baseline_predictions.json`으로 두면 안 된다. 그 파일명은
+// `run_rule_baseline.js`(규칙엔진 = 학습의 **입력 baseline**)의 기본 출력이고
+// `merge_baselines.js`가 그대로 읽어 간다. 이 러너는 **KRR 적용 엔진**의 예측을 내므로,
+// 같은 파일명을 쓰면 학습 입력이 조용히 "모델 출력"으로 바뀌어 잔차가 0에 가까워지고
+// 승격 게이트가 무관하게 깨진다(2026-07-27에 실제로 발생 — root 119건이 오염돼
+// EZ 게이트까지 흔들렸다). 그래서 기본값을 KRR 전용 이름으로 분리한다.
+const DEFAULT_JSON = path.join(SCRATCH_DIR, 'krr_pred_root.json');
+const DEFAULT_CSV = path.join(SCRATCH_DIR, 'krr_pred_root.csv');
+const RULE_BASELINE_NAMES = new Set([
+  'baseline_predictions.json', 'baseline_predictions.csv',
+  'baseline_predictions_all.json', 'baseline_predictions_all.csv',
+  'baseline_ez_embedded_predictions.json', 'baseline_ez_embedded_predictions.csv',
+  'baseline_corrected_width_predictions.json', 'baseline_corrected_width_predictions.csv',
+  'baseline_class2_width_predictions.json', 'baseline_class2_width_predictions.csv',
+  'baseline_class2b_width_predictions.json', 'baseline_class2b_width_predictions.csv',
+  'baseline_missing_predictions.json', 'baseline_missing_predictions.csv',
+]);
 
 function parseArgs(argv) {
   const out = { from: 1, limit: null, source: 'root', output: DEFAULT_JSON, csv: DEFAULT_CSV, headed: false };
@@ -46,6 +61,13 @@ function parseArgs(argv) {
   if (!Number.isInteger(out.from) || out.from < 1) throw new Error('--from must be a positive integer');
   if (out.limit != null && (!Number.isInteger(out.limit) || out.limit < 1)) throw new Error('--limit must be a positive integer');
   if (!['root', 'ez-embedded-only', 'class2-width-embedded'].includes(out.source)) throw new Error('--source must be root, ez-embedded-only, or class2-width-embedded');
+  // KRR 예측을 규칙 baseline 파일명으로 덮어쓰는 것을 막는다(위 주석의 오염 사고 재발 방지).
+  for (const target of [out.output, out.csv]) {
+    if (RULE_BASELINE_NAMES.has(path.basename(target))) {
+      throw new Error(`Refusing to write KRR-engine predictions to a rule-baseline file name: ${path.basename(target)}. `
+        + 'Those files are the training input and must come from run_rule_baseline.js (production rule engine).');
+    }
+  }
   return out;
 }
 
