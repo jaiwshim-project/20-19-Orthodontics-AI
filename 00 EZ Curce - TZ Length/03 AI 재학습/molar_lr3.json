@@ -1,0 +1,519 @@
+{
+  "schemaVersion": "molar-lr3-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "좌우 어금니 정확도 격차를 현재 모델(3단계, 384건, WIDTH_BIAS 1.013)에서 재측정. 왼쪽=치아1·2, 오른쪽=치아11·12. 격차는 (오른쪽 − 왼쪽)이며 양수면 오른쪽이 더 나쁘다. 픽셀 등방 mm(스팬=54mm), 시드 [20260711, 20260712, 20260713, 20260714], 부트스트랩 5000회.",
+  "sideConvention": {
+    "cases": 384,
+    "tooth1and2OnImageLeft": 384,
+    "flipped": 0,
+    "convention": "tooth 1,2 = image left"
+  },
+  "ruleEngineDraftGaps": {
+    "position": {
+      "leftMm": 5.1479,
+      "rightMm": 5.0021,
+      "gapMm": -0.1458,
+      "rightWorseByPercent": -2.83,
+      "ci95Percent": [
+        -10.22,
+        5.15
+      ],
+      "significant": false,
+      "casesRightWorseFraction": 0.438
+    },
+    "lengthAbs": {
+      "leftMm": 1.3081,
+      "rightMm": 1.2829,
+      "gapMm": -0.0252,
+      "rightWorseByPercent": -1.93,
+      "ci95Percent": [
+        -7.57,
+        3.81
+      ],
+      "significant": false,
+      "casesRightWorseFraction": 0.477
+    },
+    "terminalPosition": {
+      "leftMm": 5.434,
+      "rightMm": 5.3664,
+      "gapMm": -0.0676,
+      "rightWorseByPercent": -1.24,
+      "ci95Percent": [
+        -8.53,
+        6.54
+      ],
+      "significant": false,
+      "casesRightWorseFraction": 0.456
+    }
+  },
+  "krrOutOfFold": {
+    "position": {
+      "meanPercent": -8.01,
+      "perSeed": [
+        -7.35,
+        -8.75,
+        -8.95,
+        -6.97
+      ],
+      "seedsSignificant": "4/4"
+    },
+    "lengthAbs": {
+      "meanPercent": -11.26,
+      "perSeed": [
+        -14.59,
+        -9.28,
+        -10.46,
+        -10.71
+      ],
+      "seedsSignificant": "4/4"
+    },
+    "terminalPosition": {
+      "meanPercent": -7.46,
+      "perSeed": [
+        -6.74,
+        -7.96,
+        -8.31,
+        -6.84
+      ],
+      "seedsSignificant": "3/4"
+    },
+    "terminalLengthAbs": {
+      "meanPercent": -2.6,
+      "perSeed": [
+        -5.32,
+        -2.52,
+        -1.12,
+        -1.44
+      ],
+      "seedsSignificant": "0/4"
+    },
+    "positionClass2": {
+      "meanPercent": -13.36,
+      "perSeed": [
+        -13.86,
+        -14.05,
+        -14.25,
+        -11.3
+      ],
+      "seedsSignificant": "4/4"
+    },
+    "positionOther": {
+      "meanPercent": -1.07,
+      "perSeed": [
+        1.26,
+        -2.11,
+        -2.07,
+        -1.36
+      ],
+      "seedsSignificant": "0/4"
+    },
+    "signedLengthLeftPercent": -3.073,
+    "signedLengthRightPercent": -1.242,
+    "perSeed": [
+      {
+        "seed": 20260711,
+        "position": {
+          "leftMm": 2.8648,
+          "rightMm": 2.6542,
+          "gapMm": -0.2106,
+          "rightWorseByPercent": -7.35,
+          "ci95Percent": [
+            -13.48,
+            -0.46
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.458
+        },
+        "lengthAbs": {
+          "leftMm": 1.1372,
+          "rightMm": 0.9713,
+          "gapMm": -0.1659,
+          "rightWorseByPercent": -14.59,
+          "ci95Percent": [
+            -20.69,
+            -8.04
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.427
+        },
+        "lengthSignedLeftPercent": -3.335,
+        "lengthSignedRightPercent": -1.448,
+        "terminalPosition": {
+          "leftMm": 3.0201,
+          "rightMm": 2.8166,
+          "gapMm": -0.2034,
+          "rightWorseByPercent": -6.74,
+          "ci95Percent": [
+            -12.78,
+            -0.05
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.49
+        },
+        "terminalLengthAbs": {
+          "leftMm": 1.232,
+          "rightMm": 1.1664,
+          "gapMm": -0.0656,
+          "rightWorseByPercent": -5.32,
+          "ci95Percent": [
+            -13.58,
+            3.56
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.505
+        },
+        "position_class2": {
+          "leftMm": 2.9151,
+          "rightMm": 2.5111,
+          "gapMm": -0.404,
+          "rightWorseByPercent": -13.86,
+          "ci95Percent": [
+            -21.01,
+            -5.79
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.423
+        },
+        "position_other": {
+          "leftMm": 2.8008,
+          "rightMm": 2.8362,
+          "gapMm": 0.0354,
+          "rightWorseByPercent": 1.26,
+          "ci95Percent": [
+            -8.58,
+            12.25
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.503
+        }
+      },
+      {
+        "seed": 20260712,
+        "position": {
+          "leftMm": 2.8679,
+          "rightMm": 2.6171,
+          "gapMm": -0.2508,
+          "rightWorseByPercent": -8.75,
+          "ci95Percent": [
+            -14.69,
+            -2.34
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.424
+        },
+        "lengthAbs": {
+          "leftMm": 1.1041,
+          "rightMm": 1.0016,
+          "gapMm": -0.1025,
+          "rightWorseByPercent": -9.28,
+          "ci95Percent": [
+            -15.65,
+            -2.39
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.456
+        },
+        "lengthSignedLeftPercent": -2.922,
+        "lengthSignedRightPercent": -1.411,
+        "terminalPosition": {
+          "leftMm": 3.0115,
+          "rightMm": 2.7718,
+          "gapMm": -0.2396,
+          "rightWorseByPercent": -7.96,
+          "ci95Percent": [
+            -14.1,
+            -1.22
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.466
+        },
+        "terminalLengthAbs": {
+          "leftMm": 1.2303,
+          "rightMm": 1.1993,
+          "gapMm": -0.0311,
+          "rightWorseByPercent": -2.52,
+          "ci95Percent": [
+            -10.94,
+            6.48
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.513
+        },
+        "position_class2": {
+          "leftMm": 2.8473,
+          "rightMm": 2.4473,
+          "gapMm": -0.4,
+          "rightWorseByPercent": -14.05,
+          "ci95Percent": [
+            -21.27,
+            -6.16
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.391
+        },
+        "position_other": {
+          "leftMm": 2.8942,
+          "rightMm": 2.8331,
+          "gapMm": -0.0611,
+          "rightWorseByPercent": -2.11,
+          "ci95Percent": [
+            -11.73,
+            8.5
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.467
+        }
+      },
+      {
+        "seed": 20260713,
+        "position": {
+          "leftMm": 2.8676,
+          "rightMm": 2.611,
+          "gapMm": -0.2567,
+          "rightWorseByPercent": -8.95,
+          "ci95Percent": [
+            -14.92,
+            -2.15
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.456
+        },
+        "lengthAbs": {
+          "leftMm": 1.1107,
+          "rightMm": 0.9945,
+          "gapMm": -0.1162,
+          "rightWorseByPercent": -10.46,
+          "ci95Percent": [
+            -16.71,
+            -3.95
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.453
+        },
+        "lengthSignedLeftPercent": -3.018,
+        "lengthSignedRightPercent": -1.047,
+        "terminalPosition": {
+          "leftMm": 3.0207,
+          "rightMm": 2.7697,
+          "gapMm": -0.2511,
+          "rightWorseByPercent": -8.31,
+          "ci95Percent": [
+            -14.55,
+            -1.48
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.474
+        },
+        "terminalLengthAbs": {
+          "leftMm": 1.2028,
+          "rightMm": 1.1893,
+          "gapMm": -0.0135,
+          "rightWorseByPercent": -1.12,
+          "ci95Percent": [
+            -9.1,
+            7.87
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.536
+        },
+        "position_class2": {
+          "leftMm": 2.8919,
+          "rightMm": 2.4797,
+          "gapMm": -0.4122,
+          "rightWorseByPercent": -14.25,
+          "ci95Percent": [
+            -21.48,
+            -6.36
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.433
+        },
+        "position_other": {
+          "leftMm": 2.8368,
+          "rightMm": 2.778,
+          "gapMm": -0.0587,
+          "rightWorseByPercent": -2.07,
+          "ci95Percent": [
+            -12.28,
+            9.51
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.485
+        }
+      },
+      {
+        "seed": 20260714,
+        "position": {
+          "leftMm": 2.867,
+          "rightMm": 2.6673,
+          "gapMm": -0.1997,
+          "rightWorseByPercent": -6.97,
+          "ci95Percent": [
+            -13.06,
+            -0.45
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.458
+        },
+        "lengthAbs": {
+          "leftMm": 1.0998,
+          "rightMm": 0.982,
+          "gapMm": -0.1178,
+          "rightWorseByPercent": -10.71,
+          "ci95Percent": [
+            -16.96,
+            -3.92
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.458
+        },
+        "lengthSignedLeftPercent": -3.016,
+        "lengthSignedRightPercent": -1.063,
+        "terminalPosition": {
+          "leftMm": 3.0109,
+          "rightMm": 2.805,
+          "gapMm": -0.206,
+          "rightWorseByPercent": -6.84,
+          "ci95Percent": [
+            -13.13,
+            0.11
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.469
+        },
+        "terminalLengthAbs": {
+          "leftMm": 1.1992,
+          "rightMm": 1.182,
+          "gapMm": -0.0172,
+          "rightWorseByPercent": -1.44,
+          "ci95Percent": [
+            -9.82,
+            7.37
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.508
+        },
+        "position_class2": {
+          "leftMm": 2.8884,
+          "rightMm": 2.562,
+          "gapMm": -0.3264,
+          "rightWorseByPercent": -11.3,
+          "ci95Percent": [
+            -18.88,
+            -2.9
+          ],
+          "significant": true,
+          "casesRightWorseFraction": 0.451
+        },
+        "position_other": {
+          "leftMm": 2.8398,
+          "rightMm": 2.8012,
+          "gapMm": -0.0386,
+          "rightWorseByPercent": -1.36,
+          "ci95Percent": [
+            -10.98,
+            9.46
+          ],
+          "significant": false,
+          "casesRightWorseFraction": 0.467
+        }
+      }
+    ]
+  },
+  "mirrorPairProfile": [
+    {
+      "pairFromEnd": 1,
+      "leftToothIndex": 1,
+      "rightToothIndex": 12,
+      "leftPositionMm": 3.0201,
+      "rightPositionMm": 2.8166,
+      "rightMinusLeftMm": -0.2034,
+      "leftLengthAbsMm": 1.232,
+      "rightLengthAbsMm": 1.1664
+    },
+    {
+      "pairFromEnd": 2,
+      "leftToothIndex": 2,
+      "rightToothIndex": 11,
+      "leftPositionMm": 2.7095,
+      "rightPositionMm": 2.4918,
+      "rightMinusLeftMm": -0.2178,
+      "leftLengthAbsMm": 1.0424,
+      "rightLengthAbsMm": 0.7761
+    },
+    {
+      "pairFromEnd": 3,
+      "leftToothIndex": 3,
+      "rightToothIndex": 10,
+      "leftPositionMm": 2.216,
+      "rightPositionMm": 2.0978,
+      "rightMinusLeftMm": -0.1183,
+      "leftLengthAbsMm": 0.9391,
+      "rightLengthAbsMm": 0.5881
+    },
+    {
+      "pairFromEnd": 4,
+      "leftToothIndex": 4,
+      "rightToothIndex": 9,
+      "leftPositionMm": 1.9484,
+      "rightPositionMm": 1.8976,
+      "rightMinusLeftMm": -0.0508,
+      "leftLengthAbsMm": 0.7811,
+      "rightLengthAbsMm": 0.698
+    },
+    {
+      "pairFromEnd": 5,
+      "leftToothIndex": 5,
+      "rightToothIndex": 8,
+      "leftPositionMm": 1.8313,
+      "rightPositionMm": 1.8404,
+      "rightMinusLeftMm": 0.0091,
+      "leftLengthAbsMm": 0.5538,
+      "rightLengthAbsMm": 0.6154
+    },
+    {
+      "pairFromEnd": 6,
+      "leftToothIndex": 6,
+      "rightToothIndex": 7,
+      "leftPositionMm": 1.6346,
+      "rightPositionMm": 1.6827,
+      "rightMinusLeftMm": 0.0481,
+      "leftLengthAbsMm": 0.4864,
+      "rightLengthAbsMm": 0.4746
+    }
+  ],
+  "truthSideDisagreement": {
+    "casesCompared": 53,
+    "Position": {
+      "leftMm": 0.667,
+      "rightMm": 0.836,
+      "gapMm": 0.1691,
+      "rightWorseByPercent": 25.35,
+      "ci95Percent": [
+        8.91,
+        43.46
+      ],
+      "significant": true,
+      "casesRightWorseFraction": 0.679
+    },
+    "LengthAbs": {
+      "leftMm": 0.455,
+      "rightMm": 0.3963,
+      "gapMm": -0.0587,
+      "rightWorseByPercent": -12.91,
+      "ci95Percent": [
+        -26.07,
+        1.48
+      ],
+      "significant": false,
+      "casesRightWorseFraction": 0.453
+    }
+  }
+}

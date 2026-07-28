@@ -1,0 +1,340 @@
+{
+  "schemaVersion": "molar-lr4-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "좌우 어금니 격차의 메커니즘. 왼쪽=치아1·2(영상 왼쪽), 오른쪽=치아11·12. H1 정답 비대칭 / H2 초안 오차 부호 일관성(=학습 가능성) / H3 촬영 회전 / H4 보정량·캡 포화. 픽셀 등방 mm(스팬=54mm), 시드 20260711, 부트스트랩 5000회. consistency = |평균|/표준편차, 클수록 한 방향으로 일관되게 틀림 = 배우기 쉬움.",
+  "h1TruthAsymmetry": {
+    "all": {
+      "cases": 384,
+      "leftTruthLenMm": 10.318,
+      "rightTruthLenMm": 10.3257,
+      "rightMinusLeftMm": 0.0077,
+      "ci95": [
+        -0.033,
+        0.0491
+      ],
+      "significant": false
+    },
+    "class2": {
+      "cases": 215,
+      "leftTruthLenMm": 10.3786,
+      "rightTruthLenMm": 10.349,
+      "rightMinusLeftMm": -0.0296,
+      "ci95": [
+        -0.0849,
+        0.0343
+      ],
+      "significant": false
+    },
+    "other": {
+      "cases": 169,
+      "leftTruthLenMm": 10.241,
+      "rightTruthLenMm": 10.296,
+      "rightMinusLeftMm": 0.0551,
+      "ci95": [
+        -0.0015,
+        0.111
+      ],
+      "significant": false
+    }
+  },
+  "h2DraftErrorConsistency": {
+    "all": {
+      "left_along": {
+        "meanMm": 3.7263,
+        "stdMm": 4.0842,
+        "consistency": 0.9124,
+        "sameSignFraction": 0.891
+      },
+      "left_inward": {
+        "meanMm": -1.499,
+        "stdMm": 1.4837,
+        "consistency": 1.0103,
+        "sameSignFraction": 0.857
+      },
+      "left_lenSigned": {
+        "meanMm": -1.0845,
+        "stdMm": 0.9673,
+        "consistency": 1.1212,
+        "sameSignFraction": 0.88
+      },
+      "right_along": {
+        "meanMm": -3.8606,
+        "stdMm": 4.1558,
+        "consistency": 0.929,
+        "sameSignFraction": 0.839
+      },
+      "right_inward": {
+        "meanMm": -1.05,
+        "stdMm": 1.3022,
+        "consistency": 0.8063,
+        "sameSignFraction": 0.812
+      },
+      "right_lenSigned": {
+        "meanMm": -1.0413,
+        "stdMm": 0.9555,
+        "consistency": 1.0899,
+        "sameSignFraction": 0.888
+      }
+    },
+    "class2": {
+      "left_along": {
+        "meanMm": 5.1806,
+        "stdMm": 3.7667,
+        "consistency": 1.3754,
+        "sameSignFraction": 0.967
+      },
+      "left_inward": {
+        "meanMm": -0.9831,
+        "stdMm": 1.4816,
+        "consistency": 0.6635,
+        "sameSignFraction": 0.795
+      },
+      "left_lenSigned": {
+        "meanMm": -1.4571,
+        "stdMm": 0.8477,
+        "consistency": 1.7188,
+        "sameSignFraction": 0.949
+      },
+      "right_along": {
+        "meanMm": -5.1292,
+        "stdMm": 3.8661,
+        "consistency": 1.3267,
+        "sameSignFraction": 0.916
+      },
+      "right_inward": {
+        "meanMm": -0.7234,
+        "stdMm": 1.3524,
+        "consistency": 0.5349,
+        "sameSignFraction": 0.735
+      },
+      "right_lenSigned": {
+        "meanMm": -1.3777,
+        "stdMm": 0.8078,
+        "consistency": 1.7055,
+        "sameSignFraction": 0.967
+      }
+    },
+    "other": {
+      "left_along": {
+        "meanMm": 1.8761,
+        "stdMm": 3.7064,
+        "consistency": 0.5062,
+        "sameSignFraction": 0.793
+      },
+      "left_inward": {
+        "meanMm": -2.1553,
+        "stdMm": 1.2,
+        "consistency": 1.7961,
+        "sameSignFraction": 0.935
+      },
+      "left_lenSigned": {
+        "meanMm": -0.6105,
+        "stdMm": 0.9002,
+        "consistency": 0.6782,
+        "sameSignFraction": 0.793
+      },
+      "right_along": {
+        "meanMm": -2.2469,
+        "stdMm": 3.9466,
+        "consistency": 0.5693,
+        "sameSignFraction": 0.74
+      },
+      "right_inward": {
+        "meanMm": -1.4656,
+        "stdMm": 1.1035,
+        "consistency": 1.3281,
+        "sameSignFraction": 0.911
+      },
+      "right_lenSigned": {
+        "meanMm": -0.6134,
+        "stdMm": 0.9577,
+        "consistency": 0.6405,
+        "sameSignFraction": 0.787
+      }
+    }
+  },
+  "h2ResidualAfterKrr": {
+    "all": {
+      "left_along": {
+        "meanMm": 0.2208,
+        "stdMm": 2.9858,
+        "consistency": 0.0739,
+        "sameSignFraction": 0.586
+      },
+      "left_inward": {
+        "meanMm": -0.1102,
+        "stdMm": 1.3679,
+        "consistency": 0.0805,
+        "sameSignFraction": 0.536
+      },
+      "left_lenSigned": {
+        "meanMm": -0.354,
+        "stdMm": 1.1139,
+        "consistency": 0.3178,
+        "sameSignFraction": 0.625
+      },
+      "right_along": {
+        "meanMm": -0.2546,
+        "stdMm": 2.7338,
+        "consistency": 0.0931,
+        "sameSignFraction": 0.599
+      },
+      "right_inward": {
+        "meanMm": -0.0712,
+        "stdMm": 1.2942,
+        "consistency": 0.055,
+        "sameSignFraction": 0.523
+      },
+      "right_lenSigned": {
+        "meanMm": -0.1821,
+        "stdMm": 0.9801,
+        "consistency": 0.1858,
+        "sameSignFraction": 0.594
+      }
+    },
+    "class2": {
+      "left_along": {
+        "meanMm": 0.8551,
+        "stdMm": 2.96,
+        "consistency": 0.2889,
+        "sameSignFraction": 0.674
+      },
+      "left_inward": {
+        "meanMm": 0.1262,
+        "stdMm": 1.3622,
+        "consistency": 0.0927,
+        "sameSignFraction": 0.521
+      },
+      "left_lenSigned": {
+        "meanMm": -0.7062,
+        "stdMm": 1.0147,
+        "consistency": 0.696,
+        "sameSignFraction": 0.763
+      },
+      "right_along": {
+        "meanMm": -0.7227,
+        "stdMm": 2.3966,
+        "consistency": 0.3016,
+        "sameSignFraction": 0.679
+      },
+      "right_inward": {
+        "meanMm": 0.0178,
+        "stdMm": 1.3414,
+        "consistency": 0.0132,
+        "sameSignFraction": 0.493
+      },
+      "right_lenSigned": {
+        "meanMm": -0.38,
+        "stdMm": 0.9459,
+        "consistency": 0.4018,
+        "sameSignFraction": 0.674
+      }
+    },
+    "other": {
+      "left_along": {
+        "meanMm": -0.5862,
+        "stdMm": 2.8191,
+        "consistency": 0.208,
+        "sameSignFraction": 0.527
+      },
+      "left_inward": {
+        "meanMm": -0.4109,
+        "stdMm": 1.315,
+        "consistency": 0.3125,
+        "sameSignFraction": 0.609
+      },
+      "left_lenSigned": {
+        "meanMm": 0.0942,
+        "stdMm": 1.0728,
+        "consistency": 0.0878,
+        "sameSignFraction": 0.55
+      },
+      "right_along": {
+        "meanMm": 0.3411,
+        "stdMm": 3.0067,
+        "consistency": 0.1134,
+        "sameSignFraction": 0.503
+      },
+      "right_inward": {
+        "meanMm": -0.1843,
+        "stdMm": 1.2222,
+        "consistency": 0.1508,
+        "sameSignFraction": 0.544
+      },
+      "right_lenSigned": {
+        "meanMm": 0.0697,
+        "stdMm": 0.9649,
+        "consistency": 0.0723,
+        "sameSignFraction": 0.509
+      }
+    }
+  },
+  "h3PhotoTilt": {
+    "class2": {
+      "cases": 215,
+      "meanTiltDeg": -0.109,
+      "stdTiltDeg": 2.859,
+      "ci95": [
+        -0.487,
+        0.2669
+      ]
+    },
+    "other": {
+      "cases": 169,
+      "meanTiltDeg": -0.116,
+      "stdTiltDeg": 2.253,
+      "ci95": [
+        -0.4627,
+        0.2315
+      ]
+    }
+  },
+  "h4CorrectionAmount": {
+    "all": {
+      "left": {
+        "neededMoveMm": 5.1479,
+        "actualMoveMm": 4.5649,
+        "moveFraction": 1.1014
+      },
+      "right": {
+        "neededMoveMm": 5.0021,
+        "actualMoveMm": 4.5864,
+        "moveFraction": 1.2742
+      },
+      "fractionGapRightMinusLeft": 0.1728
+    },
+    "class2": {
+      "left": {
+        "neededMoveMm": 5.9091,
+        "actualMoveMm": 5.0434,
+        "moveFraction": 1.0806
+      },
+      "right": {
+        "neededMoveMm": 5.8278,
+        "actualMoveMm": 5.0138,
+        "moveFraction": 1.0563
+      },
+      "fractionGapRightMinusLeft": -0.0243
+    },
+    "other": {
+      "left": {
+        "neededMoveMm": 4.1795,
+        "actualMoveMm": 3.9561,
+        "moveFraction": 1.1279
+      },
+      "right": {
+        "neededMoveMm": 3.9516,
+        "actualMoveMm": 4.0426,
+        "moveFraction": 1.5513
+      },
+      "fractionGapRightMinusLeft": 0.4234
+    }
+  }
+}
