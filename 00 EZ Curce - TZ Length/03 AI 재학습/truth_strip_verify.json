@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "truth-strip-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "정답 EZL/TZL 스트립 실구동 검증. 학습 이미지는 SHA-256 일치로만 선택했고 파일명·SHA는 기록하지 않는다.",
+  "trainedImage": {
+    "expectedTzlMm": 98.27,
+    "observedTzlMm": 98.3,
+    "observedEzlMm": 94.5,
+    "observedDiffMm": 3.8
+  },
+  "layout": {
+    "truthStripTopPx": 911,
+    "widthStripTopPx": 947
+  },
+  "unknownImageTested": true,
+  "pageErrors": [],
+  "checks": {
+    "noPageErrors": true,
+    "selfTestPassed": true,
+    "truthStripVisibleOnTrainedImage": true,
+    "truthTzlMatchesPipeline": true,
+    "truthEzlIsFinite": true,
+    "truthDiffConsistent": true,
+    "truthStripRenderedAboveWidthBox": true,
+    "truthStripInsideCanvasArea": true,
+    "widthStripStillVisible": true,
+    "truthStripHiddenOnUnknownImage": true
+  },
+  "pass": true
+}
