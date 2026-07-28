@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "class2-scale-test-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "폭 스케일 차가 주석자 속성이 아니라 클래스2 케이스 속성임을 확인한 뒤, (1) 배율을 클래스2/나머지 2개로 나누면 길이 악화가 회복되는지, (2) 평가를 클래스2 케이스로 한정하면 신규 116건이 이득인지 실측. 평가 집합은 기존 268건 고정, 신규는 train에만. mm는 정답 최외곽 스팬=54mm, 픽셀 등방 공간, 부트스트랩 5000회, 시드 [20260711, 20260712, 20260713, 20260714].",
+  "class2Counts": {
+    "legacyClass2": 99,
+    "legacyOther": 169,
+    "freshClass2": 116
+  },
+  "twoGroupBias": {
+    "refitClass2": {
+      "mean": 1.0353,
+      "min": 1.0321,
+      "max": 1.0385
+    },
+    "refitOther": {
+      "mean": 1.0036,
+      "min": 1.0001,
+      "max": 1.0064
+    },
+    "acrossSeeds": {
+      "position": {
+        "meanGainPercent": 1.42,
+        "perSeedGainPercent": [
+          1.48,
+          1.5,
+          0.99,
+          1.7
+        ],
+        "seedsImproved": "4/4",
+        "seedsSignificant": "2/4"
+      },
+      "molar": {
+        "meanGainPercent": 0.76,
+        "perSeedGainPercent": [
+          0.58,
+          1.33,
+          0.35,
+          0.77
+        ],
+        "seedsImproved": "4/4",
+        "seedsSignificant": "0/4"
+      },
+      "terminal": {
+        "meanGainPercent": 0.55,
+        "perSeedGainPercent": [
+          0.6,
+          1.32,
+          -0.16,
+          0.44
+        ],
+        "seedsImproved": "3/4",
+        "seedsSignificant": "0/4"
+      },
+      "lengthAbs": {
+        "meanGainPercent": -3.72,
+        "perSeedGainPercent": [
+          -3.07,
+          -3.25,
+          -4.52,
+          -4.05
+        ],
+        "seedsImproved": "0/4",
+        "seedsSignificant": "4/4"
+      },
+      "tzl": {
+        "meanGainPercent": -0.37,
+        "perSeedGainPercent": [
+          0.9,
+          1.91,
+          -3.18,
+          -1.11
+        ],
+        "seedsImproved": "2/4",
+        "seedsSignificant": "0/4"
+      }
+    }
+  },
+  "evaluationSplit": {
+    "seedsUsed": {
+      "class2": 4,
+      "other": 4
+    },
+    "acrossSeeds": {
+      "class2": {
+        "position": {
+          "meanGainPercent": 4.37,
+          "perSeedGainPercent": [
+            3.6,
+            5.26,
+            3.63,
+            4.98
+          ],
+          "seedsImproved": "4/4",
+          "seedsSignificant": "4/4"
+        },
+        "molar": {
+          "meanGainPercent": 6.78,
+          "perSeedGainPercent": [
+            6.13,
+            8.07,
+            6.29,
+            6.64
+          ],
+          "seedsImproved": "4/4",
+          "seedsSignificant": "4/4"
+        },
+        "terminal": {
+          "meanGainPercent": 6.97,
+          "perSeedGainPercent": [
+            6.59,
+            8.35,
+            5.93,
+            7.02
+          ],
+          "seedsImproved": "4/4",
+          "seedsSignificant": "4/4"
+        },
+        "lengthAbs": {
+          "meanGainPercent": 2.58,
+          "perSeedGainPercent": [
+            2.96,
+            3.9,
+            1.23,
+            2.23
+          ],
+          "seedsImproved": "4/4",
+          "seedsSignificant": "0/4"
+        },
+        "tzl": {
+          "meanGainPercent": 12.46,
+          "perSeedGainPercent": [
+            13.15,
+            13.64,
+            11.33,
+            11.71
+          ],
+          "seedsImproved": "4/4",
+          "seedsSignificant": "4/4"
+        }
+      },
+      "other": {
+        "position": {
+          "meanGainPercent": -0.35,
+          "perSeedGainPercent": [
+            0.24,
+            -0.8,
+            -0.58,
+            -0.26
+          ],
+          "seedsImproved": "1/4",
+          "seedsSignificant": "0/4"
+        },
+        "molar": {
+          "meanGainPercent": -2.77,
+          "perSeedGainPercent": [
+            -2.63,
+            -2.74,
+            -3.1,
+            -2.62
+          ],
+          "seedsImproved": "0/4",
+          "seedsSignificant": "4/4"
+        },
+        "terminal": {
+          "meanGainPercent": -3.22,
+          "perSeedGainPercent": [
+            -2.89,
+            -2.92,
+            -3.69,
+            -3.37
+          ],
+          "seedsImproved": "0/4",
+          "seedsSignificant": "4/4"
+        },
+        "lengthAbs": {
+          "meanGainPercent": -8.37,
+          "perSeedGainPercent": [
+            -7.59,
+            -7.73,
+            -9.18,
+            -8.97
+          ],
+          "seedsImproved": "0/4",
+          "seedsSignificant": "4/4"
+        },
+        "tzl": {
+          "meanGainPercent": -8.79,
+          "perSeedGainPercent": [
+            -8.76,
+            -5.77,
+            -11.64,
+            -8.98
+          ],
+          "seedsImproved": "0/4",
+          "seedsSignificant": "3/4"
+        }
+      }
+    }
+  }
+}

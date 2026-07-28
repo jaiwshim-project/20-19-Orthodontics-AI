@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "cohort-scale-map-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "필요 폭 배율(정답 폭 합 / 규칙엔진 초안 폭 합)을 라벨 폴더별로 분해. 코호트는 라벨 md의 SHA-256으로 역추적하며 폴더명·담당자명은 산출물에 담지 않는다(익명 코드). 여러 폴더가 주석한 케이스는 제외.",
+  "cohorts": {
+    "A_width_1st": {
+      "cases": 4,
+      "medianNeededBias": 1.0188,
+      "meanNeededBias": 1.0452,
+      "iqr": [
+        0.9977,
+        1.0662
+      ],
+      "medianCi95": null
+    },
+    "B_width_2nd": {
+      "cases": 52,
+      "medianNeededBias": 1.0912,
+      "meanNeededBias": 1.0973,
+      "iqr": [
+        1.0473,
+        1.1525
+      ],
+      "medianCi95": [
+        1.0723,
+        1.1336
+      ]
+    },
+    "C_postortho": {
+      "cases": 59,
+      "medianNeededBias": 1.0468,
+      "meanNeededBias": 1.0478,
+      "iqr": [
+        1.0085,
+        1.0803
+      ],
+      "medianCi95": [
+        1.0287,
+        1.0601
+      ]
+    },
+    "D_class2_a": {
+      "cases": 99,
+      "medianNeededBias": 1.162,
+      "meanNeededBias": 1.1656,
+      "iqr": [
+        1.127,
+        1.2036
+      ],
+      "medianCi95": [
+        1.1513,
+        1.1814
+      ]
+    },
+    "E_class2_b": {
+      "cases": 116,
+      "medianNeededBias": 1.1697,
+      "meanNeededBias": 1.1691,
+      "iqr": [
+        1.1196,
+        1.2177
+      ],
+      "medianCi95": [
+        1.1528,
+        1.1875
+      ]
+    }
+  },
+  "excluded": {
+    "multipleCohortsPerCase": 54,
+    "cohortUnresolved": 0
+  },
+  "spread": {
+    "betweenCohortMedianRange": 0.1509,
+    "withinCohortIqr": 0.0898,
+    "interpretation": "betweenCohortMedianRange가 withinCohortIqr보다 작으면 '폴더별 기준 차이'보다 '케이스별 변동'이 지배적이라는 뜻 = 코호트 지시자로는 해결되지 않는다."
+  }
+}
