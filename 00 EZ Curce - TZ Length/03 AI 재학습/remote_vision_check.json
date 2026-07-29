@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "remote-vision-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "note": "provider/치아개수/합계·지연만 기록. 이미지·좌표·차트번호 저장 안 함"
+  },
+  "purpose": "프로덕션 measure-tooth-widths 가 haiku VISION 으로 돌고 계측이 성공하는지 반복 실측",
+  "target": "https://20-19-orthodontics-ai.vercel.app",
+  "expectedProvider": "anthropic:claude-haiku-4-5-20251001",
+  "probes": [
+    {
+      "trial": 1,
+      "status": 200,
+      "ms": 6604,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 104.8,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    },
+    {
+      "trial": 2,
+      "status": 200,
+      "ms": 13852,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 105,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    },
+    {
+      "trial": 3,
+      "status": 200,
+      "ms": 20438,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 107.2,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    },
+    {
+      "trial": 4,
+      "status": 200,
+      "ms": 13057,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 105.6,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    },
+    {
+      "trial": 5,
+      "status": 200,
+      "ms": 12946,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 105,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    },
+    {
+      "trial": 6,
+      "status": 200,
+      "ms": 15569,
+      "provider": "anthropic:claude-sonnet-5",
+      "nTeeth": 14,
+      "ttlMm": 106.8,
+      "error": null,
+      "keyLeak": false,
+      "ok": false
+    }
+  ],
+  "verdict": {
+    "ok": 0,
+    "total": 6,
+    "keyLeaks": 0,
+    "failures": [
+      {
+        "trial": 1,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      },
+      {
+        "trial": 2,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      },
+      {
+        "trial": 3,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      },
+      {
+        "trial": 4,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      },
+      {
+        "trial": 5,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      },
+      {
+        "trial": 6,
+        "status": 200,
+        "provider": "anthropic:claude-sonnet-5",
+        "error": null
+      }
+    ]
+  }
+}

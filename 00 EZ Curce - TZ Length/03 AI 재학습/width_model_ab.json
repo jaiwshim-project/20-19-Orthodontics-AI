@@ -1,0 +1,1074 @@
+{
+  "schemaVersion": "width-model-ab-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "note": "4자리 차트번호 + mm 단위 오차만. 좌표·절대경로 없음"
+  },
+  "purpose": "measure-tooth-widths 의 모델 교체(haiku-4-5→sonnet-5)가 정확도를 바꿨는지 쌍대 실측",
+  "caveat": "정답은 픽셀 좌표 → API 와 동일한 molarDistanceMm=54 스케일 규약으로 mm 환산. 두 모델에 동일 조건. 프론트(step3-new.html)는 이 API 를 쓰고, 연구용 보정후 HTML 은 로컬 ONNX 이므로 이 결과와 무관.",
+  "payload": {
+    "maxDim": 1200,
+    "jpegQuality": 85,
+    "note": "step3-new.html 과 동일. 원본 그대로는 5MB 한도 초과로 400"
+  },
+  "n": 20,
+  "molarDistanceMm": 54,
+  "alignNote": "정답 주석 11~12개 vs 모델 14개 → 슬라이딩 오프셋으로 MAE 최소 정렬 후 비교. 두 모델 동일 규칙.",
+  "aggregate": {
+    "ttlErrPct": {
+      "구": {
+        "n": 20,
+        "mean": 13.64,
+        "median": 10.3
+      },
+      "신": {
+        "n": 17,
+        "mean": 7.27,
+        "median": 6.3
+      }
+    },
+    "alignedMaeMm": {
+      "구": {
+        "n": 20,
+        "mean": 1.53,
+        "median": 1.56
+      },
+      "신": {
+        "n": 17,
+        "mean": 2.2,
+        "median": 2.16
+      }
+    },
+    "alignedSumErrPct": {
+      "구": {
+        "n": 20,
+        "mean": 8.28,
+        "median": 8
+      },
+      "신": {
+        "n": 17,
+        "mean": 23.54,
+        "median": 23.5
+      }
+    }
+  },
+  "paired": {
+    "ttlErrPct": {
+      "신모델우세": 12,
+      "구모델우세": 5,
+      "동일": 0
+    },
+    "alignedMaeMm": {
+      "신모델우세": 0,
+      "구모델우세": 17,
+      "동일": 0
+    },
+    "alignedSumErrPct": {
+      "신모델우세": 0,
+      "구모델우세": 17,
+      "동일": 0
+    }
+  },
+  "cases": [
+    {
+      "chart": "0000",
+      "truthTtl": 105.27258407218196,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 113.8,
+        "ttlErrPct": 8.1,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.53,
+        "alignedSumErrPct": 5.5,
+        "widths": [
+          10.2,
+          9.8,
+          7.5,
+          7.8,
+          7.9,
+          8.1,
+          8.5,
+          8.6,
+          8.2,
+          7.9,
+          7.7,
+          7.6,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 106,
+        "ttlErrPct": 0.7,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.74,
+        "alignedSumErrPct": 19.8,
+        "widths": [
+          10.8,
+          10.5,
+          7.6,
+          7.2,
+          6.5,
+          5.4,
+          5,
+          5,
+          5.4,
+          6.5,
+          7.2,
+          7.6,
+          10.5,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "0000",
+      "truthTtl": 95.6582209605151,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 122.8,
+        "ttlErrPct": 28.4,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 0.93,
+        "alignedSumErrPct": 7.2,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          8.3,
+          8.5,
+          8.9,
+          8.7,
+          8.4,
+          8.2,
+          7.8,
+          8,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 107.2,
+        "ttlErrPct": 12.1,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.02,
+        "alignedSumErrPct": 9.9,
+        "widths": [
+          10.5,
+          11,
+          7.2,
+          7.3,
+          6.7,
+          5.6,
+          5.3,
+          5.3,
+          5.6,
+          6.7,
+          7.3,
+          7.2,
+          11,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "3000",
+      "truthTtl": 109.8805460148354,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 120.1,
+        "ttlErrPct": 9.3,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 1.67,
+        "alignedSumErrPct": 8,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.7,
+          8.2,
+          7.8,
+          7.5,
+          8.3,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "fail": "parse"
+      }
+    },
+    {
+      "chart": "8000",
+      "truthTtl": 95.35462784289004,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 122,
+        "ttlErrPct": 27.9,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.34,
+        "alignedSumErrPct": 6.3,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.8,
+          8.3,
+          7.7,
+          7.8,
+          8.2,
+          9.9,
+          10.4
+        ]
+      },
+      "sonnet-5(현)": {
+        "fail": "parse"
+      }
+    },
+    {
+      "chart": "1000",
+      "truthTtl": 101.82284376408505,
+      "truthN": 11,
+      "haiku-4-5(구)": {
+        "ttl": 122,
+        "ttlErrPct": 19.8,
+        "nTeeth": 14,
+        "alignOffset": 3,
+        "alignedMaeMm": 1.32,
+        "alignedSumErrPct": 7.8,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.8,
+          8.3,
+          7.7,
+          7.8,
+          8.2,
+          9.9,
+          10.4
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 106.8,
+        "ttlErrPct": 4.9,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 2.38,
+        "alignedSumErrPct": 25.8,
+        "widths": [
+          10.2,
+          10.8,
+          7.5,
+          7.2,
+          6.8,
+          5.6,
+          5.3,
+          5.3,
+          5.6,
+          6.8,
+          7.2,
+          7.5,
+          10.8,
+          10.2
+        ]
+      }
+    },
+    {
+      "chart": "1000",
+      "truthTtl": 109.86062872622952,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.2,
+        "ttlErrPct": 10.3,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.49,
+        "alignedSumErrPct": 8.2,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.3,
+          8.9,
+          8.7,
+          8.1,
+          7.8,
+          7.9,
+          8.2,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 105,
+        "ttlErrPct": 4.4,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.16,
+        "alignedSumErrPct": 23.5,
+        "widths": [
+          10.5,
+          11,
+          7,
+          7,
+          6.5,
+          5.5,
+          5,
+          5,
+          5.5,
+          6.5,
+          7,
+          7,
+          11,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "3000",
+      "truthTtl": 109.15661388415052,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 113.8,
+        "ttlErrPct": 4.3,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.56,
+        "alignedSumErrPct": 8.8,
+        "widths": [
+          10.2,
+          9.8,
+          7.5,
+          7.8,
+          7.9,
+          8.1,
+          8.5,
+          8.6,
+          8.2,
+          7.9,
+          7.7,
+          7.6,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 105,
+        "ttlErrPct": 3.8,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.1,
+        "alignedSumErrPct": 23,
+        "widths": [
+          10.5,
+          11,
+          7,
+          7,
+          6.5,
+          5.5,
+          5,
+          5,
+          5.5,
+          6.5,
+          7,
+          7,
+          11,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "8000",
+      "truthTtl": 116.52143341807893,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.5,
+        "ttlErrPct": 4.3,
+        "nTeeth": 14,
+        "alignOffset": 0,
+        "alignedMaeMm": 1.63,
+        "alignedSumErrPct": 12.7,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.8,
+          8.3,
+          7.7,
+          7.8,
+          8.2,
+          9.7,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 103.8,
+        "ttlErrPct": 10.9,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.86,
+        "alignedSumErrPct": 29.5,
+        "widths": [
+          10.8,
+          10.2,
+          7.2,
+          6.8,
+          6.5,
+          5.4,
+          5,
+          5,
+          5.4,
+          6.5,
+          6.8,
+          7.2,
+          10.2,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "6000",
+      "truthTtl": 111.88535914353767,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.2,
+        "ttlErrPct": 8.3,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.38,
+        "alignedSumErrPct": 9.8,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.3,
+          8.9,
+          8.7,
+          8.1,
+          7.8,
+          7.9,
+          8.2,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 102.8,
+        "ttlErrPct": 8.1,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.47,
+        "alignedSumErrPct": 26.5,
+        "widths": [
+          10.3,
+          9.8,
+          7.5,
+          7,
+          6.5,
+          5.3,
+          5,
+          5,
+          5.3,
+          6.5,
+          7,
+          7.5,
+          9.8,
+          10.3
+        ]
+      }
+    },
+    {
+      "chart": "9000",
+      "truthTtl": 97.31136178573054,
+      "truthN": 11,
+      "haiku-4-5(구)": {
+        "ttl": 122.8,
+        "ttlErrPct": 26.2,
+        "nTeeth": 14,
+        "alignOffset": 3,
+        "alignedMaeMm": 1.26,
+        "alignedSumErrPct": 2.7,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          8.3,
+          8.5,
+          8.9,
+          8.7,
+          8.4,
+          8.2,
+          7.8,
+          8,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 103.4,
+        "ttlErrPct": 6.3,
+        "nTeeth": 14,
+        "alignOffset": 0,
+        "alignedMaeMm": 2.12,
+        "alignedSumErrPct": 22.1,
+        "widths": [
+          10.3,
+          10,
+          7.3,
+          7,
+          6.7,
+          5.4,
+          5,
+          5,
+          5.4,
+          6.7,
+          7,
+          7.3,
+          10,
+          10.3
+        ]
+      }
+    },
+    {
+      "chart": "0000",
+      "truthTtl": 103.12569615425588,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.1,
+        "ttlErrPct": 17.4,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.41,
+        "alignedSumErrPct": 2.3,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.7,
+          8.2,
+          7.8,
+          7.5,
+          8.3,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 105.8,
+        "ttlErrPct": 2.6,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.58,
+        "alignedSumErrPct": 18.4,
+        "widths": [
+          10.8,
+          10.2,
+          7.4,
+          7.1,
+          6.7,
+          5.6,
+          5.1,
+          5.1,
+          5.6,
+          6.7,
+          7.1,
+          7.4,
+          10.2,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "6000",
+      "truthTtl": 117.65294669056145,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 123.2,
+        "ttlErrPct": 4.7,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.62,
+        "alignedSumErrPct": 12.5,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          8.3,
+          7.9,
+          8.5,
+          8.7,
+          8.9,
+          8.4,
+          7.8,
+          8.2,
+          8.4,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 107.6,
+        "ttlErrPct": 8.5,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.64,
+        "alignedSumErrPct": 26.9,
+        "widths": [
+          10.8,
+          11.2,
+          7.2,
+          7,
+          6.8,
+          5.6,
+          5.2,
+          5.2,
+          5.6,
+          6.8,
+          7,
+          7.2,
+          11.2,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "7000",
+      "truthTtl": 109.47648847528396,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.2,
+        "ttlErrPct": 10.7,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 1.6,
+        "alignedSumErrPct": 7.6,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.3,
+          8.9,
+          8.7,
+          8.1,
+          7.8,
+          7.9,
+          8.2,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 103,
+        "ttlErrPct": 5.9,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.34,
+        "alignedSumErrPct": 25.6,
+        "widths": [
+          10.8,
+          10.2,
+          7,
+          6.8,
+          6.5,
+          5.3,
+          4.9,
+          4.9,
+          5.3,
+          6.5,
+          6.8,
+          7,
+          10.2,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "2000",
+      "truthTtl": 104.79015598555402,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 123,
+        "ttlErrPct": 17.4,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.23,
+        "alignedSumErrPct": 2.2,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          8.3,
+          8.5,
+          8.9,
+          8.7,
+          8.4,
+          8.2,
+          7.8,
+          8,
+          9.9,
+          10.3
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 106.5,
+        "ttlErrPct": 1.6,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.61,
+        "alignedSumErrPct": 18.4,
+        "widths": [
+          10.5,
+          11.5,
+          7.5,
+          7,
+          6.5,
+          5.5,
+          5,
+          5,
+          5.5,
+          6.5,
+          7,
+          7.5,
+          11,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "0000",
+      "truthTtl": 109.66486398010389,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 121.7,
+        "ttlErrPct": 11,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.34,
+        "alignedSumErrPct": 7.5,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.8,
+          8.3,
+          7.7,
+          7.8,
+          8.2,
+          9.9,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 105,
+        "ttlErrPct": 4.3,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.14,
+        "alignedSumErrPct": 23.4,
+        "widths": [
+          10.5,
+          11,
+          7.2,
+          6.8,
+          6.5,
+          5.5,
+          5,
+          5,
+          5.5,
+          6.5,
+          6.8,
+          7.2,
+          11,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "6001",
+      "truthTtl": 113.59627080909127,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 120.1,
+        "ttlErrPct": 5.7,
+        "nTeeth": 14,
+        "alignOffset": 0,
+        "alignedMaeMm": 1.72,
+        "alignedSumErrPct": 10.7,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.7,
+          8.2,
+          7.8,
+          7.5,
+          8.3,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "fail": "parse"
+      }
+    },
+    {
+      "chart": "3000",
+      "truthTtl": 118.91535073886722,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 118.7,
+        "ttlErrPct": 0.2,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 2.08,
+        "alignedSumErrPct": 17,
+        "widths": [
+          10.2,
+          9.8,
+          7.5,
+          7.2,
+          7.8,
+          8.1,
+          8.5,
+          8.6,
+          8.2,
+          7.9,
+          7.3,
+          7.4,
+          9.9,
+          10.3
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 105.8,
+        "ttlErrPct": 11,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 2.84,
+        "alignedSumErrPct": 28.7,
+        "widths": [
+          10.8,
+          10.2,
+          7.6,
+          7.2,
+          6.6,
+          5.5,
+          5,
+          5,
+          5.5,
+          6.6,
+          7.2,
+          7.6,
+          10.2,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "4000",
+      "truthTtl": 85.03326906897169,
+      "truthN": 10,
+      "haiku-4-5(구)": {
+        "ttl": 122.5,
+        "ttlErrPct": 44.1,
+        "nTeeth": 14,
+        "alignOffset": 4,
+        "alignedMaeMm": 1.64,
+        "alignedSumErrPct": 1.7,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          8.3,
+          8.5,
+          8.9,
+          8.7,
+          8.4,
+          8.2,
+          7.8,
+          8,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 101.4,
+        "ttlErrPct": 19.2,
+        "nTeeth": 14,
+        "alignOffset": 4,
+        "alignedMaeMm": 1.79,
+        "alignedSumErrPct": 21.1,
+        "widths": [
+          10.5,
+          10,
+          7,
+          6.8,
+          6.5,
+          5,
+          4.9,
+          4.9,
+          5,
+          6.5,
+          6.8,
+          7,
+          10,
+          10.5
+        ]
+      }
+    },
+    {
+      "chart": "0000",
+      "truthTtl": 118.20427180160664,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 108.7,
+        "ttlErrPct": 8,
+        "nTeeth": 14,
+        "alignOffset": 2,
+        "alignedMaeMm": 2.28,
+        "alignedSumErrPct": 16.5,
+        "widths": [
+          10.2,
+          9.8,
+          7.5,
+          7.2,
+          7.9,
+          8.1,
+          8.5,
+          8.6,
+          8.2,
+          7.8,
+          7.3,
+          7.4,
+          9.9,
+          10.3
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 104.8,
+        "ttlErrPct": 11.3,
+        "nTeeth": 14,
+        "alignOffset": 0,
+        "alignedMaeMm": 2.99,
+        "alignedSumErrPct": 30.4,
+        "widths": [
+          10.8,
+          9.7,
+          7.2,
+          6.8,
+          6.5,
+          5.4,
+          5,
+          5,
+          5.4,
+          6.5,
+          6.8,
+          7.2,
+          9.7,
+          10.8
+        ]
+      }
+    },
+    {
+      "chart": "6000",
+      "truthTtl": 112.58164704147114,
+      "truthN": 12,
+      "haiku-4-5(구)": {
+        "ttl": 120.1,
+        "ttlErrPct": 6.7,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 1.63,
+        "alignedSumErrPct": 10.5,
+        "widths": [
+          10.2,
+          9.8,
+          8.1,
+          7.9,
+          7.6,
+          8.4,
+          8.9,
+          8.7,
+          8.2,
+          7.8,
+          7.5,
+          8.3,
+          9.6,
+          10.1
+        ]
+      },
+      "sonnet-5(현)": {
+        "ttl": 103.6,
+        "ttlErrPct": 8,
+        "nTeeth": 14,
+        "alignOffset": 1,
+        "alignedMaeMm": 2.55,
+        "alignedSumErrPct": 27.2,
+        "widths": [
+          10.8,
+          10.2,
+          7.2,
+          6.9,
+          6.3,
+          5.4,
+          5,
+          5,
+          5.4,
+          6.3,
+          6.9,
+          7.2,
+          10.2,
+          10.8
+        ]
+      }
+    }
+  ]
+}

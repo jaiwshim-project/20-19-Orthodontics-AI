@@ -13,7 +13,7 @@
       "name": "consult (HEAVY)",
       "route": "/api/consult",
       "status": 200,
-      "ms": 5063,
+      "ms": 5373,
       "ok": true,
       "why": "provider=anthropic",
       "keyLeak": false
@@ -22,7 +22,7 @@
       "name": "chat (HEAVY)",
       "route": "/api/chat",
       "status": 200,
-      "ms": 14640,
+      "ms": 10574,
       "ok": true,
       "why": "provider=anthropic",
       "keyLeak": false
@@ -31,16 +31,16 @@
       "name": "measure-tooth-widths (VISION)",
       "route": "/api/measure-tooth-widths",
       "status": 200,
-      "ms": 4102,
+      "ms": 6345,
       "ok": true,
-      "why": "provider=anthropic:claude-sonnet-5 teeth=0",
+      "why": "provider=anthropic:claude-sonnet-5 teeth=14",
       "keyLeak": false
     },
     {
       "name": "detect-arch-landmarks (VISION)",
       "route": "/api/detect-arch-landmarks",
       "status": 200,
-      "ms": 8983,
+      "ms": 8546,
       "ok": true,
       "why": "provider=anthropic:claude-sonnet-5 success=true",
       "keyLeak": false
@@ -49,7 +49,7 @@
       "name": "analyze-image (VISION)",
       "route": "/api/analyze-image",
       "status": 200,
-      "ms": 4431,
+      "ms": 4578,
       "ok": true,
       "why": "provider=anthropic:claude-sonnet-5",
       "keyLeak": false
@@ -58,7 +58,7 @@
       "name": "classify-diagnosis (VISION)",
       "route": "/api/classify-diagnosis",
       "status": 200,
-      "ms": 19454,
+      "ms": 17459,
       "ok": true,
       "why": "provider=anthropic:claude-sonnet-5 status=200",
       "keyLeak": false
@@ -67,7 +67,7 @@
       "name": "comprehensive-diagnosis (HEAVY)",
       "route": "/api/comprehensive-diagnosis",
       "status": 200,
-      "ms": 45834,
+      "ms": 48855,
       "ok": true,
       "why": "provider=anthropic:claude-opus-5",
       "keyLeak": false
@@ -76,7 +76,7 @@
       "name": "diagnose (HEAVY)",
       "route": "/api/diagnose",
       "status": 200,
-      "ms": 38911,
+      "ms": 36209,
       "ok": true,
       "why": "fallback=undefined score=85",
       "keyLeak": false

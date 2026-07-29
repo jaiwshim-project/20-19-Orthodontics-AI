@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "empty-response-diag-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "note": "4자리 차트번호 + 응답 메타데이터만"
+  },
+  "purpose": "sonnet-5 텍스트 0바이트 응답의 stop_reason/블록 타입 확정",
+  "findings": [
+    {
+      "chart": "6000",
+      "stopReason": "end_turn",
+      "stopSequence": null,
+      "blockTypes": [
+        {
+          "type": "text",
+          "len": 860
+        }
+      ],
+      "outputTokens": 534,
+      "textLen": 860,
+      "head": "```json\n{\n  \"success\": true,\n  \"teeth\": [\n    {\"index\": 1, \"widthMm\": 10.8, \"note\": \"좌측 제2대구치\"},\n    {\"index\": 2, \"widthMm\": 10.2, \"note\": \"좌측 제1대구치\"},\n    {\"index\": 3, \"widthMm\": 7.2, \"note\": \"좌측 제2소"
+    },
+    {
+      "chart": "8000",
+      "stopReason": "end_turn",
+      "stopSequence": null,
+      "blockTypes": [
+        {
+          "type": "thinking",
+          "len": null
+        },
+        {
+          "type": "text",
+          "len": 848
+        }
+      ],
+      "outputTokens": 1209,
+      "textLen": 848,
+      "head": "{\n  \"success\": true,\n  \"teeth\": [\n    {\"index\": 1, \"widthMm\": 10.5, \"note\": \"좌측 제2대구치\"},\n    {\"index\": 2, \"widthMm\": 11.0, \"note\": \"좌측 제1대구치\"},\n    {\"index\": 3, \"widthMm\": 7.0, \"note\": \"좌측 제2소구치\"},\n  "
+    }
+  ]
+}
