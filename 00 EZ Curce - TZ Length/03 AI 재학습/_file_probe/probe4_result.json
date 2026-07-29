@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "file-protocol-probe-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false
+  },
+  "purpose": "file:// 에서 ORT WASM 글루(.mjs)를 import할 수 있는 경로 탐색 + wasmBinary 주입 초기화 실측",
+  "protocol": "file:",
+  "candidates": {
+    "navStartToRuntimeMs": 304,
+    "modelScriptParsedMs": 980,
+    "glueSrcLoaded": true,
+    "gluePatchCount": 5,
+    "wasmBytes": 11246032,
+    "modelB64Chars": 65279688,
+    "b64DecodeMs": 177,
+    "modelBytes": 48959765,
+    "sessionCreateMs": 362,
+    "inputNames": [
+      "image"
+    ],
+    "outputNames": [
+      "heatmap",
+      "offset"
+    ],
+    "inferenceMs": 1608,
+    "outputShapes": [
+      [
+        1,
+        24,
+        128,
+        128
+      ],
+      [
+        1,
+        48,
+        128,
+        128
+      ]
+    ],
+    "sessionOk": true,
+    "totalMs": 3127,
+    "jsHeapUsedMb": 368
+  },
+  "pageErrors": [],
+  "verdict": {
+    "anyImportWorks": false,
+    "workingPaths": [],
+    "wasmInstantiates": false
+  }
+}

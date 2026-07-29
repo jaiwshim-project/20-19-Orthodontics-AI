@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "pixel-leak-audit-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "images": 384,
+  "uniquePatients": 322,
+  "checks": {
+    "sourceImageShaCrossFold": 0,
+    "resizedFileShaCrossFold": 0,
+    "patientsSplitAcrossFolds": 0,
+    "nearIdenticalKeypointPairsCrossFold": 0,
+    "perceptualNearDuplicateCrossFold": 0
+  },
+  "clean": true,
+  "detail": {
+    "sourceShaDuplicateGroups": [],
+    "resizedFileShaDuplicateGroups": [],
+    "patientsSplitAcrossFolds": [],
+    "nearIdenticalKeypointPairs": [],
+    "perceptualHash": {
+      "maxSimilarity": 0.8817,
+      "alertThreshold": 0.95,
+      "thresholdSweep": {
+        "0.99": {
+          "pairs": 0,
+          "crossFold": 0,
+          "samePatient": 0
+        },
+        "0.97": {
+          "pairs": 0,
+          "crossFold": 0,
+          "samePatient": 0
+        },
+        "0.95": {
+          "pairs": 0,
+          "crossFold": 0,
+          "samePatient": 0
+        },
+        "0.9": {
+          "pairs": 0,
+          "crossFold": 0,
+          "samePatient": 0
+        },
+        "0.85": {
+          "pairs": 5,
+          "crossFold": 3,
+          "samePatient": 0
+        },
+        "0.8": {
+          "pairs": 89,
+          "crossFold": 64,
+          "samePatient": 0
+        }
+      },
+      "alertPairs": []
+    }
+  },
+  "interpretation": {
+    "phashMaxBelowAlert": true,
+    "note": "지각 해시 최대 유사도가 경보선 아래면 SHA가 다른 '사실상 같은 사진'이 없다는 뜻이다 — 환자 ID 복원이 틀렸어도 우회해서 잡는 검사다.",
+    "samePatientPairsAreVisuallyDissimilar": "같은 환자 쌍이 유사도 상위에 없는 것은 정상이다: 교정 전/후 사진이라 치열 배치가 실제로 다르다. 그래도 환자 단위로 같은 fold에 잠겨 있다."
+  }
+}

@@ -14,7 +14,7 @@
   .stage-tracker { display:flex; gap:6px; margin-top:8px; }
   .stage-tracker .stage {
     flex:1; padding: 8px 4px; text-align:center;
-    background: rgba(255,255,255,0.04);
+    background: #F8FAFC;
     border: 1px solid var(--border-subtle);
     border-radius: 8px;
     font-size: 11px; font-weight: 600;
@@ -25,7 +25,7 @@
   .chart-wrap { position: relative; height: 320px; }
   /* Visual Measurements (shared with extraction) */
   .visual-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
-  .visual-card { background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+  .visual-card { background:#F8FAFC; border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
   .visual-card .vc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .visual-card .vc-name { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
   .visual-card .vc-val { font-size:16px; font-weight:700; font-family:'Inter',monospace; }
@@ -34,11 +34,11 @@
   .visual-card .vc-val.danger { color:var(--color-danger); }
   .visual-card svg { width:100%; height:80px; display:block; }
   .visual-card .vc-note { font-size:10px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
-  .gauge-track { fill:rgba(255,255,255,0.06); }
-  .gauge-zone-ok { fill:rgba(16,185,129,0.18); }
-  .gauge-zone-warn { fill:rgba(245,158,11,0.18); }
-  .gauge-zone-danger { fill:rgba(239,68,68,0.18); }
-  .gauge-pin { fill:#fff; stroke:var(--color-primary); stroke-width:2; }
+  .gauge-track { fill:#E2E8F0; }
+  .gauge-zone-ok { fill:rgba(5,150,105,0.18); }
+  .gauge-zone-warn { fill:rgba(217,119,6,0.18); }
+  .gauge-zone-danger { fill:rgba(220,38,38,0.18); }
+  .gauge-pin { fill:#FFFFFF; stroke:var(--color-primary); stroke-width:2; filter: drop-shadow(0 1px 3px rgba(14,165,233,0.4)); }
 </style>
 </head>
 <body>
@@ -136,7 +136,7 @@
       <div class="stage" data-s="5">CS5</div><div class="stage" data-s="6">CS6</div>
     </div>
 
-    <div style="margin-top:16px; padding:12px; background: rgba(255,255,255,0.03); border-radius:10px; font-size:13px;">
+    <div style="margin-top:16px; padding:12px; background:#F8FAFC; border:1px solid var(--border-subtle); border-radius:10px; font-size:13px;">
       <strong style="color:var(--color-primary);">권장 치료 시기:</strong>
       <span id="treatTiming">분석 후 표시</span>
     </div>
@@ -361,11 +361,11 @@ function renderVisuals() {
     `<div class="visual-card">
       <div class="vc-head"><div class="vc-name">잔여 성장</div><div class="vc-val ${remaining > 5 ? 'ok' : remaining > 1 ? 'warn' : 'danger'}">+${remaining.toFixed(1)} cm</div></div>
       <svg viewBox="0 0 240 50" preserveAspectRatio="none">
-        <rect x="0" y="20" width="240" height="14" rx="3" fill="rgba(255,255,255,0.06)"/>
+        <rect x="0" y="20" width="240" height="14" rx="3" fill="#E2E8F0"/>
         <rect x="0" y="20" width="${Math.min(1, remaining/15) * 240}" height="14" rx="3" fill="url(#growthGrad)"/>
         <defs><linearGradient id="growthGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#0EA5E9"/></linearGradient></defs>
-        <text x="0" y="48" font-size="9" fill="rgba(255,255,255,0.4)">0</text>
-        <text x="240" y="48" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.4)">15cm+</text>
+        <text x="0" y="48" font-size="9" fill="#94A3B8">0</text>
+        <text x="240" y="48" text-anchor="end" font-size="9" fill="#94A3B8">15cm+</text>
       </svg>
       <div class="vc-note">CVMS×성장 가중치로 추정. 5cm↑ 양호</div>
       <div style="margin-top:8px; padding:8px 10px; background:rgba(14,165,233,0.04); border-left:2px solid var(--color-primary); border-radius:0 6px 6px 0; font-size:11px; line-height:1.55; color:var(--text-secondary);">CVMS 단계별 잔여 성장 가중치(CS1 95% → CS6 2%)와 부모 키 차이를 곱해 산출. 골연령-역연령 차이만큼 보정. 5cm 이상 잔여 시 기능 장치 효과 큼.</div>

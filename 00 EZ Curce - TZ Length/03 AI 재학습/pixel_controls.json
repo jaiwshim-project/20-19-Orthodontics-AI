@@ -1,0 +1,213 @@
+{
+  "schemaVersion": "pixel-controls-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "note": "이미지를 보지 않는 무학습 대조군. 픽셀 모델과 동일한 환자 단위 5-fold, 동일 mm 정의(정답 24점 최대 쌍거리=54mm), 동일 전처리 좌표계.",
+  "cases": 384,
+  "folds": 5,
+  "controls": {
+    "globalMean": "훈련 fold 평균 키포인트 배치. 학습·이미지 모두 없음.",
+    "meanScaled": "평균 배치를 사진 유효 영역 크기로 등방 스케일.",
+    "oracleAffine": "평균 배치 + 케이스별 최적 유사변환. **정답을 본 오라클**이라 달성 가능한 값이 아니다 — 형태(치아별 폭·회전)에 남는 오차의 하한."
+  },
+  "overall": {
+    "globalMean": {
+      "position": 3.4178,
+      "molar": 4.1843,
+      "endpoint": 3.5479,
+      "lengthAbs": 0.8031,
+      "tzl": 8.9284,
+      "positionP95": 5.9273
+    },
+    "meanScaled": {
+      "position": 3.4027,
+      "molar": 4.1712,
+      "endpoint": 3.5325,
+      "lengthAbs": 0.7857,
+      "tzl": 8.7074,
+      "positionP95": 5.9038
+    },
+    "oracleAffine": {
+      "position": 1.0466,
+      "molar": 1.1066,
+      "endpoint": 1.2882,
+      "lengthAbs": 0.5046,
+      "tzl": 4.5469,
+      "positionP95": 1.8234
+    }
+  },
+  "perFold": {
+    "globalMean": [
+      {
+        "position": 3.3408,
+        "molar": 4.0927,
+        "endpoint": 3.4913,
+        "lengthAbs": 0.8579,
+        "tzl": 9.6782,
+        "positionP95": 6.1306,
+        "fold": 0,
+        "cases": 78
+      },
+      {
+        "position": 3.3633,
+        "molar": 4.0695,
+        "endpoint": 3.4986,
+        "lengthAbs": 0.7424,
+        "tzl": 8.1132,
+        "positionP95": 5.9927,
+        "fold": 1,
+        "cases": 75
+      },
+      {
+        "position": 3.7032,
+        "molar": 4.539,
+        "endpoint": 3.822,
+        "lengthAbs": 0.8142,
+        "tzl": 9.2512,
+        "positionP95": 6.4226,
+        "fold": 2,
+        "cases": 80
+      },
+      {
+        "position": 3.3404,
+        "molar": 3.9474,
+        "endpoint": 3.4609,
+        "lengthAbs": 0.7564,
+        "tzl": 8.3858,
+        "positionP95": 5.7965,
+        "fold": 3,
+        "cases": 74
+      },
+      {
+        "position": 3.3414,
+        "molar": 4.2727,
+        "endpoint": 3.4667,
+        "lengthAbs": 0.8445,
+        "tzl": 9.2137,
+        "positionP95": 5.2942,
+        "fold": 4,
+        "cases": 77
+      }
+    ],
+    "meanScaled": [
+      {
+        "position": 3.3242,
+        "molar": 4.0697,
+        "endpoint": 3.4746,
+        "lengthAbs": 0.8319,
+        "tzl": 9.3564,
+        "positionP95": 6.0592,
+        "fold": 0,
+        "cases": 78
+      },
+      {
+        "position": 3.3513,
+        "molar": 4.0632,
+        "endpoint": 3.4843,
+        "lengthAbs": 0.7342,
+        "tzl": 8.0293,
+        "positionP95": 5.9595,
+        "fold": 1,
+        "cases": 75
+      },
+      {
+        "position": 3.6938,
+        "molar": 4.5212,
+        "endpoint": 3.8132,
+        "lengthAbs": 0.7963,
+        "tzl": 9.0033,
+        "positionP95": 6.4063,
+        "fold": 2,
+        "cases": 80
+      },
+      {
+        "position": 3.3096,
+        "molar": 3.9103,
+        "endpoint": 3.4295,
+        "lengthAbs": 0.72,
+        "tzl": 7.9167,
+        "positionP95": 5.7918,
+        "fold": 3,
+        "cases": 74
+      },
+      {
+        "position": 3.3346,
+        "molar": 4.2917,
+        "endpoint": 3.4611,
+        "lengthAbs": 0.846,
+        "tzl": 9.2313,
+        "positionP95": 5.3024,
+        "fold": 4,
+        "cases": 77
+      }
+    ],
+    "oracleAffine": [
+      {
+        "position": 1.1126,
+        "molar": 1.2074,
+        "endpoint": 1.3676,
+        "lengthAbs": 0.5467,
+        "tzl": 5.1312,
+        "positionP95": 1.7766,
+        "fold": 0,
+        "cases": 78
+      },
+      {
+        "position": 1.105,
+        "molar": 1.0856,
+        "endpoint": 1.3469,
+        "lengthAbs": 0.5518,
+        "tzl": 5.341,
+        "positionP95": 2.0581,
+        "fold": 1,
+        "cases": 75
+      },
+      {
+        "position": 0.953,
+        "molar": 1.0031,
+        "endpoint": 1.1883,
+        "lengthAbs": 0.4344,
+        "tzl": 3.6527,
+        "positionP95": 1.6611,
+        "fold": 2,
+        "cases": 80
+      },
+      {
+        "position": 1.0294,
+        "molar": 1.0855,
+        "endpoint": 1.2658,
+        "lengthAbs": 0.4708,
+        "tzl": 4.0166,
+        "positionP95": 1.7654,
+        "fold": 3,
+        "cases": 74
+      },
+      {
+        "position": 1.0331,
+        "molar": 1.1512,
+        "endpoint": 1.2724,
+        "lengthAbs": 0.5194,
+        "tzl": 4.5929,
+        "positionP95": 1.8559,
+        "fold": 4,
+        "cases": 77
+      }
+    ]
+  },
+  "referencePoints": {
+    "ruleEngineDraftPosition": 3.6874,
+    "krrStage3OofPosition": 2.1723,
+    "annotatorAgreementEndpoint": 0.674,
+    "annotationToConsensusPosition": 0.2394,
+    "source": "accuracy_ceiling.json / truth_agreement.json / label_noise_floor.json"
+  },
+  "interpretation": {
+    "taskIsTriviallyEasy": false,
+    "meanShapePositionMm": 3.4178,
+    "conclusion": "이미지를 보지 않는 평균 배치만으로 위치 3.4178mm. 규칙엔진 3.687mm보다 낮다 — 규칙엔진이 평균 배치보다도 못하다는 뜻이므로, 픽셀 모델의 우위를 '딥러닝의 힘'으로 해석하면 안 된다. 촬영 규약이 일정해서 과제가 쉽다. 정답 배치를 본 오라클 유사변환은 1.0466mm로, 배치만 완벽히 맞춰도 이만큼은 남는다(= 형태 성분)."
+  }
+}

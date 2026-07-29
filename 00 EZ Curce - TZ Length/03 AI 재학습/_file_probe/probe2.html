@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>file:// ORT 초기화 프로브 2</title></head>
+<body>
+<!--
+  프로브 1 결과: blob/data URL로 글루 import는 **성공**. 초기화에서
+  "Failed to construct 'URL': Invalid URL" 로 실패 — 글루가
+      new URL("ort-wasm-simd-threaded.wasm", import.meta.url)
+  를 계산하는데 blob:file:/// 는 opaque origin이라 URL 생성이 깨진다.
+
+  글루 소스를 읽어 확인한 우회 조건 2개:
+   (A) w.wasmBinary 를 주면 `var L; w.wasmBinary&&(L=w.wasmBinary)` 로 들어가
+       fetch 자체가 필요 없어진다. 단 위 new URL 은 **여전히 평가**되므로
+   (B) locateFile 을 주면 삼항 분기가 new URL 쪽으로 가지 않는다:
+       Na ||= w.locateFile ? (... w.locateFile(...)) : (new URL(...)).href
+       → locateFile 이 있으면 new URL 이 평가되지 않는다.
+  (A)+(B) 를 함께 줘야 통과한다는 가설을 실측한다. 실패 시 (C) 소스 문자열의
+  import.meta.url 을 안전한 절대 URL로 치환하는 안까지 시험한다.
+-->
+<pre id="out">실행 중…</pre>
+<script src="glue_source.js"></script>
+<script src="tiny_model.js"></script>
+<script src="ort.wasm.min.js"></script>
+<script>
+const out = document.getElementById('out');
+const log = (k, v) => { out.textContent += '\n' + k + ': ' + v; };
+const results = {};
+
+function b64ToBytes(b64) {
+  const raw = atob(b64);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+}
+
+async function tryFactory(label, source) {
+  // 글루 소스 문자열 -> blob -> import -> 초기화. wasmBinary + locateFile 동시 주입.
+  try {
+    const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+    const factory = (await import(/*webpackIgnore:true*/ url)).default;
+    const mod = await factory({
+      numThreads: 1,
+      wasmBinary: window.__ORT_WASM_BYTES,
+      // locateFile 이 있으면 글루가 new URL(..., import.meta.url) 을 평가하지 않는다.
+      // wasmBinary 가 이미 있으니 이 값이 실제로 fetch되지는 않는다.
+      locateFile: (f) => f,
+    });
+    const hasOrt = typeof mod._OrtCreateSessionOptions === 'function';
+    results[label] = { ok: hasOrt, exports: Object.keys(mod || {}).length };
+    log(label, (hasOrt ? 'OK' : 'MODULE BUT NO ORT EXPORT') + ' exports=' + Object.keys(mod || {}).length);
+    return hasOrt;
+  } catch (e) {
+    results[label] = { ok: false, error: String(e.message || e).slice(0, 200) };
+    log(label, 'FAIL ' + String(e.message || e).slice(0, 170));
+    return false;
+  }
+}
+
+(async () => {
+  out.textContent = 'protocol=' + location.protocol + '  ortLoaded=' + (typeof ort !== 'undefined');
+
+  const src = window.__ORT_GLUE_SOURCE;
+  // 가설 (A)+(B): 소스 그대로 + wasmBinary + locateFile
+  await tryFactory('glueAsIs', src);
+
+  // 가설 (C): import.meta.url 을 안전한 절대 URL 문자열로 치환.
+  //  ⚠️ blob URL 로 import 하는 모듈에서 import.meta.url 은 blob:file:/// 이 되어
+  //     new URL 생성자가 던진다. 치환하면 그 계산이 정상화된다.
+  const safeBase = new URL('.', document.baseURI).href;
+  const patched = src.replace(/import\.meta\.url/g, JSON.stringify(safeBase + 'x.mjs'));
+  results.patchedOccurrences = (src.match(/import\.meta\.url/g) || []).length;
+  await tryFactory('glueImportMetaPatched', patched);
+
+  // 실제 ORT API 로 세션이 열리는지 — 위 우회를 ort.env.wasm 설정으로 표현할 수 있는가.
+  //  ort 1.20.1 은 wasmPaths={mjs,wasm} 객체와 env.wasm.wasmBinary 를 지원한다.
+  try {
+    const glueUrl = URL.createObjectURL(new Blob([patched], { type: 'text/javascript' }));
+    ort.env.wasm.wasmPaths = { mjs: glueUrl, wasm: 'ort-wasm-simd-threaded.wasm' };
+    ort.env.wasm.wasmBinary = window.__ORT_WASM_BYTES;
+    ort.env.wasm.numThreads = 1;
+    ort.env.wasm.proxy = false;
+    ort.env.logLevel = 'error';
+    const session = await ort.InferenceSession.create(b64ToBytes(window.__TINY_ONNX_B64));
+    const t = new ort.Tensor('float32', new Float32Array([1.5, -2.5]), [1, 2]);
+    const o = await session.run({ x: t });
+    const y = Array.from(o.y.data);
+    results.ortSessionOnFileProtocol = { ok: y[0] === 1.5 && y[1] === -2.5, output: y };
+    log('ortSessionOnFileProtocol', 'OK output=' + JSON.stringify(y));
+  } catch (e) {
+    results.ortSessionOnFileProtocol = { ok: false, error: String(e.message || e).slice(0, 220) };
+    log('ortSessionOnFileProtocol', 'FAIL ' + String(e.message || e).slice(0, 180));
+  }
+
+  document.documentElement.dataset.probeDone = 'true';
+  document.documentElement.dataset.probeResults = JSON.stringify(results);
+})();
+</script>
+</body></html>

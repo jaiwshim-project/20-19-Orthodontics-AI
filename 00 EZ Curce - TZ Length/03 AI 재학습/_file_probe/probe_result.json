@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "file-protocol-probe-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false
+  },
+  "purpose": "file:// 에서 ORT WASM 글루(.mjs)를 import할 수 있는 경로 탐색 + wasmBinary 주입 초기화 실측",
+  "protocol": "file:",
+  "candidates": {
+    "relativeMjs": {
+      "imported": false,
+      "error": "Failed to resolve module specifier 'ort-wasm-simd-threaded.mjs'"
+    },
+    "absoluteFileUrl": {
+      "imported": false,
+      "error": "Failed to fetch dynamically imported module: <로컬경로>:/01%20%ED%81%B4%EB%A1%9C%EB%93%9C%EC%BD%94%EB%93%9C/20-19%20Orthodontics%20AI/00%20EZ%20Curce%20-%20TZ%20Length/03%20AI%20%EC%9E%AC%ED%95%99%EC%8"
+    },
+    "blobUrl": {
+      "imported": true,
+      "hasDefault": true
+    },
+    "dataUrl": {
+      "imported": true,
+      "hasDefault": true
+    },
+    "wasmInstantiate": {
+      "ok": false,
+      "error": "Failed to construct 'URL': Invalid URL"
+    }
+  },
+  "pageErrors": [],
+  "verdict": {
+    "anyImportWorks": true,
+    "workingPaths": [
+      "blobUrl",
+      "dataUrl"
+    ],
+    "wasmInstantiates": false
+  }
+}

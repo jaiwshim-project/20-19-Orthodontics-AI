@@ -38,7 +38,33 @@ PRIOR_MM = (12.19, 7.92, 8.13, 7.30, 6.49, 5.91, 5.91, 6.46, 7.21, 8.15, 8.04, 1
 RATIO = (0.74, 1.20)
 
 
+def dims_by_case(dataset_path: Path) -> dict[str, tuple[float, float]]:
+    """caseId -> (width, height). 정규화 좌표를 픽셀로 되돌릴 때 쓴다.
+
+    ⚠️ `dims_by_group`을 쓰면 안 되는 경우가 있다. 그 함수의 키는
+    `splitGrouping.minimumGroupId` = **환자 차트 ID**이고 `setdefault`로 첫 사진의
+    크기만 기억한다. 그런데 같은 환자의 사진 2장은 해상도가 다른 경우가 많다 —
+    실측 343그룹 중 **106그룹**이 서로 다른 크기다(예 chart:2960 = 3666x2444와
+    5514x3681). 그 그룹의 두 번째 사진은 잘못된 W/H로 픽셀 변환돼 좌표가 틀어진다.
+    실측 영향: 폭 정답 384건 중 52건이 다른 파이프라인 정답과 최대 24.9mm 어긋났다.
+
+    caseId는 케이스마다 고유하므로(384건 전수 확인) 이 함수는 그 충돌이 없다.
+    """
+    out: dict[str, tuple[float, float]] = {}
+    for case in tr.dataset_cases(tr.read_json(dataset_path)):
+        size = tr.dimensions(case)
+        if size:
+            out[str(tr.get_case_id(case))] = size
+    return out
+
+
 def dims_by_group(dataset_path: Path) -> dict[str, tuple[float, float]]:
+    """그룹(환자 차트) -> 첫 사진의 (width, height).
+
+    ⚠️ 같은 그룹에 크기가 다른 사진이 섞이면 두 번째 이후가 틀린다
+    (실측 106/343 그룹). 케이스 단위 변환에는 `dims_by_case`를 쓴다. 이 함수는
+    기존 측정 스크립트의 재현성을 위해 남겨 둔다.
+    """
     out: dict[str, tuple[float, float]] = {}
     for case in tr.dataset_cases(tr.read_json(dataset_path)):
         image = case.get("image") if isinstance(case.get("image"), dict) else case

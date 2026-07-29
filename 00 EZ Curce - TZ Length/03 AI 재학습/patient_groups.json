@@ -1,0 +1,2326 @@
+{
+  "schemaVersion": "patient-groups-v2",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "note": "환자 키는 4자리 차트번호 또는 파일명 해시. 이름은 저장하지 않음."
+  },
+  "inputs": {
+    "indexCases": 452,
+    "labelMdFiles": 631,
+    "labelShaLinked": 623,
+    "filenameProvenance": {
+      "bare_chart_filename": 186,
+      "chart_plus_date_filename": 101,
+      "chart_plus_date_plus_seq_filename": 39,
+      "chart_prefix_with_suffix_filename": 117,
+      "name_chart_date_filename": 118,
+      "three_digit_root_filename_alias": 70
+    }
+  },
+  "resolution": {
+    "casesResolvedViaLabel": 442,
+    "casesUnresolvedFallback": 10,
+    "unresolvedCaseIds": [
+      "018",
+      "022",
+      "030",
+      "033",
+      "034",
+      "038",
+      "040",
+      "058",
+      "092",
+      "115"
+    ],
+    "aliasKeysMergedByUnionFind": 66,
+    "casesWithResidualDistinctRoots": 0
+  },
+  "leakage": {
+    "allCases": {
+      "cases": 452,
+      "uniquePatients": 343,
+      "patientsWithMultipleImages": 109
+    },
+    "width12TrainingCases": {
+      "cases": 384,
+      "uniquePatients": 322,
+      "patientsWithMultipleImages": 62,
+      "leakableCases": 124,
+      "leakableCaseRate": 0.3229
+    },
+    "ezCases": {
+      "cases": 113,
+      "uniquePatients": 113,
+      "leakableCases": 0,
+      "leakableCaseRate": 0.0
+    }
+  },
+  "width12PatientSizeDistribution": {
+    "1": 260,
+    "2": 62
+  },
+  "assignments": {
+    "001": {
+      "patientGroupId": "chart:2960",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "002": {
+      "patientGroupId": "chart:2960",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "003": {
+      "patientGroupId": "chart:2970",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "004": {
+      "patientGroupId": "chart:2970",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "005": {
+      "patientGroupId": "chart:2983",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "006": {
+      "patientGroupId": "chart:2983",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "007": {
+      "patientGroupId": "chart:2998",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "008": {
+      "patientGroupId": "chart:2998",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "009": {
+      "patientGroupId": "chart:3001",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "010": {
+      "patientGroupId": "chart:3001",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "011": {
+      "patientGroupId": "chart:3011",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "012": {
+      "patientGroupId": "chart:3011",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "013": {
+      "patientGroupId": "chart:3013",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "014": {
+      "patientGroupId": "chart:3013",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "015": {
+      "patientGroupId": "chart:3018",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "016": {
+      "patientGroupId": "chart:3018",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "017": {
+      "patientGroupId": "chart:3026",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "018": {
+      "patientGroupId": "imageonly:3325719c4ebc56d6",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "019": {
+      "patientGroupId": "root3:019",
+      "provenance": "three_digit_root_filename_alias",
+      "aliasKeyCount": 1
+    },
+    "020": {
+      "patientGroupId": "chart:3119",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "021": {
+      "patientGroupId": "chart:3119",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "022": {
+      "patientGroupId": "imageonly:5e43aedab188477f",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "023": {
+      "patientGroupId": "chart:3120",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "024": {
+      "patientGroupId": "chart:3126",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "025": {
+      "patientGroupId": "chart:3127",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "026": {
+      "patientGroupId": "chart:3127",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "027": {
+      "patientGroupId": "chart:3132",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "028": {
+      "patientGroupId": "chart:3160",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "029": {
+      "patientGroupId": "chart:3160",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "030": {
+      "patientGroupId": "imageonly:9f5f6da0128d60ab",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "031": {
+      "patientGroupId": "chart:3166",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "032": {
+      "patientGroupId": "chart:3207",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "033": {
+      "patientGroupId": "imageonly:7f910c7efa734f16",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "034": {
+      "patientGroupId": "imageonly:ad9120c1d6d14be0",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "035": {
+      "patientGroupId": "chart:3213",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "036": {
+      "patientGroupId": "root3:036",
+      "provenance": "three_digit_root_filename_alias",
+      "aliasKeyCount": 1
+    },
+    "037": {
+      "patientGroupId": "chart:3224",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "038": {
+      "patientGroupId": "imageonly:94b676315d7b9c94",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "039": {
+      "patientGroupId": "chart:3240",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "040": {
+      "patientGroupId": "imageonly:b47ab74b375e11bf",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "041": {
+      "patientGroupId": "chart:3246",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "042": {
+      "patientGroupId": "chart:3248",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 2
+    },
+    "043": {
+      "patientGroupId": "chart:3258",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "044": {
+      "patientGroupId": "chart:3261",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "045": {
+      "patientGroupId": "chart:3272",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "046": {
+      "patientGroupId": "chart:3276",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "047": {
+      "patientGroupId": "chart:3278",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "048": {
+      "patientGroupId": "chart:3296",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "049": {
+      "patientGroupId": "chart:3296",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "050": {
+      "patientGroupId": "chart:3297",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "051": {
+      "patientGroupId": "chart:3298",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "052": {
+      "patientGroupId": "chart:3311",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "053": {
+      "patientGroupId": "chart:3312",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "054": {
+      "patientGroupId": "chart:3312",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "055": {
+      "patientGroupId": "chart:3337",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "056": {
+      "patientGroupId": "chart:3337",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "057": {
+      "patientGroupId": "chart:3355",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "058": {
+      "patientGroupId": "imageonly:d8c667922e852422",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "059": {
+      "patientGroupId": "chart:3361",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "060": {
+      "patientGroupId": "chart:3361",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "061": {
+      "patientGroupId": "chart:3372",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "062": {
+      "patientGroupId": "chart:3372",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "063": {
+      "patientGroupId": "chart:3374",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "064": {
+      "patientGroupId": "chart:3374",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "065": {
+      "patientGroupId": "chart:3394",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "066": {
+      "patientGroupId": "chart:3394",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "067": {
+      "patientGroupId": "chart:3409",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "068": {
+      "patientGroupId": "chart:3409",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "069": {
+      "patientGroupId": "chart:3415",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "070": {
+      "patientGroupId": "chart:3415",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "071": {
+      "patientGroupId": "chart:3426",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "072": {
+      "patientGroupId": "chart:3426",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "073": {
+      "patientGroupId": "chart:3431",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "074": {
+      "patientGroupId": "chart:3431",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "075": {
+      "patientGroupId": "chart:3443",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "076": {
+      "patientGroupId": "chart:3443",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "077": {
+      "patientGroupId": "chart:3447",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "078": {
+      "patientGroupId": "chart:3447",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "079": {
+      "patientGroupId": "chart:3448",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "080": {
+      "patientGroupId": "chart:3448",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "081": {
+      "patientGroupId": "chart:3449",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "082": {
+      "patientGroupId": "chart:3449",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "083": {
+      "patientGroupId": "chart:3453",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "084": {
+      "patientGroupId": "chart:3453",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "085": {
+      "patientGroupId": "chart:3456",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "086": {
+      "patientGroupId": "chart:3456",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "087": {
+      "patientGroupId": "chart:3481",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "088": {
+      "patientGroupId": "chart:3481",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "089": {
+      "patientGroupId": "chart:3486",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "090": {
+      "patientGroupId": "chart:3486",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "091": {
+      "patientGroupId": "chart:3491",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "092": {
+      "patientGroupId": "imageonly:504095bb5c0fc64e",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "093": {
+      "patientGroupId": "chart:3492",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "094": {
+      "patientGroupId": "chart:3311",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "095": {
+      "patientGroupId": "chart:3305",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "096": {
+      "patientGroupId": "chart:3272",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "097": {
+      "patientGroupId": "chart:3462",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "098": {
+      "patientGroupId": "chart:3297",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "099": {
+      "patientGroupId": "chart:3258",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "100": {
+      "patientGroupId": "chart:3257",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "101": {
+      "patientGroupId": "chart:3254",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "102": {
+      "patientGroupId": "chart:3254",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "103": {
+      "patientGroupId": "chart:3474",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "104": {
+      "patientGroupId": "chart:3474",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "105": {
+      "patientGroupId": "chart:3274",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "106": {
+      "patientGroupId": "chart:3278",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "107": {
+      "patientGroupId": "chart:3247",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "108": {
+      "patientGroupId": "chart:3459",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "109": {
+      "patientGroupId": "chart:3501",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "110": {
+      "patientGroupId": "chart:3235",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "111": {
+      "patientGroupId": "chart:3256",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "112": {
+      "patientGroupId": "chart:3256",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "113": {
+      "patientGroupId": "root3:113",
+      "provenance": "three_digit_root_filename_alias",
+      "aliasKeyCount": 1
+    },
+    "114": {
+      "patientGroupId": "root3:114",
+      "provenance": "three_digit_root_filename_alias",
+      "aliasKeyCount": 1
+    },
+    "115": {
+      "patientGroupId": "imageonly:392eb6c773470fdc",
+      "provenance": "fallback_image_sha256_no_label_link",
+      "aliasKeyCount": 0
+    },
+    "116": {
+      "patientGroupId": "chart:3298",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "117": {
+      "patientGroupId": "chart:3424",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "118": {
+      "patientGroupId": "chart:3424",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "119": {
+      "patientGroupId": "chart:3261",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 2
+    },
+    "embedded-00bf3efff144dec7": {
+      "patientGroupId": "chart:2023",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-010cc211e848b910": {
+      "patientGroupId": "chart:3277",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-01713acc789ead2d": {
+      "patientGroupId": "chart:2988",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-07190a29e963cba6": {
+      "patientGroupId": "chart:2002",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-075bb28db006493c": {
+      "patientGroupId": "chart:3395",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-078be2ce3188e4e8": {
+      "patientGroupId": "chart:2240",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-07c8ded215431731": {
+      "patientGroupId": "chart:2225",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-085fa8a80cb9385c": {
+      "patientGroupId": "chart:2147",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-09487a92b7892d8c": {
+      "patientGroupId": "chart:3026",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-09b544fc822a2dae": {
+      "patientGroupId": "chart:2049",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0a1c0d6041d0c834": {
+      "patientGroupId": "chart:2053",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0a30ac9f894b60f2": {
+      "patientGroupId": "chart:3349",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0a65b1d82c849b2e": {
+      "patientGroupId": "chart:3282",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0b93e94344c23bc3": {
+      "patientGroupId": "chart:3343",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0bc9b512733deab4": {
+      "patientGroupId": "chart:3330",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0e66f437786ef449": {
+      "patientGroupId": "chart:3445",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0e8bfa5232f45e77": {
+      "patientGroupId": "chart:2078",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0e8cd89f852ba159": {
+      "patientGroupId": "chart:2051",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0ec1864dce66dd76": {
+      "patientGroupId": "chart:2152",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0efd28a5b5deebba": {
+      "patientGroupId": "chart:3242",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0f179fef4ecf8c23": {
+      "patientGroupId": "chart:2976",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-0f7f4f93d919887e": {
+      "patientGroupId": "chart:2096",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-10d1f660618572c9": {
+      "patientGroupId": "chart:2194",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-12ffb10d47822216": {
+      "patientGroupId": "chart:3242",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-13b4854736de616b": {
+      "patientGroupId": "chart:3283",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-14e96f8452034ecf": {
+      "patientGroupId": "chart:2178",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1588ede79c3a25be": {
+      "patientGroupId": "chart:2011",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-15e98ef1ad6062b5": {
+      "patientGroupId": "chart:2207",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1748ab4b6750d46e": {
+      "patientGroupId": "chart:2277",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1c3ae06a88945c5f": {
+      "patientGroupId": "chart:2020",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1d10cbcf33ae22aa": {
+      "patientGroupId": "chart:3022",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1dd261bda3661a31": {
+      "patientGroupId": "chart:2031",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1ea86ab7d575f173": {
+      "patientGroupId": "chart:2230",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1f1ae569276e9fa7": {
+      "patientGroupId": "chart:2271",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1f4278fe07a655c7": {
+      "patientGroupId": "chart:3246",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-1f7ec8bd6a39660e": {
+      "patientGroupId": "chart:2173",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-202f4ca1befd83a7": {
+      "patientGroupId": "chart:3267",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-21988d33fad6bfb9": {
+      "patientGroupId": "chart:2113",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-21d7a964f9d985ca": {
+      "patientGroupId": "chart:2061",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-22d0535e5bf8abd3": {
+      "patientGroupId": "chart:2976",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2367c435bc2768db": {
+      "patientGroupId": "chart:2171",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-24729bbd3a5bfad7": {
+      "patientGroupId": "chart:3290",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-256ea54c0066f459": {
+      "patientGroupId": "chart:3195",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2571da8b152579de": {
+      "patientGroupId": "chart:2182",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-266a9208d4eb7cda": {
+      "patientGroupId": "chart:2000",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-26e8d74b8d00e577": {
+      "patientGroupId": "chart:3318",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-27ffc3c10726e620": {
+      "patientGroupId": "chart:2035",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-285335d8ca58969d": {
+      "patientGroupId": "chart:2275",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-29236d81ec720175": {
+      "patientGroupId": "chart:2052",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2925cc129f427b47": {
+      "patientGroupId": "chart:2071",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-29d9058972db341f": {
+      "patientGroupId": "chart:3074",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2a3c9d1f0784390a": {
+      "patientGroupId": "chart:2026",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2a4c1c399145f6f3": {
+      "patientGroupId": "chart:2097",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2a741111113e8d90": {
+      "patientGroupId": "chart:3381",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2b57f1134726f7df": {
+      "patientGroupId": "chart:2074",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2b96e4875af1979c": {
+      "patientGroupId": "chart:3235",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2c23bce29d5bfd6d": {
+      "patientGroupId": "chart:3275",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2f295b2be18fcad9": {
+      "patientGroupId": "chart:3462",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2fac07145681fda7": {
+      "patientGroupId": "chart:3250",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-2fd98f0c0b27808e": {
+      "patientGroupId": "chart:3041",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-304a069d6012c6d0": {
+      "patientGroupId": "chart:2163",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-30f300e06edcda17": {
+      "patientGroupId": "chart:2250",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-317d99a864a8fc79": {
+      "patientGroupId": "chart:2264",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3236a76ffeef458a": {
+      "patientGroupId": "chart:3185",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3348a7d7dbfe51fc": {
+      "patientGroupId": "chart:3274",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-335d43ffd0f87cab": {
+      "patientGroupId": "chart:2081",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-33771c583d5d4014": {
+      "patientGroupId": "chart:2106",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-34ab80c2de9a4123": {
+      "patientGroupId": "chart:3395",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-34bb1664692d5c30": {
+      "patientGroupId": "chart:2088",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3616c8f33c64b8b0": {
+      "patientGroupId": "chart:2184",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-373052923f23206e": {
+      "patientGroupId": "chart:2121",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-379201b8e4211428": {
+      "patientGroupId": "chart:2202",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-37cca67a0ab572ba": {
+      "patientGroupId": "chart:2101",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3898176957ec71f2": {
+      "patientGroupId": "chart:2203",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-38d32ba463839b0c": {
+      "patientGroupId": "chart:3306",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-38f1ea842a78789c": {
+      "patientGroupId": "chart:3441",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3986c92450232402": {
+      "patientGroupId": "chart:3081",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3ae31b209a75f7d8": {
+      "patientGroupId": "chart:2181",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3d46de8d04126c9a": {
+      "patientGroupId": "chart:2050",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3da709047498122b": {
+      "patientGroupId": "chart:3471",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3e1eed8544ef30e4": {
+      "patientGroupId": "chart:3282",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3e9973a12396a5ff": {
+      "patientGroupId": "chart:2170",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3eccb39dd20e7d36": {
+      "patientGroupId": "chart:3186",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-3f28583f2719efba": {
+      "patientGroupId": "chart:2130",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-437db377993afac7": {
+      "patientGroupId": "chart:2138",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-43d86f573e5abb67": {
+      "patientGroupId": "chart:2059",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-43e29aca87d46da8": {
+      "patientGroupId": "chart:2044",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-45ee753d68fbb2f4": {
+      "patientGroupId": "chart:2605",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-46444f2aaf1d7bb1": {
+      "patientGroupId": "chart:3255",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4682be1d7611d8e5": {
+      "patientGroupId": "chart:3371",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-48055a07b66e2f37": {
+      "patientGroupId": "chart:2016",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-49a79b496da3f504": {
+      "patientGroupId": "chart:2213",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4aa85c40edcec9c9": {
+      "patientGroupId": "chart:2036",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4baee4176a3e9fce": {
+      "patientGroupId": "chart:3260",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4c6f0f21203717a5": {
+      "patientGroupId": "chart:3088",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4c7ddd8b5cd6d5f9": {
+      "patientGroupId": "chart:3126",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4e120d8d4afa3eaf": {
+      "patientGroupId": "chart:2015",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4e1cc3de7b971047": {
+      "patientGroupId": "chart:3260",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4f812f49e81ffb36": {
+      "patientGroupId": "chart:3339",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-4f81e0123ce78224": {
+      "patientGroupId": "chart:2211",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-53c9700cae7ec762": {
+      "patientGroupId": "chart:3343",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-54698f331b55b23d": {
+      "patientGroupId": "chart:2100",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-54b8501e67577fa4": {
+      "patientGroupId": "chart:3125",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-556885d49541bcd5": {
+      "patientGroupId": "chart:2064",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-55910925d2e9de96": {
+      "patientGroupId": "chart:2008",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-568d0a35a81160a6": {
+      "patientGroupId": "chart:2204",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-56c2c9486fe15a2d": {
+      "patientGroupId": "chart:2244",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-574404b85613e297": {
+      "patientGroupId": "chart:3082",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5775de14e635faf9": {
+      "patientGroupId": "chart:2245",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-577d3f5b1b9f78ab": {
+      "patientGroupId": "chart:2019",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5799601b26b4f7e4": {
+      "patientGroupId": "chart:3195",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-579dfb631c2450f2": {
+      "patientGroupId": "chart:2208",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-57f20ffc5378be58": {
+      "patientGroupId": "chart:2037",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5959613e88b1d79f": {
+      "patientGroupId": "chart:2167",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-59859c060bc3bcfa": {
+      "patientGroupId": "chart:3422",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-598f0b4606bbfb27": {
+      "patientGroupId": "chart:3378",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5998f07bed96483f": {
+      "patientGroupId": "chart:2237",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5a23142155930f19": {
+      "patientGroupId": "chart:3277",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5a7da1ba3e15c065": {
+      "patientGroupId": "chart:3121",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5c41a982dc7de117": {
+      "patientGroupId": "chart:2251",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5cb24e4fadcdd912": {
+      "patientGroupId": "chart:2024",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5cd9d28cc7af614b": {
+      "patientGroupId": "chart:3378",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5e170bb182ac14cd": {
+      "patientGroupId": "chart:2221",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5e447fb36a45f180": {
+      "patientGroupId": "chart:2114",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5ee2ae56c7b1423a": {
+      "patientGroupId": "chart:2126",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5fb0cd45074a45df": {
+      "patientGroupId": "chart:3034",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-5fbd56c4bfbe06fe": {
+      "patientGroupId": "chart:2022",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-614b3e0bcf64d5e6": {
+      "patientGroupId": "chart:2017",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-634be06c3254d5dd": {
+      "patientGroupId": "chart:2185",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6436eecf48f42d7d": {
+      "patientGroupId": "chart:2249",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-654752b2d93dceb5": {
+      "patientGroupId": "chart:3132",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-678b6a7faf83b7c6": {
+      "patientGroupId": "chart:2087",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-67a17ba46ae5fbd7": {
+      "patientGroupId": "chart:2164",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6802178f64dba361": {
+      "patientGroupId": "chart:2084",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-68805765b065c280": {
+      "patientGroupId": "chart:2137",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-68f548d6f9cae15f": {
+      "patientGroupId": "chart:2109",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6948334b5faf8a8e": {
+      "patientGroupId": "chart:3051",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-69c7c86c276725ac": {
+      "patientGroupId": "chart:3213",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6a0b4f3dd93cebe7": {
+      "patientGroupId": "chart:2033",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6a1d59cb50d01e90": {
+      "patientGroupId": "chart:2076",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6ac50315d329d27d": {
+      "patientGroupId": "chart:3441",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6d2c867c2353ddfa": {
+      "patientGroupId": "chart:3179",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6d555fede9d55069": {
+      "patientGroupId": "chart:3344",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6d55d32f647e90ee": {
+      "patientGroupId": "chart:2263",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6eb9bc3b5b3fd67a": {
+      "patientGroupId": "chart:2160",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6f7d8e2ea183a05d": {
+      "patientGroupId": "chart:2013",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6fa62eea74838813": {
+      "patientGroupId": "chart:3082",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-6fb50e812c56987e": {
+      "patientGroupId": "chart:2260",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-702b5edbaf0560b2": {
+      "patientGroupId": "chart:2166",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-70760379c9a81a8c": {
+      "patientGroupId": "chart:2262",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7113988402b899ca": {
+      "patientGroupId": "chart:3257",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-71f20a7418308b4c": {
+      "patientGroupId": "chart:2172",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-71f4e61082a49795": {
+      "patientGroupId": "chart:2236",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7282b15d5ce63d7c": {
+      "patientGroupId": "chart:2001",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-73bc3e202b3d27c1": {
+      "patientGroupId": "chart:2042",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7556f69916346584": {
+      "patientGroupId": "chart:2092",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-77426b460e2fbe68": {
+      "patientGroupId": "chart:2122",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7748b1abb99b813f": {
+      "patientGroupId": "chart:2073",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-78c3947382bf8b1f": {
+      "patientGroupId": "chart:2186",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7935d0f972dbee6d": {
+      "patientGroupId": "chart:2265",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-79459d4c0dfd0ae2": {
+      "patientGroupId": "chart:3283",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7948bc638392dadb": {
+      "patientGroupId": "chart:2007",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7a5cc140d0c32aa0": {
+      "patientGroupId": "chart:3255",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7af386e99be4a2e2": {
+      "patientGroupId": "chart:2010",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7bd0a8640912daea": {
+      "patientGroupId": "chart:3225",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7c7606a562760178": {
+      "patientGroupId": "chart:3156",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7e056efd719deab7": {
+      "patientGroupId": "chart:3366",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-7ff019130eed47cc": {
+      "patientGroupId": "chart:3344",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-80177d3e646dc29f": {
+      "patientGroupId": "chart:2216",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-807821b1007c03e9": {
+      "patientGroupId": "chart:3023",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-81e695877302dba8": {
+      "patientGroupId": "chart:2079",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-83d0b56fcdad5757": {
+      "patientGroupId": "chart:2280",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8402c727f2577476": {
+      "patientGroupId": "chart:2009",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-84dd2309a9d6b8a6": {
+      "patientGroupId": "chart:2210",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-858df7d73067f9a5": {
+      "patientGroupId": "chart:3268",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-85e1a9575da9dc7d": {
+      "patientGroupId": "chart:2072",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-86bec7d5ab6611ce": {
+      "patientGroupId": "chart:3106",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8931b83f8bd1d403": {
+      "patientGroupId": "chart:3276",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8b4466c62b533476": {
+      "patientGroupId": "chart:2005",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8bc0416c6ef10c96": {
+      "patientGroupId": "chart:2120",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8c963e95ee8f3712": {
+      "patientGroupId": "chart:2175",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8cf2dc9016a6ab2e": {
+      "patientGroupId": "chart:2014",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-8e22470076d7f8f4": {
+      "patientGroupId": "chart:3381",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-913c46c675842b0b": {
+      "patientGroupId": "chart:3293",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9242724e6c551146": {
+      "patientGroupId": "chart:2267",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9264818c19128861": {
+      "patientGroupId": "chart:3063",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-93219a55e4565d62": {
+      "patientGroupId": "chart:3121",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9397e9c37100b0c8": {
+      "patientGroupId": "chart:2048",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-94f78fca426ea27d": {
+      "patientGroupId": "chart:2132",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-961a443eed58c5a6": {
+      "patientGroupId": "chart:2605",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9905350a049587c8": {
+      "patientGroupId": "chart:3106",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9a0faab149dfa336": {
+      "patientGroupId": "chart:2107",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9bc796697872a38d": {
+      "patientGroupId": "chart:2258",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9ca3bd9b25c6db71": {
+      "patientGroupId": "chart:3305",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9d28b87c24253261": {
+      "patientGroupId": "chart:2086",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9dd0aaf4e1573355": {
+      "patientGroupId": "chart:3422",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9f04e88c3dafc891": {
+      "patientGroupId": "chart:3171",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-9f7a9336b2db8994": {
+      "patientGroupId": "chart:2105",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a0061d2ea9332ffa": {
+      "patientGroupId": "chart:3034",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a11be579b454f062": {
+      "patientGroupId": "chart:2124",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a11efcf275d0f397": {
+      "patientGroupId": "chart:2220",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a27050b84afa93eb": {
+      "patientGroupId": "chart:3081",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a2a7ad64b0ce6bdf": {
+      "patientGroupId": "chart:3445",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a2d7586d2022f2d1": {
+      "patientGroupId": "chart:3306",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a2ea68c4ddc01b55": {
+      "patientGroupId": "chart:2043",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a337805907e07340": {
+      "patientGroupId": "chart:3114",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a355f6b283306fe0": {
+      "patientGroupId": "chart:3479",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a356f1fae497850b": {
+      "patientGroupId": "chart:2218",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a37b276a88ea86fb": {
+      "patientGroupId": "chart:2281",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a3a0386ea933925a": {
+      "patientGroupId": "chart:3091",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-a4c4f621c4c483e4": {
+      "patientGroupId": "chart:3051",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-aa4bf71aeb2c65b5": {
+      "patientGroupId": "chart:2054",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-aaaa8be8cd2ab5f2": {
+      "patientGroupId": "chart:2231",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ab0c0cab0754a334": {
+      "patientGroupId": "chart:2259",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ab0ff2e78eaee8ed": {
+      "patientGroupId": "chart:2988",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ab28372627ab114b": {
+      "patientGroupId": "chart:3240",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ac12301b98546e3d": {
+      "patientGroupId": "chart:3208",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ac465b411746d9f7": {
+      "patientGroupId": "chart:2256",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-aea2298c285a4936": {
+      "patientGroupId": "chart:2077",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-aef70c0294f3ae67": {
+      "patientGroupId": "chart:2082",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-af0107033d8536e7": {
+      "patientGroupId": "chart:2212",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b0b7d76a19d9447f": {
+      "patientGroupId": "chart:2183",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b17c6d1bfe8ba931": {
+      "patientGroupId": "chart:2993",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b17f0fefae8bbfe0": {
+      "patientGroupId": "chart:2029",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b1f5a38c4bdd36ed": {
+      "patientGroupId": "chart:2045",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b27870fc145552c5": {
+      "patientGroupId": "chart:2187",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b287bc015d9615c8": {
+      "patientGroupId": "chart:3227",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b32f3ba3c056ed3c": {
+      "patientGroupId": "chart:3266",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b3391ff79dafa97e": {
+      "patientGroupId": "chart:3323",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b3d51e802e3e0dca": {
+      "patientGroupId": "chart:3221",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b416d324a96a5eb2": {
+      "patientGroupId": "chart:2060",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b8c7bd41fa64c3c8": {
+      "patientGroupId": "chart:3339",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-b9a52467711b2d41": {
+      "patientGroupId": "chart:2091",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ba2af1def313b39e": {
+      "patientGroupId": "chart:3411",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-bb928a1abcbe6af7": {
+      "patientGroupId": "chart:2128",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-bbb49cb3b36dbd30": {
+      "patientGroupId": "chart:2117",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-be8331e28db198ec": {
+      "patientGroupId": "chart:2274",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-bf5d13d62a467010": {
+      "patientGroupId": "chart:3349",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-bf9c782f875cbf37": {
+      "patientGroupId": "chart:3366",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-bfe47bb0368572a8": {
+      "patientGroupId": "chart:2123",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c112d14655d8ade2": {
+      "patientGroupId": "chart:2046",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c1c845cf135c189f": {
+      "patientGroupId": "chart:2004",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c223fbbc372df815": {
+      "patientGroupId": "chart:2083",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c3023df86bef4766": {
+      "patientGroupId": "chart:3459",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c349b51b55f966ef": {
+      "patientGroupId": "chart:3318",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c42081f01ac72fbc": {
+      "patientGroupId": "chart:3089",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c465c151d1b47129": {
+      "patientGroupId": "chart:3208",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c5193ee755224415": {
+      "patientGroupId": "chart:2288",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c538888ba3f65b7f": {
+      "patientGroupId": "chart:3247",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c6239a8dc3239346": {
+      "patientGroupId": "chart:3074",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c7237fd1ac6b1872": {
+      "patientGroupId": "chart:3411",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c75ac3eb09ab787d": {
+      "patientGroupId": "chart:3166",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-c9fefce6027246be": {
+      "patientGroupId": "chart:2243",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cabc3e79d39c1bf7": {
+      "patientGroupId": "chart:2944",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cad2627c9b23c66c": {
+      "patientGroupId": "chart:2056",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-caf4d01c99decd0f": {
+      "patientGroupId": "chart:2268",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cb193314e9b16035": {
+      "patientGroupId": "chart:2188",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cc18deb92feb7e40": {
+      "patientGroupId": "chart:2272",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cc46a0b37a01ffb5": {
+      "patientGroupId": "chart:3268",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cc870487b55f0cf6": {
+      "patientGroupId": "chart:2115",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cd6e787d8e614e14": {
+      "patientGroupId": "chart:3016",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cd834f4e33931fc4": {
+      "patientGroupId": "chart:2090",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cd8d2235c9697f89": {
+      "patientGroupId": "chart:2155",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cdd1e139b22d0ab0": {
+      "patientGroupId": "chart:2217",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-cfef9dc57cd4bc00": {
+      "patientGroupId": "chart:3364",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d018bff10de35924": {
+      "patientGroupId": "chart:2116",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d1136ba0e4a2ce86": {
+      "patientGroupId": "chart:2027",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d1e91ea84605bbb5": {
+      "patientGroupId": "chart:2069",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d286464a9067f096": {
+      "patientGroupId": "chart:3492",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d2e68e9e1195bfe4": {
+      "patientGroupId": "chart:3290",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d40f8c16117a364e": {
+      "patientGroupId": "chart:2255",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d427b7956c07132c": {
+      "patientGroupId": "chart:2111",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d4a193e137e84d65": {
+      "patientGroupId": "chart:2142",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d58277e2213b8d86": {
+      "patientGroupId": "chart:2041",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d59cacde92156c5a": {
+      "patientGroupId": "chart:2028",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d5ac30b729334483": {
+      "patientGroupId": "chart:2254",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d601404f86a0f64f": {
+      "patientGroupId": "chart:2993",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d6bcd5e13b0f00cb": {
+      "patientGroupId": "chart:2055",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d6d5cb4df78e0a0c": {
+      "patientGroupId": "chart:2080",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d6ebbba9f3cc5f2c": {
+      "patientGroupId": "chart:2034",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d7751d43a2ea0b12": {
+      "patientGroupId": "chart:3227",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d8aca7d13b0579bf": {
+      "patientGroupId": "chart:3364",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d917b314d5d45489": {
+      "patientGroupId": "chart:3330",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d9635b26ee2d58f4": {
+      "patientGroupId": "chart:2145",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-d9750bf829072467": {
+      "patientGroupId": "chart:2209",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-da3209d63efc803f": {
+      "patientGroupId": "chart:2148",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-dab328229cdff070": {
+      "patientGroupId": "chart:3022",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-db3174c9a15f4527": {
+      "patientGroupId": "chart:2030",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-dbd09fa036f719fb": {
+      "patientGroupId": "chart:3371",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-dc47273f2a9fd08e": {
+      "patientGroupId": "chart:2146",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-dec7ad7ae453a5d8": {
+      "patientGroupId": "chart:3479",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-df13367e794ae8f4": {
+      "patientGroupId": "chart:2089",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-dfe70abde035619d": {
+      "patientGroupId": "chart:2136",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e0e42e5d553cbd5f": {
+      "patientGroupId": "chart:3270",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e1569c27259d3e87": {
+      "patientGroupId": "chart:2006",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e1705e4b7a838e2b": {
+      "patientGroupId": "chart:2242",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e293507c44aee31c": {
+      "patientGroupId": "chart:2038",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e35e669b675a89f4": {
+      "patientGroupId": "chart:3063",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e375def14b323476": {
+      "patientGroupId": "chart:3224",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e3abf42e70477326": {
+      "patientGroupId": "chart:2039",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e5e57e047d8de536": {
+      "patientGroupId": "chart:2158",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e60b5525368a17e3": {
+      "patientGroupId": "chart:2070",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e653206e1f3dfdae": {
+      "patientGroupId": "chart:3501",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e67fca06a748698d": {
+      "patientGroupId": "chart:3196",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e7f627bb9e54460e": {
+      "patientGroupId": "chart:2140",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-e981a4485c386cb6": {
+      "patientGroupId": "chart:3207",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ea54b86c2c7f73b2": {
+      "patientGroupId": "chart:3041",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ea65e64d5b2a1300": {
+      "patientGroupId": "chart:2192",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ebfc31085fee755a": {
+      "patientGroupId": "chart:2134",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ec844684332225b4": {
+      "patientGroupId": "chart:2119",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ededa6264d0a8168": {
+      "patientGroupId": "chart:2012",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-edf699da25591e7b": {
+      "patientGroupId": "chart:3287",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-eecb96694ea176bf": {
+      "patientGroupId": "chart:2065",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-efb48526656d5600": {
+      "patientGroupId": "chart:3023",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f0213a1fae0b55ce": {
+      "patientGroupId": "chart:2159",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f0a55d363ea3b482": {
+      "patientGroupId": "chart:2032",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f1b09b01c99081a6": {
+      "patientGroupId": "chart:2157",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f2cd280d96829561": {
+      "patientGroupId": "chart:2227",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f32e5be7160992a7": {
+      "patientGroupId": "chart:2094",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f3416a44b2a6e132": {
+      "patientGroupId": "chart:2058",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f386087c6498efbd": {
+      "patientGroupId": "chart:2235",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f419ff14f159ae9a": {
+      "patientGroupId": "chart:3406",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f49e206330b7a59f": {
+      "patientGroupId": "chart:2246",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f5346b3c0c02ebf5": {
+      "patientGroupId": "chart:3406",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f7b45b6cb813564d": {
+      "patientGroupId": "chart:2971",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f7e4a05c0360e356": {
+      "patientGroupId": "chart:3211",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f89540b795d0260c": {
+      "patientGroupId": "chart:3248",
+      "provenance": "chart_prefix_with_suffix_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-f9429af2be991943": {
+      "patientGroupId": "chart:3471",
+      "provenance": "bare_chart_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-fcadb03493eae5e4": {
+      "patientGroupId": "chart:2238",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-fd20da791578e894": {
+      "patientGroupId": "chart:3266",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-fdd435145f6d1e8d": {
+      "patientGroupId": "chart:2223",
+      "provenance": "chart_plus_date_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-fef6f375ed993075": {
+      "patientGroupId": "chart:3250",
+      "provenance": "chart_plus_date_plus_seq_filename",
+      "aliasKeyCount": 1
+    },
+    "embedded-ff0e6cfc2631259d": {
+      "patientGroupId": "chart:2021",
+      "provenance": "name_chart_date_filename",
+      "aliasKeyCount": 1
+    }
+  }
+}

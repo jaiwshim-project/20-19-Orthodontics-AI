@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "pixel-sanity-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "purpose": "픽셀 모델의 큰 개선폭(규칙 대비 +91.8%)이 측정 오류가 아님을 확인하는 3종 검사.",
+  "truthAgreementBetweenPipelines": {
+    "sharedCases": 315,
+    "meanEndpointGapMm": 0.024,
+    "medianMm": 0.0002,
+    "p95Mm": 0.0003,
+    "maxMm": 1.1145,
+    "casesAbove0_5mm": 8,
+    "identicalWithin0_01mm": 307
+  },
+  "sourceResolutionDomainShift": {
+    "casesEvaluated": 100,
+    "sourceImagesMissing": 0,
+    "derived1280": {
+      "position": 0.309,
+      "molar": 0.4313,
+      "endpoint": 0.4627,
+      "lengthAbs": 0.257,
+      "molarLengthAbs": 0.3144,
+      "tzl": 1.8523
+    },
+    "sourceFullRes": {
+      "position": 0.3099,
+      "molar": 0.4312,
+      "endpoint": 0.4646,
+      "lengthAbs": 0.2543,
+      "molarLengthAbs": 0.3167,
+      "tzl": 1.8161
+    },
+    "note": "같은 fold 모델로만 추론(OOF 유지). derived는 학습에 쓴 1280px 파생본, source는 최대 6016px 원본. 배포는 source 조건이다.",
+    "positionDegradationPct": 0.29
+  },
+  "truthImprintCheck": {
+    "casesEvaluated": 60,
+    "radiusPxAt1280": 15.4,
+    "clean": {
+      "position": 0.335,
+      "molar": 0.5105,
+      "endpoint": 0.4605,
+      "lengthAbs": 0.2754,
+      "molarLengthAbs": 0.3615,
+      "tzl": 1.8898
+    },
+    "occluded": {
+      "position": 0.6546,
+      "molar": 0.7645,
+      "endpoint": 0.851,
+      "lengthAbs": 0.6398,
+      "molarLengthAbs": 0.6792,
+      "tzl": 3.3032
+    },
+    "note": "정답점 근방을 회색으로 덮었다. 성능이 붕괴하면 정답이 픽셀에 새겨져 있다는 뜻이고, 완만히 나빠지면 주변 치아 형태를 보고 있다는 뜻이다. ⚠️ 가림 자체가 치아 경계를 지우므로 어느 정도의 악화는 정상이다.",
+    "positionDegradationPct": 95.4
+  },
+  "verdict": {
+    "truthPipelinesAgree": true,
+    "survivesFullResolution": true,
+    "notReadingDrawnLabels": true
+  }
+}

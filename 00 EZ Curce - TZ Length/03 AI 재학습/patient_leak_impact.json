@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "patient-leak-impact-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false
+  },
+  "note": "환자 단위 그룹으로 재분할해 기존 KRR을 재평가. 두 실행은 데이터·하이퍼탐색·시드가 모두 동일하고 그룹 키만 다르다(이미지SHA → 환자ID). 3단계, per-stage cap 0.05, 누적 0.15.",
+  "grouping": {
+    "before": "image_sha256",
+    "after": "patient_chart_number_via_label_filename",
+    "width12Cases": 384,
+    "width12GroupsBefore": 384,
+    "width12GroupsAfter": 322,
+    "leakableCases": 124,
+    "leakableCaseRate": 0.3229,
+    "prePostPairsConfirmed": 62,
+    "ezLeakableCases": 0
+  },
+  "tasks": {
+    "width": {
+      "groupsBefore": 384,
+      "groupsAfter": 322,
+      "coordinateMAE": {
+        "leaky": 0.026298958501766136,
+        "clean": 0.026268016110952284,
+        "inflationPct": -0.118
+      },
+      "p95": {
+        "leaky": 0.07242517514747386,
+        "clean": 0.07257907174128753
+      },
+      "improvementVsRule": {
+        "leaky": 0.39754728548815055,
+        "clean": 0.39825610927438676,
+        "deltaPp": 0.071
+      },
+      "gatePass": {
+        "leaky": true,
+        "clean": true
+      }
+    },
+    "ez": {
+      "groupsBefore": 113,
+      "groupsAfter": 113,
+      "coordinateMAE": {
+        "leaky": 0.02440129903225012,
+        "clean": 0.0248277908485806,
+        "inflationPct": 1.718
+      },
+      "p95": {
+        "leaky": 0.071804818388276,
+        "clean": 0.07065542249297581
+      },
+      "improvementVsRule": {
+        "leaky": 0.4283741448520474,
+        "clean": 0.4183831296646468,
+        "deltaPp": -0.999
+      },
+      "gatePass": {
+        "leaky": true,
+        "clean": true
+      }
+    }
+  },
+  "verdict": "KRR 잔차모델은 환자 누출에 실질적으로 면역이다. width는 오히려 미세 개선(-0.12%), ez는 +1.75% 악화로 둘 다 노이즈 수준이다. 이유: 입력이 픽셀이 아니라 규칙엔진 좌표 169차원이고, 거리 게이트가 프로토타입 근방만 보정하므로 '같은 환자의 다른 사진'을 외울 여지가 작다. 따라서 기존에 보고한 KRR 수치(+39.8%/+42.8%)는 누출로 부풀려진 값이 아니다. ⚠️ 단, 이 면역은 좌표 전용 모델에 한정된다. 픽셀 모델은 환자 고유 치아 형태를 직접 외울 수 있어 환자 단위 분할이 필수다 — pixel_dataset의 fold는 환자 겹침 0으로 만들어 두었다."
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Gemini + Supabase pgvector 기반 RAG 챗봇. 출처 근거 인용 + 파일 첨부 분석.">
+<meta name="description" content="AI + Supabase pgvector 기반 RAG 챗봇. 출처 근거 인용 + 파일 첨부 분석.">
 <meta property="og:title" content="RAG 챗봇 · Orthodontics AI">
 <title>RAG 챗봇 · 20-19 Orthodontics AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,32 +13,33 @@
 <style>
   .chat-shell { display:grid; grid-template-columns: 260px 1fr 300px; gap:0; height: calc(100vh - 64px); min-height: 600px; }
   @media (max-width: 1024px) { .chat-shell { grid-template-columns: 1fr; } .chat-sidebar, .chat-aside { display:none; } }
-  .chat-sidebar, .chat-aside { background: rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); padding:16px; overflow:auto; }
-  .chat-aside { border-right: none; border-left:1px solid rgba(255,255,255,0.06); }
+  .chat-sidebar, .chat-aside { background: #F8FAFC; border-right:1px solid var(--border-subtle); padding:16px; overflow:auto; }
+  .chat-aside { border-right: none; border-left:1px solid var(--border-subtle); }
   .chat-main { display:flex; flex-direction:column; min-width:0; }
   .chat-list { display:flex; flex-direction:column; gap:6px; }
   .chat-item { padding:10px 12px; border-radius:10px; cursor:pointer; color:var(--text-secondary); font-size:13px; }
-  .chat-item:hover, .chat-item.active { background: rgba(14,165,233,0.12); color:var(--text-primary); }
-  .chat-stream { flex:1; overflow:auto; padding:24px; display:flex; flex-direction:column; gap:14px; }
+  .chat-item:hover, .chat-item.active { background: rgba(14,165,233,0.10); color:var(--color-primary-dark); }
+  .chat-stream { flex:1; overflow:auto; padding:24px; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; }
   .msg { max-width: 76%; padding:12px 16px; border-radius:14px; line-height:1.6; }
-  .msg.user { align-self:flex-end; background: linear-gradient(135deg,#0EA5E9,#8B5CF6); color:#fff; }
-  .msg.assistant { align-self:flex-start; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
-  .msg.assistant pre, .msg.assistant code { background: rgba(0,0,0,0.4); padding:2px 6px; border-radius:6px; font-size:13px; }
-  .quick-chips { display:flex; gap:8px; padding:0 24px 8px; flex-wrap:wrap; }
-  .chip { padding:6px 12px; border:1px solid rgba(255,255,255,0.12); border-radius:999px; font-size:12px; cursor:pointer; color:var(--text-secondary); background:transparent; }
-  .chip:hover { border-color: var(--color-primary); color:var(--text-primary); }
-  .chat-input-wrap { padding:16px 24px; border-top:1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2); }
+  .msg.user { align-self:flex-end; background: linear-gradient(135deg,#0EA5E9,#7C3AED); color:#fff; box-shadow:0 2px 12px rgba(14,165,233,0.25); }
+  .msg.assistant { align-self:flex-start; background: #F8FAFC; border:1px solid var(--border-subtle); color:var(--text-primary); }
+  .msg.assistant pre, .msg.assistant code { background: #1E293B; color:#E2E8F0; padding:2px 6px; border-radius:6px; font-size:13px; }
+  .quick-chips { display:flex; gap:8px; padding:0 24px 8px; flex-wrap:wrap; background:#FFFFFF; }
+  .chip { padding:6px 12px; border:1px solid var(--border-strong); border-radius:999px; font-size:12px; cursor:pointer; color:var(--text-secondary); background:#FFFFFF; transition:all .2s; }
+  .chip:hover { border-color: var(--color-primary); color:var(--color-primary-dark); background:rgba(14,165,233,0.05); }
+  .chat-input-wrap { padding:16px 24px; border-top:1px solid var(--border-subtle); background: #F8FAFC; }
   .chat-input { display:flex; gap:8px; align-items:flex-end; }
-  .chat-input textarea { flex:1; min-height:44px; max-height:160px; resize:vertical; padding:12px 14px; background: rgba(255,255,255,0.04); color:var(--text-primary); border:1px solid rgba(255,255,255,0.1); border-radius:12px; font-family:inherit; }
-  .chat-input button { padding: 0 18px; height:44px; background: linear-gradient(135deg,#0EA5E9,#8B5CF6); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:600; }
-  .chat-input .icon-btn { background: rgba(255,255,255,0.06); }
+  .chat-input textarea { flex:1; min-height:44px; max-height:160px; resize:vertical; padding:12px 14px; background:#FFFFFF; color:var(--text-primary); border:1px solid var(--border-strong); border-radius:12px; font-family:inherit; }
+  .chat-input textarea:focus { outline:none; border-color:var(--color-primary); box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+  .chat-input button { padding: 0 18px; height:44px; background: linear-gradient(135deg,#0EA5E9,#7C3AED); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:600; }
+  .chat-input .icon-btn { background: #FFFFFF; border:1px solid var(--border-strong); color:var(--text-secondary); }
   .source-card { padding:10px 12px; background: rgba(14,165,233,0.06); border:1px solid rgba(14,165,233,0.18); border-radius:10px; margin-bottom:8px; font-size:12px; }
-  .source-card .src { color: var(--color-primary); font-weight:600; margin-bottom:4px; }
+  .source-card .src { color: var(--color-primary-dark); font-weight:600; margin-bottom:4px; }
   .typing { display:flex; gap:4px; padding: 8px 0; }
   .typing span { width:8px; height:8px; background: var(--color-primary); border-radius:50%; animation: bounce 1.4s infinite ease-in-out; }
   .typing span:nth-child(2) { animation-delay: 0.2s; } .typing span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity:0.6; } 40% { transform: scale(1); opacity:1; } }
-  .model-select { width:100%; padding:8px; background: rgba(255,255,255,0.04); color:var(--text-primary); border:1px solid rgba(255,255,255,0.1); border-radius:8px; margin-bottom:12px; }
+  .model-select { width:100%; padding:8px; background:#FFFFFF; color:var(--text-primary); border:1px solid var(--border-strong); border-radius:8px; margin-bottom:12px; }
 </style>
 </head>
 <body>
@@ -48,7 +49,7 @@
     <aside class="chat-sidebar">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <h3 style="margin:0; font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px;">대화</h3>
-        <button class="icon-btn" onclick="newChat()" style="background:transparent; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:4px 10px; cursor:pointer; color:var(--text-primary);">+ 새 대화</button>
+        <button class="icon-btn" onclick="newChat()" style="background:#FFFFFF; border:1px solid var(--border-strong); border-radius:8px; padding:4px 10px; cursor:pointer; color:var(--text-primary);">+ 새 대화</button>
       </div>
       <div class="chat-list" id="chatList"></div>
     </aside>

@@ -1,0 +1,932 @@
+{
+  "schemaVersion": "ez-tzl-residual-metrics/v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImagePixels": false,
+    "content": "normalized numeric model parameters only"
+  },
+  "seed": 20260711,
+  "foldCount": 5,
+  "trainingDataDigestSha256": "8d997683eb0a98ad1ce26e3d7322cfbf87edc5b9a53f1983f42a30456be1353b",
+  "metricDefinitions": {
+    "coordinateMAE": "mean absolute x/y error after axis normalization",
+    "mae": "mean 2D landmark error as fraction of normalized image diagonal",
+    "rmse": "root mean squared 2D landmark error as fraction of normalized image diagonal",
+    "p95": "95th percentile 2D landmark error as fraction of normalized image diagonal",
+    "pck": "fraction of landmarks within 2%, 5%, and 10% of normalized image diagonal",
+    "overallOutOfFold": "each prediction is from a model that excluded its split group"
+  },
+  "inputSummary": {
+    "datasetCases": 452,
+    "baselineRecords": 452,
+    "matchedUsableBaselines": 452,
+    "taskSamples": {
+      "width": 384,
+      "ez": 113
+    },
+    "taskGroups": {
+      "width": 322,
+      "ez": 113
+    }
+  },
+  "labelQuality": {
+    "counts": {
+      "casesWithoutComplete12WidthTruth": 68,
+      "casesWithoutUsableEzTruth": 339,
+      "expertWidthPairsCanonicalized": 34,
+      "ezMultiAnnotationCases": 1,
+      "widthMultiAnnotationCases": 53
+    },
+    "flags": [
+      "expertWidthPairsCanonicalized",
+      "ezMultiAnnotationCases",
+      "widthMultiAnnotationCases"
+    ]
+  },
+  "tasks": {
+    "width": {
+      "samples": 384,
+      "groups": 322,
+      "stages": 3,
+      "folds": [
+        {
+          "fold": 1,
+          "trainSamples": 301,
+          "testSamples": 83,
+          "trainGroups": 257,
+          "testGroups": 65,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.0008341120069771483,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008341120069771483,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.5,
+              "gamma": 0.0016682240139542965,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013345792111634372,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 12.778135732438164,
+            "kernelSimilarityFloor": 0.8726729365936593,
+            "accepted": 79,
+            "fallback": 4,
+            "acceptedRate": 0.9518072289156626
+          },
+          "baseline": {
+            "mae": 0.046149505836041216,
+            "rmse": 0.06253913195093602,
+            "coordinateMAE": 0.04017038251952176,
+            "coordinateRMSE": 0.06253913195093602,
+            "p95": 0.13398060983690915,
+            "pck": {
+              "2pct": 0.3453815261044177,
+              "5pct": 0.679718875502008,
+              "10pct": 0.8473895582329317
+            },
+            "landmarkCount": 1992
+          },
+          "corrected": {
+            "mae": 0.02938421119559545,
+            "rmse": 0.036637445903644095,
+            "coordinateMAE": 0.025853062898484564,
+            "coordinateRMSE": 0.0366374459036441,
+            "p95": 0.06990281538369074,
+            "pck": {
+              "2pct": 0.4066265060240964,
+              "5pct": 0.8473895582329317,
+              "10pct": 0.9899598393574297
+            },
+            "landmarkCount": 1992
+          },
+          "coordinateMaeRelativeImprovement": 0.35641481915387174,
+          "p95Regression": -0.06407779445321841
+        },
+        {
+          "fold": 2,
+          "trainSamples": 303,
+          "testSamples": 81,
+          "trainGroups": 257,
+          "testGroups": 65,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.0008410392696182288,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008410392696182288,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 2.0,
+              "gamma": 0.0067283141569458305,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008410392696182288,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 12.819227576745133,
+            "kernelSimilarityFloor": 0.8709156354528184,
+            "accepted": 77,
+            "fallback": 4,
+            "acceptedRate": 0.9506172839506173
+          },
+          "baseline": {
+            "mae": 0.05087401494517722,
+            "rmse": 0.06710038260272928,
+            "coordinateMAE": 0.04401767581784594,
+            "coordinateRMSE": 0.06710038260272928,
+            "p95": 0.13949487180103948,
+            "pck": {
+              "2pct": 0.2952674897119342,
+              "5pct": 0.6213991769547325,
+              "10pct": 0.8348765432098766
+            },
+            "landmarkCount": 1944
+          },
+          "corrected": {
+            "mae": 0.030584333618453377,
+            "rmse": 0.0389441199950946,
+            "coordinateMAE": 0.026930515168698484,
+            "coordinateRMSE": 0.03894411999509461,
+            "p95": 0.07538838669738758,
+            "pck": {
+              "2pct": 0.38580246913580246,
+              "5pct": 0.8539094650205762,
+              "10pct": 0.9799382716049383
+            },
+            "landmarkCount": 1944
+          },
+          "coordinateMaeRelativeImprovement": 0.3881886158609916,
+          "p95Regression": -0.0641064851036519
+        },
+        {
+          "fold": 3,
+          "trainSamples": 310,
+          "testSamples": 74,
+          "trainGroups": 258,
+          "testGroups": 64,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.0008452904243173083,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008452904243173083,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008452904243173083,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013524646789076934,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 12.888540890624167,
+            "kernelSimilarityFloor": 0.868997539965302,
+            "accepted": 73,
+            "fallback": 1,
+            "acceptedRate": 0.9864864864864865
+          },
+          "baseline": {
+            "mae": 0.051822819139704976,
+            "rmse": 0.06788371557551047,
+            "coordinateMAE": 0.045042805453084624,
+            "coordinateRMSE": 0.06788371557551047,
+            "p95": 0.13718104694963318,
+            "pck": {
+              "2pct": 0.29842342342342343,
+              "5pct": 0.6081081081081081,
+              "10pct": 0.8192567567567568
+            },
+            "landmarkCount": 1776
+          },
+          "corrected": {
+            "mae": 0.02984402149752507,
+            "rmse": 0.03757346713572911,
+            "coordinateMAE": 0.026434949258427296,
+            "coordinateRMSE": 0.03757346713572911,
+            "p95": 0.07079539391330592,
+            "pck": {
+              "2pct": 0.40822072072072074,
+              "5pct": 0.8423423423423423,
+              "10pct": 0.9887387387387387
+            },
+            "landmarkCount": 1776
+          },
+          "coordinateMaeRelativeImprovement": 0.4131149471592921,
+          "p95Regression": -0.06638565303632726
+        },
+        {
+          "fold": 4,
+          "trainSamples": 313,
+          "testSamples": 71,
+          "trainGroups": 258,
+          "testGroups": 64,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.000844021625868548,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.000844021625868548,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.25,
+              "gamma": 0.000844021625868548,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013504346013896768,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 12.604238914651846,
+            "kernelSimilarityFloor": 0.8745139371022422,
+            "accepted": 65,
+            "fallback": 6,
+            "acceptedRate": 0.9154929577464789
+          },
+          "baseline": {
+            "mae": 0.05284450372812552,
+            "rmse": 0.06936571886084573,
+            "coordinateMAE": 0.045857807544816526,
+            "coordinateRMSE": 0.06936571886084573,
+            "p95": 0.1387255489534669,
+            "pck": {
+              "2pct": 0.2857981220657277,
+              "5pct": 0.6073943661971831,
+              "10pct": 0.8174882629107981
+            },
+            "landmarkCount": 1704
+          },
+          "corrected": {
+            "mae": 0.029459052851325926,
+            "rmse": 0.03847285539694683,
+            "coordinateMAE": 0.02593612812869986,
+            "coordinateRMSE": 0.03847285539694684,
+            "p95": 0.07781732094260742,
+            "pck": {
+              "2pct": 0.4307511737089202,
+              "5pct": 0.8591549295774648,
+              "10pct": 0.977112676056338
+            },
+            "landmarkCount": 1704
+          },
+          "coordinateMaeRelativeImprovement": 0.43442284929665126,
+          "p95Regression": -0.060908228010859475
+        },
+        {
+          "fold": 5,
+          "trainSamples": 309,
+          "testSamples": 75,
+          "trainGroups": 258,
+          "testGroups": 64,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.0008374279270002487,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008374279270002487,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008374279270002487,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013398846832003979,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 12.868875364933718,
+            "kernelSimilarityFloor": 0.8705024329341391,
+            "accepted": 70,
+            "fallback": 5,
+            "acceptedRate": 0.9333333333333333
+          },
+          "baseline": {
+            "mae": 0.050738439113391584,
+            "rmse": 0.06655342336854027,
+            "coordinateMAE": 0.04365552046444079,
+            "coordinateRMSE": 0.06655342336854028,
+            "p95": 0.13738868010907362,
+            "pck": {
+              "2pct": 0.3011111111111111,
+              "5pct": 0.6194444444444445,
+              "10pct": 0.8322222222222222
+            },
+            "landmarkCount": 1800
+          },
+          "corrected": {
+            "mae": 0.029674175598694265,
+            "rmse": 0.03736820390282534,
+            "coordinateMAE": 0.026161211934740948,
+            "coordinateRMSE": 0.037368203902825345,
+            "p95": 0.07175508805339947,
+            "pck": {
+              "2pct": 0.3977777777777778,
+              "5pct": 0.8527777777777777,
+              "10pct": 0.9838888888888889
+            },
+            "landmarkCount": 1800
+          },
+          "coordinateMaeRelativeImprovement": 0.40073531007263263,
+          "p95Regression": -0.06563359205567415
+        }
+      ],
+      "overallOutOfFold": {
+        "baseline": {
+          "mae": 0.050373529972630796,
+          "rmse": 0.06661762439785493,
+          "coordinateMAE": 0.04365314964689875,
+          "coordinateRMSE": 0.06661762439785494,
+          "p95": 0.13738032157510904,
+          "pck": {
+            "2pct": 0.3060980902777778,
+            "5pct": 0.6284722222222222,
+            "10pct": 0.8308376736111112
+          },
+          "landmarkCount": 9216
+        },
+        "corrected": {
+          "mae": 0.029796442878885967,
+          "rmse": 0.037795710813806324,
+          "coordinateMAE": 0.026268016110952284,
+          "coordinateRMSE": 0.037795710813806324,
+          "p95": 0.07257907174128753,
+          "pck": {
+            "2pct": 0.4052734375,
+            "5pct": 0.8510199652777778,
+            "10pct": 0.9840494791666666
+          },
+          "landmarkCount": 9216
+        },
+        "coordinateMaeRelativeImprovement": 0.39825610927438676,
+        "p95Regression": -0.06480124983382152
+      },
+      "selectedFinalHyperparameters": {
+        "kernel": "rbf",
+        "gammaFactor": 0.25,
+        "gamma": 0.0008417960080030662,
+        "lambda": 0.1
+      },
+      "selectedFinalStageHyperparameters": [
+        {
+          "stage": 1,
+          "gammaFactor": 0.25,
+          "gamma": 0.0008417960080030662,
+          "lambda": 0.1
+        },
+        {
+          "stage": 2,
+          "gammaFactor": 0.5,
+          "gamma": 0.0016835920160061324,
+          "lambda": 1.0
+        },
+        {
+          "stage": 3,
+          "gammaFactor": 4.0,
+          "gamma": 0.01346873612804906,
+          "lambda": 1.0
+        }
+      ],
+      "promotionGate": {
+        "pass": true,
+        "checks": {
+          "coordinateMaeRelativeImprovementAtLeast10Pct": true,
+          "atLeast4Of5FoldsImproved": true,
+          "p95DidNotRegress": true,
+          "perStageCorrectionCapIs5PctDiagonal": true,
+          "cumulativeCorrectionWithinDeclaredCap": true,
+          "cumulativeCapAtMost15PctDiagonal": true,
+          "worsenedCaseRateAtMost25Pct": true,
+          "unfamiliarFallbackEnabled": true
+        },
+        "observed": {
+          "coordinateMaeRelativeImprovement": 0.39825610927438676,
+          "improvedFolds": 5,
+          "foldCount": 5,
+          "p95Regression": -0.06480124983382152,
+          "stages": 3,
+          "perStageCorrectionCap": 0.05,
+          "cumulativeCorrectionCap": 0.15,
+          "observedCumulativeCorrectionMax": 0.14833907605138472,
+          "observedCumulativeCorrectionP95": 0.11245607769123304,
+          "worsenedCaseRate": 0.22395833333333334,
+          "worsenedCaseCount": 86,
+          "unfamiliarAcceptedRate": 0.9479166666666666,
+          "unfamiliarFallbackCount": 20,
+          "nearestTrainingDistanceP95": 12.83601077384427
+        },
+        "required": {
+          "coordinateMaeRelativeImprovement": 0.1,
+          "improvedFolds": 4,
+          "foldCount": 5,
+          "p95RegressionMaximum": 0.0,
+          "perStageCorrectionCapDiagonalFraction": 0.05,
+          "cumulativeCorrectionCapMaximum": 0.15,
+          "worsenedCaseRateMaximum": 0.25,
+          "unfamiliarFallback": true
+        }
+      }
+    },
+    "ez": {
+      "samples": 113,
+      "groups": 113,
+      "stages": 3,
+      "folds": [
+        {
+          "fold": 1,
+          "trainSamples": 90,
+          "testSamples": 23,
+          "trainGroups": 90,
+          "testGroups": 23,
+          "hyperparameters": {
+            "gammaFactor": 0.5,
+            "gamma": 0.0016652119420911917,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.5,
+              "gamma": 0.0016652119420911917,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 4.0,
+              "gamma": 0.013321695536729534,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008326059710455959,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 14.733341021983724,
+            "kernelSimilarityFloor": 0.6966516459411116,
+            "accepted": 23,
+            "fallback": 0,
+            "acceptedRate": 1.0
+          },
+          "baseline": {
+            "mae": 0.06135459933956037,
+            "rmse": 0.07026171850253661,
+            "coordinateMAE": 0.05136804737414964,
+            "coordinateRMSE": 0.07026171850253661,
+            "p95": 0.12899307903261817,
+            "pck": {
+              "2pct": 0.10507246376811594,
+              "5pct": 0.44565217391304346,
+              "10pct": 0.8623188405797102
+            },
+            "landmarkCount": 276
+          },
+          "corrected": {
+            "mae": 0.028160765149897012,
+            "rmse": 0.03518085280010787,
+            "coordinateMAE": 0.024189344030479665,
+            "coordinateRMSE": 0.03518085280010787,
+            "p95": 0.0690664863953385,
+            "pck": {
+              "2pct": 0.44565217391304346,
+              "5pct": 0.8514492753623188,
+              "10pct": 0.9891304347826086
+            },
+            "landmarkCount": 276
+          },
+          "coordinateMaeRelativeImprovement": 0.5290974590820701,
+          "p95Regression": -0.059926592637279674
+        },
+        {
+          "fold": 2,
+          "trainSamples": 90,
+          "testSamples": 23,
+          "trainGroups": 90,
+          "testGroups": 23,
+          "hyperparameters": {
+            "gammaFactor": 0.5,
+            "gamma": 0.0016840711230903074,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.5,
+              "gamma": 0.0016840711230903074,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.5,
+              "gamma": 0.0016840711230903074,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013472568984722459,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 14.820459501160336,
+            "kernelSimilarityFloor": 0.6908037396004585,
+            "accepted": 23,
+            "fallback": 0,
+            "acceptedRate": 1.0
+          },
+          "baseline": {
+            "mae": 0.04612593391897918,
+            "rmse": 0.05448632071480951,
+            "coordinateMAE": 0.03932776934230665,
+            "coordinateRMSE": 0.05448632071480951,
+            "p95": 0.10885931404757365,
+            "pck": {
+              "2pct": 0.13043478260869565,
+              "5pct": 0.6594202898550725,
+              "10pct": 0.9347826086956522
+            },
+            "landmarkCount": 276
+          },
+          "corrected": {
+            "mae": 0.024341062862051035,
+            "rmse": 0.029543968070004173,
+            "coordinateMAE": 0.021226510489916514,
+            "coordinateRMSE": 0.029543968070004176,
+            "p95": 0.05642619413848892,
+            "pck": {
+              "2pct": 0.4963768115942029,
+              "5pct": 0.9311594202898551,
+              "10pct": 0.9963768115942029
+            },
+            "landmarkCount": 276
+          },
+          "coordinateMaeRelativeImprovement": 0.4602666043638991,
+          "p95Regression": -0.05243311990908473
+        },
+        {
+          "fold": 3,
+          "trainSamples": 90,
+          "testSamples": 23,
+          "trainGroups": 90,
+          "testGroups": 23,
+          "hyperparameters": {
+            "gammaFactor": 0.5,
+            "gamma": 0.001637194160059942,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.5,
+              "gamma": 0.001637194160059942,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 2.0,
+              "gamma": 0.006548776640239768,
+              "lambda": 0.1
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013097553280479537,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 14.187722684839148,
+            "kernelSimilarityFloor": 0.7192450006834331,
+            "accepted": 19,
+            "fallback": 4,
+            "acceptedRate": 0.8260869565217391
+          },
+          "baseline": {
+            "mae": 0.048534170317220265,
+            "rmse": 0.059408632817973206,
+            "coordinateMAE": 0.04182370669052564,
+            "coordinateRMSE": 0.059408632817973206,
+            "p95": 0.12497744905357841,
+            "pck": {
+              "2pct": 0.13043478260869565,
+              "5pct": 0.6739130434782609,
+              "10pct": 0.8840579710144928
+            },
+            "landmarkCount": 276
+          },
+          "corrected": {
+            "mae": 0.02986931701097215,
+            "rmse": 0.03758050611588988,
+            "coordinateMAE": 0.02636764543640608,
+            "coordinateRMSE": 0.03758050611588988,
+            "p95": 0.07211105092982667,
+            "pck": {
+              "2pct": 0.391304347826087,
+              "5pct": 0.8586956521739131,
+              "10pct": 0.9818840579710145
+            },
+            "landmarkCount": 276
+          },
+          "coordinateMaeRelativeImprovement": 0.3695526407663153,
+          "p95Regression": -0.05286639812375174
+        },
+        {
+          "fold": 4,
+          "trainSamples": 91,
+          "testSamples": 22,
+          "trainGroups": 91,
+          "testGroups": 22,
+          "hyperparameters": {
+            "gammaFactor": 0.25,
+            "gamma": 0.0008289422329729996,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008289422329729996,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 0.25,
+              "gamma": 0.0008289422329729996,
+              "lambda": 1.0
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013263075727567993,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 14.096653559094396,
+            "kernelSimilarityFloor": 0.8481279351514196,
+            "accepted": 20,
+            "fallback": 2,
+            "acceptedRate": 0.9090909090909091
+          },
+          "baseline": {
+            "mae": 0.04942138373668668,
+            "rmse": 0.0582176749501027,
+            "coordinateMAE": 0.04184879595206981,
+            "coordinateRMSE": 0.0582176749501027,
+            "p95": 0.11024410574176349,
+            "pck": {
+              "2pct": 0.125,
+              "5pct": 0.6098484848484849,
+              "10pct": 0.9356060606060606
+            },
+            "landmarkCount": 264
+          },
+          "corrected": {
+            "mae": 0.029249292908115364,
+            "rmse": 0.03563447868093543,
+            "coordinateMAE": 0.024929927760950356,
+            "coordinateRMSE": 0.03563447868093543,
+            "p95": 0.07866700427228383,
+            "pck": {
+              "2pct": 0.4053030303030303,
+              "5pct": 0.8522727272727273,
+              "10pct": 1.0
+            },
+            "landmarkCount": 264
+          },
+          "coordinateMaeRelativeImprovement": 0.4042856623759724,
+          "p95Regression": -0.03157710146947966
+        },
+        {
+          "fold": 5,
+          "trainSamples": 91,
+          "testSamples": 22,
+          "trainGroups": 91,
+          "testGroups": 22,
+          "hyperparameters": {
+            "gammaFactor": 0.5,
+            "gamma": 0.0016845344475147066,
+            "lambda": 0.1
+          },
+          "stageHyperparameters": [
+            {
+              "stage": 1,
+              "gammaFactor": 0.5,
+              "gamma": 0.0016845344475147066,
+              "lambda": 0.1
+            },
+            {
+              "stage": 2,
+              "gammaFactor": 4.0,
+              "gamma": 0.013476275580117653,
+              "lambda": 0.0001
+            },
+            {
+              "stage": 3,
+              "gammaFactor": 4.0,
+              "gamma": 0.013476275580117653,
+              "lambda": 1.0
+            }
+          ],
+          "distanceGate": {
+            "threshold": 14.223762129526467,
+            "kernelSimilarityFloor": 0.711195959585586,
+            "accepted": 20,
+            "fallback": 2,
+            "acceptedRate": 0.9090909090909091
+          },
+          "baseline": {
+            "mae": 0.046257809249884554,
+            "rmse": 0.059005782869503094,
+            "coordinateMAE": 0.03886677143925604,
+            "coordinateRMSE": 0.059005782869503094,
+            "p95": 0.12874480272268152,
+            "pck": {
+              "2pct": 0.22727272727272727,
+              "5pct": 0.696969696969697,
+              "10pct": 0.8863636363636364
+            },
+            "landmarkCount": 264
+          },
+          "corrected": {
+            "mae": 0.03254344011787243,
+            "rmse": 0.040921311114701264,
+            "coordinateMAE": 0.027548248006465804,
+            "coordinateRMSE": 0.04092131111470127,
+            "p95": 0.07484692401903995,
+            "pck": {
+              "2pct": 0.32575757575757575,
+              "5pct": 0.8446969696969697,
+              "10pct": 0.9772727272727273
+            },
+            "landmarkCount": 264
+          },
+          "coordinateMaeRelativeImprovement": 0.2912133684805719,
+          "p95Regression": -0.05389787870364157
+        }
+      ],
+      "overallOutOfFold": {
+        "baseline": {
+          "mae": 0.05038301263669949,
+          "rmse": 0.06054057377949516,
+          "coordinateMAE": 0.04268753558380313,
+          "coordinateRMSE": 0.06054057377949516,
+          "p95": 0.12262537193188419,
+          "pck": {
+            "2pct": 0.1430678466076696,
+            "5pct": 0.616519174041298,
+            "10pct": 0.9004424778761062
+          },
+          "landmarkCount": 1356
+        },
+        "corrected": {
+          "mae": 0.02879625187698138,
+          "rmse": 0.03592042478257701,
+          "coordinateMAE": 0.0248277908485806,
+          "coordinateRMSE": 0.03592042478257701,
+          "p95": 0.07065542249297581,
+          "pck": {
+            "2pct": 0.413716814159292,
+            "5pct": 0.8679941002949852,
+            "10pct": 0.9889380530973452
+          },
+          "landmarkCount": 1356
+        },
+        "coordinateMaeRelativeImprovement": 0.4183831296646468,
+        "p95Regression": -0.05196994943890838
+      },
+      "selectedFinalHyperparameters": {
+        "kernel": "rbf",
+        "gammaFactor": 0.5,
+        "gamma": 0.001673307742924997,
+        "lambda": 0.1
+      },
+      "selectedFinalStageHyperparameters": [
+        {
+          "stage": 1,
+          "gammaFactor": 0.5,
+          "gamma": 0.001673307742924997,
+          "lambda": 0.1
+        },
+        {
+          "stage": 2,
+          "gammaFactor": 0.5,
+          "gamma": 0.001673307742924997,
+          "lambda": 1.0
+        },
+        {
+          "stage": 3,
+          "gammaFactor": 4.0,
+          "gamma": 0.013386461943399977,
+          "lambda": 1.0
+        }
+      ],
+      "promotionGate": {
+        "pass": true,
+        "checks": {
+          "coordinateMaeRelativeImprovementAtLeast10Pct": true,
+          "atLeast4Of5FoldsImproved": true,
+          "p95DidNotRegress": true,
+          "perStageCorrectionCapIs5PctDiagonal": true,
+          "cumulativeCorrectionWithinDeclaredCap": true,
+          "cumulativeCapAtMost15PctDiagonal": true,
+          "worsenedCaseRateAtMost25Pct": true,
+          "unfamiliarFallbackEnabled": true
+        },
+        "observed": {
+          "coordinateMaeRelativeImprovement": 0.4183831296646468,
+          "improvedFolds": 5,
+          "foldCount": 5,
+          "p95Regression": -0.05196994943890838,
+          "stages": 3,
+          "perStageCorrectionCap": 0.05,
+          "cumulativeCorrectionCap": 0.15,
+          "observedCumulativeCorrectionMax": 0.12238272405504148,
+          "observedCumulativeCorrectionP95": 0.08505851352783024,
+          "worsenedCaseRate": 0.1415929203539823,
+          "worsenedCaseCount": 16,
+          "unfamiliarAcceptedRate": 0.9292035398230089,
+          "unfamiliarFallbackCount": 8,
+          "nearestTrainingDistanceP95": 14.633579951584888
+        },
+        "required": {
+          "coordinateMaeRelativeImprovement": 0.1,
+          "improvedFolds": 4,
+          "foldCount": 5,
+          "p95RegressionMaximum": 0.0,
+          "perStageCorrectionCapDiagonalFraction": 0.05,
+          "cumulativeCorrectionCapMaximum": 0.15,
+          "worsenedCaseRateMaximum": 0.25,
+          "unfamiliarFallback": true
+        }
+      }
+    }
+  },
+  "promotionGate": {
+    "pass": true,
+    "taskPass": {
+      "width": true,
+      "ez": true
+    },
+    "policy": "deploy_only_if_every_trained_task_passes"
+  }
+}

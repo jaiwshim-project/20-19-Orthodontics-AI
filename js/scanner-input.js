@@ -1,6 +1,6 @@
 /* ==============================================================
    ScannerInput — 멀티 이미지 슬롯 업로드 컴포넌트
-   슬롯 키: scanner / xray / faceFront / faceSide / intraoral
+   슬롯 키: scanner / xray / faceFront / faceSide / intraoral / fiveView
    각 AI 페이지가 사용할 슬롯 목록을 TYPE_CONFIG에서 선언.
    ============================================================== */
 
@@ -10,12 +10,17 @@
     xray:       { title: 'X-ray / 두부방사선',      hint: 'Lateral Ceph · Pano · 손목', icon: '🩻', tag: 'X-ray' },
     faceFront:  { title: '정면 안모 사진',           hint: '입을 다문 정면, 자연광',       icon: '😐', tag: '정면' },
     faceSide:   { title: '측면 안모 사진',           hint: '90도 측면 (Profile)',         icon: '👤', tag: '측면' },
-    intraoral:  { title: '입술 벌린 정면',           hint: '치아 노출 정면 사진',          icon: '😬', tag: '입속' }
+    intraoral:  { title: '입술 벌린 정면',           hint: '치아 노출 정면 사진',          icon: '😬', tag: '입속' },
+    fiveView:   { title: '5방향 구강사진 1장',       hint: '정면/우측/좌측/상악/하악을 한 장에 배치한 이미지', icon: '📷', tag: '5방향' },
+    faceOpen:   { title: '정면 안모 - 입술 오픈',    hint: '정면에서 입술을 벌린 얼굴 사진', icon: '😬', tag: '오픈' },
+    faceClose:  { title: '정면 안모 - 입술 클로즈',  hint: '정면에서 입술을 다문 얼굴 사진', icon: '😐', tag: '클로즈' },
+    faceOblique:{ title: '45도 측면 안모',           hint: '45도 사면 얼굴 사진',           icon: '🧑', tag: '45도' },
+    faceSet:    { title: '얼굴사진 4종',             hint: '정면-오픈/정면-클로즈/측면/45도 측면 4장을 한 번에 업로드', icon: '👤', tag: '얼굴4' }
   };
 
   const TYPE_CONFIG = {
     extraction: {
-      slots: ['scanner', 'xray', 'faceFront', 'faceSide', 'intraoral'],
+      slots: ['scanner', 'xray', 'fiveView', 'faceSet'],
       fields: ['anb', 'crowding', 'overjet', 'overbite', 'profile', 'lipStrain', 'fma', 'impa']
     },
     growth: {
@@ -30,6 +35,13 @@
       slots: ['scanner', 'xray', 'intraoral', 'faceSide'],
       fields: ['impa', 'incisorShift', 'residual']
     }
+  };
+
+  const FACE_SLOT_LABELS = {
+    faceOpen: '정면-입술 오픈',
+    faceClose: '정면-입술 클로즈',
+    faceSide: '측면',
+    faceOblique: '45도 측면'
   };
 
   const FIELD_LABELS = {
@@ -127,7 +139,7 @@
       SLOT_KEYS.forEach(key => {
         slots[key] = {
           el: container.querySelector(`[data-slot="${key}"]`),
-          file: null, base64: null, contentType: null
+          file: null, base64: null, contentType: null, images: []
         };
       });
 
@@ -147,39 +159,132 @@
       }
 
       function refreshAnalyzeBtn() {
-        const anyUploaded = SLOT_KEYS.some(k => slots[k].base64);
+        const anyUploaded = SLOT_KEYS.some(k => slots[k].base64 || slots[k].images?.length);
         analyzeBtn.disabled = !anyUploaded;
         clearBtn.hidden = !anyUploaded;
+      }
+
+      function validateImageFile(file) {
+        if (!file) return '파일이 없습니다.';
+        if (!file.type.startsWith('image/')) return '이미지 파일만 지원합니다 (JPG/PNG).';
+        if (file.size > 20 * 1024 * 1024) return '파일이 20MB를 초과합니다.';
+        return '';
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function showPreviewForSlot(key, dataUrl, file) {
+        const slot = slots[key];
+        if (!slot?.el) return;
+        const emptyEl = slot.el.querySelector('[data-empty]');
+        const previewEl = slot.el.querySelector('[data-preview]');
+        slot.file = file;
+        slot.base64 = dataUrl.split(',')[1];
+        slot.contentType = file.type;
+        emptyEl.hidden = true;
+        previewEl.hidden = false;
+        previewEl.innerHTML = `
+          <div class="scanner-preview" style="margin:0;">
+            <img src="${dataUrl}" alt="${escapeHtml(key)} 이미지">
+            <button type="button" class="remove-btn" aria-label="제거" data-remove>×</button>
+          </div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:4px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(file.name)}</div>
+        `;
+        previewEl.querySelector('[data-remove]').onclick = (ev) => { ev.stopPropagation(); resetSlot(key); };
+        refreshAnalyzeBtn();
+      }
+
+      function showFaceSetPreview(items) {
+        const slot = slots.faceSet;
+        if (!slot?.el) return;
+        const emptyEl = slot.el.querySelector('[data-empty]');
+        const previewEl = slot.el.querySelector('[data-preview]');
+        slot.file = null;
+        slot.base64 = null;
+        slot.contentType = null;
+        slot.images = items;
+        emptyEl.hidden = true;
+        previewEl.hidden = false;
+        previewEl.innerHTML = `
+          <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px;">
+            ${items.map(item => `
+              <div class="scanner-preview" style="margin:0;">
+                <img src="${item.dataUrl}" alt="${escapeHtml(item.label)}">
+                <div style="position:absolute; left:4px; bottom:4px; right:4px; padding:2px 4px; border-radius:4px; background:rgba(15,23,42,.76); color:#fff; font-size:9px; font-weight:700;">${escapeHtml(item.label)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" data-remove style="width:100%; justify-content:center; margin-top:8px;">얼굴사진 4종 제거</button>
+        `;
+        previewEl.querySelector('[data-remove]').onclick = (ev) => { ev.stopPropagation(); resetSlot('faceSet'); };
+        refreshAnalyzeBtn();
       }
 
       function setupSlot(key) {
         const slot = slots[key];
         const zone = slot.el.querySelector('[data-zone]');
         const fileInput = slot.el.querySelector('[data-file]');
-        const emptyEl = slot.el.querySelector('[data-empty]');
-        const previewEl = slot.el.querySelector('[data-preview]');
+
+        if (key === 'faceSet') {
+          fileInput.multiple = true;
+
+          async function loadFaceFiles(fileList) {
+            const files = Array.from(fileList || []).filter(file => file.type.startsWith('image/')).slice(0, 4);
+            if (!files.length) return;
+            const usedKeys = new Set();
+            const items = [];
+            for (const file of files) {
+              const error = validateImageFile(file);
+              if (error) { setStatus(`${file.name}: ${error}`, 'error'); continue; }
+              const subKey = detectFaceSlot(file, usedKeys);
+              if (!subKey) continue;
+              usedKeys.add(subKey);
+              const dataUrl = await readFileAsDataUrl(file);
+              items.push({
+                subKey,
+                label: FACE_SLOT_LABELS[subKey],
+                file,
+                dataUrl,
+                base64: dataUrl.split(',')[1],
+                contentType: file.type
+              });
+            }
+            showFaceSetPreview(items);
+            setStatus(
+              items.length === 4
+                ? '얼굴사진 4종을 업로드했습니다.'
+                : `얼굴사진 ${items.length}장을 업로드했습니다. 이 슬롯에는 최대 4장을 넣을 수 있습니다.`,
+              items.length === 4 ? 'success' : 'analyzing'
+            );
+          }
+
+          zone.addEventListener('click', () => fileInput.click());
+          fileInput.addEventListener('change', e => loadFaceFiles(e.target.files));
+          zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+          zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+          zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('drag');
+            loadFaceFiles(e.dataTransfer.files);
+          });
+          return;
+        }
 
         function showPreview(dataUrl, file) {
-          slot.file = file;
-          slot.base64 = dataUrl.split(',')[1];
-          slot.contentType = file.type;
-          emptyEl.hidden = true;
-          previewEl.hidden = false;
-          previewEl.innerHTML = `
-            <div class="scanner-preview" style="margin:0;">
-              <img src="${dataUrl}" alt="${escapeHtml(key)} 이미지">
-              <button type="button" class="remove-btn" aria-label="제거" data-remove>×</button>
-            </div>
-            <div style="font-size:10px; color:var(--text-muted); margin-top:4px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(file.name)}</div>
-          `;
-          previewEl.querySelector('[data-remove]').onclick = (ev) => { ev.stopPropagation(); resetSlot(key); };
-          refreshAnalyzeBtn();
+          showPreviewForSlot(key, dataUrl, file);
         }
 
         function loadFile(file) {
           if (!file) return;
-          if (!file.type.startsWith('image/')) { setStatus('이미지 파일만 지원합니다 (JPG/PNG).', 'error'); return; }
-          if (file.size > 20 * 1024 * 1024) { setStatus('파일이 20MB를 초과합니다.', 'error'); return; }
+          const error = validateImageFile(file);
+          if (error) { setStatus(error, 'error'); return; }
           const reader = new FileReader();
           reader.onload = e => showPreview(e.target.result, file);
           reader.readAsDataURL(file);
@@ -198,7 +303,7 @@
 
       function resetSlot(key) {
         const slot = slots[key];
-        slot.file = null; slot.base64 = null; slot.contentType = null;
+        slot.file = null; slot.base64 = null; slot.contentType = null; slot.images = [];
         slot.el.querySelector('[data-empty]').hidden = false;
         const previewEl = slot.el.querySelector('[data-preview]');
         previewEl.hidden = true;
@@ -218,6 +323,23 @@
 
       SLOT_KEYS.forEach(setupSlot);
 
+      function normalizeName(name) {
+        return String(name).toLowerCase().replace(/[\s_.-]+/g, '');
+      }
+
+      function detectFaceSlot(file, usedKeys) {
+        const name = normalizeName(file.name);
+        const rules = [
+          { key: 'faceOpen', hints: ['open', 'smile', 'mouthopen', '입술오픈', '오픈', '벌린'] },
+          { key: 'faceClose', hints: ['close', 'closed', 'rest', 'mouthclosed', '입술클로즈', '클로즈', '다문'] },
+          { key: 'faceOblique', hints: ['45', 'oblique', 'threequarter', 'quarter', '사면', '사선'] },
+          { key: 'faceSide', hints: ['side', 'profile', 'lateral', '측면', '프로파일'] }
+        ];
+        const matched = rules.find(rule => !usedKeys.has(rule.key) && rule.hints.some(hint => name.includes(normalizeName(hint))));
+        if (matched) return matched.key;
+        return ['faceOpen', 'faceClose', 'faceSide', 'faceOblique'].find(key => !usedKeys.has(key)) || null;
+      }
+
       // 환자 supabaseId 있으면 같은 type의 최근 진단 이미지 자동 로드
       (async () => {
         try {
@@ -236,7 +358,7 @@
           const prevCount = container.querySelector('[data-prev-count]');
           prevBox.hidden = false;
           prevCount.textContent = `(${images.length}장 발견)`;
-          const SLOT_KO = { scanner: '3D', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속' };
+          const SLOT_KO = { scanner: '3D', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속', fiveView: '5방향', faceOpen: '오픈', faceClose: '클로즈', faceOblique: '45도', faceSet: '얼굴4' };
           prevGrid.innerHTML = images.slice(0, 10).map(im => `
             <a href="${im.url}" target="_blank" rel="noopener" style="display:block; border:1px solid var(--border-subtle); border-radius:6px; overflow:hidden; cursor:zoom-in; position:relative;">
               <img src="${im.url}" style="width:100%; height:60px; object-fit:cover; display:block;">
@@ -253,6 +375,16 @@
       container._getUploadedImages = () => {
         const out = {};
         SLOT_KEYS.forEach(k => {
+          if (k === 'faceSet' && slots[k].images?.length) {
+            slots[k].images.forEach(item => {
+              out[item.subKey] = {
+                base64: item.base64,
+                contentType: item.contentType,
+                filename: item.file?.name
+              };
+            });
+            return;
+          }
           if (slots[k].base64) {
             out[k] = {
               base64: slots[k].base64,
@@ -268,6 +400,13 @@
         const images = {};
         const usedTags = [];
         SLOT_KEYS.forEach(k => {
+          if (k === 'faceSet' && slots[k].images?.length) {
+            slots[k].images.forEach(item => {
+              images[item.subKey] = { base64: item.base64, contentType: item.contentType };
+            });
+            usedTags.push(COMMON_SLOTS[k].tag);
+            return;
+          }
           if (slots[k].base64) {
             images[k] = { base64: slots[k].base64, contentType: slots[k].contentType };
             usedTags.push(COMMON_SLOTS[k].tag);
@@ -275,7 +414,7 @@
         });
         if (Object.keys(images).length === 0) { setStatus('이미지를 1장 이상 업로드하세요.', 'error'); return; }
         analyzeBtn.disabled = true;
-        setStatus(`AI 분석 중 (${usedTags.join(' + ')})... Gemini Vision 5-15초 소요`, 'analyzing');
+        setStatus(`AI 분석 중 (${usedTags.join(' + ')})... 5-15초 소요`, 'analyzing');
         try {
           const res = await window.apiFetch('/api/analyze-image', {
             method: 'POST',
@@ -300,7 +439,7 @@
           console.error('[scanner] 분석 실패:', e);
           const isFetchFail = e.message === 'Failed to fetch' || e.name === 'TypeError';
           const hint = isFetchFail
-            ? 'API 서버 미실행. 터미널에서 `npm run dev` 후 http://localhost:3000 접속.'
+            ? 'API 서버가 실행 중인지 확인하세요. 터미널에서 `npm run dev` 후 http://localhost:3000/extraction-ai.html 로 접속하면 안정적으로 동작합니다.'
             : '데이터 탭에서 직접 입력하세요.';
           setStatus(`❌ 분석 실패: ${e.message}\n${hint}`, 'error');
         } finally {

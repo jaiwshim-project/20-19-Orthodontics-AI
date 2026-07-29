@@ -1,0 +1,38 @@
+device=cuda cases=384 patients=322 (홀드아웃 없음)
+C:\Users\USER\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\optim\lr_scheduler.py:227: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+  ep 20 loss=0.25819 (6s)
+  ep 40 loss=0.07189 (6s)
+  ep 60 loss=0.03246 (6s)
+  ep 80 loss=0.02454 (8s)
+{
+  "inSample": {
+    "position": 0.0774,
+    "molar": 0.0772,
+    "endpoint": 0.1106,
+    "terminal": 0.0773,
+    "lengthAbs": 0.0967,
+    "molarLengthAbs": 0.0977,
+    "lengthSignedPct": -0.0125,
+    "angleDeg": 0.7704,
+    "tzl": 0.4791,
+    "positionP95": 0.137,
+    "cases": 384,
+    "positionP95Overall": 0.103
+  },
+  "reportableOof": {
+    "position": 0.3113,
+    "molar": 0.4189,
+    "endpoint": 0.484,
+    "terminal": 0.4611,
+    "lengthAbs": 0.2397,
+    "molarLengthAbs": 0.3129,
+    "lengthSignedPct": -0.3632,
+    "angleDeg": 3.5797,
+    "tzl": 1.6181,
+    "positionP95": 0.7093,
+    "cases": 384,
+    "positionP95Overall": 0.4278
+  }
+}
+-> C:\01 클로드코드\20-19 Orthodontics AI\00 EZ Curce - TZ Length\03 AI 재학습\pixel_model\final.pt

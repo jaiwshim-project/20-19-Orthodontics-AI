@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>file:// 로컬 바이너리 읽기 프로브</title></head>
+<body>
+<!--
+  프로브 2에서 file://에서도 ORT 세션이 열리는 것을 확인했다(글루 blob + wasmBinary).
+  남은 문제는 **49MB .onnx 를 어떻게 넣는가**다. 후보를 실측한다:
+    ① fetch('...wasm')      — 막힐 것으로 예상(기준선)
+    ② XMLHttpRequest        — Chrome은 file:// XHR을 기본 차단하지만 확인은 해야 한다
+    ③ <script src> base64   — classic script는 file://에서 통과(프로브 2에서 이미 입증)
+  ③이 유일한 무조작 경로라면 페이로드 크기·파싱 시간을 재서 실용성을 판단한다.
+-->
+<pre id="out">실행 중…</pre>
+<script>
+const out = document.getElementById('out');
+const log = (k, v) => { out.textContent += '\n' + k + ': ' + v; };
+const results = {};
+const t0 = performance.now();
+
+(async () => {
+  out.textContent = 'protocol=' + location.protocol;
+
+  // ① fetch
+  try {
+    const r = await fetch('ort-wasm-simd-threaded.mjs');
+    const t = await r.text();
+    results.fetchLocal = { ok: true, bytes: t.length };
+    log('fetchLocal', 'OK ' + t.length);
+  } catch (e) {
+    results.fetchLocal = { ok: false, error: String(e.message || e).slice(0, 120) };
+    log('fetchLocal', 'FAIL ' + String(e.message || e).slice(0, 100));
+  }
+
+  // ② XHR (동기/비동기 모두)
+  await new Promise((resolve) => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'tiny.onnx', true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = () => {
+        results.xhrLocal = { ok: !!xhr.response, bytes: xhr.response?.byteLength || 0, status: xhr.status };
+        log('xhrLocal', 'OK bytes=' + (xhr.response?.byteLength || 0) + ' status=' + xhr.status);
+        resolve();
+      };
+      xhr.onerror = () => {
+        results.xhrLocal = { ok: false, error: 'onerror status=' + xhr.status };
+        log('xhrLocal', 'FAIL onerror status=' + xhr.status);
+        resolve();
+      };
+      xhr.send();
+    } catch (e) {
+      results.xhrLocal = { ok: false, error: String(e.message || e).slice(0, 120) };
+      log('xhrLocal', 'FAIL ' + String(e.message || e).slice(0, 100));
+      resolve();
+    }
+  });
+
+  results.elapsedMs = Math.round(performance.now() - t0);
+  document.documentElement.dataset.probeDone = 'true';
+  document.documentElement.dataset.probeResults = JSON.stringify(results);
+})();
+</script>
+</body></html>

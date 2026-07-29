@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -6,12 +7,16 @@ const KO_RULE = `
 중요: notes는 반드시 한국어로 작성하세요. 의학 용어는 영문 병기 가능 (예: "치근 흡수(root resorption)").`;
 
 const DUAL_IMAGE_RULE = `
-입력 이미지는 최대 5장이며, 각 이미지 직전에 라벨 텍스트가 붙어있습니다:
+입력 이미지는 여러 장일 수 있으며, 각 이미지 직전에 라벨 텍스트가 붙어있습니다:
 - "[3D 스캐너 / 구강 모형]"   → 치아 배열·Crowding·Overjet·Overbite 측정
 - "[X-ray / 두부방사선]"      → ANB·FMA·IMPA·골격 관계·CVMS 측정
 - "[정면 안모]"                → 안면 대칭·하안면부 비율·미소선 평가
 - "[측면 안모 / Profile]"     → E-line·입술 돌출·턱 위치·Profile(straight/convex/concave)
 - "[입술 벌린 정면 / Intraoral]" → 미소시 치아 노출·치은 노출·중심선
+- "[5방향 구강사진 / Frontal, right, left, upper occlusal, lower occlusal]" → 정면·우측·좌측·상악 교합면·하악 교합면이 한 장에 배치된 이미지. Crowding, Overjet, Overbite, 중심선, arch form을 가능한 범위에서 추정
+- "[정면 안모 - 입술 오픈]" → 정면 안모에서 입술 긴장, 치아 노출, 중심선, 미소선 평가
+- "[정면 안모 - 입술 클로즈]" → 입술 폐쇄 시 lip strain, 안면 대칭, 하안면 비율 평가
+- "[45도 측면 안모]" → 사면에서 profile convexity, 입술 돌출, 턱 위치 보조 평가
 제공된 이미지 종류에 따라 가능한 항목만 추출하고, 관찰 불가 항목은 null로 반환하세요.`;
 
 const SCHEMAS = {
@@ -138,11 +143,23 @@ const SLOT_LABELS = {
   xray:      '[X-ray / 두부방사선]',
   faceFront: '[정면 안모]',
   faceSide:  '[측면 안모 / Profile]',
-  intraoral: '[입술 벌린 정면 / Intraoral]'
+  intraoral: '[입술 벌린 정면 / Intraoral]',
+  fiveView:  '[5방향 구강사진 / Frontal, right, left, upper occlusal, lower occlusal]',
+  faceOpen:  '[정면 안모 - 입술 오픈]',
+  faceClose: '[정면 안모 - 입술 클로즈]',
+  faceOblique: '[45도 측면 안모]'
 };
 
 const SLOT_DISPLAY = {
-  scanner: '3D', xray: 'X-ray', faceFront: '정면', faceSide: '측면', intraoral: '입속'
+  scanner: '3D',
+  xray: 'X-ray',
+  faceFront: '정면',
+  faceSide: '측면',
+  intraoral: '입속',
+  fiveView: '5방향',
+  faceOpen: '입술 오픈',
+  faceClose: '입술 클로즈',
+  faceOblique: '45도'
 };
 
 function normalizeImages(body) {
@@ -183,7 +200,7 @@ export default async function handler(req, res) {
 
   const images = normalizeImages(body);
   if (images.length === 0) {
-    return res.status(400).json({ error: '최소 1장의 이미지(scanner/xray/faceFront/faceSide/intraoral 중 하나)가 필요합니다.' });
+    return res.status(400).json({ error: '최소 1장의 이미지(scanner/xray/faceFront/faceSide/intraoral/fiveView/faceOpen/faceClose/faceOblique 중 하나)가 필요합니다.' });
   }
 
   // 총 base64 크기 가드
@@ -192,29 +209,40 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: '이미지 합계가 너무 큽니다 (총 ~45MB 이내).' });
   }
 
-  if (!GEMINI_API_KEY) {
-    console.warn('[analyze-image] GEMINI_API_KEY 미설정 → 폴백 사용');
+  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+    console.warn('[analyze-image] AI provider 미설정 → 폴백 사용');
     return res.status(200).json({ ...fallbackFields(type), usedImages: images.map(i => i.display) });
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: SCHEMAS[type].instruction,
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
-    });
+    let text;
+    if (isAzureChatConfigured()) {
+      text = await azureVisionCompletion({
+        system: SCHEMAS[type].instruction,
+        images,
+        prompt: '위 이미지를 분석하고 정의된 JSON 스키마로만 응답하세요.',
+        responseFormat: 'json',
+        temperature: 0.2,
+        timeoutMs: 30000
+      });
+    } else {
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        systemInstruction: SCHEMAS[type].instruction,
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
+      });
 
-    // Gemini Vision 멀티 이미지 컨텐츠 빌드
-    const parts = [];
-    for (const img of images) {
-      parts.push({ text: img.label });
-      parts.push({ inlineData: { data: img.base64, mimeType: img.contentType } });
+      const parts = [];
+      for (const img of images) {
+        parts.push({ text: img.label });
+        parts.push({ inlineData: { data: img.base64, mimeType: img.contentType } });
+      }
+      parts.push({ text: '위 이미지(들)를 분석하고 정의된 JSON 스키마로만 응답하세요.' });
+
+      const result = await model.generateContent(parts);
+      text = result.response.text();
     }
-    parts.push({ text: '위 이미지(들)를 분석하고 정의된 JSON 스키마로만 응답하세요.' });
-
-    const result = await model.generateContent(parts);
-    const text = result.response.text();
 
     let parsed;
     try {

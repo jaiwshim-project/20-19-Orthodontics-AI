@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "pixel-gate-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "purpose": "픽셀 모델을 HTML에 붙일 때의 채택 규칙. 신뢰도(24점 최소 sigmoid) 임계 아래에서 KRR로 되돌리는 하이브리드가 순수 픽셀보다 나은지 실측.",
+  "cases": 315,
+  "pureMeans": {
+    "rulePositionMm": 3.8077,
+    "krrPositionMm": 2.1644,
+    "pixelPositionMm": 0.3105,
+    "pixelPositionP95Mm": 0.4285,
+    "pixelPositionMaxMm": 2.8834
+  },
+  "whenPixelLoses": {
+    "casesPixelWorseThanKrr": 3,
+    "pctPixelWorse": 0.95,
+    "meanExcessMmWhenWorse": 0.7595,
+    "maxExcessMm": 1.1804,
+    "confidenceOfWorseCases": {
+      "median": 0.2008,
+      "medianOfRest": 0.8272
+    }
+  },
+  "confidenceCorrelation": {
+    "pearsonMinScoreVsPositionMm": -0.4142,
+    "note": "음수 = 신뢰도 낮을수록 오차 크다(=게이트로 쓸 수 있다)"
+  },
+  "thresholdSweep": [
+    {
+      "threshold": 0.0,
+      "fallbackCases": 0,
+      "fallbackPct": 0.0,
+      "positionMm": 0.3105,
+      "positionP95Mm": 0.4285,
+      "positionMaxMm": 2.8834,
+      "molarMm": 0.4085
+    },
+    {
+      "threshold": 0.1,
+      "fallbackCases": 2,
+      "fallbackPct": 0.63,
+      "positionMm": 0.3233,
+      "positionP95Mm": 0.4297,
+      "positionMaxMm": 3.728,
+      "molarMm": 0.408
+    },
+    {
+      "threshold": 0.15,
+      "fallbackCases": 6,
+      "fallbackPct": 1.9,
+      "positionMm": 0.3414,
+      "positionP95Mm": 0.4297,
+      "positionMaxMm": 3.728,
+      "molarMm": 0.4208
+    },
+    {
+      "threshold": 0.2,
+      "fallbackCases": 8,
+      "fallbackPct": 2.54,
+      "positionMm": 0.3624,
+      "positionP95Mm": 0.4395,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.4572
+    },
+    {
+      "threshold": 0.25,
+      "fallbackCases": 12,
+      "fallbackPct": 3.81,
+      "positionMm": 0.3839,
+      "positionP95Mm": 0.4626,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.4645
+    },
+    {
+      "threshold": 0.3,
+      "fallbackCases": 15,
+      "fallbackPct": 4.76,
+      "positionMm": 0.4051,
+      "positionP95Mm": 0.7034,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.4849
+    },
+    {
+      "threshold": 0.35,
+      "fallbackCases": 18,
+      "fallbackPct": 5.71,
+      "positionMm": 0.4209,
+      "positionP95Mm": 1.7213,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.505
+    },
+    {
+      "threshold": 0.4,
+      "fallbackCases": 24,
+      "fallbackPct": 7.62,
+      "positionMm": 0.4612,
+      "positionP95Mm": 2.0814,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.5635
+    },
+    {
+      "threshold": 0.5,
+      "fallbackCases": 39,
+      "fallbackPct": 12.38,
+      "positionMm": 0.5681,
+      "positionP95Mm": 2.6433,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.682
+    },
+    {
+      "threshold": 0.6,
+      "fallbackCases": 56,
+      "fallbackPct": 17.78,
+      "positionMm": 0.6693,
+      "positionP95Mm": 2.8022,
+      "positionMaxMm": 5.1405,
+      "molarMm": 0.802
+    },
+    {
+      "threshold": 0.7,
+      "fallbackCases": 83,
+      "fallbackPct": 26.35,
+      "positionMm": 0.8575,
+      "positionP95Mm": 3.3237,
+      "positionMaxMm": 5.8821,
+      "molarMm": 1.05
+    }
+  ],
+  "bestThresholdInSample": {
+    "threshold": 0.0,
+    "fallbackCases": 0,
+    "fallbackPct": 0.0,
+    "positionMm": 0.3105,
+    "positionP95Mm": 0.4285,
+    "positionMaxMm": 2.8834,
+    "molarMm": 0.4085
+  },
+  "leaveOneFoldOutThresholdSelection": {
+    "perFold": [
+      {
+        "threshold": 0.0,
+        "fallbackCases": 0,
+        "fallbackPct": 0.0,
+        "positionMm": 0.2909,
+        "positionP95Mm": 0.3903,
+        "positionMaxMm": 0.8099,
+        "molarMm": 0.3631,
+        "heldOutFold": 0
+      },
+      {
+        "threshold": 0.0,
+        "fallbackCases": 0,
+        "fallbackPct": 0.0,
+        "positionMm": 0.2746,
+        "positionP95Mm": 0.3895,
+        "positionMaxMm": 0.4299,
+        "molarMm": 0.3065,
+        "heldOutFold": 1
+      },
+      {
+        "threshold": 0.0,
+        "fallbackCases": 0,
+        "fallbackPct": 0.0,
+        "positionMm": 0.2816,
+        "positionP95Mm": 0.4132,
+        "positionMaxMm": 0.6195,
+        "molarMm": 0.3274,
+        "heldOutFold": 2
+      },
+      {
+        "threshold": 0.0,
+        "fallbackCases": 0,
+        "fallbackPct": 0.0,
+        "positionMm": 0.3085,
+        "positionP95Mm": 0.4487,
+        "positionMaxMm": 2.1031,
+        "molarMm": 0.35,
+        "heldOutFold": 3
+      },
+      {
+        "threshold": 0.0,
+        "fallbackCases": 0,
+        "fallbackPct": 0.0,
+        "positionMm": 0.3893,
+        "positionP95Mm": 0.8959,
+        "positionMaxMm": 2.8834,
+        "molarMm": 0.674,
+        "heldOutFold": 4
+      }
+    ],
+    "meanPositionMm": 0.309,
+    "note": "임계를 나머지 4 fold에서 고른 뒤 남은 fold에서 평가. 임계 선택 편의를 뺀 값이다."
+  },
+  "verdict": {
+    "hybridBeatsPurePixel": false,
+    "recommendedThreshold": 0.0,
+    "hybridGainOverPurePixelPct": 0.0,
+    "conclusion": "순수 픽셀 0.3105mm, 최적 하이브리드(임계 0.0) 0.3105mm (+0.0%), 폴백 0.0%. 편의 제거 추정 0.3090mm."
+  }
+}

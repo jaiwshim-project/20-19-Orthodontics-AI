@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
+import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -94,7 +95,7 @@ export default async function handler(req, res) {
     };
   }
 
-  if (!GEMINI_API_KEY) {
+  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
     const before = extractBeforeFromInputs();
     return res.status(200).json({
       headline: '교정 치료 권장 사항',
@@ -117,18 +118,30 @@ export default async function handler(req, res) {
     const ctx = { patient, diagnoses: {} };
     diagnoses.forEach(d => { ctx.diagnoses[d.type] = { score: d.result?.score, recommendation: d.result?.recommendation, reasoning: d.result?.reasoning }; });
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: SYSTEM_PROMPT,
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.4 }
-    });
+    const userMsg = `환자 컨텍스트:\n${JSON.stringify(ctx, null, 2)}\n\n환자 친화 Before-After 요약을 JSON으로 작성하세요.`;
+    let text;
+    if (isAzureChatConfigured()) {
+      text = await azureChatCompletion({
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }],
+        responseFormat: 'json',
+        temperature: 0.4,
+        timeoutMs: 30000
+      });
+    } else {
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        systemInstruction: SYSTEM_PROMPT,
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.4 }
+      });
 
-    const result = await Promise.race([
-      model.generateContent(`환자 컨텍스트:\n${JSON.stringify(ctx, null, 2)}\n\n환자 친화 Before-After 요약을 JSON으로 작성하세요.`),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 30s')), 30000))
-    ]);
-    const text = result.response.text();
+      const result = await Promise.race([
+        model.generateContent(userMsg),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 30s')), 30000))
+      ]);
+      text = result.response.text();
+    }
 
     let parsed;
     try { parsed = JSON.parse(text); }

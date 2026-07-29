@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "version": "1.0",
+    "createdAt": "2026-06-29",
+    "class": "Class I",
+    "source": "김용을 원장 자료 (01 자료모음-클래스1)",
+    "patients": 68,
+    "description": "Class I 교정 환자 68명의 초진(교정 전)/최종(교정 후) 임상 패턴 학습 데이터"
+  },
+
+  "definition": {
+    "class": "Class I",
+    "criteria": "상악-하악 전후방 골격 관계가 정상 범위(ANB 0~4°). 치열 배열/공간/악궁 형태/교합 안정성 문제가 중심.",
+    "ezTzInterpretation": "골격 관계는 수용 가능하지만, 현재 치열 위치(TZ)가 안정적 배열 영역(EZ)과 불일치하여 총생·회전·악궁 비대칭·교합 불안정이 발생"
+  },
+
+  "initialPatterns": {
+    "description": "초진(교정 전) 사진에서 반복되는 문제 패턴",
+    "common": [
+      "전치부 crowding (총생)",
+      "상하악 전치 회전 (rotation)",
+      "견치/소구치 부위 배열 불량",
+      "상악 또는 하악 arch form 불균형",
+      "좌우 교합 접촉의 비대칭",
+      "deep bite 또는 open bite 경향",
+      "전치부 정중선 불일치",
+      "상하악 치열궁 폭/형태 부조화"
+    ],
+    "intraoral": {
+      "front": "전치부 crowding, 회전, 정중선 편위 관찰",
+      "left": "좌측 구치부 교합 관계, canine 관계 확인",
+      "right": "우측 구치부 교합 관계, canine 관계 확인",
+      "upper": "상악 arch form, palatal crowding, 치아 위치 확인",
+      "lower": "하악 arch form, 전치부 총생, TZ 곡선 형태 → EZ/TZ 길이 비교 대상"
+    },
+    "ceph": {
+      "purpose": "Class 확정 (ANB 정상 범위 확인), 수직 패턴, 전치 경사 확인",
+      "normalValues": { "ANB": "2±2°", "SNA": "82±2°", "SNB": "80±2°", "FMA": "25±5°", "IMPA": "90±5°" }
+    }
+  },
+
+  "finalPatterns": {
+    "description": "최종(교정 후) 사진에서 확인되는 치료 목표 달성 패턴",
+    "common": [
+      "상하악 전치부 배열 정리",
+      "치아 회전 해소",
+      "상악/하악 arch form 정리",
+      "좌우 구치부 교합 접촉 안정화",
+      "canine/premolar 관계 개선",
+      "overjet/overbite 기능적 범위 회복",
+      "유지장치 장착 상태"
+    ]
+  },
+
+  "treatmentGroups": [
+    {
+      "group": "A",
+      "pattern": "경도 crowding + 회전",
+      "treatment": "비발치, leveling, minor IPR",
+      "estimatedDuration": "9-12개월"
+    },
+    {
+      "group": "B",
+      "pattern": "중등도 crowding + arch form 불균형",
+      "treatment": "IPR/확장/원심이동, 발치 경계 판단 필요",
+      "estimatedDuration": "12-18개월"
+    },
+    {
+      "group": "C",
+      "pattern": "전치부 배열 불량 + 교합 접촉 불안정",
+      "treatment": "전치 배열 + 구치 finishing 병행",
+      "estimatedDuration": "12-15개월"
+    },
+    {
+      "group": "D",
+      "pattern": "deep bite/open bite 경향 동반",
+      "treatment": "수직 교합 조절 + torque/leveling 관리",
+      "estimatedDuration": "15-20개월"
+    }
+  ],
+
+  "ezTzRules": {
+    "measurement": "하악 교합면 사진에서 TZ(현재 치열선)와 EZ(안정 배열선)의 호 길이를 비교",
+    "discrepancy": {
+      "nonExtraction": "TZ - EZ ≤ 2mm → 비발치 가능",
+      "borderline": "2mm < TZ - EZ ≤ 6mm → 경계 케이스",
+      "extractionReview": "TZ - EZ > 6mm → 발치 검토"
+    },
+    "modifiers": [
+      "돌출 안모 → +1mm 보정",
+      "후퇴 안모 → -1mm 보정",
+      "순측 경사 전치 → +0.8mm",
+      "설측 경사 전치 → -0.8mm",
+      "치주 위험 → +0.8mm",
+      "성장 가능성 → -0.5mm"
+    ]
+  },
+
+  "datasetStats": {
+    "totalFiles": 1814,
+    "initial": {
+      "intraoral": 336,
+      "face": 269,
+      "xray": 136,
+      "model_3d": 136
+    },
+    "final": {
+      "intraoral": 337,
+      "face": 270,
+      "xray": 128,
+      "model_3d": 134
+    },
+    "completePairs": {
+      "intraoral_both": 67,
+      "xray_both": 68,
+      "face_both": 67,
+      "model_both": 64
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "pixel-file-protocol-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false
+  },
+  "purpose": "file:// 로 열었을 때 픽셀 층이 도는지, 수동 .onnx 지정이 실제 우회책인지 실측",
+  "environment": {
+    "protocol": "file:",
+    "ortLoaded": true,
+    "pixelModuleLoaded": true,
+    "wasmPaths": null
+  },
+  "autoFetchPath": {
+    "applied": "true",
+    "reason": null
+  },
+  "manualFilePickerVisible": false,
+  "manualFilePath": {
+    "applied": "true",
+    "reason": null,
+    "confidenceMin": "0.901"
+  },
+  "pageErrors": [],
+  "verdict": {
+    "worksOnFileProtocolAuto": true,
+    "worksOnFileProtocolManual": true,
+    "conclusion": "file://에서 픽셀 층이 자동으로 돈다(글루 blob import + wasmBinary/모델 바이트 주입)."
+  }
+}

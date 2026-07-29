@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "pixel-html-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "purpose": "패치된 연구용 HTML을 실제 브라우저에서 구동해 픽셀 랜드마크 층이 도는지 실측",
+  "protocol": "http:",
+  "environment": {
+    "ortLoaded": true,
+    "pixelModuleLoaded": true,
+    "selfTest": "passed",
+    "truthEntries": 442,
+    "buildBadge": "정답 442건 · 치아별표기 ON"
+  },
+  "cases": [
+    {
+      "caseId": "002",
+      "pixelOff": {
+        "pixelApplied": "false",
+        "pixelFallbackReason": "픽셀 런타임 없음",
+        "pixelConfidenceMin": null,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 90.2,
+          "tzl": 94.9,
+          "difference": -4.7,
+          "pxPerMm": 17.16
+        },
+        "truthTzlAppMm": 94.04,
+        "tzlAbsErrorMm": 0.859,
+        "perToothMaeMm": 0.762,
+        "perToothMaxMm": 1.42
+      },
+      "pixelOn": {
+        "pixelApplied": "true",
+        "pixelFallbackReason": null,
+        "pixelConfidenceMin": 0.901,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 88.4,
+          "tzl": 95.4,
+          "difference": -7,
+          "pxPerMm": 17.16
+        },
+        "truthTzlAppMm": 94.04,
+        "tzlAbsErrorMm": 1.359,
+        "perToothMaeMm": 0.134,
+        "perToothMaxMm": 0.389
+      },
+      "perToothMaeImprovementPct": 82.4,
+      "tzlErrorImprovementPct": -58.2,
+      "pythonOofPositionMm": 0.3064
+    },
+    {
+      "caseId": "003",
+      "pixelOff": {
+        "pixelApplied": "false",
+        "pixelFallbackReason": "픽셀 런타임 없음",
+        "pixelConfidenceMin": null,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 89.2,
+          "tzl": 94.6,
+          "difference": -5.4,
+          "pxPerMm": 17.04
+        },
+        "truthTzlAppMm": 87.9,
+        "tzlAbsErrorMm": 6.702,
+        "perToothMaeMm": 0.666,
+        "perToothMaxMm": 1.601
+      },
+      "pixelOn": {
+        "pixelApplied": "true",
+        "pixelFallbackReason": null,
+        "pixelConfidenceMin": 0.916,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 85,
+          "tzl": 89,
+          "difference": -4,
+          "pxPerMm": 17.04
+        },
+        "truthTzlAppMm": 87.9,
+        "tzlAbsErrorMm": 1.102,
+        "perToothMaeMm": 0.098,
+        "perToothMaxMm": 0.209
+      },
+      "perToothMaeImprovementPct": 85.3,
+      "tzlErrorImprovementPct": 83.6,
+      "pythonOofPositionMm": 0.2839
+    },
+    {
+      "caseId": "004",
+      "pixelOff": {
+        "pixelApplied": "false",
+        "pixelFallbackReason": "픽셀 런타임 없음",
+        "pixelConfidenceMin": null,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 96.4,
+          "tzl": 100.5,
+          "difference": -4.1,
+          "pxPerMm": 17.74
+        },
+        "truthTzlAppMm": 94.05,
+        "tzlAbsErrorMm": 6.447,
+        "perToothMaeMm": 0.603,
+        "perToothMaxMm": 2.093
+      },
+      "pixelOn": {
+        "pixelApplied": "true",
+        "pixelFallbackReason": null,
+        "pixelConfidenceMin": 0.895,
+        "coordSource": "auto",
+        "analysisState": "applied",
+        "widthCount": 12,
+        "displayed": {
+          "ezl": 86.8,
+          "tzl": 95,
+          "difference": -8.2,
+          "pxPerMm": 17.74
+        },
+        "truthTzlAppMm": 94.05,
+        "tzlAbsErrorMm": 0.947,
+        "perToothMaeMm": 0.111,
+        "perToothMaxMm": 0.288
+      },
+      "perToothMaeImprovementPct": 81.6,
+      "tzlErrorImprovementPct": 85.3,
+      "pythonOofPositionMm": 0.2857
+    }
+  ],
+  "summary": {
+    "casesRun": 3,
+    "casesPixelApplied": 3,
+    "casesPixelAppliedWhenDisabled": 0,
+    "meanPerToothMaeOffMm": 0.677,
+    "meanPerToothMaeOnMm": 0.114,
+    "meanTzlErrorOffMm": 4.669,
+    "meanTzlErrorOnMm": 1.136,
+    "meanPythonOofPositionMm": 0.292,
+    "note": "브라우저는 배포 모델(384건 전수 학습, 홀드아웃 없음)이라 이 3건은 **in-sample**이다. 따라서 여기의 개선율은 성능 근거가 아니며 \"층이 실제로 돌고 좌표가 정상 범위인가\"의 확인이다. 보고 가능한 성능은 5-fold OOF(위치 0.3113mm)뿐이다."
+  },
+  "pageErrors": [],
+  "verdict": {
+    "runtimeLoaded": true,
+    "pixelLayerRuns": true,
+    "abControlClean": true,
+    "selfTestPassed": true,
+    "noPageErrors": true
+  }
+}

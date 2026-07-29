@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "legend-size-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsCaseIdentifiers": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "containsFileNames": false,
+    "containsAnnotatorNames": false
+  },
+  "note": "캔버스 범례 배율 검증. 범례는 캔버스에 그려지므로 DOM이 없어 픽셀에서 박스 경계를 측정한다. 사진은 SHA-256 일치로만 선택했고 파일명·SHA·좌표는 기록하지 않는다.",
+  "legendBoxSource": {
+    "width": 220,
+    "height": 118
+  },
+  "scale": {
+    "sessionStart": 0.7,
+    "current": 0.98,
+    "ratioVsSessionStart": 1.4
+  },
+  "renderedSize": {
+    "sessionStart": [
+      154,
+      82.6
+    ],
+    "current": [
+      215.6,
+      115.6
+    ]
+  },
+  "perViewport": [
+    {
+      "viewport": "1920x1080",
+      "canvasWidth": 1570,
+      "canvasHeight": 718,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 1101,
+      "measuredHeightPx": 433,
+      "changedPixels": 4690,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "1600x900",
+      "canvasWidth": 1250,
+      "canvasHeight": 636,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 904,
+      "measuredHeightPx": 384,
+      "changedPixels": 4679,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "1366x768",
+      "canvasWidth": 1016,
+      "canvasHeight": 504,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 727,
+      "measuredHeightPx": 305,
+      "changedPixels": 4687,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "1280x720",
+      "canvasWidth": 930,
+      "canvasHeight": 456,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 663,
+      "measuredHeightPx": 276,
+      "changedPixels": 4679,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "1024x768",
+      "canvasWidth": 674,
+      "canvasHeight": 504,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 532,
+      "measuredHeightPx": 272,
+      "changedPixels": 14547,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "768 tablet",
+      "canvasWidth": 750,
+      "canvasHeight": 750,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 592,
+      "measuredHeightPx": 302,
+      "changedPixels": 12883,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    },
+    {
+      "viewport": "414 mobile",
+      "canvasWidth": 396,
+      "canvasHeight": 396,
+      "expectedWidthPx": 215.6,
+      "expectedHeightPx": 115.6,
+      "measuredWidthPx": 309,
+      "measuredHeightPx": 161,
+      "changedPixels": 19696,
+      "boxLeftPx": 9,
+      "boxTopPx": 9,
+      "overflowRightPx": 0,
+      "overflowBottomPx": 0
+    }
+  ],
+  "pageErrors": [],
+  "checks": {
+    "noPageErrors": true,
+    "scaleMatchesRequest": true,
+    "measuredWidthMatchesExpected": false,
+    "measuredHeightMatchesExpected": false,
+    "noOverflowInAnyViewport": true,
+    "legendActuallyDrawnEverywhere": true,
+    "legendStartsAtOrigin": false
+  },
+  "pass": false
+}

@@ -1,23 +1,108 @@
 import { isAzureChatConfigured, azureVisionCompletion } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
-export const config = { api: { bodyParser: { sizeLimit: '15mb' } } };
+export const config = { api: { bodyParser: { sizeLimit: '20mb' } } };
 
-const PROMPT = `이 사진은 치과 교정 환자의 하악(또는 상악) 교합면 사진입니다.
+const PROMPT = `You are an orthodontic image segmentation assistant for occlusal intraoral photos.
 
-각 치아의 절단연(전치부) 또는 교두정(구치부)의 중앙 위치를 이미지 좌표로 찾아주세요.
+Analyze the image and return EZ/TZ landmarks as normalized image coordinates.
 
-규칙:
-1. 좌측 제2대구치(#37 또는 #27)부터 시작하여 우측 제2대구치(#47 또는 #17)까지 순서대로 14개 포인트를 반환
-2. 좌표는 이미지 너비/높이에 대한 비율(0~1)로 반환 (x=가로, y=세로)
-3. 치아가 보이지 않거나 발치된 경우 인접 치아 사이의 중간점을 추정
-4. 교합면(씹는 면)이 보이는 사진이므로, 각 치아의 가장 돌출된 점(교두정/절단연)을 정확히 찾기
+Definitions:
+- TZ curve: red tooth-zone curve. It follows the dental arch through tooth anatomy. Posterior molar/premolar points should be at the tooth center. Anterior/canine points should follow the incisal edge or cusp tip line. The curve starts and ends at the center of the left and right molars closest to the occlusal plane.
+- EZ curve: blue equilibrium-zone curve. It is NOT based on tooth centers. It follows the center of the alveolar bone / dental arch basal bone corridor, inside the dental arch. It starts and ends at the same left/right molar center anchors used by TZ, then passes through the alveolar ridge center line.
 
-반드시 아래 JSON 형식으로만 응답하세요:
-{"points":[{"x":0.14,"y":0.32,"tooth":"37"},{"x":0.19,"y":0.38,"tooth":"36"},...14개],"arch":"lower","confidence":0.85}
+Return 14 ordered points from patient-left posterior molar to patient-right posterior molar.
 
-arch는 "lower" 또는 "upper"로 하악/상악을 판별하세요.`;
+Important:
+- Segment/identify visible tooth crown regions and alveolar ridge corridor visually.
+- Keep all points on plausible dental or alveolar anatomy, not outside the mouth or on soft tissue glare.
+- For mandibular occlusal images, the anterior teeth are typically near the lower/front side of the arch. For maxillary images, the anterior teeth are typically near the upper/front side.
+- If uncertain, provide best-estimate points and lower confidence.
+
+Respond ONLY with valid JSON in this schema:
+{
+  "arch": "lower" | "upper",
+  "confidence": 0.0,
+  "tzPoints": [{"x":0.0,"y":0.0,"tooth":"left_molar_2","role":"center|tip"}],
+  "ezPoints": [{"x":0.0,"y":0.0,"role":"alveolar_center"}],
+  "toothRegions": [{"label":"left_molar_2","cx":0.0,"cy":0.0,"x1":0.0,"y1":0.0,"x2":0.0,"y2":0.0}],
+  "notes": ["short reason"]
+}`;
+
+function extractJson(text) {
+  if (!text) return null;
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : text;
+  const start = candidate.indexOf('{');
+  const end = candidate.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  return candidate.slice(start, end + 1);
+}
+
+function normalizePoint(point, width, height) {
+  const x = Number(point?.x);
+  const y = Number(point?.y);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const nx = x > 1 ? x / width : x;
+  const ny = y > 1 ? y / height : y;
+  return { ...point, x: Math.max(0, Math.min(1, nx)), y: Math.max(0, Math.min(1, ny)) };
+}
+
+function toPixelPoint(point, width, height) {
+  return {
+    x: Math.round(Number(point.x) * width),
+    y: Math.round(Number(point.y) * height),
+    tooth: point.tooth || point.label || null,
+    role: point.role || null
+  };
+}
+
+async function anthropicVisionCompletion({ system, prompt, images, timeoutMs = 45000 }) {
+  if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured.');
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const content = [];
+    for (const image of images) {
+      if (image.label) content.push({ type: 'text', text: image.label });
+      content.push({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: image.contentType || image.mimeType || 'image/jpeg',
+          data: image.base64
+        }
+      });
+    }
+    content.push({ type: 'text', text: prompt });
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 2600,
+        temperature: 0.05,
+        system,
+        messages: [{ role: 'user', content }]
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error?.message || `Anthropic request failed: HTTP ${response.status}`);
+    return (data.content || []).filter(part => part.type === 'text').map(part => part.text).join('\n');
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -25,59 +110,70 @@ export default async function handler(req, res) {
 
   try {
     const { base64, contentType, imageWidth, imageHeight } = req.body || {};
-    if (!base64) return res.status(400).json({ error: 'base64 필수' });
+    if (!base64) return res.status(400).json({ error: 'base64 is required' });
 
     const mime = contentType || 'image/jpeg';
     let response;
+    let provider = 'unknown';
 
-    if (isAzureChatConfigured()) {
+    if (ANTHROPIC_API_KEY) {
+      provider = 'anthropic';
+      response = await anthropicVisionCompletion({
+        system: 'You are an orthodontic occlusal image segmentation assistant. Return only valid JSON.',
+        images: [{ base64, contentType: mime, label: 'Occlusal intraoral photo' }],
+        prompt: PROMPT,
+        timeoutMs: 45000
+      });
+    } else if (isAzureChatConfigured()) {
+      provider = 'azure-openai';
       response = await azureVisionCompletion({
-        system: '치과 교정 전문 AI. 교합면 사진에서 치아 랜드마크 좌표를 정확히 검출합니다. JSON으로만 응답.',
+        system: 'You are an orthodontic occlusal image segmentation assistant. Return only valid JSON.',
         images: [{ base64, contentType: mime }],
         prompt: PROMPT,
-        temperature: 0.1,
-        timeoutMs: 30000
+        temperature: 0.05,
+        timeoutMs: 45000
       });
     } else if (GEMINI_API_KEY) {
+      provider = 'gemini';
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-      const result = await model.generateContent([
-        { inlineData: { data: base64, mimeType: mime } },
-        { text: PROMPT }
-      ]);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash', generationConfig: { temperature: 0.05, responseMimeType: 'application/json' } });
+      const result = await model.generateContent([{ inlineData: { data: base64, mimeType: mime } }, { text: PROMPT }]);
       response = result.response.text();
     } else {
-      return res.status(503).json({ error: 'AI API 키가 설정되지 않았습니다 (GEMINI_API_KEY 또는 AZURE_OPENAI)' });
+      return res.status(503).json({ error: 'AI API key is not configured. Set ANTHROPIC_API_KEY, Azure OpenAI, or GEMINI_API_KEY.' });
     }
 
-    // JSON 추출
-    const jsonMatch = response.match(/\{[\s\S]*"points"[\s\S]*\}/);
-    if (!jsonMatch) {
-      return res.status(200).json({ success: false, error: 'AI 응답에서 좌표를 추출하지 못했습니다', raw: response.slice(0, 500) });
-    }
+    const jsonText = extractJson(response);
+    if (!jsonText) return res.status(200).json({ success: false, provider, error: 'Could not extract JSON landmarks from AI response.', raw: String(response || '').slice(0, 700) });
 
-    const parsed = JSON.parse(jsonMatch[0]);
-    if (!parsed.points || !Array.isArray(parsed.points) || parsed.points.length < 5) {
-      return res.status(200).json({ success: false, error: '포인트 수 부족', raw: response.slice(0, 500) });
-    }
+    const parsed = JSON.parse(jsonText);
+    const w = Number(imageWidth) || 1;
+    const h = Number(imageHeight) || 1;
+    const tzPoints = (parsed.tzPoints || parsed.points || []).map(point => normalizePoint(point, w, h)).filter(Boolean);
+    const ezPoints = (parsed.ezPoints || []).map(point => normalizePoint(point, w, h)).filter(Boolean);
 
-    // 비율 좌표를 픽셀 좌표로 변환 (이미지 크기가 제공된 경우)
-    const w = imageWidth || 1;
-    const h = imageHeight || 1;
-    const pixelPoints = parsed.points.map(p => ({
-      x: Math.round(p.x * w),
-      y: Math.round(p.y * h),
-      tooth: p.tooth
-    }));
+    if (tzPoints.length < 5) return res.status(200).json({ success: false, provider, error: 'AI returned too few TZ points.', raw: String(response || '').slice(0, 700) });
+
+    const tzPixelPoints = tzPoints.map(point => toPixelPoint(point, w, h));
+    const ezPixelPoints = ezPoints.length >= 5 ? ezPoints.map(point => toPixelPoint(point, w, h)) : [];
 
     return res.status(200).json({
       success: true,
-      points: parsed.points,
-      pixelPoints,
+      provider,
+      segmentation: true,
+      points: tzPoints,
+      pixelPoints: tzPixelPoints,
+      tzPoints,
+      ezPoints,
+      tzPixelPoints,
+      ezPixelPoints,
+      toothRegions: Array.isArray(parsed.toothRegions) ? parsed.toothRegions : [],
       arch: parsed.arch || 'lower',
-      confidence: parsed.confidence || 0.7,
-      count: parsed.points.length
+      confidence: Number(parsed.confidence) || 0.65,
+      count: tzPoints.length,
+      ezCount: ezPoints.length,
+      notes: Array.isArray(parsed.notes) ? parsed.notes : []
     });
   } catch (e) {
     console.error('[detect-arch-landmarks]', e);

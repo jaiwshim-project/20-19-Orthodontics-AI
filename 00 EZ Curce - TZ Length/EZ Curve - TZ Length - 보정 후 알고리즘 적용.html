@@ -202,6 +202,12 @@
       <span>자동 분석 신뢰도</span>
       <span class="confidence-badge" id="autoConfidence">대기</span>
     </div>
+    <div class="confidence-row" id="pixelModelRow" style="display:none;">
+      <span>픽셀 랜드마크 모델</span>
+      <span class="confidence-badge" id="pixelModelStatus">확인 중</span>
+      <input type="file" id="pixelModelFile" accept=".onnx" style="display:none;">
+      <button class="btn" id="pixelModelBtn" type="button" style="padding:4px 8px; font-size:11px;" data-tip="자동 로드가 실패했을 때 pixel_runtime/arch_landmarks.onnx 를 직접 지정합니다. file:// 로 열어도 픽셀 모델은 자동으로 준비되므로 보통 필요하지 않습니다.">모델 파일 지정</button>
+    </div>
     <div class="auto-actions">
       <button class="btn btn-success" id="applyAutoBtn" type="button" disabled data-tip="미리보기 중인 청록색 자동 분석 초안을 실제 측정값으로 확정합니다. (신뢰도 35% 이상일 때) 적용 직전 상태는 자동 저장되어 되돌릴 수 있습니다.">초안 적용</button>
       <button class="btn" id="cancelAutoBtn" type="button" disabled data-tip="자동 분석 초안을 적용하지 않고 버립니다. 기존 측정값은 그대로 유지됩니다.">초안 취소</button>
@@ -315,6 +321,85 @@
   </div>
 </div>
 
+<script src="pixel_runtime/ort.wasm.min.js"></script>
+<script src="pixel_runtime/pixel_inference.js"></script>
+<script>
+// === 픽셀 랜드마크 런타임 설정 ===
+// numThreads=1: 멀티스레드 WASM은 SharedArrayBuffer를 요구해 COOP/COEP 헤더가 필요하다.
+// 로컬에서 헤더 없이 열리므로 단일 스레드로 고정한다(추론 1~3초).
+//
+// ⚠️ HTTP에서 wasmPaths는 **절대 URL**이어야 한다. 'pixel_runtime/' 처럼 상대 경로를
+//    주면 ORT가 .mjs 글루를 dynamic import할 때 "bare module specifier"로 해석해
+//    `Failed to resolve module specifier 'pixel_runtime/ort-wasm-simd-threaded.mjs'`로
+//    죽고, 픽셀 층이 조용히 폴백한다(실측: 3/3 케이스 pixelApplied=false).
+//    .wasm은 상대 경로로도 받아지므로 fetch 200만 보고 통과로 착각하기 쉽다.
+//
+// file:// 은 fetch·XHR·모듈 import가 모두 막히지만 **classic script와 blob URL
+// import는 통과한다**(_file_probe 실측). 그래서 file:일 때는 글루/wasm/모델을
+// 스크립트로 실어와 주입한다 — 아래 EzPixelFileMode가 그 일을 한다.
+window.EzPixelFileMode=(function(){
+  var isFile=location.protocol==='file:';
+  var readyPromise=null;
+  /** 스크립트 1개를 classic script로 붙인다(file://에서 통과하는 유일한 경로). */
+  function addScript(src){
+    return new Promise(function(resolve,reject){
+      var s=document.createElement('script');
+      s.src=src; s.async=false;
+      s.onload=function(){resolve(src);};
+      s.onerror=function(){reject(new Error('스크립트 로드 실패: '+src));};
+      document.head.appendChild(s);
+    });
+  }
+  /** file:// 전용 준비. 글루·wasm·모델을 순서대로 주입하고 ort.env를 설정한다. */
+  function prepare(onProgress){
+    if(!isFile) return Promise.resolve({mode:'http'});
+    if(readyPromise) return readyPromise;
+    readyPromise=(function(){
+      var steps=[
+        {src:'pixel_runtime/ort_glue_src.js', label:'WASM 글루', check:function(){return typeof window.__EZ_ORT_GLUE_SRC==='string';}},
+        {src:'pixel_runtime/ort_wasm_b64.js', label:'WASM 바이너리(11MB)', check:function(){return !!window.__EZ_ORT_WASM_BYTES;}},
+        {src:'pixel_runtime/model_b64.js',    label:'모델(49MB)',        check:function(){return !!window.__EZ_MODEL_BYTES;}}
+      ];
+      var chain=Promise.resolve();
+      steps.forEach(function(step,idx){
+        chain=chain.then(function(){
+          if(step.check()) return null;          // 이미 로드됨(중복 방지)
+          if(onProgress) onProgress(step.label, idx, steps.length);
+          return addScript(step.src).then(function(){
+            if(!step.check()) throw new Error(step.label+' 주입 실패');
+          });
+        });
+      });
+      return chain.then(function(){
+        // 글루를 blob URL로 import시키기 위해 wasmPaths.mjs에 blob을 준다.
+        // ⚠️ ort_glue_src.js가 import.meta.url을 이미 치환해 뒀다. 치환하지 않으면
+        //    blob 모듈에서 new URL(...)이 opaque origin 때문에 던진다(실측).
+        var glueUrl=URL.createObjectURL(new Blob([window.__EZ_ORT_GLUE_SRC],{type:'text/javascript'}));
+        ort.env.wasm.wasmPaths={mjs:glueUrl, wasm:'ort-wasm-simd-threaded.wasm'};
+        // wasmBinary를 주면 글루가 .wasm을 fetch하지 않는다(file://에서 필수).
+        ort.env.wasm.wasmBinary=window.__EZ_ORT_WASM_BYTES;
+        return {mode:'file', modelBytes:window.__EZ_MODEL_BYTES,
+                modelShaPrefix:window.__EZ_MODEL_SHA256_PREFIX||null};
+      });
+    })().catch(function(err){
+      readyPromise=null;    // 재시도 가능하게 되돌린다
+      throw err;
+    });
+    return readyPromise;
+  }
+  return {isFile:isFile, prepare:prepare};
+})();
+(function(){
+  if(typeof ort==='undefined') return;
+  // HTTP 기본 설정. file:// 일 때는 prepare()가 wasmPaths를 덮어쓴다.
+  if(location.protocol!=='file:'){
+    ort.env.wasm.wasmPaths=new URL('pixel_runtime/', document.baseURI).href;
+  }
+  ort.env.wasm.numThreads=1;
+  ort.env.wasm.proxy=false;
+  ort.env.logLevel='error';
+})();
+</script>
 <script>
 // === KRR 잔차 보정 모델 데이터 (초안 모드) ===
 window.EZ_RESIDUAL_MODEL={
@@ -175507,6 +175592,12 @@ window.EZ_RESIDUAL_MODEL={
   let dragType = null; // 'tooth' | 'ez' | 'widthP1' | 'widthP2'
   let dragWidthIdx = -1;
   const layers = { grid: true, toothNum: true, ezCurve: true, toothWidth: true, legend: true };
+  // 캔버스 범례 배율. 박스 원본 220x118px이므로 렌더 크기 = 220*S x 118*S.
+  // 변경 경위: 0.7 → (2배 요청) 1.4 → (70% 요청) **0.98**. 세션 시작 대비 1.4배.
+  // ⚠️ "70%"의 기준은 직전 크기(1.4)다. 원래 값이 이미 0.7이었으므로 절대 0.7로 읽으면
+  //    요청이 no-op가 된다. 좁은 캔버스에서 잘리지 않는지는 _legend_size_verify.mjs가
+  //    실제 캔버스 폭과 대조해 검증한다(414 모바일 포함).
+  const LEGEND_SCALE = 0.98;
   const AUTO_ENGINE_VERSION = 'tzl-ezl-rule-v1.0';
   const AUTO_TOOTH_WIDTHS_MM = [12.19, 7.92, 8.13, 7.30, 6.49, 5.91, 5.91, 6.46, 7.21, 8.15, 8.04, 12.31];
   let analysisState = 'idle'; // idle | running | preview | applied | error
@@ -176457,6 +176548,166 @@ window.EZ_RESIDUAL_MODEL={
   //           (d) ~~코호트 지시자~~ → **클래스 지시자를 모델 입력에** (a)로 승격됐다.
   //               사후 배율 추정 계열은 전역·클래스별 모두 기각됐다(⑨d).
   // ────────────────────────────────────────────────────────────────────────────
+
+  // ===== 픽셀 랜드마크 층 (치아폭 24점 히트맵 검출) =====
+  //
+  // 파이프라인: 규칙엔진 → KRR 잔차보정 → **여기서 폭 24점만 교체**.
+  // EZ 12점은 건드리지 않는다 — 픽셀 모델은 EZ를 예측하지 않는다.
+  //
+  // 실측(OOF 315건, 짝지어진 부트스트랩 5,000회):
+  //   위치(중점이동) 규칙 3.808 → KRR 2.164 → 픽셀 0.311 mm  (KRR 대비 +85.7%)
+  //   어금니 위치     5.277 → 2.724 → 0.409 mm               (+85.0%)
+  //   길이오차       1.108 → 0.783 → 0.235 mm               (+69.9%)
+  // 앱 표시 기준(60건): TZL 5.49 → 4.72mm(+14.0%, 유의 아님), EZL 3.44mm 그대로.
+  //   → 화면 숫자의 남은 여력은 폭이 아니라 **EZ 곡선**에 있다.
+  //
+  // ⚠️ WIDTH_BIAS를 씌우지 않는다. 1.013은 KRR 예측의 축소 편향을 상쇄하는 값이고
+  //    픽셀 예측에는 그 편향이 없다(최적 배율 1.003, 1.013 적용 시 −4.1% 악화).
+  const USE_PIXEL_LANDMARKS = true;
+  const PIXEL_MODEL_URL = 'pixel_runtime/arch_landmarks.onnx';
+  const PIXEL_ENGINE_VERSION = 'rule+krr-residual+pixel-landmark/v1';
+  let pixelSessionPromise = null;
+  let pixelModelBytes = null;
+  let pixelLoadError = null;
+
+  function pixelAvailable(){
+    return USE_PIXEL_LANDMARKS && typeof ort !== 'undefined' && !!window.EzPixelLandmarks;
+  }
+
+  function getPixelSession(){
+    if(!pixelAvailable()) return Promise.resolve(null);
+    if(pixelSessionPromise) return pixelSessionPromise;
+    // file:// 이면 글루·wasm·모델을 classic script로 먼저 주입한다(fetch가 막히므로).
+    // HTTP면 prepare()가 즉시 {mode:'http'}로 통과하고 기존 fetch 경로를 쓴다.
+    const fileMode = window.EzPixelFileMode;
+    const prep = (fileMode && fileMode.isFile && !pixelModelBytes)
+      ? fileMode.prepare((label, idx, total) => {
+          setAutoProgress(40 + Math.round(idx / total * 25),
+            '픽셀 모델 준비 중 — ' + label + ' 불러오는 중… (' + (idx + 1) + '/' + total + ')');
+        })
+      : Promise.resolve(null);
+    pixelSessionPromise = prep.then(prepared => {
+      // 우선순위: 사용자가 직접 지정한 파일 > file:// 주입 바이트 > HTTP fetch URL
+      const source = pixelModelBytes
+        || (prepared && prepared.modelBytes)
+        || PIXEL_MODEL_URL;
+      return window.EzPixelLandmarks.createSession(source, {executionProviders:['wasm']});
+    }).catch(err => {
+      // 실패해도 조용히 넘기지 않는다. 이유를 UI와 dataset에 남긴다.
+      pixelLoadError = err;
+      pixelSessionPromise = null;
+      updatePixelModelUi();
+      throw err;
+    });
+    return pixelSessionPromise;
+  }
+
+  function updatePixelModelUi(){
+    const row = document.getElementById('pixelModelRow');
+    const badge = document.getElementById('pixelModelStatus');
+    if(!row || !badge) return;
+    if(!pixelAvailable()){ badge.textContent='런타임 없음'; row.style.display='flex'; return; }
+    if(pixelModelBytes){ badge.textContent='모델 준비됨(수동 지정)'; row.style.display='none'; return; }
+    if(pixelLoadError){
+      badge.textContent='자동 로드 실패 — .onnx 파일을 지정하세요';
+      row.style.display='flex';
+      return;
+    }
+    // file:// 도 지원한다. 다만 첫 분석에서 60MB를 스크립트로 읽어 3초쯤 걸리므로
+    // 미리 알려 준다(HTTP는 브라우저 캐시를 타서 더 빠르다).
+    if(location.protocol==='file:'){
+      badge.textContent='file:// 자동 준비 (첫 분석에 약 3초 소요)';
+      row.style.display='none';
+      return;
+    }
+    badge.textContent='자동 로드';
+    row.style.display='none';
+  }
+
+  /** 픽셀 층의 실제 동작을 DOM에 남긴다(검증 스크립트가 읽는다).
+   *
+   * 앱 스크립트는 IIFE라 내부 변수를 page.evaluate로 읽을 수 없다. 그래서 실구동
+   * 검증(_pixel_html_verify.mjs)이 볼 수 있는 유일한 창구가 이 dataset 신호다.
+   * ⚠️ 미적용 경로에서도 **반드시** 호출해야 한다 — 안 하면 직전 분석의 'true'가
+   *    남아 층이 돌았다고 잘못 읽힌다.
+   */
+  function stampPixelState(applied, reason, confidence){
+    const root = document.documentElement;
+    root.dataset.ezPixelApplied = applied ? 'true' : 'false';
+    if(reason) root.dataset.ezPixelFallbackReason = reason;
+    else delete root.dataset.ezPixelFallbackReason;
+    // 미적용이면 신뢰도도 지운다. 남겨 두면 직전 분석 값이 이번 결과로 오독된다.
+    if(confidence) root.dataset.ezPixelConfidenceMin = String(Math.round(confidence.min*1000)/1000);
+    else delete root.dataset.ezPixelConfidenceMin;
+  }
+
+  /**
+   * KRR 보정 초안의 **치아폭만** 픽셀 모델 결과로 교체한다.
+   * 실패·형식 위반 시 입력 초안을 그대로 돌려준다(조용한 열화 금지: analysisMeta에 이유를 남김).
+   */
+  async function applyPixelLandmarks(draft, img){
+    // 런타임이 없으면 즉시 반환하되 DOM 신호는 **반드시 갱신**한다. 갱신하지 않으면
+    // 직전 분석의 'true'가 남아 "픽셀 층이 돌았다"고 잘못 읽힌다(실측: A/B 대조군
+    // 4/5건이 이전 값을 물고 있었다).
+    if(!pixelAvailable() || !draft){
+      stampPixelState(false, pixelAvailable() ? '초안 없음' : '픽셀 런타임 없음', null);
+      return draft;
+    }
+    let reason = null;
+    try{
+      const session = await getPixelSession();
+      if(!session) return draft;
+      const result = await window.EzPixelLandmarks.detect(session, img, {});
+      const teeth = result.toothWidths;
+      const inRange = p => p && Number.isFinite(p.x) && Number.isFinite(p.y)
+        && p.x >= 0 && p.y >= 0 && p.x < img.width && p.y < img.height;
+      const formOk = Array.isArray(teeth) && teeth.length === draft.toothWidths.length
+        && teeth.every(w => inRange(w.p1) && inRange(w.p2)
+          && Math.hypot(w.p2.x - w.p1.x, w.p2.y - w.p1.y) > 2);
+      if(!formOk){
+        reason = '픽셀 모델 좌표가 형식 검증을 통과하지 못했습니다(개수·범위·길이).';
+      }else{
+        const widths = teeth.map(w => ({
+          p1:{x:Math.round(w.p1.x), y:Math.round(w.p1.y)},
+          p2:{x:Math.round(w.p2.x), y:Math.round(w.p2.y)},
+        }));
+        const out = {
+          toothCenters: widths.map(w => ({x:Math.round((w.p1.x+w.p2.x)/2), y:Math.round((w.p1.y+w.p2.y)/2)})),
+          ezPoints: draft.ezPoints.map(p => ({x:p.x, y:p.y})),
+          toothWidths: widths,
+        };
+        out.analysisMeta = Object.assign({}, draft.analysisMeta, {
+          engineVersion: PIXEL_ENGINE_VERSION,
+          source: 'rule-based-auto-draft+krr-residual+pixel-landmark',
+          pixelApplied: true,
+          pixelWidthBias: 1.0,
+          pixelConfidence: {min:result.confidence.min, mean:result.confidence.mean},
+          pixelModelSource: pixelModelBytes ? 'manual-file' : 'fetch',
+          // 보고 가능한 수치는 5-fold OOF뿐이다(배포 가중치는 384건 전수 학습 = 홀드아웃 없음).
+          pixelReportableOofPositionMm: 0.3113,
+          warnings: (draft.analysisMeta.warnings || []).concat(
+            result.confidence.min < 0.2
+              ? ['픽셀 모델 신뢰도가 낮은 치아가 있습니다. 폭선을 눈으로 확인하세요.'] : []),
+        });
+        out.metrics = calculateMetricsFor(out.ezPoints, out.toothWidths);
+        stampPixelState(true, null, result.confidence);
+        return out;
+      }
+    }catch(err){
+      console.warn('픽셀 랜드마크 적용 실패:', err);
+      reason = '픽셀 모델을 불러오지 못했습니다: ' + (err && err.message ? err.message : err);
+    }
+    // 폴백. 무엇이 왜 안 됐는지 산출물에 남긴다.
+    draft.analysisMeta = Object.assign({}, draft.analysisMeta, {
+      pixelApplied: false,
+      pixelFallbackReason: reason,
+      warnings: (draft.analysisMeta.warnings || []).concat(
+        reason ? ['픽셀 랜드마크 미적용(KRR 결과 유지): ' + reason] : []),
+    });
+    stampPixelState(false, reason, null);
+    return draft;
+  }
+
   const USE_KRR = true;
   function applyKrrCorrection(draft, img) {
     if(!USE_KRR || !window.EzResidualInference || !window.EZ_RESIDUAL_MODEL) return draft;
@@ -176550,8 +176801,15 @@ window.EZ_RESIDUAL_MODEL={
     await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,20)));
     try{
       setAutoProgress(45,'하악 U자 치열궁을 찾고 있습니다…');
-      const result=runAutoEngine(image);
+      const ruleResult=runAutoEngine(image);
       if(runId!==analysisRunId||revision!==imageRevision)return;
+      // 정답 룩업으로 나온 결과는 픽셀 모델로 덮지 않는다(전문가 정답이 상위).
+      const isTruth=ruleResult.analysisMeta&&ruleResult.analysisMeta.truthMatch;
+      if(isTruth) stampPixelState(false,'전문가 정답 표시(픽셀 모델 미적용)',null);
+      else setAutoProgress(70,'픽셀 랜드마크 모델로 치아폭을 다시 잡고 있습니다…');
+      const result=isTruth?ruleResult:await applyPixelLandmarks(ruleResult,image);
+      if(runId!==analysisRunId||revision!==imageRevision)return;
+      validateAutoDraft(result,image);
       autoDraft=result;analysisState='preview';
       const m=result.metrics,c=result.analysisMeta.confidence.overall,warnings=result.analysisMeta.warnings;
       setAutoProgress(100,'미리보기 완료 · EZL '+m.ezl.toFixed(1)+' / TZL '+m.tzl.toFixed(1)+' / 차이 '+(m.difference>=0?'+':'')+m.difference.toFixed(1)+' mm'+(warnings.length?' · '+warnings[0]:''),c<.5?'warning':'success');
@@ -177038,12 +177296,13 @@ window.EZ_RESIDUAL_MODEL={
       ctx.fillText(String(idx + 1), mid.x, mid.y - 10);
     });
 
-    // 범례 (70% 축소)
+    // 범례 (98% — 박스 220x118 → 렌더 215.6x115.6)
+    // ⚠️ 좌표·폰트를 개별로 키우면 비율이 깨진다. **이 scale 한 곳만** 바꿀 것.
     if (layers.legend) {
       const lx = 10, ly = 10;
       ctx.save();
       ctx.translate(lx, ly);
-      ctx.scale(0.7, 0.7);
+      ctx.scale(LEGEND_SCALE, LEGEND_SCALE);
 
       ctx.fillStyle = 'rgba(15,23,42,0.88)';
       ctx.fillRect(0, 0, 220, 118);
@@ -177482,6 +177741,26 @@ window.EZ_RESIDUAL_MODEL={
     const tests={scale:Math.abs(m.pxPerMm-2)<1e-9,ezl:Math.abs(m.ezl-54)<1e-9,tzl:Math.abs(m.tzl-60)<1e-9,difference:Math.abs(m.difference+6)<1e-9};
     return {passed:Object.values(tests).every(Boolean),tests,metrics:m};
   }
+
+
+  // 픽셀 모델 수동 지정 (자동 로드 실패 시 구제 수단)
+  (function(){
+    const btn = document.getElementById('pixelModelBtn');
+    const input = document.getElementById('pixelModelFile');
+    if(!btn || !input) return;
+    btn.onclick = () => input.click();
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      if(!file) return;
+      const buffer = await file.arrayBuffer();
+      pixelModelBytes = new Uint8Array(buffer);
+      pixelSessionPromise = null;
+      pixelLoadError = null;
+      updatePixelModelUi();
+      updateGuide('픽셀 랜드마크 모델을 불러왔습니다(' + Math.round(file.size/1048576) + 'MB). 자동 분석을 다시 실행하세요.');
+    };
+    updatePixelModelUi();
+  })();
 
   // 빌드 식별 배지. 브라우저가 이전 빌드를 캐시하면 화면과 파일이 어긋나는데,
   // 정답 룩업 건수(113=구버전 / 442=현재)로 그것을 즉시 알 수 있다.

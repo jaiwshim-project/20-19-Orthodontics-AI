@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { searchKnowledge, saveConversation } from '../lib/supabase.js';
+import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -47,10 +48,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'messages가 비어있습니다.' });
     }
 
-    if (!GEMINI_API_KEY) {
+    if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
       console.warn('[chat] GEMINI_API_KEY 미설정 → 안내 응답 반환');
       return res.status(200).json({
-        reply: '죄송합니다. AI 서비스 키가 설정되지 않아 답변을 생성할 수 없습니다. 관리자에게 GEMINI_API_KEY 설정을 요청해 주세요.',
+        reply: '죄송합니다. AI 서비스 키가 완전히 설정되지 않아 답변을 생성할 수 없습니다. Azure OpenAI endpoint/deployment 또는 GEMINI_API_KEY 설정을 확인해 주세요.',
         sources: [],
         usage: { model: 'fallback' },
         // 키 미설정 폴백
@@ -69,6 +70,33 @@ export default async function handler(req, res) {
     const ragContext = sources.length
       ? `\n\n참고 지식:\n${sources.map((s, i) => `[${i + 1}] ${s.content}`).join('\n')}`
       : '';
+
+    if (isAzureChatConfigured()) {
+      const azureMessages = messages.map(m => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: m.content
+      }));
+      const reply = await azureChatCompletion({
+        system: SYSTEM_PROMPT + ragContext,
+        messages: azureMessages,
+        temperature: 0.2,
+        timeoutMs: 30000
+      });
+
+      if (userId) {
+        try {
+          await saveConversation(userId, [...messages, { role: 'assistant', content: reply }]);
+        } catch (e) {
+          console.warn('[chat] 저장 실패:', e.message);
+        }
+      }
+
+      return res.status(200).json({
+        reply,
+        sources: sources.map(s => ({ source: s.source, snippet: s.content?.slice(0, 200) })),
+        usage: { provider: 'azure-openai', model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT }
+      });
+    }
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const geminiModel = genAI.getGenerativeModel({

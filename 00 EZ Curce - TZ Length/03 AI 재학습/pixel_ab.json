@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "pixel-ab-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "note": "픽셀 랜드마크 모델 vs 규칙엔진 초안 vs KRR 3단 잔차보정. 모두 out-of-fold, 픽셀 등방 공간, mm는 정답 24점 최대 쌍거리=54mm 기준. 케이스 단위 짝지어진 부트스트랩 5,000회.",
+  "sampleCounts": {
+    "pixelModelCases": 384,
+    "ruleKrrCases": 384,
+    "sharedCases": 315
+  },
+  "splitPolicy": {
+    "pixelModel": "patient_grouped_5fold (pixel_dataset manifest, seed 20260729)",
+    "ruleKrr": "grouped_5fold on minimumGroupId of dataset-index.patientgrouped.json",
+    "caveat": "두 방식의 fold 경계는 다르다(셔플 알고리즘 상이). 둘 다 OOF라 in-sample 누출은 없지만 fold 구성 잡음은 남는다."
+  },
+  "krrConfig": {
+    "stages": 3,
+    "perStageCap": 0.05,
+    "cumulativeCap": 0.15
+  },
+  "onSharedCases": {
+    "ruleEngine": {
+      "position": 3.8077,
+      "molar": 5.2771,
+      "endpoint": 4.0163,
+      "lengthAbs": 1.1084,
+      "molarLengthAbs": 1.3742,
+      "tzl": 12.2453
+    },
+    "krrStage3": {
+      "position": 2.1644,
+      "molar": 2.7243,
+      "endpoint": 2.3878,
+      "lengthAbs": 0.7825,
+      "molarLengthAbs": 1.0651,
+      "tzl": 6.1292
+    },
+    "pixelLandmark": {
+      "position": 0.3105,
+      "molar": 0.4085,
+      "endpoint": 0.4929,
+      "lengthAbs": 0.2354,
+      "molarLengthAbs": 0.3116,
+      "tzl": 1.5703
+    }
+  },
+  "onAllCases": {
+    "ruleEngine": {
+      "position": 3.6874,
+      "molar": 5.075,
+      "endpoint": 3.8841,
+      "lengthAbs": 1.0419,
+      "molarLengthAbs": 1.2955,
+      "tzl": 11.0827
+    },
+    "krrStage3": {
+      "position": 2.1784,
+      "molar": 2.7553,
+      "endpoint": 2.3903,
+      "lengthAbs": 0.7829,
+      "molarLengthAbs": 1.0679,
+      "tzl": 6.0031
+    },
+    "pixelLandmark": {
+      "position": 0.3113,
+      "molar": 0.4189,
+      "endpoint": 0.484,
+      "lengthAbs": 0.2397,
+      "molarLengthAbs": 0.3129,
+      "tzl": 1.6181
+    }
+  },
+  "paired": {
+    "pixelVsRule": {
+      "position": {
+        "old": 3.8077,
+        "new": 0.3105,
+        "improvementPct": 91.85,
+        "ci95": [
+          3.3286,
+          3.6686
+        ],
+        "significant": true,
+        "casesImproved": 314,
+        "casesWorsened": 1
+      },
+      "molar": {
+        "old": 5.2771,
+        "new": 0.4085,
+        "improvementPct": 92.26,
+        "ci95": [
+          4.596,
+          5.1472
+        ],
+        "significant": true,
+        "casesImproved": 312,
+        "casesWorsened": 3
+      },
+      "endpoint": {
+        "old": 4.0163,
+        "new": 0.4929,
+        "improvementPct": 87.73,
+        "ci95": [
+          3.3593,
+          3.6893
+        ],
+        "significant": true,
+        "casesImproved": 314,
+        "casesWorsened": 1
+      },
+      "lengthAbs": {
+        "old": 1.1084,
+        "new": 0.2354,
+        "improvementPct": 78.76,
+        "ci95": [
+          0.82,
+          0.9238
+        ],
+        "significant": true,
+        "casesImproved": 311,
+        "casesWorsened": 4
+      },
+      "molarLengthAbs": {
+        "old": 1.3742,
+        "new": 0.3116,
+        "improvementPct": 77.33,
+        "ci95": [
+          0.9594,
+          1.1571
+        ],
+        "significant": true,
+        "casesImproved": 310,
+        "casesWorsened": 5
+      },
+      "tzl": {
+        "old": 12.2453,
+        "new": 1.5703,
+        "improvementPct": 87.18,
+        "ci95": [
+          9.9425,
+          11.3999
+        ],
+        "significant": true,
+        "casesImproved": 307,
+        "casesWorsened": 8
+      }
+    },
+    "pixelVsKrr": {
+      "position": {
+        "old": 2.1644,
+        "new": 0.3105,
+        "improvementPct": 85.65,
+        "ci95": [
+          1.7385,
+          1.9706
+        ],
+        "significant": true,
+        "casesImproved": 312,
+        "casesWorsened": 3
+      },
+      "molar": {
+        "old": 2.7243,
+        "new": 0.4085,
+        "improvementPct": 85.01,
+        "ci95": [
+          2.1434,
+          2.4934
+        ],
+        "significant": true,
+        "casesImproved": 310,
+        "casesWorsened": 5
+      },
+      "endpoint": {
+        "old": 2.3878,
+        "new": 0.4929,
+        "improvementPct": 79.36,
+        "ci95": [
+          1.7815,
+          2.0123
+        ],
+        "significant": true,
+        "casesImproved": 313,
+        "casesWorsened": 2
+      },
+      "lengthAbs": {
+        "old": 0.7825,
+        "new": 0.2354,
+        "improvementPct": 69.91,
+        "ci95": [
+          0.5067,
+          0.5866
+        ],
+        "significant": true,
+        "casesImproved": 310,
+        "casesWorsened": 5
+      },
+      "molarLengthAbs": {
+        "old": 1.0651,
+        "new": 0.3116,
+        "improvementPct": 70.75,
+        "ci95": [
+          0.6521,
+          0.8395
+        ],
+        "significant": true,
+        "casesImproved": 307,
+        "casesWorsened": 8
+      },
+      "tzl": {
+        "old": 6.1292,
+        "new": 1.5703,
+        "improvementPct": 74.38,
+        "ci95": [
+          3.9495,
+          5.1502
+        ],
+        "significant": true,
+        "casesImproved": 274,
+        "casesWorsened": 41
+      }
+    },
+    "krrVsRule": {
+      "position": {
+        "old": 3.8077,
+        "new": 2.1644,
+        "improvementPct": 43.16,
+        "ci95": [
+          1.4642,
+          1.825
+        ],
+        "significant": true,
+        "casesImproved": 243,
+        "casesWorsened": 57
+      },
+      "molar": {
+        "old": 5.2771,
+        "new": 2.7243,
+        "improvementPct": 48.37,
+        "ci95": [
+          2.2462,
+          2.8579
+        ],
+        "significant": true,
+        "casesImproved": 238,
+        "casesWorsened": 62
+      },
+      "endpoint": {
+        "old": 4.0163,
+        "new": 2.3878,
+        "improvementPct": 40.55,
+        "ci95": [
+          1.4568,
+          1.8057
+        ],
+        "significant": true,
+        "casesImproved": 245,
+        "casesWorsened": 55
+      },
+      "lengthAbs": {
+        "old": 1.1084,
+        "new": 0.7825,
+        "improvementPct": 29.4,
+        "ci95": [
+          0.2851,
+          0.3663
+        ],
+        "significant": true,
+        "casesImproved": 237,
+        "casesWorsened": 63
+      },
+      "molarLengthAbs": {
+        "old": 1.3742,
+        "new": 1.0651,
+        "improvementPct": 22.49,
+        "ci95": [
+          0.2461,
+          0.3749
+        ],
+        "significant": true,
+        "casesImproved": 216,
+        "casesWorsened": 84
+      },
+      "tzl": {
+        "old": 12.2453,
+        "new": 6.1292,
+        "improvementPct": 49.95,
+        "ci95": [
+          5.5198,
+          6.6995
+        ],
+        "significant": true,
+        "casesImproved": 260,
+        "casesWorsened": 40
+      }
+    }
+  },
+  "inputSummary": {
+    "datasetCases": 452,
+    "baselineRecords": 452,
+    "matchedUsableBaselines": 452,
+    "taskSamples": {
+      "width": 384,
+      "ez": 113
+    },
+    "taskGroups": {
+      "width": 322,
+      "ez": 113
+    }
+  },
+  "verdict": {
+    "pixelBeatsKrrOnPosition": true,
+    "pixelBeatsKrrOnMolar": true,
+    "pixelBeatsRuleOnPosition": true,
+    "conclusion": "픽셀 모델이 KRR 대비 위치 +85.7% (CI [1.7385, 1.9706]), 어금니 +85.0%"
+  }
+}

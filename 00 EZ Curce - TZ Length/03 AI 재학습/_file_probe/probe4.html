@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>file:// 49MB 모델 자동로드 비용 측정</title></head>
+<body>
+<!--
+  file://에서 .onnx 49MB를 자동으로 넣는 유일한 무조작 경로는 classic script로
+  실어오는 것이다(fetch/XHR 둘 다 차단 실측). 그 **비용**을 재서 실용성을 판단한다:
+    - 65MB base64 스크립트 파싱 시간
+    - atob → Uint8Array 변환 시간과 피크 메모리
+    - 실제 ORT 세션 생성 시간
+  느리면 자동로드 대신 파일 선택(File API)만 남기는 것이 정직한 선택이다.
+-->
+<pre id="out">실행 중…</pre>
+<script src="../../pixel_runtime/ort.wasm.min.js"></script>
+<script src="../../pixel_runtime/ort_glue_src.js"></script>
+<script src="../../pixel_runtime/ort_wasm_b64.js"></script>
+<script>
+window.__T_AFTER_RUNTIME = performance.now();
+</script>
+<script src="../../pixel_runtime/_probe_model_b64.js"></script>
+<script>
+const out = document.getElementById('out');
+const results = { navStartToRuntimeMs: Math.round(window.__T_AFTER_RUNTIME) };
+const log = (k, v) => { out.textContent += '\n' + k + ': ' + v; };
+
+(async () => {
+  out.textContent = 'protocol=' + location.protocol;
+  results.modelScriptParsedMs = Math.round(performance.now());
+  results.glueSrcLoaded = typeof window.__EZ_ORT_GLUE_SRC === 'string';
+  results.gluePatchCount = window.__EZ_ORT_GLUE_PATCH_COUNT || 0;
+  results.wasmBytes = window.__EZ_ORT_WASM_BYTES?.length || 0;
+  results.modelB64Chars = (window.__EZ_MODEL_B64 || '').length;
+  log('runtime+model script parsed at', results.modelScriptParsedMs + 'ms');
+
+  // base64 -> bytes
+  let t = performance.now();
+  const raw = atob(window.__EZ_MODEL_B64);
+  const model = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) model[i] = raw.charCodeAt(i);
+  results.b64DecodeMs = Math.round(performance.now() - t);
+  results.modelBytes = model.length;
+  log('atob+copy', results.b64DecodeMs + 'ms for ' + model.length + ' bytes');
+
+  // 글루 blob + wasmBinary 주입으로 세션 생성
+  try {
+    t = performance.now();
+    const glueUrl = URL.createObjectURL(
+      new Blob([window.__EZ_ORT_GLUE_SRC], { type: 'text/javascript' }));
+    ort.env.wasm.wasmPaths = { mjs: glueUrl, wasm: 'ort-wasm-simd-threaded.wasm' };
+    ort.env.wasm.wasmBinary = window.__EZ_ORT_WASM_BYTES;
+    ort.env.wasm.numThreads = 1;
+    ort.env.wasm.proxy = false;
+    ort.env.logLevel = 'error';
+    const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
+    results.sessionCreateMs = Math.round(performance.now() - t);
+    results.inputNames = session.inputNames;
+    results.outputNames = session.outputNames;
+    log('session created', results.sessionCreateMs + 'ms inputs=' + JSON.stringify(session.inputNames));
+
+    // 실제 추론 1회 (검은 512x512 입력) — 출력 형태와 시간 확인
+    t = performance.now();
+    const tensor = new ort.Tensor('float32', new Float32Array(1 * 3 * 512 * 512), [1, 3, 512, 512]);
+    const feeds = {}; feeds[session.inputNames[0]] = tensor;
+    const o = await session.run(feeds);
+    results.inferenceMs = Math.round(performance.now() - t);
+    results.outputShapes = session.outputNames.map((n) => o[n]?.dims);
+    results.sessionOk = true;
+    log('inference', results.inferenceMs + 'ms shapes=' + JSON.stringify(results.outputShapes));
+  } catch (e) {
+    results.sessionOk = false;
+    results.sessionError = String(e.message || e).slice(0, 240);
+    log('session', 'FAIL ' + String(e.message || e).slice(0, 200));
+  }
+
+  results.totalMs = Math.round(performance.now());
+  if (performance.memory) {
+    results.jsHeapUsedMb = Math.round(performance.memory.usedJSHeapSize / 1048576);
+  }
+  document.documentElement.dataset.probeDone = 'true';
+  document.documentElement.dataset.probeResults = JSON.stringify(results);
+})();
+</script>
+</body></html>

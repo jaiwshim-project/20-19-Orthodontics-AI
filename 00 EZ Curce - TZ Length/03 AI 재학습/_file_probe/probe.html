@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>file:// 모듈 import 프로브</title></head>
+<body>
+<!--
+  file:// 에서 ORT WASM 글루(.mjs)를 로드할 수 있는 경로가 있는지 실측한다.
+  ORT 1.20.1 로더의 차단 지점은 딱 한 줄이다:
+      Dr = async t => (await import(t)).default
+  즉 "모듈 URL을 import"만 되면 글루는 살아난다. 후보 4가지를 각각 시험한다.
+
+  ⚠️ 이 프로브가 확인하는 것은 "import가 되는가"뿐이 아니다. blob/data URL로 import된
+     모듈은 **자기 위치를 기준으로 .wasm을 찾을 수 없다**(import.meta.url이 blob:).
+     그래서 wasmBinary 주입까지 함께 시험해야 실제로 쓸 수 있는지 알 수 있다.
+-->
+<pre id="out">실행 중…</pre>
+<script src="glue_source.js"></script>
+<script>
+const out = document.getElementById('out');
+const log = (k, v) => { out.textContent += '\n' + k + ': ' + v; };
+const results = {};
+
+async function tryImport(label, makeUrl) {
+  try {
+    const url = makeUrl();
+    const mod = await import(/*webpackIgnore:true*/ url);
+    const ok = typeof mod.default === 'function';
+    results[label] = { imported: true, hasDefault: ok };
+    log(label, 'OK (default=' + typeof mod.default + ')');
+    return mod.default;
+  } catch (e) {
+    results[label] = { imported: false, error: String(e.message || e).slice(0, 200) };
+    log(label, 'FAIL ' + String(e.message || e).slice(0, 160));
+    return null;
+  }
+}
+
+(async () => {
+  out.textContent = 'protocol=' + location.protocol
+    + '  glueSourceLoaded=' + (typeof window.__ORT_GLUE_SOURCE === 'string')
+    + '  glueChars=' + (window.__ORT_GLUE_SOURCE || '').length;
+
+  // ① 상대 경로 — 기준선(실패가 예상되는 현행 동작)
+  await tryImport('relativeMjs', () => 'ort-wasm-simd-threaded.mjs');
+
+  // ② 절대 file:// URL — 경로는 맞지만 CORS가 막는지 확인
+  await tryImport('absoluteFileUrl',
+    () => new URL('ort-wasm-simd-threaded.mjs', document.baseURI).href);
+
+  // ③ blob URL (classic script로 실어온 소스 문자열에서 생성)
+  const blobFactory = await tryImport('blobUrl', () => {
+    const blob = new Blob([window.__ORT_GLUE_SOURCE], { type: 'text/javascript' });
+    return URL.createObjectURL(blob);
+  });
+
+  // ④ data URL
+  const dataFactory = await tryImport('dataUrl',
+    () => 'data:text/javascript;base64,'
+      + btoa(unescape(encodeURIComponent(window.__ORT_GLUE_SOURCE))));
+
+  // 글루 팩토리를 실제로 **초기화**해 본다. import만 되고 초기화가 안 되면 무의미하다.
+  // .wasm은 fetch가 막히므로 wasmBinary로 직접 주입한다(=locateFile 불필요).
+  const factory = blobFactory || dataFactory;
+  if (factory && window.__ORT_WASM_BYTES) {
+    try {
+      const mod = await factory({ numThreads: 1, wasmBinary: window.__ORT_WASM_BYTES });
+      const fn = mod && (mod._OrtInit || mod._OrtCreateSessionOptions);
+      results.wasmInstantiate = { ok: !!fn, exports: Object.keys(mod || {}).length };
+      log('wasmInstantiate', (fn ? 'OK' : 'MODULE BUT NO ORT EXPORT')
+        + ' (exports=' + Object.keys(mod || {}).length + ')');
+    } catch (e) {
+      results.wasmInstantiate = { ok: false, error: String(e.message || e).slice(0, 200) };
+      log('wasmInstantiate', 'FAIL ' + String(e.message || e).slice(0, 160));
+    }
+  } else {
+    results.wasmInstantiate = { ok: false, error: '글루 또는 wasm 바이트 없음' };
+    log('wasmInstantiate', 'SKIP');
+  }
+
+  document.documentElement.dataset.probeDone = 'true';
+  document.documentElement.dataset.probeResults = JSON.stringify(results);
+})();
+</script>
+</body></html>

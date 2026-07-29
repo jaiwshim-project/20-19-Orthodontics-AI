@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "pixel-app-metrics-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false
+  },
+  "purpose": "좌표 오차가 아니라 **앱이 화면에 띄우는 EZL/TZL(mm)** 기준 평가. 픽셀 모델은 EZ를 예측하지 않으므로 px/mm 스케일은 여전히 EZ가 정한다.",
+  "scaleConvention": "pxPerMm = |ez[last]-ez[0]| / 54 (앱 calculateMetricsFor와 동일)",
+  "ezlCaveat": "앱은 EZL에 correctedCurveLength(치아 점유 구간만)를 쓰지만 여기서는 전체 곡선 길이를 쓴다. 모든 조합에 같은 방식이라 비교는 공정하지만 절대값은 앱 표시와 다르다.",
+  "cases": 60,
+  "limitedBy": "EZ 라벨 113건",
+  "combinations": {
+    "rule": "규칙엔진 EZ + 규칙엔진 폭 (현행 초안)",
+    "krr": "KRR 3단 EZ + KRR 3단 폭 (현행 연구 보정)",
+    "pixelOnRuleEz": "규칙엔진 EZ + 픽셀 모델 폭 (통합안 A)",
+    "pixelOnKrrEz": "KRR EZ + 픽셀 모델 폭 (통합안 B, 권장)",
+    "pixelOnTruthEz": "정답 EZ + 픽셀 모델 폭 (**오라클**, 달성 불가 — EZ 상한)"
+  },
+  "maeMm": {
+    "rule": {
+      "ezlMm": 4.4225,
+      "tzlMm": 7.9736,
+      "differenceMm": 7.5933
+    },
+    "krr": {
+      "ezlMm": 3.4398,
+      "tzlMm": 5.4915,
+      "differenceMm": 5.5717
+    },
+    "pixelOnRuleEz": {
+      "ezlMm": 4.4225,
+      "tzlMm": 6.9395,
+      "differenceMm": 8.6983
+    },
+    "pixelOnKrrEz": {
+      "ezlMm": 3.4398,
+      "tzlMm": 4.7225,
+      "differenceMm": 5.7063
+    },
+    "pixelOnTruthEz": {
+      "ezlMm": 0.0,
+      "tzlMm": 2.1441,
+      "differenceMm": 2.1441
+    }
+  },
+  "p95Mm": {
+    "rule": {
+      "ezlMm": 9.7426,
+      "tzlMm": 18.1988,
+      "differenceMm": 22.4065
+    },
+    "krr": {
+      "ezlMm": 7.1576,
+      "tzlMm": 14.2376,
+      "differenceMm": 15.3979
+    },
+    "pixelOnRuleEz": {
+      "ezlMm": 9.7426,
+      "tzlMm": 18.7714,
+      "differenceMm": 18.2796
+    },
+    "pixelOnKrrEz": {
+      "ezlMm": 7.1576,
+      "tzlMm": 9.5264,
+      "differenceMm": 16.4581
+    },
+    "pixelOnTruthEz": {
+      "ezlMm": 0.0,
+      "tzlMm": 3.4632,
+      "differenceMm": 3.4632
+    }
+  },
+  "paired": {
+    "pixelOnRuleEzVsKrr": {
+      "ezlMm": {
+        "old": 3.4398,
+        "new": 4.4225,
+        "improvementPct": -28.57,
+        "ci95": [
+          -1.634,
+          -0.3154
+        ],
+        "significant": false,
+        "casesImproved": 17,
+        "casesWorsened": 39
+      },
+      "tzlMm": {
+        "old": 5.4915,
+        "new": 6.9395,
+        "improvementPct": -26.37,
+        "ci95": [
+          -2.992,
+          0.1286
+        ],
+        "significant": false,
+        "casesImproved": 21,
+        "casesWorsened": 39
+      },
+      "differenceMm": {
+        "old": 5.5717,
+        "new": 8.6983,
+        "improvementPct": -56.12,
+        "ci95": [
+          -4.8237,
+          -1.4564
+        ],
+        "significant": false,
+        "casesImproved": 21,
+        "casesWorsened": 39
+      }
+    },
+    "pixelOnKrrEzVsKrr": {
+      "ezlMm": {
+        "old": 3.4398,
+        "new": 3.4398,
+        "improvementPct": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "significant": false,
+        "casesImproved": 0,
+        "casesWorsened": 0
+      },
+      "tzlMm": {
+        "old": 5.4915,
+        "new": 4.7225,
+        "improvementPct": 14.0,
+        "ci95": [
+          -0.62,
+          2.1145
+        ],
+        "significant": false,
+        "casesImproved": 32,
+        "casesWorsened": 28
+      },
+      "differenceMm": {
+        "old": 5.5717,
+        "new": 5.7063,
+        "improvementPct": -2.42,
+        "ci95": [
+          -1.6477,
+          1.3066
+        ],
+        "significant": false,
+        "casesImproved": 30,
+        "casesWorsened": 30
+      }
+    },
+    "pixelOnTruthEzVsKrr": {
+      "ezlMm": {
+        "old": 3.4398,
+        "new": 0.0,
+        "improvementPct": 100.0,
+        "ci95": [
+          2.8326,
+          4.073
+        ],
+        "significant": true,
+        "casesImproved": 60,
+        "casesWorsened": 0
+      },
+      "tzlMm": {
+        "old": 5.4915,
+        "new": 2.1441,
+        "improvementPct": 60.96,
+        "ci95": [
+          1.9715,
+          4.652
+        ],
+        "significant": true,
+        "casesImproved": 48,
+        "casesWorsened": 12
+      },
+      "differenceMm": {
+        "old": 5.5717,
+        "new": 2.1441,
+        "improvementPct": 61.52,
+        "ci95": [
+          1.7576,
+          4.9376
+        ],
+        "significant": true,
+        "casesImproved": 45,
+        "casesWorsened": 15
+      }
+    },
+    "pixelOnKrrEzVsRule": {
+      "ezlMm": {
+        "old": 4.4225,
+        "new": 3.4398,
+        "improvementPct": 22.22,
+        "ci95": [
+          0.3154,
+          1.634
+        ],
+        "significant": true,
+        "casesImproved": 39,
+        "casesWorsened": 17
+      },
+      "tzlMm": {
+        "old": 7.9736,
+        "new": 4.7225,
+        "improvementPct": 40.77,
+        "ci95": [
+          1.4702,
+          5.0469
+        ],
+        "significant": true,
+        "casesImproved": 38,
+        "casesWorsened": 22
+      },
+      "differenceMm": {
+        "old": 7.5933,
+        "new": 5.7063,
+        "improvementPct": 24.85,
+        "ci95": [
+          -0.2397,
+          4.0113
+        ],
+        "significant": false,
+        "casesImproved": 35,
+        "casesWorsened": 25
+      }
+    }
+  },
+  "inputSummary": {
+    "datasetCases": 452,
+    "baselineRecords": 452,
+    "matchedUsableBaselines": 452,
+    "taskSamples": {
+      "width": 384,
+      "ez": 113
+    },
+    "taskGroups": {
+      "width": 322,
+      "ez": 113
+    }
+  },
+  "verdict": {
+    "tzlImprovesOverKrr": false,
+    "ezlImprovesOverKrr": false,
+    "conclusion": "앱 표시 기준 TZL 5.4915→4.7225mm (+14.0%, 유의=False), EZL 3.4398→3.4398mm (+0.0%, 유의=False). EZ가 완벽하면 TZL 2.1441mm까지 가므로, 남은 여력은 폭이 아니라 **EZ 곡선**에 있다 — 픽셀 모델은 EZ를 예측하지 않는다."
+  }
+}

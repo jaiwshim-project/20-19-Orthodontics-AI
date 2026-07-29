@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { saveDiagnosis } from '../lib/supabase.js';
+import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -119,26 +120,37 @@ export default async function handler(req, res) {
   const cleanPatient = normalizeInputs(patient);
   const cleanInputs = normalizeInputs(inputs);
 
-  if (!GEMINI_API_KEY) {
-    console.warn('[diagnose] GEMINI_API_KEY 미설정 → 폴백 사용');
+  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+    console.warn('[diagnose] AI provider 미설정 → 폴백 사용');
     return res.status(200).json({ ...fallbackResult(type, cleanInputs), fallback: true });
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash-lite',
-      systemInstruction: PROMPTS[type],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
-    });
-
     const userMsg = `환자: ${JSON.stringify(cleanPatient)}\n입력: ${JSON.stringify(cleanInputs)}\n\nJSON으로만 응답하세요.`;
-    // 30초 timeout으로 Gemini 응답 보호
-    const result = await Promise.race([
-      model.generateContent(userMsg),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 30s')), 30000))
-    ]);
-    const text = result.response.text();
+    let text;
+
+    if (isAzureChatConfigured()) {
+      text = await azureChatCompletion({
+        system: PROMPTS[type],
+        messages: [{ role: 'user', content: userMsg }],
+        responseFormat: 'json',
+        temperature: 0.2,
+        timeoutMs: 30000
+      });
+    } else {
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        systemInstruction: PROMPTS[type],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
+      });
+
+      const result = await Promise.race([
+        model.generateContent(userMsg),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 30s')), 30000))
+      ]);
+      text = result.response.text();
+    }
 
     let parsed;
     try {

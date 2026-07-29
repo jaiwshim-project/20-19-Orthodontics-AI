@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
+import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MAX_BYTES = 50 * 1024 * 1024;
@@ -22,6 +23,16 @@ function inferMimeFromName(name = '') {
 }
 
 async function analyzeImage(base64, mime) {
+  if (isAzureChatConfigured()) {
+    return azureVisionCompletion({
+      system: '당신은 교정치과 영상 분석 AI입니다. 입력 이미지가 X-ray, 구강사진, 모형 사진 중 무엇인지 판별하고, 발견된 임상적 특징을 한국어로 요약하세요.',
+      images: [{ base64, contentType: mime }],
+      prompt: '이 이미지에서 관찰되는 교정학적 특징을 5개 항목으로 요약하고, 추가 검사의 필요성을 명시하세요.',
+      temperature: 0.2,
+      timeoutMs: 30000
+    });
+  }
+
   if (!GEMINI_API_KEY) return '이미지 분석을 위한 API 키가 설정되지 않았습니다.';
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({

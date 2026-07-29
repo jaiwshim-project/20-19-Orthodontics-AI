@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
+import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -133,7 +134,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '저장된 진단이 없습니다. 먼저 4종 AI 진단 중 하나 이상을 실행하세요.' });
   }
 
-  if (!GEMINI_API_KEY) {
+  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
     return res.status(200).json(fallbackPlan(patient, diagnoses));
   }
 
@@ -141,18 +142,29 @@ export default async function handler(req, res) {
     const ctx = buildContext(patient, diagnoses);
     const userMsg = `환자 컨텍스트:\n${JSON.stringify(ctx, null, 2)}\n\n위 4가지 AI 진단 결과를 종합해 단일 통합 치료 계획을 JSON으로 반환하세요.\n반드시 한국어로 작성하되 의학 용어는 영문 병기.`;
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-pro',
-      systemInstruction: SYSTEM_PROMPT,
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.3 }
-    });
+    let text;
+    if (isAzureChatConfigured()) {
+      text = await azureChatCompletion({
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }],
+        responseFormat: 'json',
+        temperature: 0.3,
+        timeoutMs: 50000
+      });
+    } else {
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-pro',
+        systemInstruction: SYSTEM_PROMPT,
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.3 }
+      });
 
-    const result = await Promise.race([
-      model.generateContent(userMsg),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 50s')), 50000))
-    ]);
-    const text = result.response.text();
+      const result = await Promise.race([
+        model.generateContent(userMsg),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('Gemini timeout 50s')), 50000))
+      ]);
+      text = result.response.text();
+    }
 
     let parsed;
     try {

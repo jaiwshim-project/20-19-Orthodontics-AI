@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "source": "교정학 자료-김용을 원장.pdf",
+    "author": "Yong E. Kim (김용을)",
+    "coAuthors": ["Jong-moon Chae", "Jusik Kim", "Hye Young Seo"],
+    "learnedAt": "2026-06-29",
+    "totalPages": 25,
+    "description": "Buccinator Mechanism 기반 EZL/TTL 이론 + 임상 케이스 + Customized Treatment Goal"
+  },
+
+  "core_theory": {
+    "title": "BUCCINATOR MECHANISM",
+    "principle": "각 치아의 배열, 악궁의 형태, 악궁의 크기, 반대쪽 악궁과의 조화는 모두 주변 연조직의 안정화 기능에 의해 영향을 받습니다.",
+    "english": "Alignment of each tooth, arch form, arch size, and coordination with opposing arch are all influenced by the stabilizing function of surrounding soft tissue.",
+    "force_balance": "혀(5-10g 압력) ↔ 볼/입술 압력 = 치아 위치 결정"
+  },
+
+  "ezl_ttl_definition": {
+    "EZL": {
+      "fullName": "Equilibrium Zone Length",
+      "color": "Yellow (노란색)",
+      "meaning": "혀와 입술/볼의 압력 균형에 의해 결정되는 안정적 악궁 길이",
+      "measurement": "교합면 사진에서 노란색 곡선의 호 길이",
+      "determines": "치아가 안정적으로 위치할 수 있는 공간의 총 길이"
+    },
+    "TTL": {
+      "fullName": "Total Teeth Length",
+      "color": "Black (검은색) 또는 Red (빨간색)",
+      "meaning": "실제 치아들의 근원심 폭경(mesiodistal width)의 합",
+      "measurement": "교합면 사진에서 검은색/빨간색 곡선의 호 길이 또는 치아 폭 합산",
+      "determines": "현재 치아들이 차지하는 실제 공간의 총 길이"
+    },
+    "comparison": {
+      "EZL_equals_TTL": "정상적인 치아 배열 (Normal alignment)",
+      "EZL_greater_TTL": "빈공간이 보이는 치아 배열 (Spacing)",
+      "EZL_less_TTL": "삐드럭니 (Protruding teeth / Crowding)"
+    }
+  },
+
+  "terminology_mapping": {
+    "previous_platform_terms": {
+      "EZ": "Equilibrium Zone — 김용을 원장의 EZL과 동일 개념",
+      "TZ": "Transition Zone — 현재 치아 배열선, 김용을 원장의 TTL에 해당"
+    },
+    "correct_terms": {
+      "EZL": "안정 영역 길이 (Yellow Arch Length) — 목표 악궁 길이",
+      "TTL": "총 치아 길이 (Black Arch Length) — 현재 치아 공간 필요량"
+    },
+    "discrepancy": "TTL - EZL = 공간 부족량 (양수=crowding, 음수=spacing)"
+  },
+
+  "curve_drawing_rules": {
+    "EZL_curve": {
+      "color": "노란색 (Yellow)",
+      "shape": "부드러운 U자형 (상악) 또는 역U자형 (하악)",
+      "reference_points": "양측 최후방 구치 위치를 앵커로, 연조직 균형점을 따라 매끄럽게 연결",
+      "represents": "치아가 안정적으로 존재할 수 있는 이상적 악궁 경계",
+      "position": "치아 바깥쪽 (labial/buccal surface) 기준"
+    },
+    "TTL_curve": {
+      "color": "검은색/빨간색 (Black/Red)",
+      "shape": "실제 치아 절단연/교두정을 따라 그린 곡선",
+      "reference_points": "각 치아의 가장 바깥쪽 접촉점을 순서대로 연결",
+      "represents": "현재 치아들이 실제로 차지하는 공간의 호"
+    },
+    "visual_from_pdf": {
+      "page1_upper": "상악 교합면: 노란색=EZL(바깥쪽 큰 호), 빨간색=TTL(치아를 따라 안쪽 호)",
+      "page1_lower": "하악 교합면: 노란색=EZL(바깥쪽 큰 호), 빨간색=TTL(치아를 따라 안쪽 호)",
+      "page3_before": "초진: EZ(yellow)가 치아 바깥쪽을 감싸는 형태 — 상악과 하악 각각 표시",
+      "page8_after": "최종: 치료 후 치아가 EZ 안으로 안정적으로 배열된 상태",
+      "page22_adult": "성인 케이스: 상악/하악 교합면에 노란 EZ 곡선 표시"
+    }
+  },
+
+  "clinical_cases": [
+    {
+      "patient": "이주경",
+      "gender": "F",
+      "age": "11-2",
+      "chiefComplaint": "My teeth are sticking out",
+      "diagnosis": [
+        "Mild skeletal Class II, Dental class I malocclusion in late mixed dentition",
+        "Upper and Lower mild crowding: U -1.5mm, L -2mm",
+        "Anterior openbite: -2mm",
+        "Upper and lower anterior teeth labial inclination",
+        "Upper and lower lip protrusion: UL +3.5mm/E, LL +5.9mm/E",
+        "Lip incompetence",
+        "Hypermentalis"
+      ],
+      "treatmentGoal": ["Align crowded teeth", "Correct open bite", "Improve facial profile"],
+      "treatmentPlan": "Ext. U4, L4 (발치 교정)",
+      "alternatives": ["Non Ext: RPE(?)", "Ext: U4,L4 or U4,L5"],
+      "cephValues_before": { "SNA": 79.4, "SNB": 75.3, "ANB": 4.1, "FMA": 27, "IMPA": 94.02 },
+      "duration": "2018.07 → 2022.04 (약 3.5년)",
+      "ezNote": "Before: EZ 바깥으로 치아 돌출 (TTL > EZL). After: 치아가 EZ 안으로 정렬됨"
+    },
+    {
+      "patient": "송은영",
+      "gender": "F",
+      "age": 19,
+      "classification": "Class III",
+      "cephValues_before": { "SNA": 82.5, "SNB": 85.2, "ANB": -2.7, "Saddle_angle": 109, "FMA": 27, "IMPA": 89 },
+      "cephValues_after": { "SNA": 82.8, "SNB": 84.8, "ANB": -2.0, "Saddle_angle": 109, "FMA": 27.5, "IMPA": 89 },
+      "note": "Class III 비발치 케이스 — 세팔로 중첩으로 치료 전후 변화 확인"
+    },
+    {
+      "patient": "윤경선",
+      "gender": "F",
+      "age": 24,
+      "classification": "Class II (severe)",
+      "cephValues_before": { "SNA": 77.8, "SNB": 68.9, "ANB": 9.2, "Saddle_angle": 109, "FMA": 42.6, "IMPA": 88.7 },
+      "cephValues_after": { "SNA": 75.9, "SNB": 70.5, "ANB": 5.4, "Saddle_angle": 109, "FMA": 41.5, "IMPA": 98.3 },
+      "note": "심한 Class II — 발치 교정으로 ANB 9.2→5.4 개선, IMPA 88.7→98.3 (하악 전치 순측 이동)"
+    }
+  ],
+
+  "customized_treatment_goal": {
+    "horizontal": {
+      "title": "Customized Treatment Goal by Horizontal Skeletal Discrepancy",
+      "categories": {
+        "Class I": "직선형 프로파일 — 정상 교합, 안정적 EZ/TTL 관계",
+        "Class II": "볼록형 프로파일 — 상악 전방/하악 후퇴, ANB 증가",
+        "Class III": "오목형 프로파일 — 하악 전방/상악 후퇴, ANB 감소 또는 음수"
+      }
+    },
+    "vertical": {
+      "title": "Customized Treatment Goal by Vertical Skeletal Discrepancy",
+      "categories": {
+        "Brachy": "저각(low angle) — FMA < 20°, deep bite 경향, 짧은 하안면",
+        "Dolicho": "고각(high angle) — FMA > 30°, open bite 경향, 긴 하안면"
+      }
+    },
+    "normal_occlusion": {
+      "title": "NORMAL OCCLUSION (= Customized Treatment Goal)",
+      "description": "인종/개인별 정상 교합이 다름 — 각 환자의 골격 유형에 맞는 개별화된 치료 목표 설정 필요",
+      "key_principle": "정상의 정의가 없으면 → 객관적 진단 기준 없음 → 비객관적 치료 목표 → 다양한 치료 결과 → 불만족/불안정한 결과"
+    }
+  },
+
+  "open_bite_theory": {
+    "title": "PHYSIO-ETIOLOGY of OPEN BITE: Buttress effect",
+    "authors": "Yong E. Kim, Jong-moon Chae, Jusik Kim, Hye Young Seo",
+    "concept": "Open bite의 생리-병인학적 원인으로 Buttress effect(지지대 효과) 제시"
+  },
+
+  "platform_update": {
+    "terminology_correction": {
+      "old": "EZ/TZ (Equilibrium Zone / Transition Zone)",
+      "new": "EZL/TTL (Equilibrium Zone Length / Total Teeth Length)",
+      "reason": "김용을 원장의 원래 용어를 정확히 반영. EZL=안정 영역 길이, TTL=총 치아 길이"
+    },
+    "color_convention": {
+      "EZL": "노란색 (Yellow) — 부드러운 이상적 악궁",
+      "TTL": "빨간색/검은색 — 실제 치아 위치를 따른 곡선"
+    },
+    "discrepancy_formula": "TTL - EZL > 0 → Crowding (발치 검토) | TTL - EZL < 0 → Spacing | TTL - EZL ≈ 0 → 정상"
+  }
+}

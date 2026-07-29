@@ -50,3 +50,25 @@ logs/
 
 # 측정 로그(재생성 가능)
 03 AI 재학습/_*.log
+
+# ── 픽셀 랜드마크 (2026-07-29) ──────────────────────────────────────
+# 환자 사진·주석 데이터셋 (PHI) — 절대 커밋 금지
+*/03 AI 재학습/pixel_dataset/
+# 학습 체크포인트 702MB (재생성 가능: _train_final.py)
+*/03 AI 재학습/pixel_model/
+# file:// 전용 base64 사본 (95MB) — HTTP 배포에서는 쓰이지 않는다.
+# 로컬에서 _gen_file_shim.py 로 재생성한다.
+**/pixel_runtime/model_b64.js
+**/pixel_runtime/ort_wasm_b64.js
+**/pixel_runtime/ort_glue_src.js
+
+# 테스팅 이미지 모음 (413MB, 환자 사진 포함)
+01 플랫폼 테스팅 이미지 모음/
+재분류/
+# 디버그 스크린샷
+screenshot_*.png
+# 격리 산출물
+*.quarantine
+
+# ONNX export 중간 산출물 140MB (pixel_runtime/ 사본) — 재생성: _export_onnx.py
+*/03 AI 재학습/_onnx_probe/*.onnx
