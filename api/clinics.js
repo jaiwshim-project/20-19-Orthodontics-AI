@@ -1,4 +1,5 @@
 import { listClinics, upsertClinic } from '../lib/supabase.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 let cache = null;
 let cacheAt = 0;
@@ -58,6 +59,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (e) {
     console.error('[clinics] 실패:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

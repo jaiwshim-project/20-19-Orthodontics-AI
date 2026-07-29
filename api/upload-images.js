@@ -1,4 +1,5 @@
 import { getAdmin } from '../lib/supabase.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const BUCKET = 'diagnosis-images';
 const MAX_BYTES_PER = 20 * 1024 * 1024;
@@ -70,7 +71,7 @@ export default async function handler(req, res) {
       });
     } catch (e) {
       console.error(`[upload-images] ${slot} 실패:`, e.message);
-      errors.push({ slot, error: e.message });
+      errors.push({ slot, error: safeErrorMessage(e) });
     }
   }
 

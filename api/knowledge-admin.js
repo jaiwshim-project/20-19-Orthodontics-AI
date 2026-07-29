@@ -1,5 +1,6 @@
 import { getAdmin } from '../lib/supabase.js';
 import { embed, embedBatch } from '../lib/embeddings.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 // ============================================================
 // 김용을 원장 자료 RAG 지식베이스 관리 API
@@ -84,7 +85,7 @@ export default async function handler(req, res) {
         total: (data || []).length
       });
     } catch (e) {
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ error: safeErrorMessage(e) });
     }
   }
 
@@ -137,7 +138,7 @@ export default async function handler(req, res) {
       });
     } catch (e) {
       console.error('[knowledge-admin] add 실패:', e.message);
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ error: safeErrorMessage(e) });
     }
   }
 
@@ -149,7 +150,7 @@ export default async function handler(req, res) {
       if (error) throw error;
       return res.status(200).json({ deleted: id });
     } catch (e) {
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ error: safeErrorMessage(e) });
     }
   }
 

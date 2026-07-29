@@ -1,5 +1,6 @@
 import { getAdmin } from '../lib/supabase.js';
 import sharp from 'sharp';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 export const config = {
   api: { bodyParser: { sizeLimit: '1mb' } }
@@ -82,7 +83,7 @@ export default async function handler(req, res) {
           label: SLOT_LABELS[slot]
         };
       } catch (e) {
-        errors.push({ slot, path: meta.path, error: e.message });
+        errors.push({ slot, path: meta.path, error: safeErrorMessage(e) });
       }
     }
 
@@ -112,6 +113,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[get-yoon-sohee-sample] failed:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

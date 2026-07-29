@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { saveDiagnosis } from '../lib/supabase.js';
 import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -178,6 +179,6 @@ export default async function handler(req, res) {
     return res.status(200).json(parsed);
   } catch (e) {
     console.error('[diagnose] 실패:', e);
-    return res.status(200).json({ ...fallbackResult(type, cleanInputs), fallback: true, error: e.message });
+    return res.status(200).json({ ...fallbackResult(type, cleanInputs), fallback: true, error: safeErrorMessage(e) });
   }
 }

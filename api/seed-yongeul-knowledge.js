@@ -1,5 +1,6 @@
 import { getAdmin } from '../lib/supabase.js';
 import { embed } from '../lib/embeddings.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 // ============================================================
 // 김용을 원장 자료 시드 — 환자 상담 RAG 초기 지식
@@ -94,7 +95,7 @@ export default async function handler(req, res) {
       if (embedVec) results.embedded++; else results.without_embedding++;
     } catch (e) {
       console.error('[seed-yongeul]', chunk.source, e.message);
-      results.errors.push({ source: chunk.source, error: e.message });
+      results.errors.push({ source: chunk.source, error: safeErrorMessage(e) });
     }
   }
 

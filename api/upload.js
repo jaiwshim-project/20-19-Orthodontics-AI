@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
 import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MAX_BYTES = 50 * 1024 * 1024;
@@ -129,6 +130,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[upload] 실패:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

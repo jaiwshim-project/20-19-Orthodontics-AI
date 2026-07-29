@@ -4,6 +4,7 @@ import {
   azureChatCompletion, isAzureChatConfigured,
   anthropicChatCompletion, isAnthropicConfigured
 } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 // ============================================================
 // 환자 상담 AI — 김용을 원장 RAG 자료 기반
@@ -177,6 +178,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[consult] 처리 실패:', e);
-    return res.status(500).json({ error: e.message || '내부 서버 오류' });
+    return res.status(500).json({ error: safeErrorMessage(e) || '내부 서버 오류' });
   }
 }

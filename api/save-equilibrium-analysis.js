@@ -1,4 +1,5 @@
 import { getAdmin } from '../lib/supabase.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 export const config = {
   api: { bodyParser: { sizeLimit: '25mb' } }
@@ -99,7 +100,7 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error('[save-equilibrium-analysis] failed:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }
 

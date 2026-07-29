@@ -1,5 +1,6 @@
 import { getAdmin } from '../lib/supabase.js';
 import { embed } from '../lib/embeddings.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const ADMIN_PASS = process.env.ADMIN_DASH_PASS || 'orthodontics-admin-2026';
 
@@ -132,7 +133,7 @@ export default async function handler(req, res) {
       results.inserted++;
     } catch (e) {
       console.error('[seed-knowledge]', chunk.source, e.message);
-      results.errors.push({ source: chunk.source, error: e.message });
+      results.errors.push({ source: chunk.source, error: safeErrorMessage(e) });
     }
   }
 

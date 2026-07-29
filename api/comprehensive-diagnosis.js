@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -292,6 +293,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ ...sanitizeResult(parsed, body, images), fallback: false, usedImages: images.map(i => i.key) });
   } catch (error) {
     console.error('[comprehensive-diagnosis] failed:', error);
-    return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, error: error.message, usedImages: images.map(i => i.key) });
+    return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, error: safeErrorMessage(error), usedImages: images.map(i => i.key) });
   }
 }

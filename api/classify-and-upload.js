@@ -1,5 +1,6 @@
 import { getAdmin } from '../lib/supabase.js';
 import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BUCKET = 'patient-photos';
@@ -147,7 +148,8 @@ export default async function handler(req, res) {
         confidence: classification.confidence,
         storagePath,
         publicUrl,
-        error: error?.message || null
+        // 성공 항목은 null 을 유지해야 한다 — safeErrorMessage 는 항상 문자열을 준다
+        error: error ? safeErrorMessage(error) : null
       });
     }
 
@@ -184,6 +186,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, results, photoUrls });
   } catch (e) {
     console.error('[classify-and-upload]', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

@@ -1,4 +1,5 @@
 import { getAdmin } from '../lib/supabase.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 function fixKoreanEncoding(text) {
   if (!text || typeof text !== 'string') return text;
@@ -108,6 +109,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[save-diagnosis] 실패:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

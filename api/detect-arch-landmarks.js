@@ -1,4 +1,5 @@
 import { isAzureChatConfigured, azureVisionCompletion } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -177,6 +178,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[detect-arch-landmarks]', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: safeErrorMessage(e) });
   }
 }

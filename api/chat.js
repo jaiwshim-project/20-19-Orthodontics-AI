@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { searchKnowledge, saveConversation } from '../lib/supabase.js';
 import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -128,6 +129,6 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     console.error('[chat] 처리 실패:', e);
-    return res.status(500).json({ error: e.message || '내부 서버 오류' });
+    return res.status(500).json({ error: safeErrorMessage(e) || '내부 서버 오류' });
   }
 }
