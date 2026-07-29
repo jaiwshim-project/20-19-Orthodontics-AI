@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "remote-claude-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsApiKeys": false,
+    "note": "합성 PNG + 더미 수치. 응답 본문은 저장하지 않고 provider 만 기록"
+  },
+  "purpose": "프로덕션에서 Claude 분기가 실제로 실행되는지 + 키 유출 0 재확인",
+  "target": "https://20-19-orthodontics-ai.vercel.app",
+  "probes": [
+    {
+      "name": "consult (HEAVY)",
+      "route": "/api/consult",
+      "status": 200,
+      "ms": 5063,
+      "ok": true,
+      "why": "provider=anthropic",
+      "keyLeak": false
+    },
+    {
+      "name": "chat (HEAVY)",
+      "route": "/api/chat",
+      "status": 200,
+      "ms": 14640,
+      "ok": true,
+      "why": "provider=anthropic",
+      "keyLeak": false
+    },
+    {
+      "name": "measure-tooth-widths (VISION)",
+      "route": "/api/measure-tooth-widths",
+      "status": 200,
+      "ms": 4102,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 teeth=0",
+      "keyLeak": false
+    },
+    {
+      "name": "detect-arch-landmarks (VISION)",
+      "route": "/api/detect-arch-landmarks",
+      "status": 200,
+      "ms": 8983,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 success=true",
+      "keyLeak": false
+    },
+    {
+      "name": "analyze-image (VISION)",
+      "route": "/api/analyze-image",
+      "status": 200,
+      "ms": 4431,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5",
+      "keyLeak": false
+    },
+    {
+      "name": "classify-diagnosis (VISION)",
+      "route": "/api/classify-diagnosis",
+      "status": 200,
+      "ms": 19454,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 status=200",
+      "keyLeak": false
+    },
+    {
+      "name": "comprehensive-diagnosis (HEAVY)",
+      "route": "/api/comprehensive-diagnosis",
+      "status": 200,
+      "ms": 45834,
+      "ok": true,
+      "why": "provider=anthropic:claude-opus-5",
+      "keyLeak": false
+    },
+    {
+      "name": "diagnose (HEAVY)",
+      "route": "/api/diagnose",
+      "status": 200,
+      "ms": 38911,
+      "ok": true,
+      "why": "fallback=undefined score=85",
+      "keyLeak": false
+    }
+  ],
+  "verdict": {
+    "okCount": 8,
+    "total": 8,
+    "keyLeaks": 0,
+    "failed": []
+  }
+}

@@ -37,6 +37,9 @@ async function classifyImage(base64, mime, filename) {
 
   try {
     let response;
+    // ⚠️ 어느 provider 가 실제로 돌았는지 응답에 실어야 원격에서 실측할 수 있다
+    //    ("파일에 코드가 있다" ≠ "그 분기가 돌았다").
+    let usedProvider = 'filename-fallback';
     if (isAnthropicConfigured()) {
       // 카테고리/슬롯 태깅은 '단순 판별' → LIGHT(haiku) 로 충분하다.
       // 업로드 1장마다 호출되므로 무거운 모델을 쓰면 비용·지연이 장수에 비례한다.
@@ -49,6 +52,7 @@ async function classifyImage(base64, mime, filename) {
         temperature: 0.1,
         timeoutMs: 25000
       });
+      usedProvider = `anthropic:${ANTHROPIC_MODEL_LIGHT}`;
     } else if (isAzureChatConfigured()) {
       response = await azureVisionCompletion({
         system: '치과 교정 이미지 분류 AI. JSON으로만 응답.',
@@ -57,6 +61,7 @@ async function classifyImage(base64, mime, filename) {
         temperature: 0.1,
         timeoutMs: 15000
       });
+      usedProvider = 'azure-openai';
     } else if (GEMINI_API_KEY) {
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -66,6 +71,7 @@ async function classifyImage(base64, mime, filename) {
         { text: prompt }
       ]);
       response = result.response.text();
+      usedProvider = 'gemini';
     } else {
       return classifyByFilename(filename);
     }
@@ -74,7 +80,7 @@ async function classifyImage(base64, mime, filename) {
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
       if (VALID_CATEGORIES.includes(parsed.category) && VALID_SLOTS[parsed.category]?.includes(parsed.slot)) {
-        return parsed;
+        return { ...parsed, provider: usedProvider };
       }
     }
   } catch (e) {
@@ -161,6 +167,8 @@ export default async function handler(req, res) {
         category: classification.category,
         slot: classification.slot,
         confidence: classification.confidence,
+        // slotHint 로 건너뛴 경우엔 AI 를 안 부른다 → provider 가 없다.
+        provider: classification.provider || (slotHint ? 'slot-hint' : 'filename-fallback'),
         storagePath,
         publicUrl,
         // 성공 항목은 null 을 유지해야 한다 — safeErrorMessage 는 항상 문자열을 준다
