@@ -14,111 +14,96 @@
     {
       "trial": 1,
       "status": 200,
-      "ms": 6604,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 5167,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 104.8,
+      "ttlMm": 108.7,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
     },
     {
       "trial": 2,
       "status": 200,
-      "ms": 13852,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 5377,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 105,
+      "ttlMm": 122.5,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
     },
     {
       "trial": 3,
       "status": 200,
-      "ms": 20438,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 6290,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 107.2,
+      "ttlMm": 121.9,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
     },
     {
       "trial": 4,
       "status": 200,
-      "ms": 13057,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 5641,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 105.6,
+      "ttlMm": 122.8,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
     },
     {
       "trial": 5,
       "status": 200,
-      "ms": 12946,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 4373,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 105,
+      "ttlMm": 122,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
     },
     {
       "trial": 6,
       "status": 200,
-      "ms": 15569,
-      "provider": "anthropic:claude-sonnet-5",
+      "ms": 5525,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
       "nTeeth": 14,
-      "ttlMm": 106.8,
+      "ttlMm": 123.2,
       "error": null,
       "keyLeak": false,
-      "ok": false
+      "ok": true
+    },
+    {
+      "trial": 7,
+      "status": 200,
+      "ms": 4212,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
+      "nTeeth": 14,
+      "ttlMm": 113.8,
+      "error": null,
+      "keyLeak": false,
+      "ok": true
+    },
+    {
+      "trial": 8,
+      "status": 200,
+      "ms": 5538,
+      "provider": "anthropic:claude-haiku-4-5-20251001",
+      "nTeeth": 14,
+      "ttlMm": 122.5,
+      "error": null,
+      "keyLeak": false,
+      "ok": true
     }
   ],
   "verdict": {
-    "ok": 0,
-    "total": 6,
+    "ok": 8,
+    "total": 8,
     "keyLeaks": 0,
-    "failures": [
-      {
-        "trial": 1,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      },
-      {
-        "trial": 2,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      },
-      {
-        "trial": 3,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      },
-      {
-        "trial": 4,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      },
-      {
-        "trial": 5,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      },
-      {
-        "trial": 6,
-        "status": 200,
-        "provider": "anthropic:claude-sonnet-5",
-        "error": null
-      }
-    ]
+    "failures": []
   }
 }

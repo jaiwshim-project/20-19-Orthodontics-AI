@@ -13,7 +13,7 @@
       "name": "consult (HEAVY)",
       "route": "/api/consult",
       "status": 200,
-      "ms": 5373,
+      "ms": 5359,
       "ok": true,
       "why": "provider=anthropic",
       "keyLeak": false
@@ -22,7 +22,7 @@
       "name": "chat (HEAVY)",
       "route": "/api/chat",
       "status": 200,
-      "ms": 10574,
+      "ms": 7703,
       "ok": true,
       "why": "provider=anthropic",
       "keyLeak": false
@@ -31,43 +31,43 @@
       "name": "measure-tooth-widths (VISION)",
       "route": "/api/measure-tooth-widths",
       "status": 200,
-      "ms": 6345,
+      "ms": 2199,
       "ok": true,
-      "why": "provider=anthropic:claude-sonnet-5 teeth=14",
+      "why": "provider=anthropic:claude-haiku-4-5-20251001 teeth=0",
       "keyLeak": false
     },
     {
       "name": "detect-arch-landmarks (VISION)",
       "route": "/api/detect-arch-landmarks",
       "status": 200,
-      "ms": 8546,
+      "ms": 2770,
       "ok": true,
-      "why": "provider=anthropic:claude-sonnet-5 success=true",
+      "why": "provider=anthropic:claude-haiku-4-5-20251001 success=false",
       "keyLeak": false
     },
     {
       "name": "analyze-image (VISION)",
       "route": "/api/analyze-image",
       "status": 200,
-      "ms": 4578,
+      "ms": 1957,
       "ok": true,
-      "why": "provider=anthropic:claude-sonnet-5",
+      "why": "provider=anthropic:claude-haiku-4-5-20251001",
       "keyLeak": false
     },
     {
       "name": "classify-diagnosis (VISION)",
       "route": "/api/classify-diagnosis",
       "status": 200,
-      "ms": 17459,
+      "ms": 7695,
       "ok": true,
-      "why": "provider=anthropic:claude-sonnet-5 status=200",
+      "why": "provider=anthropic:claude-haiku-4-5-20251001 status=200",
       "keyLeak": false
     },
     {
       "name": "comprehensive-diagnosis (HEAVY)",
       "route": "/api/comprehensive-diagnosis",
       "status": 200,
-      "ms": 48855,
+      "ms": 54715,
       "ok": true,
       "why": "provider=anthropic:claude-opus-5",
       "keyLeak": false
@@ -76,9 +76,9 @@
       "name": "diagnose (HEAVY)",
       "route": "/api/diagnose",
       "status": 200,
-      "ms": 36209,
+      "ms": 28092,
       "ok": true,
-      "why": "fallback=undefined score=85",
+      "why": "fallback=undefined score=82",
       "keyLeak": false
     }
   ],
