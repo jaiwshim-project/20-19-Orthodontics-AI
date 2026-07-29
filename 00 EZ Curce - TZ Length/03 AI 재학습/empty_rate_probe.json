@@ -1,0 +1,311 @@
+{
+  "schemaVersion": "empty-rate-probe-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "note": "4자리 차트번호 + 응답 메타데이터만"
+  },
+  "purpose": "sonnet-5 빈 텍스트 응답의 발생률·원인(thinking 블록/stop_reason) 확정",
+  "config": {
+    "model": "claude-sonnet-5",
+    "maxTokens": 3000,
+    "repeats": 6,
+    "cases": 4
+  },
+  "verdict": {
+    "총시행": 24,
+    "빈응답": 4,
+    "빈응답률": 16.7,
+    "thinking블록출현": 19,
+    "빈응답의stopReason": [
+      "max_tokens"
+    ],
+    "빈응답중thinking보유": 4,
+    "stopReason분포": {
+      "end_turn": 20,
+      "max_tokens": 4
+    }
+  },
+  "trials": [
+    {
+      "chart": "0000",
+      "trial": 1,
+      "stop": "end_turn",
+      "types": [
+        "text"
+      ],
+      "hasThinking": false,
+      "textLen": 860,
+      "outTok": 534
+    },
+    {
+      "chart": "0000",
+      "trial": 2,
+      "stop": "end_turn",
+      "types": [
+        "text"
+      ],
+      "hasThinking": false,
+      "textLen": 847,
+      "outTok": 529
+    },
+    {
+      "chart": "0000",
+      "trial": 3,
+      "stop": "end_turn",
+      "types": [
+        "text"
+      ],
+      "hasThinking": false,
+      "textLen": 860,
+      "outTok": 534
+    },
+    {
+      "chart": "0000",
+      "trial": 4,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 860,
+      "outTok": 1224
+    },
+    {
+      "chart": "0000",
+      "trial": 5,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 2326
+    },
+    {
+      "chart": "0000",
+      "trial": 6,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 847,
+      "outTok": 882
+    },
+    {
+      "chart": "0000",
+      "trial": 1,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 1175
+    },
+    {
+      "chart": "0000",
+      "trial": 2,
+      "stop": "max_tokens",
+      "types": [
+        "thinking"
+      ],
+      "hasThinking": true,
+      "textLen": 0,
+      "outTok": 3000
+    },
+    {
+      "chart": "0000",
+      "trial": 3,
+      "stop": "max_tokens",
+      "types": [
+        "thinking"
+      ],
+      "hasThinking": true,
+      "textLen": 0,
+      "outTok": 3000
+    },
+    {
+      "chart": "0000",
+      "trial": 4,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 860,
+      "outTok": 2561
+    },
+    {
+      "chart": "0000",
+      "trial": 5,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 847,
+      "outTok": 1474
+    },
+    {
+      "chart": "0000",
+      "trial": 6,
+      "stop": "max_tokens",
+      "types": [
+        "thinking"
+      ],
+      "hasThinking": true,
+      "textLen": 0,
+      "outTok": 3000
+    },
+    {
+      "chart": "3000",
+      "trial": 1,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 1785
+    },
+    {
+      "chart": "3000",
+      "trial": 2,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 847,
+      "outTok": 1270
+    },
+    {
+      "chart": "3000",
+      "trial": 3,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 860,
+      "outTok": 2648
+    },
+    {
+      "chart": "3000",
+      "trial": 4,
+      "stop": "max_tokens",
+      "types": [
+        "thinking"
+      ],
+      "hasThinking": true,
+      "textLen": 0,
+      "outTok": 3000
+    },
+    {
+      "chart": "3000",
+      "trial": 5,
+      "stop": "end_turn",
+      "types": [
+        "text"
+      ],
+      "hasThinking": false,
+      "textLen": 858,
+      "outTok": 534
+    },
+    {
+      "chart": "3000",
+      "trial": 6,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 860,
+      "outTok": 1390
+    },
+    {
+      "chart": "8000",
+      "trial": 1,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 1449
+    },
+    {
+      "chart": "8000",
+      "trial": 2,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 2109
+    },
+    {
+      "chart": "8000",
+      "trial": 3,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 860,
+      "outTok": 1568
+    },
+    {
+      "chart": "8000",
+      "trial": 4,
+      "stop": "end_turn",
+      "types": [
+        "text"
+      ],
+      "hasThinking": false,
+      "textLen": 860,
+      "outTok": 534
+    },
+    {
+      "chart": "8000",
+      "trial": 5,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 848,
+      "outTok": 2121
+    },
+    {
+      "chart": "8000",
+      "trial": 6,
+      "stop": "end_turn",
+      "types": [
+        "thinking",
+        "text"
+      ],
+      "hasThinking": true,
+      "textLen": 889,
+      "outTok": 1083
+    }
+  ]
+}

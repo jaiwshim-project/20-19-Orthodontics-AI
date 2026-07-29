@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "fix-verify-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "note": "검증 통과 여부와 모델명만"
+  },
+  "purpose": "VISION haiku 되돌림 + 빈 텍스트 재시도가 실제로 동작하는지 실구동 확인",
+  "checks": [
+    {
+      "name": "VISION 기본값 되돌림",
+      "ok": true,
+      "detail": "VISION=claude-haiku-4-5-20251001 (HEAVY=claude-opus-5, LIGHT=claude-haiku-4-5-20251001)"
+    },
+    {
+      "name": "빈 텍스트 재시도 발동",
+      "ok": true,
+      "detail": "시도 1회차에 텍스트 확보(69자) — 재시도층이 빈 응답을 구제"
+    },
+    {
+      "name": "핸들러 haiku 실구동",
+      "ok": true,
+      "detail": "status=200 provider=anthropic:claude-haiku-4-5-20251001 teeth=14 ttl=122"
+    }
+  ],
+  "verdict": {
+    "passed": 3,
+    "total": 3,
+    "failed": []
+  }
+}

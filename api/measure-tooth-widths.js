@@ -60,7 +60,9 @@ export default async function handler(req, res) {
         system: SYSTEM_PROMPT,
         images: [{ base64, contentType: contentType || 'image/jpeg' }],
         prompt: userPrompt,
-        maxTokens: 3000,
+        // thinking 블록이 토큰을 먹는 경우가 있어 여유를 둔다(빈 응답 16.7% 실측).
+        // 근본 대책은 lib/ai-provider.js 의 빈 텍스트 재시도.
+        maxTokens: 4000,
         temperature: 0.1,
         timeoutMs: 45000
       });

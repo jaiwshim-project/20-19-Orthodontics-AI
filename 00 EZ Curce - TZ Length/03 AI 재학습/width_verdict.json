@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "width-verdict-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsFilePaths": false,
+    "containsImageCoordinates": false,
+    "note": "mm/％ 집계 수치만"
+  },
+  "purpose": "치아 개수 교란 제거 후 haiku-4-5 vs sonnet-5 최종 판정",
+  "supersedes": "width_model_ab.json 의 TTL 기반 판정(무효 — 개수 교란)",
+  "n": 55,
+  "metricNotes": {
+    "perToothBiasPct": "치아 1개당 평균 폭의 부호 편향% — 개수와 무관한 스케일 지표",
+    "segSumErrPct": "정답과 같은 개수의 정렬 구간에서의 합오차%",
+    "alignedMaeMm": "정렬 후 치아별 폭 MAE(mm)",
+    "nTeeth": "반환 치아 개수(정답 중위 12개)"
+  },
+  "metrics": {
+    "perToothBiasPct": {
+      "haiku": {
+        "mean": -4.7,
+        "ci95": {
+          "lo": -6.271,
+          "hi": -2.759
+        }
+      },
+      "sonnet": {
+        "mean": -17.799,
+        "ci95": {
+          "lo": -19.082,
+          "hi": -16.27
+        }
+      },
+      "diffMean": -13.099,
+      "diffCi95": {
+        "lo": -13.755,
+        "hi": -12.537
+      },
+      "pairedSonnetBetter": 55,
+      "pairedHaikuBetter": 0,
+      "p": 0
+    },
+    "perToothAbsBiasPct": {
+      "haiku": {
+        "mean": 6.652,
+        "ci95": {
+          "lo": 5.46,
+          "hi": 7.925
+        }
+      },
+      "sonnet": {
+        "mean": 17.799,
+        "ci95": {
+          "lo": 16.271,
+          "hi": 19.082
+        }
+      },
+      "diffMean": 11.147,
+      "diffCi95": {
+        "lo": 9.719,
+        "hi": 12.394
+      },
+      "pairedSonnetBetter": 3,
+      "pairedHaikuBetter": 52,
+      "p": 0
+    },
+    "segSumErrPct": {
+      "haiku": {
+        "mean": 8.414,
+        "ci95": {
+          "lo": 7.085,
+          "hi": 9.656
+        }
+      },
+      "sonnet": {
+        "mean": 23.431,
+        "ci95": {
+          "lo": 21.99,
+          "hi": 24.626
+        }
+      },
+      "diffMean": 15.017,
+      "diffCi95": {
+        "lo": 13.945,
+        "hi": 15.997
+      },
+      "pairedSonnetBetter": 1,
+      "pairedHaikuBetter": 54,
+      "p": 0
+    },
+    "alignedMaeMm": {
+      "haiku": {
+        "mean": 1.581,
+        "ci95": {
+          "lo": 1.502,
+          "hi": 1.654
+        }
+      },
+      "sonnet": {
+        "mean": 2.176,
+        "ci95": {
+          "lo": 2.015,
+          "hi": 2.32
+        }
+      },
+      "diffMean": 0.596,
+      "diffCi95": {
+        "lo": 0.476,
+        "hi": 0.701
+      },
+      "pairedSonnetBetter": 4,
+      "pairedHaikuBetter": 51,
+      "p": 0
+    },
+    "nTeeth": {
+      "haiku": {
+        "mean": 14,
+        "ci95": {
+          "lo": 14,
+          "hi": 14
+        }
+      },
+      "sonnet": {
+        "mean": 14,
+        "ci95": {
+          "lo": 14,
+          "hi": 14
+        }
+      },
+      "diffMean": 0,
+      "diffCi95": {
+        "lo": 0,
+        "hi": 0
+      },
+      "pairedSonnetBetter": 0,
+      "pairedHaikuBetter": 0,
+      "p": null
+    }
+  },
+  "verdict": {
+    "개당폭_편향": "haiku -4.7% vs sonnet -17.799% (둘 다 과소추정, sonnet 이 3.8배 심함)",
+    "정렬구간_합오차": "haiku 8.414% vs sonnet 23.431% — haiku 우세 54/1 p=0",
+    "치아별_MAE": "haiku 1.581mm vs sonnet 2.176mm — haiku 우세 51/4 p=0",
+    "결론": "haiku-4-5 가 3개 지표 모두에서 sonnet-5 보다 정확하다. 앞선 \"TTL 개선\" 판정은 치아 개수 교란(모델 14개 vs 정답 11~12개)으로 인한 허상이었다 → VISION 티어를 haiku 로 되돌린다."
+  }
+}

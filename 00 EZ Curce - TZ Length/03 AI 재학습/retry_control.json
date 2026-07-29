@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "retry-control-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsFilePaths": false,
+    "note": "빈 응답 건수만"
+  },
+  "purpose": "빈 텍스트 재시도층의 효과를 대조군(층 OFF)과 비교해 위양성 배제",
+  "config": {
+    "model": "claude-sonnet-5",
+    "maxTokens": 40,
+    "trials": 8
+  },
+  "result": {
+    "대조군_빈응답": 1,
+    "수정본_빈응답": 0,
+    "재현력있음": true,
+    "개선": true
+  }
+}
