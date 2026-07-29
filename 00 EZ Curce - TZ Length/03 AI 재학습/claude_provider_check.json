@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "claude-provider-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsApiKeys": false
+  },
+  "purpose": "Claude 3단 모델 ID 유효성 + lib 공용 비전 함수 실호출 검증",
+  "models": {
+    "heavy": "claude-opus-5",
+    "vision": "claude-sonnet-5",
+    "light": "claude-haiku-4-5-20251001"
+  },
+  "probes": [
+    {
+      "name": "vision-VISION",
+      "model": "claude-sonnet-5",
+      "ok": true,
+      "ms": 2276,
+      "replyChars": 3,
+      "replyHead": "Red"
+    },
+    {
+      "name": "vision-LIGHT",
+      "model": "claude-haiku-4-5-20251001",
+      "ok": true,
+      "ms": 1585,
+      "replyChars": 3,
+      "replyHead": "Red"
+    },
+    {
+      "name": "chat-HEAVY",
+      "model": "claude-opus-5",
+      "ok": true,
+      "ms": 3904,
+      "replyChars": 84,
+      "replyHead": "교정 치료 후 치아와 주변 잇몸·뼈 조직이 새로운 위치에 완전히 안정되기까지 시간이 걸리고, 그 사이 치아가"
+    },
+    {
+      "name": "vision-json",
+      "model": "claude-sonnet-5",
+      "ok": true,
+      "ms": 2208,
+      "replyChars": 15,
+      "replyHead": "{\"color\":\"red\"}"
+    }
+  ],
+  "verdict": {
+    "allOk": true,
+    "okCount": 4,
+    "total": 4
+  }
+}

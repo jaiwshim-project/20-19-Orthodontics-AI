@@ -1,9 +1,10 @@
-import { isAzureChatConfigured, azureVisionCompletion } from '../lib/ai-provider.js';
+import {
+  isAzureChatConfigured, azureVisionCompletion,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_VISION
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
 export const config = { api: { bodyParser: { sizeLimit: '20mb' } } };
 
@@ -61,50 +62,6 @@ function toPixelPoint(point, width, height) {
   };
 }
 
-async function anthropicVisionCompletion({ system, prompt, images, timeoutMs = 45000 }) {
-  if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured.');
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const content = [];
-    for (const image of images) {
-      if (image.label) content.push({ type: 'text', text: image.label });
-      content.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: image.contentType || image.mimeType || 'image/jpeg',
-          data: image.base64
-        }
-      });
-    }
-    content.push({ type: 'text', text: prompt });
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: 2600,
-        temperature: 0.05,
-        system,
-        messages: [{ role: 'user', content }]
-      })
-    });
-
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data?.error?.message || `Anthropic request failed: HTTP ${response.status}`);
-    return (data.content || []).filter(part => part.type === 'text').map(part => part.text).join('\n');
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
@@ -117,8 +74,8 @@ export default async function handler(req, res) {
     let response;
     let provider = 'unknown';
 
-    if (ANTHROPIC_API_KEY) {
-      provider = 'anthropic';
+    if (isAnthropicConfigured()) {
+      provider = `anthropic:${ANTHROPIC_MODEL_VISION}`;
       response = await anthropicVisionCompletion({
         system: 'You are an orthodontic occlusal image segmentation assistant. Return only valid JSON.',
         images: [{ base64, contentType: mime, label: 'Occlusal intraoral photo' }],

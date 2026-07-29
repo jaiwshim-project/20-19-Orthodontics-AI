@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_HEAVY
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -229,6 +232,19 @@ function sanitizeResult(parsed, body, images) {
   return result;
 }
 
+// ⚠️ Azure/Gemini 는 JSON 모드가 있어 순수 JSON 이 오지만 Claude 는 없다 —
+//    ```json 펜스나 앞뒤 설명이 섞일 수 있으므로 관대하게 추출한다.
+function parseLooseJson(text) {
+  const raw = String(text || '');
+  try { return JSON.parse(raw); } catch {}
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : raw;
+  const start = candidate.indexOf('{');
+  const end = candidate.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(candidate.slice(start, end + 1)); } catch { return null; }
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
@@ -244,7 +260,7 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: '이미지 합계가 너무 큽니다. 45MB 이내로 줄여주세요.' });
   }
 
-  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+  if (!isAnthropicConfigured() && !isAzureChatConfigured() && !GEMINI_API_KEY) {
     return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, usedImages: images.map(i => i.key) });
   }
 
@@ -257,7 +273,22 @@ export default async function handler(req, res) {
     });
 
     let text;
-    if (isAzureChatConfigured()) {
+    let provider = 'unknown';
+    if (isAnthropicConfigured()) {
+      // 종합진단은 이미지를 보지만 성격은 '진단' → VISION 이 아니라 HEAVY 를 쓴다.
+      provider = `anthropic:${ANTHROPIC_MODEL_HEAVY}`;
+      text = await anthropicVisionCompletion({
+        // ⚠️ Claude 에는 responseFormat:'json' 이 없다 → system 으로 강제.
+        system: `${SYSTEM_INSTRUCTION}\n\nRespond with valid JSON only. No prose, no markdown fences.`,
+        images,
+        prompt: `다음 케이스 컨텍스트와 이미지를 종합 분석하세요. JSON만 반환하세요.\n${caseContext}`,
+        model: ANTHROPIC_MODEL_HEAVY,
+        maxTokens: 4000,
+        temperature: 0.15,
+        timeoutMs: 60000
+      });
+    } else if (isAzureChatConfigured()) {
+      provider = 'azure-openai';
       text = await azureVisionCompletion({
         system: SYSTEM_INSTRUCTION,
         images,
@@ -267,6 +298,7 @@ export default async function handler(req, res) {
         timeoutMs: 45000
       });
     } else {
+      provider = 'gemini';
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
@@ -282,15 +314,13 @@ export default async function handler(req, res) {
       text = result.response.text();
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch (error) {
-      console.warn('[comprehensive-diagnosis] JSON parse failed:', text?.slice?.(0, 300));
-      return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, parseError: true, usedImages: images.map(i => i.key) });
+    const parsed = parseLooseJson(text);
+    if (!parsed) {
+      console.warn('[comprehensive-diagnosis] JSON parse failed:', String(text || '').slice(0, 300));
+      return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, parseError: true, provider, usedImages: images.map(i => i.key) });
     }
 
-    return res.status(200).json({ ...sanitizeResult(parsed, body, images), fallback: false, usedImages: images.map(i => i.key) });
+    return res.status(200).json({ ...sanitizeResult(parsed, body, images), fallback: false, provider, usedImages: images.map(i => i.key) });
   } catch (error) {
     console.error('[comprehensive-diagnosis] failed:', error);
     return res.status(200).json({ ...fallbackDiagnosis(body, images), fallback: true, error: safeErrorMessage(error), usedImages: images.map(i => i.key) });

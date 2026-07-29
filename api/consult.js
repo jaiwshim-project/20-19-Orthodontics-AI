@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { searchKnowledge, searchKnowledgeByKeyword, saveConversation } from '../lib/supabase.js';
 import {
   azureChatCompletion, isAzureChatConfigured,
-  anthropicChatCompletion, isAnthropicConfigured
+  anthropicChatCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_HEAVY
 } from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
@@ -112,8 +112,9 @@ export default async function handler(req, res) {
       const reply = await anthropicChatCompletion({
         system: fullSystem,
         messages,
+        model: ANTHROPIC_MODEL_HEAVY,
         maxTokens: 2048,
-        timeoutMs: 30000
+        timeoutMs: 45000
       });
 
       if (userId) {
@@ -124,7 +125,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         reply,
         sources: sources.map(s => ({ source: s.source, snippet: (s.content || '').slice(0, 220) })),
-        usage: { provider: 'anthropic', model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-8' }
+        usage: { provider: 'anthropic', model: ANTHROPIC_MODEL_HEAVY }
       });
     }
 

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "claude-endpoint-check-v1",
+  "privacy": {
+    "containsPhi": false,
+    "containsPatientNames": false,
+    "containsApiKeys": false,
+    "note": "합성 64x64 PNG + 더미 수치만 사용"
+  },
+  "purpose": "Claude 분기가 실제로 실행되는지 핸들러 직접 호출로 실측",
+  "models": {
+    "heavy": "claude-opus-5",
+    "vision": "claude-sonnet-5",
+    "light": "claude-haiku-4-5-20251001"
+  },
+  "probes": [
+    {
+      "name": "measure-tooth-widths",
+      "file": "measure-tooth-widths.js",
+      "status": 200,
+      "ms": 7284,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 status=200 teeth=14",
+      "observed": {
+        "provider": "anthropic:claude-sonnet-5",
+        "status": 200
+      }
+    },
+    {
+      "name": "detect-arch-landmarks",
+      "file": "detect-arch-landmarks.js",
+      "status": 200,
+      "ms": 9179,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 success=true",
+      "observed": {
+        "provider": "anthropic:claude-sonnet-5",
+        "success": true
+      }
+    },
+    {
+      "name": "analyze-image",
+      "file": "analyze-image.js",
+      "status": 200,
+      "ms": 4434,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5",
+      "observed": {
+        "provider": "anthropic:claude-sonnet-5",
+        "fallback": false
+      }
+    },
+    {
+      "name": "classify-diagnosis",
+      "file": "classify-diagnosis.js",
+      "status": 200,
+      "ms": 17537,
+      "ok": true,
+      "why": "provider=anthropic:claude-sonnet-5 status=200",
+      "observed": {
+        "provider": "anthropic:claude-sonnet-5",
+        "status": 200
+      }
+    },
+    {
+      "name": "comprehensive-diagnosis",
+      "file": "comprehensive-diagnosis.js",
+      "status": 200,
+      "ms": 48771,
+      "ok": true,
+      "why": "provider=anthropic:claude-opus-5",
+      "observed": {
+        "provider": "anthropic:claude-opus-5",
+        "fallback": false
+      }
+    },
+    {
+      "name": "chat",
+      "file": "chat.js",
+      "status": 200,
+      "ms": 12101,
+      "ok": true,
+      "why": "provider=anthropic",
+      "observed": {
+        "provider": "anthropic",
+        "fallback": false
+      }
+    },
+    {
+      "name": "consult",
+      "file": "consult.js",
+      "status": 200,
+      "ms": 5040,
+      "ok": true,
+      "why": "provider=anthropic",
+      "observed": {
+        "provider": "anthropic",
+        "fallback": false
+      }
+    },
+    {
+      "name": "diagnose",
+      "file": "diagnose.js",
+      "status": 200,
+      "ms": 27628,
+      "ok": true,
+      "why": "status=200 fallback=false score=78",
+      "observed": {
+        "status": 200,
+        "fallback": false
+      }
+    },
+    {
+      "name": "classify-and-upload(LIGHT 티어)",
+      "file": "classify-and-upload.js",
+      "ok": true,
+      "ms": 1783,
+      "why": "LIGHT 응답 230자",
+      "observed": {
+        "model": "claude-haiku-4-5-20251001"
+      }
+    },
+    {
+      "name": "treatment-plan/before-after(HEAVY+JSON강제)",
+      "file": "treatment-plan.js, before-after.js",
+      "ok": true,
+      "ms": 11181,
+      "why": "JSON 파싱 성공(키 2개)",
+      "observed": {
+        "model": "claude-opus-5",
+        "fenced": false
+      }
+    }
+  ],
+  "verdict": {
+    "okCount": 10,
+    "total": 10,
+    "failed": []
+  }
+}

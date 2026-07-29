@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -24,6 +27,20 @@ function inferMimeFromName(name = '') {
 }
 
 async function analyzeImage(base64, mime) {
+  const SYSTEM = '당신은 교정치과 영상 분석 AI입니다. 입력 이미지가 X-ray, 구강사진, 모형 사진 중 무엇인지 판별하고, 발견된 임상적 특징을 한국어로 요약하세요.';
+  const PROMPT = '이 이미지에서 관찰되는 교정학적 특징을 5개 항목으로 요약하고, 추가 검사의 필요성을 명시하세요.';
+
+  if (isAnthropicConfigured()) {
+    return anthropicVisionCompletion({
+      system: SYSTEM,
+      images: [{ base64, contentType: mime }],
+      prompt: PROMPT,
+      maxTokens: 1200,
+      temperature: 0.2,
+      timeoutMs: 45000
+    });
+  }
+
   if (isAzureChatConfigured()) {
     return azureVisionCompletion({
       system: '당신은 교정치과 영상 분석 AI입니다. 입력 이미지가 X-ray, 구강사진, 모형 사진 중 무엇인지 판별하고, 발견된 임상적 특징을 한국어로 요약하세요.',

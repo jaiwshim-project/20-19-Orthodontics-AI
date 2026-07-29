@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
-import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureChatCompletion, isAzureChatConfigured,
+  anthropicChatCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_HEAVY
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -42,6 +45,19 @@ JSON 스키마:
 - After 값은 임상 표준 정상화 목표 (ANB→2, Overjet→2.5, IMPA→90 등)로 산출
 - Crowding은 발치 시 거의 0으로 수렴
 - 보수적 수치 — 과도한 변화량 금지`;
+
+// ⚠️ Azure/Gemini 는 JSON 모드가 있어 순수 JSON 이 오지만 Claude 는 없다 —
+//    ```json 펜스나 앞뒤 설명이 섞일 수 있으므로 관대하게 추출한다.
+function parseLooseJson(text) {
+  const raw = String(text || '');
+  try { return JSON.parse(raw); } catch {}
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : raw;
+  const start = candidate.indexOf('{');
+  const end = candidate.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(candidate.slice(start, end + 1)); } catch { return null; }
+}
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -96,7 +112,7 @@ export default async function handler(req, res) {
     };
   }
 
-  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+  if (!isAnthropicConfigured() && !isAzureChatConfigured() && !GEMINI_API_KEY) {
     const before = extractBeforeFromInputs();
     return res.status(200).json({
       headline: '교정 치료 권장 사항',
@@ -121,7 +137,17 @@ export default async function handler(req, res) {
 
     const userMsg = `환자 컨텍스트:\n${JSON.stringify(ctx, null, 2)}\n\n환자 친화 Before-After 요약을 JSON으로 작성하세요.`;
     let text;
-    if (isAzureChatConfigured()) {
+    if (isAnthropicConfigured()) {
+      // 진단·치료계획·상담 요약은 긴 추론 → HEAVY.
+      // ⚠️ Claude 에는 responseFormat:'json' 이 없다 → system 으로 JSON 을 강제한다.
+      text = await anthropicChatCompletion({
+        system: `${SYSTEM_PROMPT}\n\nRespond with valid JSON only. No prose, no markdown fences.`,
+        messages: [{ role: 'user', content: userMsg }],
+        model: ANTHROPIC_MODEL_HEAVY,
+        maxTokens: 3000,
+        timeoutMs: 45000
+      });
+    } else if (isAzureChatConfigured()) {
       text = await azureChatCompletion({
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMsg }],
@@ -144,9 +170,8 @@ export default async function handler(req, res) {
       text = result.response.text();
     }
 
-    let parsed;
-    try { parsed = JSON.parse(text); }
-    catch { parsed = { headline: '교정 치료 권장 사항', summary: text.slice(0, 250), key_changes: [], fallback: true }; }
+    let parsed = parseLooseJson(text);
+    if (!parsed) parsed = { headline: '교정 치료 권장 사항', summary: String(text || '').slice(0, 250), key_changes: [], fallback: true };
 
     // measurements 폴백: 실제 입력값에서 추출
     if (!parsed.measurements?.before || !parsed.measurements?.after) {

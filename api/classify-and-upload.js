@@ -1,5 +1,8 @@
 import { getAdmin } from '../lib/supabase.js';
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_LIGHT
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -34,7 +37,19 @@ async function classifyImage(base64, mime, filename) {
 
   try {
     let response;
-    if (isAzureChatConfigured()) {
+    if (isAnthropicConfigured()) {
+      // 카테고리/슬롯 태깅은 '단순 판별' → LIGHT(haiku) 로 충분하다.
+      // 업로드 1장마다 호출되므로 무거운 모델을 쓰면 비용·지연이 장수에 비례한다.
+      response = await anthropicVisionCompletion({
+        system: '치과 교정 이미지 분류 AI. JSON으로만 응답.',
+        images: [{ base64, contentType: mime }],
+        prompt,
+        model: ANTHROPIC_MODEL_LIGHT,
+        maxTokens: 200,
+        temperature: 0.1,
+        timeoutMs: 25000
+      });
+    } else if (isAzureChatConfigured()) {
       response = await azureVisionCompletion({
         system: '치과 교정 이미지 분류 AI. JSON으로만 응답.',
         images: [{ base64, contentType: mime }],

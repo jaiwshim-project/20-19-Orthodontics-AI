@@ -1,9 +1,10 @@
 ﻿import { GoogleGenerativeAI } from '@google/generative-ai';
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_VISION
+} from '../lib/ai-provider.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
 
 export const config = {
   api: { bodyParser: { sizeLimit: '18mb' } }
@@ -75,50 +76,6 @@ function normalizeImage(image) {
 }
 
 
-async function anthropicVisionCompletion({ system, prompt, images, timeoutMs = 45000 }) {
-  if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured.');
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const content = [];
-    for (const image of images) {
-      content.push({ type: 'text', text: `[${image.label || image.key}]` });
-      content.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: image.contentType || 'image/jpeg',
-          data: image.base64
-        }
-      });
-    }
-    content.push({ type: 'text', text: prompt });
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: 2200,
-        system,
-        messages: [{ role: 'user', content }]
-      })
-    });
-
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(data?.error?.message || `Anthropic request failed: HTTP ${response.status}`);
-    }
-    return (data.content || []).filter(part => part.type === 'text').map(part => part.text).join('\n');
-  } finally {
-    clearTimeout(timer);
-  }
-}
 function parseJson(text) {
   try { return JSON.parse(text); } catch {}
   const match = String(text || '').match(/\{[\s\S]*\}/);
@@ -249,7 +206,7 @@ export default async function handler(req, res) {
     if (missing.length) {
       return res.status(400).json({
         success: false,
-        error: `?꾩닔 ?대?吏媛 遺議깊빀?덈떎: ${missing.join(', ')}`
+        error: `필수 이미지가 부족합니다: ${missing.join(', ')}`
       });
     }
 
@@ -273,29 +230,42 @@ Calibrate confidence with this rubric:
 - For Class II Division 1, use 0.75 or higher only when increased overjet/proclined upper incisors or convex/retrusive mandibular pattern is visible AND at least one side supports Class II canine/molar tendency.
 - If crowding is severe and molar relationship is Class I, classify as Class I regardless of apparent incisor protrusion.`;
 
+    // 어느 사진이 어느 뷰인지 모델에 알려주는 라벨. Gemini 분기가 쓰는 `[label]`
+    // 형식에 맞춰 3개 provider 를 통일한다(중복 구현을 lib 으로 합칠 때
+    // 대괄호가 조용히 사라지면 세팔로/좌/우 구분 근거가 약해진다).
+    const labeledImages = selectedImages.map(image => ({
+      ...image,
+      label: `[${image.label || image.key}]`
+    }));
+
     let text;
-    if (ANTHROPIC_API_KEY) {
+    let provider = 'unknown';
+    if (isAnthropicConfigured()) {
+      provider = `anthropic:${ANTHROPIC_MODEL_VISION}`;
       text = await anthropicVisionCompletion({
         system: SYSTEM_PROMPT,
         prompt,
-        images: selectedImages,
+        images: labeledImages,
+        maxTokens: 2200,
         timeoutMs: 45000
       });
     } else if (isAzureChatConfigured()) {
+      provider = 'azure-openai';
       text = await azureVisionCompletion({
         system: SYSTEM_PROMPT,
         prompt,
-        images: selectedImages,
+        images: labeledImages,
         responseFormat: 'json',
         temperature: 0.1,
         timeoutMs: 45000
       });
     } else if (GEMINI_API_KEY) {
+      provider = 'gemini';
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       const parts = [];
-      for (const image of selectedImages) {
-        parts.push({ text: `[${image.label}]` });
+      for (const image of labeledImages) {
+        parts.push({ text: image.label });
         parts.push({ inlineData: { data: image.base64, mimeType: image.contentType } });
       }
       parts.push({ text: prompt });
@@ -306,17 +276,18 @@ Calibrate confidence with this rubric:
       });
       text = result.response.text();
     } else {
-      return res.status(503).json(fallbackResult('?대?吏 湲곕컲 遺꾨쪟瑜??꾪븳 AI API ?ㅺ? ?ㅼ젙?섏? ?딆븯?듬땲??'));
+      return res.status(503).json(fallbackResult('이미지 기반 분류를 위한 AI API 키가 설정되지 않았습니다.'));
     }
 
     const parsed = parseJson(text);
     if (!parsed) {
-      return res.status(502).json(fallbackResult('AI ?묐떟?먯꽌 JSON 遺꾨쪟 寃곌낵瑜?異붿텧?섏? 紐삵뻽?듬땲??'));
+      return res.status(502).json(fallbackResult('AI 응답에서 JSON 분류 결과를 추출하지 못했습니다.'));
     }
 
     return res.status(200).json({
       success: true,
       source: 'image-only-ai',
+      provider,
       usedImages: REQUIRED_IMAGES,
       ...calibrateConfidence(parsed)
     });

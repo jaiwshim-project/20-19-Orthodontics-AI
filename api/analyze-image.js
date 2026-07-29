@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_VISION
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -98,6 +101,20 @@ function fallbackFields(type) {
   if (type === 'facial')     return { ...base, fields: { maxRetract: 1.5, mandShift: 0, lipUpper: -1, lipLower: -0.5, chin: 0 } };
   if (type === 'recurrence') return { ...base, fields: { impa: 92, incisorShift: 1.5, residual: 0.5 } };
   return { ...base, fields: {} };
+}
+
+// ⚠️ Azure/Gemini 는 JSON 모드가 있어 순수 JSON 이 오지만, Claude 는 없다 —
+//    ```json 펜스나 앞뒤 설명이 섞일 수 있으므로 관대하게 추출한다.
+//    (JSON.parse 직행으로 두면 Claude 응답이 전부 폴백으로 떨어진다.)
+function parseLooseJson(text) {
+  const raw = String(text || '');
+  try { return JSON.parse(raw); } catch {}
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : raw;
+  const start = candidate.indexOf('{');
+  const end = candidate.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(candidate.slice(start, end + 1)); } catch { return null; }
 }
 
 function clampNumber(v, lo, hi) {
@@ -210,14 +227,28 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: '이미지 합계가 너무 큽니다 (총 ~45MB 이내).' });
   }
 
-  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+  if (!isAnthropicConfigured() && !isAzureChatConfigured() && !GEMINI_API_KEY) {
     console.warn('[analyze-image] AI provider 미설정 → 폴백 사용');
     return res.status(200).json({ ...fallbackFields(type), usedImages: images.map(i => i.display) });
   }
 
   try {
     let text;
-    if (isAzureChatConfigured()) {
+    let provider = 'unknown';
+    if (isAnthropicConfigured()) {
+      provider = `anthropic:${ANTHROPIC_MODEL_VISION}`;
+      text = await anthropicVisionCompletion({
+        // ⚠️ Claude 에는 responseFormat:'json' 대응 파라미터가 없다 →
+        //    JSON 강제는 system 프롬프트로만 가능하다(호출부가 파싱한다).
+        system: `${SCHEMAS[type].instruction}\n\nRespond with valid JSON only. No prose, no markdown fences.`,
+        images,
+        prompt: '위 이미지를 분석하고 정의된 JSON 스키마로만 응답하세요.',
+        maxTokens: 2600,
+        temperature: 0.2,
+        timeoutMs: 45000
+      });
+    } else if (isAzureChatConfigured()) {
+      provider = 'azure-openai';
       text = await azureVisionCompletion({
         system: SCHEMAS[type].instruction,
         images,
@@ -227,6 +258,7 @@ export default async function handler(req, res) {
         timeoutMs: 30000
       });
     } else {
+      provider = 'gemini';
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
@@ -245,18 +277,17 @@ export default async function handler(req, res) {
       text = result.response.text();
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch (e) {
-      console.warn('[analyze-image] JSON 파싱 실패:', text.slice(0, 200));
-      return res.status(200).json({ ...fallbackFields(type), usedImages: images.map(i => i.display) });
+    const parsed = parseLooseJson(text);
+    if (!parsed) {
+      console.warn('[analyze-image] JSON 파싱 실패:', String(text).slice(0, 200));
+      return res.status(200).json({ ...fallbackFields(type), provider, usedImages: images.map(i => i.display) });
     }
 
     const cleaned = {
       fields: sanitizeFields(type, parsed.fields || {}),
       confidence: clampNumber(parsed.confidence, 0, 1) ?? 0.5,
       notes: typeof parsed.notes === 'string' ? parsed.notes.slice(0, 500) : '',
+      provider,
       usedImages: images.map(i => i.display),
       fallback: false
     };

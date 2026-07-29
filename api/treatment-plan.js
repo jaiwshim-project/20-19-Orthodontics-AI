@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAdmin } from '../lib/supabase.js';
-import { azureChatCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureChatCompletion, isAzureChatConfigured,
+  anthropicChatCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_HEAVY
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -99,6 +102,19 @@ function fallbackPlan(patient, diagnoses) {
   };
 }
 
+// ⚠️ Azure/Gemini 는 JSON 모드가 있어 순수 JSON 이 오지만 Claude 는 없다 —
+//    ```json 펜스나 앞뒤 설명이 섞일 수 있으므로 관대하게 추출한다.
+function parseLooseJson(text) {
+  const raw = String(text || '');
+  try { return JSON.parse(raw); } catch {}
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1] : raw;
+  const start = candidate.indexOf('{');
+  const end = candidate.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(candidate.slice(start, end + 1)); } catch { return null; }
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
@@ -135,7 +151,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '저장된 진단이 없습니다. 먼저 4종 AI 진단 중 하나 이상을 실행하세요.' });
   }
 
-  if (!isAzureChatConfigured() && !GEMINI_API_KEY) {
+  if (!isAnthropicConfigured() && !isAzureChatConfigured() && !GEMINI_API_KEY) {
     return res.status(200).json(fallbackPlan(patient, diagnoses));
   }
 
@@ -144,7 +160,17 @@ export default async function handler(req, res) {
     const userMsg = `환자 컨텍스트:\n${JSON.stringify(ctx, null, 2)}\n\n위 4가지 AI 진단 결과를 종합해 단일 통합 치료 계획을 JSON으로 반환하세요.\n반드시 한국어로 작성하되 의학 용어는 영문 병기.`;
 
     let text;
-    if (isAzureChatConfigured()) {
+    if (isAnthropicConfigured()) {
+      // 진단·치료계획·상담 요약은 긴 추론 → HEAVY.
+      // ⚠️ Claude 에는 responseFormat:'json' 이 없다 → system 으로 JSON 을 강제한다.
+      text = await anthropicChatCompletion({
+        system: `${SYSTEM_PROMPT}\n\nRespond with valid JSON only. No prose, no markdown fences.`,
+        messages: [{ role: 'user', content: userMsg }],
+        model: ANTHROPIC_MODEL_HEAVY,
+        maxTokens: 4000,
+        timeoutMs: 60000
+      });
+    } else if (isAzureChatConfigured()) {
       text = await azureChatCompletion({
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMsg }],
@@ -167,11 +193,9 @@ export default async function handler(req, res) {
       text = result.response.text();
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch (e) {
-      console.warn('[treatment-plan] JSON 파싱 실패:', text.slice(0, 200));
+    const parsed = parseLooseJson(text);
+    if (!parsed) {
+      console.warn('[treatment-plan] JSON 파싱 실패:', String(text || '').slice(0, 200));
       return res.status(200).json(fallbackPlan(patient, diagnoses));
     }
 

@@ -1,8 +1,9 @@
-import { azureVisionCompletion, isAzureChatConfigured } from '../lib/ai-provider.js';
+import {
+  azureVisionCompletion, isAzureChatConfigured,
+  anthropicVisionCompletion, isAnthropicConfigured, ANTHROPIC_MODEL_VISION
+} from '../lib/ai-provider.js';
 import { safeErrorMessage } from '../lib/safe-error.js';
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const config = { api: { bodyParser: { sizeLimit: '20mb' } } };
@@ -52,24 +53,19 @@ export default async function handler(req, res) {
     const userPrompt = buildUserPrompt(archType, width, height, molarMm);
 
     let response;
-    if (ANTHROPIC_API_KEY) {
-      const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: ANTHROPIC_MODEL,
-          max_tokens: 3000,
-          system: SYSTEM_PROMPT,
-          messages: [{ role: 'user', content: [
-            { type: 'image', source: { type: 'base64', media_type: contentType || 'image/jpeg', data: base64 } },
-            { type: 'text', text: userPrompt }
-          ]}]
-        })
+    let provider = 'unknown';
+    if (isAnthropicConfigured()) {
+      provider = `anthropic:${ANTHROPIC_MODEL_VISION}`;
+      response = await anthropicVisionCompletion({
+        system: SYSTEM_PROMPT,
+        images: [{ base64, contentType: contentType || 'image/jpeg' }],
+        prompt: userPrompt,
+        maxTokens: 3000,
+        temperature: 0.1,
+        timeoutMs: 45000
       });
-      const anthropicData = await anthropicRes.json();
-      if (!anthropicRes.ok) throw new Error(anthropicData?.error?.message || 'Anthropic API error');
-      response = (anthropicData.content || []).filter(p => p.type === 'text').map(p => p.text).join('');
     } else if (isAzureChatConfigured()) {
+      provider = 'azure-openai';
       response = await azureVisionCompletion({
         system: SYSTEM_PROMPT,
         images: [{ base64, contentType: contentType || 'image/jpeg' }],
@@ -78,6 +74,7 @@ export default async function handler(req, res) {
         timeoutMs: 30000
       });
     } else if (GEMINI_API_KEY) {
+      provider = 'gemini';
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
@@ -114,7 +111,8 @@ export default async function handler(req, res) {
       teeth,
       ttlMm: Math.round(ttlMm * 100) / 100,
       confidence: Number(parsed.confidence) || 0.7,
-      arch: archType
+      arch: archType,
+      provider
     });
 
   } catch (e) {
