@@ -122,6 +122,7 @@
           <div class="control"><label for="xRange">좌우 이동 <span id="xVal">0px</span></label><input id="xRange" type="range" min="-500" max="500" value="0"></div>
           <div class="control"><label for="yRange">상하 이동 <span id="yVal">0px</span></label><input id="yRange" type="range" min="-320" max="320" value="0"></div>
           <div class="control"><label for="faceOpacityRange">안면 사진 밝기 <span id="faceOpacityVal">100%</span></label><input id="faceOpacityRange" type="range" min="35" max="100" value="100"></div>
+          <div class="control"><label for="faceScaleRange">안면 사진 크기 <span id="faceScaleVal">100%</span></label><input id="faceScaleRange" type="range" min="60" max="160" value="100"></div>
         </div>
         <div class="toggle-row" style="margin-top:14px;">
           <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="multiplyToggle" checked style="accent-color:#0891b2;"> Multiply</label>
@@ -149,7 +150,7 @@
     ceph: null,
     faceEntry: null,
     cephEntry: null,
-    transform: { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, multiply: true, edge: true, flip: false }
+    transform: { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: true, flip: false }
   };
   const canvas = document.getElementById('overlayCanvas');
   const ctx = canvas.getContext('2d');
@@ -213,7 +214,14 @@
       return;
     }
 
-    const faceRect = state.face ? fitRect(state.face, canvas.width, canvas.height) : null;
+    const faceFit = state.face ? fitRect(state.face, canvas.width, canvas.height) : null;
+    const faceScale = Number(state.transform.faceScale || 1);
+    const faceRect = faceFit ? {
+      w: faceFit.w * faceScale,
+      h: faceFit.h * faceScale,
+      x: canvas.width / 2 - (faceFit.w * faceScale) / 2,
+      y: canvas.height / 2 - (faceFit.h * faceScale) / 2
+    } : null;
     if (state.face && faceRect) {
       ctx.save();
       ctx.globalAlpha = state.transform.faceOpacity;
@@ -246,7 +254,8 @@
     document.getElementById('rotateRange').value = t.rotation;
     document.getElementById('xRange').value = t.x;
     document.getElementById('yRange').value = t.y;
-    document.getElementById('faceOpacityRange').value = Math.round(t.faceOpacity * 100);
+    document.getElementById('faceOpacityRange').value = Math.round((t.faceOpacity ?? 1) * 100);
+    document.getElementById('faceScaleRange').value = Math.round((t.faceScale ?? 1) * 100);
     document.getElementById('multiplyToggle').checked = t.multiply;
     document.getElementById('edgeToggle').checked = t.edge;
     document.getElementById('flipToggle').checked = t.flip;
@@ -255,7 +264,8 @@
     document.getElementById('rotateVal').textContent = Number(t.rotation).toFixed(1) + '°';
     document.getElementById('xVal').textContent = Math.round(t.x) + 'px';
     document.getElementById('yVal').textContent = Math.round(t.y) + 'px';
-    document.getElementById('faceOpacityVal').textContent = Math.round(t.faceOpacity * 100) + '%';
+    document.getElementById('faceOpacityVal').textContent = Math.round((t.faceOpacity ?? 1) * 100) + '%';
+    document.getElementById('faceScaleVal').textContent = Math.round((t.faceScale ?? 1) * 100) + '%';
   }
 
   function autoFit() {
@@ -267,6 +277,7 @@
     state.transform.y = 0;
     state.transform.rotation = 0;
     state.transform.opacity = 0.58;
+    state.transform.faceScale = 1;
     updateControls();
     draw();
   }
@@ -307,6 +318,7 @@
     setNumber('xRange', 'x', 1);
     setNumber('yRange', 'y', 1);
     setNumber('faceOpacityRange', 'faceOpacity', 100);
+    setNumber('faceScaleRange', 'faceScale', 100);
     ['multiplyToggle', 'edgeToggle', 'flipToggle'].forEach(id => {
       document.getElementById(id).addEventListener('change', event => {
         const map = { multiplyToggle: 'multiply', edgeToggle: 'edge', flipToggle: 'flip' };
@@ -318,7 +330,7 @@
     document.getElementById('autoFitBtn').onclick = autoFit;
     document.getElementById('saveBtn').onclick = saveAlignment;
     document.getElementById('exportBtn').onclick = exportPng;
-    document.getElementById('resetBtn').onclick = () => { state.transform = { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, multiply: true, edge: true, flip: false }; updateControls(); autoFit(); };
+    document.getElementById('resetBtn').onclick = () => { state.transform = { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: true, flip: false }; updateControls(); autoFit(); };
     document.getElementById('nextBtn').addEventListener('click', event => { event.preventDefault(); window.location.href = buildNextUrl('classification.html'); });
   }
 
