@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -214,6 +214,15 @@ const REQUIRED_IMAGES = [
 
 const STAGE_LABELS = { permanent_dentition: '\uC601\uAD6C\uCE58\uC5F4', mixed_dentition: '\uD63C\uD569\uCE58\uC5F4', adult: '\uC131\uC778' };
 const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+function getProfile9TypeResult() {
+  try { return JSON.parse(localStorage.getItem('oa_profile_9type_result') || 'null'); } catch { return null; }
+}
+function applyProfile9TypeResult() {
+  const profile9Type = getProfile9TypeResult();
+  if (!profile9Type) return;
+  const profile = document.getElementById('profile');
+  if (profile && profile9Type.profile) profile.value = profile9Type.profile;
+}
 function renderLinkedPatientInfo(data) {
   const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
   const patient = data?.patient || getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || {};
@@ -244,11 +253,13 @@ function renderLinkedPatientInfo(data) {
     grid.appendChild(div);
   }
   if (count > 0) document.getElementById('photoPreview').style.display = 'block';
+  applyProfile9TypeResult();
   if (data.patient && data.patient.name) {
     const chief = document.getElementById('chiefComplaint');
     if (!chief.value) chief.placeholder = `환자: ${data.patient.name}`;
   }
 })();
+applyProfile9TypeResult();
 
 function normalizeImageForAi(dataUrl, maxDim = 1200) {
   return new Promise((resolve, reject) => {
@@ -319,11 +330,13 @@ async function buildStep3TransferPayload() {
   const step1Patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
   const patient = caseData?.patient || getPatientFromUrl() || step1Patient || window.PatientStore?.get?.() || null;
   const photos = caseData?.photos || {};
+  const profile9Type = getProfile9TypeResult();
   const record = window.lastClassificationResult ? {
     id: Date.now(),
     savedAt: new Date().toISOString(),
     patientName: patient?.name || '',
     patient,
+    profile9Type,
     result: window.lastClassificationResult
   } : null;
   return {
@@ -332,6 +345,7 @@ async function buildStep3TransferPayload() {
     source: 'classification-step',
     patient,
     photoKeys: Object.keys(photos).filter(key => photos[key]?.base64),
+    profile9Type,
     classificationRecord: record
   };
 }
@@ -438,7 +452,6 @@ function renderResult(r) {
 </script>
 </body>
 </html>
-
 
 
 

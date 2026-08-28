@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="측면 얼굴 사진 기준 Concave/Straight/Convex와 Dolicho/Meso/Brachy 조합 9유형 분류">
+<title>1.5단계 안모 9유형 분류 | Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-compact { position:relative; overflow:hidden; padding:28px 24px 22px; border-bottom:1px solid rgba(148,163,184,.24); background:linear-gradient(135deg, #0b1220 0%, #17324a 55%, #28425c 100%); color:#fff; }
+  .hero-compact p { color:#cbd8ee; max-width:760px; }
+  .step-indicator { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+  .step-indicator .step { display:inline-flex; align-items:center; min-height:30px; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:700; background:rgba(255,255,255,.12); color:#dbeafe; border:1px solid rgba(255,255,255,.14); text-decoration:none; }
+  .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
+  .step-indicator .step.active { background:linear-gradient(135deg, #0891b2, #16a34a); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(8,145,178,.25); }
+  .step-indicator .arrow { color:#94a3b8; font-size:16px; }
+  .layout { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr); gap:20px; margin-top:24px; align-items:start; }
+  .panel { border:1px solid var(--border-subtle); border-radius:16px; background:#fff; padding:20px; box-shadow:0 12px 30px rgba(15,23,42,.07); }
+  .preview { min-height:360px; border:1px solid var(--border-subtle); border-radius:14px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#94a3b8; text-align:center; padding:18px; }
+  .preview img { width:100%; height:100%; object-fit:contain; display:block; background:#0f172a; }
+  .axis-group { margin-top:16px; }
+  .axis-title { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .axis-title h3 { margin:0; font-size:16px; }
+  .axis-title span { font-size:12px; color:var(--text-muted); }
+  .choice-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+  .choice { text-align:left; border:1px solid var(--border-subtle); background:#f8fafc; border-radius:10px; padding:12px; cursor:pointer; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+  .choice:hover { transform:translateY(-2px); border-color:#0891b2; box-shadow:0 8px 18px rgba(15,23,42,.1); }
+  .choice.selected { background:rgba(8,145,178,.08); border-color:#0891b2; box-shadow:0 0 0 3px rgba(8,145,178,.12); }
+  .choice strong { display:block; font-size:14px; color:var(--text-primary); margin-bottom:4px; }
+  .choice span { display:block; font-size:12px; line-height:1.45; color:var(--text-secondary); }
+  .type-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin-top:14px; }
+  .type-cell { min-height:76px; border:1px solid var(--border-subtle); border-radius:10px; padding:10px; background:#f8fafc; display:flex; flex-direction:column; justify-content:center; text-align:center; }
+  .type-cell.active { background:linear-gradient(135deg, rgba(8,145,178,.12), rgba(22,163,74,.12)); border-color:#0891b2; box-shadow:0 0 0 3px rgba(8,145,178,.1); }
+  .type-cell b { font-size:13px; color:var(--text-primary); }
+  .type-cell span { font-size:11px; color:var(--text-muted); margin-top:4px; }
+  .result-box { margin-top:18px; padding:18px; border-radius:14px; background:linear-gradient(135deg, rgba(8,145,178,.1), rgba(22,163,74,.1)); border:1px solid rgba(8,145,178,.22); }
+  .result-name { font-size:30px; font-weight:800; color:#0f4f63; margin-bottom:6px; }
+  .patient-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:14px; }
+  .patient-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:#f8fafc; }
+  .patient-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
+  .patient-item b { display:block; font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+  .actions-row { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  @media (max-width:900px) { .layout { grid-template-columns:1fr; } .choice-grid, .type-grid, .patient-grid { grid-template-columns:1fr; } .preview { min-height:260px; } }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <section class="hero-compact">
+    <div class="container">
+      <div class="step-indicator">
+        <a class="step done" href="photo-upload.html">1 사진 입력</a><span class="arrow">→</span>
+        <span class="step active" aria-current="step">1.5 안모 9유형</span><span class="arrow">→</span>
+        <a class="step" href="classification.html">2 Class 분류</a><span class="arrow">→</span>
+        <a class="step" href="step3-new.html">3 EZ/TZ 분석</a><span class="arrow">→</span>
+        <a class="step" href="extraction-ai.html">4 발치 판단</a>
+      </div>
+      <span class="badge badge-primary">측면 얼굴 사진 분석</span>
+      <h1 style="margin-top:8px;">1.5단계: 안모 9유형 분류</h1>
+      <p>측면 안모를 Concave / Straight / Convex 축과 Dolicho / Meso / Brachy 축으로 나누어 총 9가지 유형 중 하나로 기록합니다.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="panel" style="margin-top:24px;">
+      <h3 style="margin:0;">환자 정보</h3>
+      <div class="patient-grid">
+        <div class="patient-item"><span>환자명 / 케이스 코드</span><b id="patientName">-</b></div>
+        <div class="patient-item"><span>치열 단계</span><b id="dentitionStage">-</b></div>
+        <div class="patient-item"><span>기존 골격 분류</span><b id="skeletalClass">-</b></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="axis-title">
+          <h3>측면 얼굴 사진</h3>
+          <a href="photo-upload.html" style="font-size:12px; color:var(--color-primary);">사진 수정</a>
+        </div>
+        <div class="preview" id="facePreview">1단계에서 안면 측면 사진을 입력하면 여기에 표시됩니다.</div>
+        <div class="result-box" id="resultBox">
+          <div class="result-name" id="resultName">유형 미선택</div>
+          <p id="resultDesc" style="margin:0; color:var(--text-secondary);">아래 두 축을 선택하면 9유형 결과가 생성됩니다.</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="axis-group" style="margin-top:0;">
+          <div class="axis-title">
+            <h3>1축: 안모 형태</h3>
+            <span>Profile</span>
+          </div>
+          <div class="choice-grid" data-axis="profile">
+            <button class="choice" type="button" data-value="concave"><strong>Concave</strong><span>오목형. 하악 전돌 또는 중안면 후퇴 경향을 의심합니다.</span></button>
+            <button class="choice" type="button" data-value="straight"><strong>Straight</strong><span>직선형. 상하악 전후방 균형이 비교적 안정적입니다.</span></button>
+            <button class="choice" type="button" data-value="convex"><strong>Convex</strong><span>볼록형. 하악 후퇴 또는 상악 전돌 경향을 의심합니다.</span></button>
+          </div>
+        </div>
+
+        <div class="axis-group">
+          <div class="axis-title">
+            <h3>2축: 수직 성장 패턴</h3>
+            <span>Vertical Pattern</span>
+          </div>
+          <div class="choice-grid" data-axis="vertical">
+            <button class="choice" type="button" data-value="dolicho"><strong>Dolicho</strong><span>장안형. 수직 성장, 개방교합, 긴 하안면 경향을 확인합니다.</span></button>
+            <button class="choice" type="button" data-value="meso"><strong>Meso</strong><span>중안형. 수직 비율이 평균 범위에 가깝습니다.</span></button>
+            <button class="choice" type="button" data-value="brachy"><strong>Brachy</strong><span>단안형. 수평 성장, 깊은 교합, 짧은 하안면 경향을 확인합니다.</span></button>
+          </div>
+        </div>
+
+        <div class="type-grid" id="typeGrid" aria-label="9유형 매트릭스"></div>
+
+        <div class="actions-row">
+          <button class="btn btn-ghost" type="button" id="resetBtn">초기화</button>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-ghost" type="button" id="saveBtn">저장</button>
+            <button class="btn btn-primary" type="button" id="nextBtn">2단계: Class 분류 →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js?v=3"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script>
+(function () {
+  const PROFILE_LABELS = { concave: 'Concave', straight: 'Straight', convex: 'Convex' };
+  const VERTICAL_LABELS = { dolicho: 'Dolicho', meso: 'Meso', brachy: 'Brachy' };
+  const PROFILE_KO = { concave: '오목형', straight: '직선형', convex: '볼록형' };
+  const VERTICAL_KO = { dolicho: '장안형', meso: '중안형', brachy: '단안형' };
+  const STAGE_LABELS = { permanent_dentition: '영구치열', mixed_dentition: '혼합치열', adult: '성인' };
+  const CLASS_LABELS = { class1: 'Class I', class2: 'Class II', class3: 'Class III' };
+  const state = { profile: '', vertical: '' };
+
+  function getPatientFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const patient = {
+      name: params.get('patientName') || '',
+      stage: params.get('dentitionStage') || '',
+      dentitionStage: params.get('dentitionStage') || '',
+      classification: params.get('classification') || ''
+    };
+    return patient.name || patient.stage || patient.classification ? patient : null;
+  }
+
+  function buildNextUrl(targetPath) {
+    const patient = getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    const url = new URL(targetPath, window.location.href);
+    if (patient.name) url.searchParams.set('patientName', patient.name);
+    if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
+    if (patient.classification) url.searchParams.set('classification', patient.classification);
+    return url.pathname.split('/').pop() + url.search;
+  }
+
+  function selectedTypeName() {
+    if (!state.profile || !state.vertical) return '';
+    return `${PROFILE_LABELS[state.profile]} / ${VERTICAL_LABELS[state.vertical]}`;
+  }
+
+  function selectedDescription() {
+    if (!state.profile || !state.vertical) return '아래 두 축을 선택하면 9유형 결과가 생성됩니다.';
+    return `${PROFILE_KO[state.profile]} 안모와 ${VERTICAL_KO[state.vertical]} 수직 패턴 조합입니다. Class 분류와 발치 판단 단계에서 보조 소견으로 함께 검토합니다.`;
+  }
+
+  function renderTypeGrid() {
+    const profiles = ['concave', 'straight', 'convex'];
+    const verticals = ['dolicho', 'meso', 'brachy'];
+    document.getElementById('typeGrid').innerHTML = verticals.flatMap(vertical =>
+      profiles.map(profile => {
+        const active = state.profile === profile && state.vertical === vertical;
+        return `<div class="type-cell ${active ? 'active' : ''}"><b>${PROFILE_LABELS[profile]} / ${VERTICAL_LABELS[vertical]}</b><span>${PROFILE_KO[profile]} · ${VERTICAL_KO[vertical]}</span></div>`;
+      })
+    ).join('');
+  }
+
+  function renderState() {
+    document.querySelectorAll('.choice').forEach(btn => {
+      const axis = btn.closest('[data-axis]')?.dataset.axis;
+      btn.classList.toggle('selected', state[axis] === btn.dataset.value);
+    });
+    const name = selectedTypeName();
+    document.getElementById('resultName').textContent = name || '유형 미선택';
+    document.getElementById('resultDesc').textContent = selectedDescription();
+    renderTypeGrid();
+  }
+
+  function saveResult(silent = false) {
+    const name = selectedTypeName();
+    if (!name) {
+      if (!silent) window.toast?.('안모 형태와 수직 성장 패턴을 모두 선택하세요.', 'warning');
+      return false;
+    }
+    const record = {
+      profile: state.profile,
+      verticalPattern: state.vertical,
+      type: name,
+      profileLabel: PROFILE_KO[state.profile],
+      verticalLabel: VERTICAL_KO[state.vertical],
+      description: selectedDescription(),
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('oa_profile_9type_result', JSON.stringify(record));
+    if (!silent) window.toast?.('안모 9유형 분류를 저장했습니다.', 'success');
+    return true;
+  }
+
+  function restoreResult() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('oa_profile_9type_result') || 'null');
+      if (saved?.profile) state.profile = saved.profile;
+      if (saved?.verticalPattern) state.vertical = saved.verticalPattern;
+    } catch {}
+  }
+
+  async function loadCase() {
+    const data = await PhotoStore.loadCase();
+    const patient = data?.patient || getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    document.getElementById('patientName').textContent = patient.name || '-';
+    document.getElementById('dentitionStage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || patient.stage || patient.dentitionStage || '-';
+    document.getElementById('skeletalClass').textContent = CLASS_LABELS[patient.classification] || patient.classification || '-';
+
+    const lateral = data?.photos?.faceLateral || data?.photos?.ceph;
+    const preview = document.getElementById('facePreview');
+    if (lateral?.base64) {
+      preview.innerHTML = `<img src="${lateral.base64}" alt="측면 얼굴 사진">`;
+    }
+  }
+
+  document.querySelectorAll('.choice').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const axis = btn.closest('[data-axis]')?.dataset.axis;
+      if (!axis) return;
+      state[axis] = btn.dataset.value;
+      renderState();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    state.profile = '';
+    state.vertical = '';
+    localStorage.removeItem('oa_profile_9type_result');
+    renderState();
+  });
+  document.getElementById('saveBtn').addEventListener('click', () => saveResult(false));
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (!saveResult(false)) return;
+    window.location.href = buildNextUrl('classification.html');
+  });
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest?.('a[href="classification.html"], a[href="step3-new.html"], a[href="extraction-ai.html"]');
+    if (!link) return;
+    event.preventDefault();
+    saveResult(true);
+    window.location.href = buildNextUrl(link.getAttribute('href'));
+  });
+
+  restoreResult();
+  renderState();
+  loadCase();
+})();
+</script>
+</body>
+</html>

@@ -125,6 +125,8 @@
       <div class="step-indicator">
         <div class="step active">1 사진 입력</div>
         <span class="arrow">→</span>
+        <div class="step">1.5 안모 9유형</div>
+        <span class="arrow">→</span>
         <div class="step">2 Class 분류</div>
         <span class="arrow">→</span>
         <div class="step">3 EZ/TZ 분석</div>
@@ -268,7 +270,7 @@
       </div>
       <div style="display:flex; gap:10px;">
         <button class="btn btn-ghost" id="saveToDbBtn" type="button" style="border-color:#22c55e; color:#16a34a;">💾 저장</button>
-        <a class="btn btn-primary" id="nextStepBtn" href="classification.html" style="pointer-events:none; opacity:0.5;">2단계: Class 분류 →</a>
+        <a class="btn btn-primary" id="nextStepBtn" href="profile-classification.html" style="pointer-events:none; opacity:0.5;">1.5단계: 안모 9유형 분류 →</a>
       </div>
     </div>
   </div>
@@ -833,17 +835,17 @@
     nextStepBtn.addEventListener('click', async (event) => {
       event.preventDefault();
       await doSave();
-      window.location.href = buildPatientQuery(nextStepBtn.getAttribute('href') || 'classification.html');
+      window.location.href = buildPatientQuery(nextStepBtn.getAttribute('href') || 'profile-classification.html');
     });
   }
 
 
   document.addEventListener('click', async (event) => {
-    const link = event.target.closest?.('a[href="classification.html"], a[href="step3-new.html"]');
+    const link = event.target.closest?.('a[href="profile-classification.html"], a[href="classification.html"], a[href="step3-new.html"]');
     if (!link) return;
     event.preventDefault();
     await doSave();
-    window.location.href = buildPatientQuery(link.getAttribute('href') || 'classification.html');
+    window.location.href = buildPatientQuery(link.getAttribute('href') || 'profile-classification.html');
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', async () => {
