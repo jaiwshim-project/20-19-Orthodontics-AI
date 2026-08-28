@@ -16,6 +16,9 @@
   .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
   .step-indicator .step.active { background:linear-gradient(135deg,#0891b2,#16a34a); color:#fff; border-color:transparent; }
   .step-indicator .arrow { color:#94a3b8; font-size:16px; }
+  .reference-panel { margin-top:22px; border:1px solid var(--border-subtle); border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 14px 32px rgba(15,23,42,.08); }
+  .reference-panel h3 { margin:0; padding:14px 16px; border-bottom:1px solid var(--border-subtle); font-size:18px; }
+  .reference-image { display:block; width:100%; height:auto; background:#f8fafc; }
   .top-upload-panel { margin-top:22px; border:1px solid var(--border-subtle); border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 14px 32px rgba(15,23,42,.08); }
   .top-upload-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid var(--border-subtle); }
   .top-upload-head h3 { margin:0; font-size:18px; }
@@ -67,6 +70,10 @@
   </section>
 
   <div class="container">
+    <section class="reference-panel">
+      <h3>Graphic Simulation 기준 이미지</h3>
+      <img class="reference-image" src="assets/graphic-simulation-reference.jpg" alt="Graphic Simulation 기준 화면">
+    </section>
     <section class="top-upload-panel">
       <div class="top-upload-head">
         <h3>상단 업로드 이미지</h3>
