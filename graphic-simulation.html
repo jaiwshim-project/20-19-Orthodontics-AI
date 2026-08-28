@@ -16,6 +16,10 @@
   .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
   .step-indicator .step.active { background:linear-gradient(135deg,#0891b2,#16a34a); color:#fff; border-color:transparent; }
   .step-indicator .arrow { color:#94a3b8; font-size:16px; }
+  .top-upload-panel { margin-top:22px; border:1px solid var(--border-subtle); border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 14px 32px rgba(15,23,42,.08); }
+  .top-upload-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid var(--border-subtle); }
+  .top-upload-head h3 { margin:0; font-size:18px; }
+  .top-upload-image { min-height:360px; aspect-ratio:21 / 9; background:#eaf2f8 center/contain no-repeat; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:16px; font-weight:800; text-align:center; padding:20px; }
   .patient-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
   .patient-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:#fff; }
   .patient-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
@@ -39,7 +43,7 @@
   .photo-meta span { display:block; margin-top:2px; font-size:11px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .empty-state { padding:34px 18px; border:1px dashed #cbd5e1; border-radius:14px; text-align:center; color:var(--text-muted); background:#f8fafc; }
   @media (max-width:900px) { .sim-stage { grid-template-columns:1fr; padding:24px 16px 30px; } .patient-strip { grid-template-columns:1fr 1fr; } }
-  @media (max-width:560px) { .patient-strip { grid-template-columns:1fr; } .sim-toolbar { align-items:flex-start; flex-direction:column; } .sim-image { min-height:220px; } }
+  @media (max-width:560px) { .patient-strip { grid-template-columns:1fr; } .sim-toolbar { align-items:flex-start; flex-direction:column; } .sim-image { min-height:220px; } .top-upload-image { min-height:220px; aspect-ratio:4 / 3; } }
 </style>
 </head>
 <body>
@@ -63,6 +67,13 @@
   </section>
 
   <div class="container">
+    <section class="top-upload-panel">
+      <div class="top-upload-head">
+        <h3>상단 업로드 이미지</h3>
+        <span style="font-size:12px; color:var(--text-muted);">대표 이미지가 이 영역에 크게 표시됩니다.</span>
+      </div>
+      <div class="top-upload-image" id="topUploadImage">업로드된 이미지가 없습니다.</div>
+    </section>
     <section class="patient-strip" aria-label="환자 정보">
       <div class="patient-item"><span>환자명</span><b id="patientName">-</b></div>
       <div class="patient-item"><span>치열 단계</span><b id="dentitionStage">-</b></div>
@@ -128,9 +139,12 @@
   }
 
   function setPrimary(entry, label) {
+    const top = document.getElementById('topUploadImage');
     const before = document.getElementById('beforeImage');
     const after = document.getElementById('afterImage');
     if (!entry?.base64) return;
+    top.style.backgroundImage = `url(${entry.base64})`;
+    top.textContent = '';
     before.style.backgroundImage = `url(${entry.base64})`;
     before.textContent = '';
     after.style.backgroundImage = `url(${entry.base64})`;
