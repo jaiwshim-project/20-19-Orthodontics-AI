@@ -16,8 +16,11 @@
   .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
   .step-indicator .step.active { background:linear-gradient(135deg, #0891b2, #16a34a); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(8,145,178,.25); }
   .step-indicator .arrow { color:#94a3b8; font-size:16px; }
-  .layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:18px; margin-top:22px; align-items:start; }
+  .layout { display:grid; grid-template-columns:1fr; gap:18px; margin-top:22px; align-items:start; }
   .panel { border:1px solid var(--border-subtle); border-radius:16px; background:#fff; padding:18px; box-shadow:0 12px 30px rgba(15,23,42,.07); }
+  .overlay-workspace { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:16px; align-items:start; }
+  .overlay-canvas-column { min-width:0; }
+  .overlay-controls { position:sticky; top:82px; border:1px solid var(--border-subtle); border-radius:14px; background:#fff; padding:16px; box-shadow:0 10px 24px rgba(15,23,42,.07); }
   .patient-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-top:12px; }
   .patient-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:#f8fafc; }
   .patient-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
@@ -46,7 +49,7 @@
   .main-scale-control span { min-width:52px; text-align:right; font-size:13px; font-weight:800; color:#0891b2; }
   .hint { margin-top:10px; padding:10px 12px; border-left:3px solid #0891b2; border-radius:0 8px 8px 0; background:rgba(8,145,178,.07); color:var(--text-secondary); font-size:12px; line-height:1.5; }
   .actions-row { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
-  @media (max-width:1100px) { .layout { grid-template-columns:1fr; } #overlayCanvas { min-height:320px; } }
+  @media (max-width:1100px) { .overlay-workspace { grid-template-columns:1fr; } .overlay-controls { position:static; } #overlayCanvas { min-height:320px; } }
   @media (max-width:700px) { .main-scale-control { grid-template-columns:1fr; align-items:start; } .main-scale-control span { text-align:left; } }
   @media (max-width:700px) { .patient-grid, .source-grid, .comparison-grid { grid-template-columns:1fr; } .hero-compact { padding:20px 16px 16px; } }
 </style>
@@ -104,6 +107,8 @@
             </div>
           </div>
         </section>
+        <div class="overlay-workspace">
+          <div class="overlay-canvas-column">
         <div class="main-scale-control">
           <label for="faceScaleRangeMain">환자 얼굴 사진 확대/축소</label>
           <input id="faceScaleRangeMain" type="range" min="60" max="160" value="100">
@@ -121,9 +126,9 @@
           <div class="source-card"><div class="thumb" id="faceThumb">안면 측면 사진 없음</div><div class="label">안면 측면</div></div>
           <div class="source-card"><div class="thumb" id="cephThumb">세팔로 측면 사진 없음</div><div class="label">세팔로 측면</div></div>
         </div>
-      </section>
+          </div>
 
-      <aside class="panel">
+          <aside class="overlay-controls">
         <h3 style="margin-top:0;">중첩 조정</h3>
         <div class="control-grid">
           <div class="control"><label for="opacityRange">세팔로 투명도 <span id="opacityVal">58%</span></label><input id="opacityRange" type="range" min="0" max="100" value="58"></div>
@@ -136,14 +141,15 @@
         </div>
         <div class="toggle-row" style="margin-top:14px;">
           <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="multiplyToggle" checked style="accent-color:#0891b2;"> Multiply</label>
-          <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="edgeToggle" checked style="accent-color:#0891b2;"> 윤곽선</label>
           <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="flipToggle" style="accent-color:#0891b2;"> 세팔로 좌우반전</label>
         </div>
         <div class="actions-row">
           <button class="btn btn-ghost" type="button" id="resetBtn">초기화</button>
           <a class="btn btn-primary" href="classification.html" id="nextBtn">2단계: Class 분류 →</a>
         </div>
-      </aside>
+          </aside>
+        </div>
+      </section>
     </div>
   </div>
 </main>
@@ -160,7 +166,7 @@
     ceph: null,
     faceEntry: null,
     cephEntry: null,
-    transform: { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: true, flip: false }
+    transform: { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: false, flip: false }
   };
   const canvas = document.getElementById('overlayCanvas');
   const ctx = canvas.getContext('2d');
@@ -269,7 +275,6 @@
     document.getElementById('faceScaleRange').value = faceScalePct;
     document.getElementById('faceScaleRangeMain').value = faceScalePct;
     document.getElementById('multiplyToggle').checked = t.multiply;
-    document.getElementById('edgeToggle').checked = t.edge;
     document.getElementById('flipToggle').checked = t.flip;
     document.getElementById('opacityVal').textContent = Math.round(t.opacity * 100) + '%';
     document.getElementById('scaleVal').textContent = Math.round(t.scale * 100) + '%';
@@ -305,6 +310,7 @@
       const saved = JSON.parse(localStorage.getItem(ALIGNMENT_KEY) || 'null');
       if (!saved) return false;
       Object.assign(state.transform, saved);
+      state.transform.edge = false;
       return true;
     } catch { return false; }
   }
@@ -333,9 +339,9 @@
     setNumber('faceOpacityRange', 'faceOpacity', 100);
     setNumber('faceScaleRange', 'faceScale', 100);
     setNumber('faceScaleRangeMain', 'faceScale', 100);
-    ['multiplyToggle', 'edgeToggle', 'flipToggle'].forEach(id => {
+    ['multiplyToggle', 'flipToggle'].forEach(id => {
       document.getElementById(id).addEventListener('change', event => {
-        const map = { multiplyToggle: 'multiply', edgeToggle: 'edge', flipToggle: 'flip' };
+        const map = { multiplyToggle: 'multiply', flipToggle: 'flip' };
         state.transform[map[id]] = event.target.checked;
         updateControls();
         draw();
@@ -344,7 +350,7 @@
     document.getElementById('autoFitBtn').onclick = autoFit;
     document.getElementById('saveBtn').onclick = saveAlignment;
     document.getElementById('exportBtn').onclick = exportPng;
-    document.getElementById('resetBtn').onclick = () => { state.transform = { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: true, flip: false }; updateControls(); autoFit(); };
+    document.getElementById('resetBtn').onclick = () => { state.transform = { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, faceScale: 1, multiply: true, edge: false, flip: false }; updateControls(); autoFit(); };
     document.getElementById('nextBtn').addEventListener('click', event => { event.preventDefault(); window.location.href = buildNextUrl('classification.html'); });
   }
 
