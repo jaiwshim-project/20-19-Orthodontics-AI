@@ -40,9 +40,14 @@
   .comparison-card { border:1px solid var(--border-subtle); border-radius:14px; overflow:hidden; background:#f8fafc; }
   .comparison-card .preview { min-height:280px; aspect-ratio:4 / 3; background:#e2e8f0 center/contain no-repeat; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:14px; font-weight:700; text-align:center; padding:18px; }
   .comparison-card .caption { padding:10px 12px; border-top:1px solid var(--border-subtle); font-size:13px; font-weight:800; color:var(--text-primary); background:#fff; }
+  .main-scale-control { display:grid; grid-template-columns:minmax(170px, auto) minmax(220px, 1fr) auto; align-items:center; gap:12px; margin:14px 0 12px; padding:12px 14px; border:1px solid rgba(8,145,178,.22); border-radius:12px; background:rgba(8,145,178,.06); }
+  .main-scale-control label { font-size:13px; font-weight:800; color:var(--text-primary); }
+  .main-scale-control input[type="range"] { width:100%; accent-color:#0891b2; }
+  .main-scale-control span { min-width:52px; text-align:right; font-size:13px; font-weight:800; color:#0891b2; }
   .hint { margin-top:10px; padding:10px 12px; border-left:3px solid #0891b2; border-radius:0 8px 8px 0; background:rgba(8,145,178,.07); color:var(--text-secondary); font-size:12px; line-height:1.5; }
   .actions-row { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
   @media (max-width:1100px) { .layout { grid-template-columns:1fr; } #overlayCanvas { min-height:320px; } }
+  @media (max-width:700px) { .main-scale-control { grid-template-columns:1fr; align-items:start; } .main-scale-control span { text-align:left; } }
   @media (max-width:700px) { .patient-grid, .source-grid, .comparison-grid { grid-template-columns:1fr; } .hero-compact { padding:20px 16px 16px; } }
 </style>
 </head>
@@ -99,6 +104,11 @@
             </div>
           </div>
         </section>
+        <div class="main-scale-control">
+          <label for="faceScaleRangeMain">환자 얼굴 사진 확대/축소</label>
+          <input id="faceScaleRangeMain" type="range" min="60" max="160" value="100">
+          <span id="faceScaleMainVal">100%</span>
+        </div>
         <div class="canvas-wrap">
           <canvas id="overlayCanvas" width="1600" height="900"></canvas>
           <div class="status-line">
@@ -255,7 +265,9 @@
     document.getElementById('xRange').value = t.x;
     document.getElementById('yRange').value = t.y;
     document.getElementById('faceOpacityRange').value = Math.round((t.faceOpacity ?? 1) * 100);
-    document.getElementById('faceScaleRange').value = Math.round((t.faceScale ?? 1) * 100);
+    const faceScalePct = Math.round((t.faceScale ?? 1) * 100);
+    document.getElementById('faceScaleRange').value = faceScalePct;
+    document.getElementById('faceScaleRangeMain').value = faceScalePct;
     document.getElementById('multiplyToggle').checked = t.multiply;
     document.getElementById('edgeToggle').checked = t.edge;
     document.getElementById('flipToggle').checked = t.flip;
@@ -265,7 +277,8 @@
     document.getElementById('xVal').textContent = Math.round(t.x) + 'px';
     document.getElementById('yVal').textContent = Math.round(t.y) + 'px';
     document.getElementById('faceOpacityVal').textContent = Math.round((t.faceOpacity ?? 1) * 100) + '%';
-    document.getElementById('faceScaleVal').textContent = Math.round((t.faceScale ?? 1) * 100) + '%';
+    document.getElementById('faceScaleVal').textContent = faceScalePct + '%';
+    document.getElementById('faceScaleMainVal').textContent = faceScalePct + '%';
   }
 
   function autoFit() {
@@ -319,6 +332,7 @@
     setNumber('yRange', 'y', 1);
     setNumber('faceOpacityRange', 'faceOpacity', 100);
     setNumber('faceScaleRange', 'faceScale', 100);
+    setNumber('faceScaleRangeMain', 'faceScale', 100);
     ['multiplyToggle', 'edgeToggle', 'flipToggle'].forEach(id => {
       document.getElementById(id).addEventListener('change', event => {
         const map = { multiplyToggle: 'multiply', edgeToggle: 'edge', flipToggle: 'flip' };
