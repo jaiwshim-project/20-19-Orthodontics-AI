@@ -17,7 +17,8 @@
       { path: 'profile-overlay.html',        label: '1.5단계 세팔로 중첩', icon: '🩻' },
       { path: 'classification.html',       label: '2단계 Class 분류',   icon: '🎯' },
       { path: 'step3-new.html',            label: '3단계 TTL/EZL 분석', icon: 'EZ' },
-      { path: 'extraction-ai.html',        label: '4단계 발치 판단',    icon: '🦷' }
+      { path: 'extraction-ai.html',        label: '4단계 발치 판단',    icon: '🦷' },
+      { path: 'graphic-simulation.html', label: '5단계 그래픽 시뮬레이션', icon: '🖥️' }
     ]},
     { group: 'AI 보조', items: [
       { path: 'growth-prediction.html', label: '성장 예측',         icon: '📈' },

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="5단계 그래픽 시뮬레이션: 1단계에서 업로드한 환자 이미지를 치료 전/시뮬레이션 화면에 표시합니다.">
+<title>5단계 그래픽 시뮬레이션 | Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-compact { padding:28px 24px 22px; border-bottom:1px solid var(--border-subtle); background:linear-gradient(135deg,#0b1220,#155e75 55%,#0f766e); color:#fff; }
+  .hero-compact p { max-width:760px; color:#dbeafe; }
+  .step-indicator { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+  .step-indicator .step { display:inline-flex; align-items:center; min-height:30px; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:700; background:rgba(255,255,255,.12); color:#dbeafe; border:1px solid rgba(255,255,255,.14); text-decoration:none; }
+  .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
+  .step-indicator .step.active { background:linear-gradient(135deg,#0891b2,#16a34a); color:#fff; border-color:transparent; }
+  .step-indicator .arrow { color:#94a3b8; font-size:16px; }
+  .patient-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
+  .patient-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:#fff; }
+  .patient-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
+  .patient-item b { display:block; font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+  .sim-shell { margin-top:22px; border:1px solid var(--border-subtle); border-radius:16px; overflow:hidden; background:#eef6fb; box-shadow:0 16px 36px rgba(15,23,42,.08); }
+  .sim-toolbar { min-height:58px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(14,116,144,.2); background:#fff; }
+  .sim-toolbar h3 { margin:0; font-size:18px; }
+  .sim-note { padding:9px 16px; background:#0891b2; color:#e0f2fe; font-size:12px; font-weight:700; }
+  .sim-stage { display:grid; grid-template-columns:1fr 1fr; gap:28px; padding:42px 34px 52px; min-height:520px; align-items:center; }
+  .sim-pane { display:grid; gap:12px; align-content:center; justify-items:center; }
+  .sim-label { justify-self:start; padding:6px 12px; background:#fff; border:1px solid var(--border-subtle); border-radius:8px; font-size:13px; font-weight:800; color:var(--text-secondary); }
+  .sim-image { width:100%; min-height:310px; aspect-ratio:16 / 10; border-radius:18px; background:#e2e8f0 center/contain no-repeat; border:1px solid rgba(148,163,184,.35); box-shadow:0 20px 42px rgba(15,23,42,.14); display:flex; align-items:center; justify-content:center; color:#64748b; font-size:15px; font-weight:800; text-align:center; padding:18px; }
+  .sim-image.after { filter:saturate(1.05) contrast(1.04); }
+  .photo-section { margin-top:18px; }
+  .photo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:12px; }
+  .photo-card { border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; background:#fff; cursor:pointer; transition:transform .16s, box-shadow .16s, border-color .16s; }
+  .photo-card:hover { transform:translateY(-1px); box-shadow:0 10px 24px rgba(15,23,42,.08); border-color:#0891b2; }
+  .photo-thumb { height:140px; background:#e2e8f0 center/cover no-repeat; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; text-align:center; padding:10px; }
+  .photo-meta { padding:9px 10px; }
+  .photo-meta b { display:block; font-size:13px; color:var(--text-primary); }
+  .photo-meta span { display:block; margin-top:2px; font-size:11px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .empty-state { padding:34px 18px; border:1px dashed #cbd5e1; border-radius:14px; text-align:center; color:var(--text-muted); background:#f8fafc; }
+  @media (max-width:900px) { .sim-stage { grid-template-columns:1fr; padding:24px 16px 30px; } .patient-strip { grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px) { .patient-strip { grid-template-columns:1fr; } .sim-toolbar { align-items:flex-start; flex-direction:column; } .sim-image { min-height:220px; } }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <section class="hero-compact">
+    <div class="container">
+      <div class="step-indicator">
+        <a class="step done" href="photo-upload.html">1 사진 입력</a><span class="arrow">→</span>
+        <a class="step done" href="profile-classification.html">1.5 안모 9유형</a><span class="arrow">→</span>
+        <a class="step done" href="profile-overlay.html">1.5 세팔로 중첩</a><span class="arrow">→</span>
+        <a class="step done" href="classification.html">2 Class 분류</a><span class="arrow">→</span>
+        <a class="step done" href="step3-new.html">3 EZ/TZ 분석</a><span class="arrow">→</span>
+        <a class="step done" href="extraction-ai.html">4 발치 판단</a><span class="arrow">→</span>
+        <span class="step active" aria-current="step">5 그래픽 시뮬레이션</span>
+      </div>
+      <span class="badge badge-primary">Graphic Simulation</span>
+      <h1 style="margin-top:8px;">5단계: 그래픽 시뮬레이션</h1>
+      <p>1단계에서 업로드한 환자 이미지를 치료 전/시뮬레이션 화면에 배치해 비교합니다.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="patient-strip" aria-label="환자 정보">
+      <div class="patient-item"><span>환자명</span><b id="patientName">-</b></div>
+      <div class="patient-item"><span>치열 단계</span><b id="dentitionStage">-</b></div>
+      <div class="patient-item"><span>업로드 이미지</span><b id="photoCount">0장</b></div>
+      <div class="patient-item"><span>대표 이미지</span><b id="primaryLabel">-</b></div>
+    </section>
+
+    <section class="sim-shell">
+      <div class="sim-toolbar">
+        <h3>Graphic Simulation</h3>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <a class="btn btn-ghost" href="photo-upload.html" id="editPhotosBtn">사진 수정</a>
+          <button class="btn btn-primary" type="button" id="reloadBtn">이미지 다시 불러오기</button>
+        </div>
+      </div>
+      <div class="sim-note">업로드된 이미지를 기준으로 치료 전과 그래픽 시뮬레이션 비교 화면을 구성합니다.</div>
+      <div class="sim-stage">
+        <div class="sim-pane">
+          <div class="sim-label">치료 전</div>
+          <div class="sim-image before" id="beforeImage">업로드된 이미지가 없습니다.</div>
+        </div>
+        <div class="sim-pane">
+          <div class="sim-label">그래픽 시뮬레이션</div>
+          <div class="sim-image after" id="afterImage">업로드된 이미지가 없습니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card photo-section">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <h3 style="margin:0;">업로드된 이미지</h3>
+        <span style="font-size:12px; color:var(--text-muted);">이미지 카드를 클릭하면 대표 이미지로 표시됩니다.</span>
+      </div>
+      <div id="photoGrid" class="photo-grid"></div>
+    </section>
+  </div>
+</main>
+<script src="js/api-config.js"></script>
+<script src="js/common.js?v=5"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script>
+(function () {
+  const STAGE_LABELS = { permanent_dentition: '영구치열', mixed_dentition: '혼합치열', adult: '성인' };
+  const SLOT_LABELS = {
+    frontal: '구강 정면', rightLateral: '구강 우측', leftLateral: '구강 좌측', upperOcclusal: '상악 교합면', lowerOcclusal: '하악 교합면',
+    ceph: '측면 세팔로', cephPA: '정면 세팔로', faceFront: '안면 정면', faceLateral: '안면 측면', faceSmile: '스마일', face45: '45도 안면',
+    modelUpper: '상악 모델', modelLower: '하악 모델'
+  };
+  const PRIMARY_ORDER = ['frontal', 'faceSmile', 'faceFront', 'rightLateral', 'leftLateral', 'faceLateral', 'ceph', 'upperOcclusal', 'lowerOcclusal', 'cephPA'];
+
+  function getPatientFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const patient = { name: params.get('patientName') || '', stage: params.get('dentitionStage') || '', dentitionStage: params.get('dentitionStage') || '' };
+    return patient.name || patient.stage ? patient : null;
+  }
+
+  function buildPatientUrl(path) {
+    const patient = getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    const url = new URL(path, window.location.href);
+    if (patient.name) url.searchParams.set('patientName', patient.name);
+    if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
+    return url.pathname.split('/').pop() + url.search;
+  }
+
+  function setPrimary(entry, label) {
+    const before = document.getElementById('beforeImage');
+    const after = document.getElementById('afterImage');
+    if (!entry?.base64) return;
+    before.style.backgroundImage = `url(${entry.base64})`;
+    before.textContent = '';
+    after.style.backgroundImage = `url(${entry.base64})`;
+    after.textContent = '';
+    document.getElementById('primaryLabel').textContent = label || '-';
+  }
+
+  async function loadSimulation() {
+    const data = await PhotoStore.loadCase();
+    const patient = data?.patient || getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    document.getElementById('patientName').textContent = patient.name || '-';
+    document.getElementById('dentitionStage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || patient.stage || patient.dentitionStage || '-';
+    document.getElementById('editPhotosBtn').href = buildPatientUrl('photo-upload.html');
+
+    const photos = data?.photos || {};
+    const entries = Object.entries(photos).filter(([, entry]) => entry?.base64 && String(entry.type || '').startsWith('image/'));
+    document.getElementById('photoCount').textContent = entries.length + '장';
+
+    const grid = document.getElementById('photoGrid');
+    if (!entries.length) {
+      grid.innerHTML = '<div class="empty-state">1단계 사진 입력에서 이미지를 업로드하면 이곳에 표시됩니다.</div>';
+      document.getElementById('primaryLabel').textContent = '-';
+      return;
+    }
+
+    let html = '';
+    for (const [key, entry] of entries) {
+      const label = SLOT_LABELS[key] || key;
+      html += `<button class="photo-card" type="button" data-key="${key}" aria-label="${label} 대표 이미지 선택"><div class="photo-thumb" style="background-image:url(${entry.base64})"></div><div class="photo-meta"><b>${label}</b><span>${entry.name || ''}</span></div></button>`;
+    }
+    grid.innerHTML = html;
+
+    const primaryKey = PRIMARY_ORDER.find(key => photos[key]?.base64 && String(photos[key].type || '').startsWith('image/')) || entries[0][0];
+    setPrimary(photos[primaryKey], SLOT_LABELS[primaryKey] || primaryKey);
+
+    grid.querySelectorAll('.photo-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const key = card.dataset.key;
+        setPrimary(photos[key], SLOT_LABELS[key] || key);
+      });
+    });
+  }
+
+  document.getElementById('reloadBtn').addEventListener('click', loadSimulation);
+  loadSimulation().catch(error => {
+    document.getElementById('photoGrid').innerHTML = `<div class="empty-state">이미지를 불러오지 못했습니다. ${error.message || ''}</div>`;
+  });
+})();
+</script>
+</body>
+</html>
