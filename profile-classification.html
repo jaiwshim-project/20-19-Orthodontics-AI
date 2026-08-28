@@ -57,6 +57,7 @@
       <div class="step-indicator">
         <a class="step done" href="photo-upload.html">1 사진 입력</a><span class="arrow">→</span>
         <span class="step active" aria-current="step">1.5 안모 9유형</span><span class="arrow">→</span>
+        <a class="step" href="profile-overlay.html">1.5 세팔로 중첩</a><span class="arrow">→</span>
         <a class="step" href="classification.html">2 Class 분류</a><span class="arrow">→</span>
         <a class="step" href="step3-new.html">3 EZ/TZ 분석</a><span class="arrow">→</span>
         <a class="step" href="extraction-ai.html">4 발치 판단</a>
@@ -134,7 +135,7 @@
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button class="btn btn-ghost" type="button" id="analyzeBtn">안모 9유형 분석</button>
             <button class="btn btn-ghost" type="button" id="saveBtn">저장</button>
-            <button class="btn btn-primary" type="button" id="nextBtn">2단계: Class 분류 →</button>
+            <button class="btn btn-primary" type="button" id="nextBtn">1.5단계: 세팔로 중첩 →</button>
           </div>
         </div>
       </section>
@@ -366,11 +367,11 @@
   document.getElementById('saveBtn').addEventListener('click', () => saveResult(false));
   document.getElementById('nextBtn').addEventListener('click', () => {
     if (!saveResult(false)) return;
-    window.location.href = buildNextUrl('classification.html');
+    window.location.href = buildNextUrl('profile-overlay.html');
   });
 
   document.addEventListener('click', (event) => {
-    const link = event.target.closest?.('a[href="classification.html"], a[href="step3-new.html"], a[href="extraction-ai.html"]');
+    const link = event.target.closest?.('a[href="profile-overlay.html"], a[href="classification.html"], a[href="step3-new.html"], a[href="extraction-ai.html"]');
     if (!link) return;
     event.preventDefault();
     saveResult(true);

@@ -14,6 +14,7 @@
     { group: '진단 워크플로우(신규환자용)', items: [
       { path: 'photo-upload.html',         label: '1단계 사진 입력',    icon: '📷' },
       { path: 'profile-classification.html', label: '1.5단계 안모 9유형', icon: '👥' },
+      { path: 'profile-overlay.html',        label: '1.5단계 세팔로 중첩', icon: '🩻' },
       { path: 'classification.html',       label: '2단계 Class 분류',   icon: '🎯' },
       { path: 'step3-new.html',            label: '3단계 TTL/EZL 분석', icon: 'EZ' },
       { path: 'extraction-ai.html',        label: '4단계 발치 판단',    icon: '🦷' }

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="1단계 측면 얼굴 사진과 세팔로 측면 사진을 중첩하여 비교하는 보조 도구">
+<title>1.5단계 세팔로 중첩 | Orthodontics AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/global.css">
+<style>
+  .hero-compact { position:relative; overflow:hidden; padding:28px 24px 22px; border-bottom:1px solid rgba(148,163,184,.24); background:linear-gradient(135deg, #0b1220 0%, #17324a 55%, #28425c 100%); color:#fff; }
+  .hero-compact p { color:#cbd8ee; max-width:820px; }
+  .step-indicator { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+  .step-indicator .step { display:inline-flex; align-items:center; min-height:30px; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:700; background:rgba(255,255,255,.12); color:#dbeafe; border:1px solid rgba(255,255,255,.14); text-decoration:none; }
+  .step-indicator .step.done { background:rgba(52,211,153,.18); color:#bbf7d0; }
+  .step-indicator .step.active { background:linear-gradient(135deg, #0891b2, #16a34a); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(8,145,178,.25); }
+  .step-indicator .arrow { color:#94a3b8; font-size:16px; }
+  .layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:18px; margin-top:22px; align-items:start; }
+  .panel { border:1px solid var(--border-subtle); border-radius:16px; background:#fff; padding:18px; box-shadow:0 12px 30px rgba(15,23,42,.07); }
+  .patient-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-top:12px; }
+  .patient-item { padding:10px 12px; border:1px solid var(--border-subtle); border-radius:10px; background:#f8fafc; }
+  .patient-item span { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; }
+  .patient-item b { display:block; font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+  .canvas-wrap { border:1px solid var(--border-subtle); border-radius:14px; overflow:hidden; background:#0f172a; }
+  #overlayCanvas { display:block; width:100%; aspect-ratio: 16 / 9; min-height:420px; cursor:grab; touch-action:none; }
+  #overlayCanvas.dragging { cursor:grabbing; }
+  .status-line { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:10px 12px; border-top:1px solid rgba(148,163,184,.28); color:#cbd5e1; background:#111827; font-size:12px; }
+  .control-grid { display:grid; gap:12px; }
+  .control { display:grid; gap:6px; }
+  .control label { display:flex; justify-content:space-between; gap:10px; font-size:12px; font-weight:700; color:var(--text-secondary); }
+  .control input[type="range"] { width:100%; accent-color:#0891b2; }
+  .toggle-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .source-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .source-card { border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; background:#f8fafc; }
+  .source-card .thumb { height:110px; background:#e2e8f0 center/cover no-repeat; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; text-align:center; padding:10px; }
+  .source-card .label { padding:8px 10px; font-size:12px; font-weight:700; color:var(--text-secondary); }
+  .hint { margin-top:10px; padding:10px 12px; border-left:3px solid #0891b2; border-radius:0 8px 8px 0; background:rgba(8,145,178,.07); color:var(--text-secondary); font-size:12px; line-height:1.5; }
+  .actions-row { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+  @media (max-width:1100px) { .layout { grid-template-columns:1fr; } #overlayCanvas { min-height:320px; } }
+  @media (max-width:700px) { .patient-grid, .source-grid { grid-template-columns:1fr; } .hero-compact { padding:20px 16px 16px; } }
+</style>
+</head>
+<body>
+<div id="app-shell"></div>
+<main class="content">
+  <section class="hero-compact">
+    <div class="container">
+      <div class="step-indicator">
+        <a class="step done" href="photo-upload.html">1 사진 입력</a><span class="arrow">→</span>
+        <a class="step done" href="profile-classification.html">1.5 안모 9유형</a><span class="arrow">→</span>
+        <span class="step active" aria-current="step">1.5 세팔로 중첩</span><span class="arrow">→</span>
+        <a class="step" href="classification.html">2 Class 분류</a><span class="arrow">→</span>
+        <a class="step" href="step3-new.html">3 EZ/TZ 분석</a><span class="arrow">→</span>
+        <a class="step" href="extraction-ai.html">4 발치 판단</a>
+      </div>
+      <span class="badge badge-primary">안면-세팔로 중첩</span>
+      <h1 style="margin-top:8px;">1.5단계: 측면 사진 / 세팔로 중첩</h1>
+      <p>1단계에서 입력된 안면 측면 사진과 세팔로 측면 사진을 같은 캔버스에 올려 프로파일과 골격 윤곽을 비교합니다.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="panel" style="margin-top:24px;">
+      <h3 style="margin:0;">환자 정보</h3>
+      <div class="patient-grid">
+        <div class="patient-item"><span>환자명 / 케이스 코드</span><b id="patientName">-</b></div>
+        <div class="patient-item"><span>치열 단계</span><b id="dentitionStage">-</b></div>
+        <div class="patient-item"><span>안모 9유형</span><b id="profileType">-</b></div>
+        <div class="patient-item"><span>사진 상태</span><b id="photoStatus">확인 중</b></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+          <h3 style="margin:0;">중첩 보기</h3>
+          <div class="actions-row" style="margin:0;">
+            <button class="btn btn-ghost" type="button" id="autoFitBtn">자동 맞춤</button>
+            <button class="btn btn-ghost" type="button" id="saveBtn">정렬 저장</button>
+            <button class="btn btn-primary" type="button" id="exportBtn">PNG 저장</button>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="overlayCanvas" width="1600" height="900"></canvas>
+          <div class="status-line">
+            <span id="canvasStatus">사진을 불러오는 중입니다.</span>
+            <span>드래그: 세팔로 이동 · 휠: 세팔로 확대/축소</span>
+          </div>
+        </div>
+        <div class="hint">정확한 중첩은 연조직 프로파일, 코끝, 상순/하순, pogonion, 두부 자세를 기준으로 미세 조정하세요. 이 화면은 진단 보조용 시각화입니다.</div>
+        <div class="source-grid">
+          <div class="source-card"><div class="thumb" id="faceThumb">안면 측면 사진 없음</div><div class="label">안면 측면</div></div>
+          <div class="source-card"><div class="thumb" id="cephThumb">세팔로 측면 사진 없음</div><div class="label">세팔로 측면</div></div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h3 style="margin-top:0;">중첩 조정</h3>
+        <div class="control-grid">
+          <div class="control"><label for="opacityRange">세팔로 투명도 <span id="opacityVal">58%</span></label><input id="opacityRange" type="range" min="0" max="100" value="58"></div>
+          <div class="control"><label for="scaleRange">확대/축소 <span id="scaleVal">100%</span></label><input id="scaleRange" type="range" min="50" max="180" value="100"></div>
+          <div class="control"><label for="rotateRange">회전 <span id="rotateVal">0.0°</span></label><input id="rotateRange" type="range" min="-12" max="12" step="0.1" value="0"></div>
+          <div class="control"><label for="xRange">좌우 이동 <span id="xVal">0px</span></label><input id="xRange" type="range" min="-500" max="500" value="0"></div>
+          <div class="control"><label for="yRange">상하 이동 <span id="yVal">0px</span></label><input id="yRange" type="range" min="-320" max="320" value="0"></div>
+          <div class="control"><label for="faceOpacityRange">안면 사진 밝기 <span id="faceOpacityVal">100%</span></label><input id="faceOpacityRange" type="range" min="35" max="100" value="100"></div>
+        </div>
+        <div class="toggle-row" style="margin-top:14px;">
+          <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="multiplyToggle" checked style="accent-color:#0891b2;"> Multiply</label>
+          <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="edgeToggle" checked style="accent-color:#0891b2;"> 윤곽선</label>
+          <label class="btn btn-ghost" style="cursor:pointer;"><input type="checkbox" id="flipToggle" style="accent-color:#0891b2;"> 세팔로 좌우반전</label>
+        </div>
+        <div class="actions-row">
+          <button class="btn btn-ghost" type="button" id="resetBtn">초기화</button>
+          <a class="btn btn-primary" href="classification.html" id="nextBtn">2단계: Class 분류 →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="js/api-config.js"></script>
+<script src="js/common.js?v=4"></script>
+<script src="js/photo-store.js?v=5"></script>
+<script>
+(function () {
+  const STAGE_LABELS = { permanent_dentition: '영구치열', mixed_dentition: '혼합치열', adult: '성인' };
+  const ALIGNMENT_KEY = 'oa_ceph_overlay_alignment';
+  const state = {
+    face: null,
+    ceph: null,
+    faceEntry: null,
+    cephEntry: null,
+    transform: { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, multiply: true, edge: true, flip: false }
+  };
+  const canvas = document.getElementById('overlayCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function getPatientFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const patient = { name: params.get('patientName') || '', stage: params.get('dentitionStage') || '', dentitionStage: params.get('dentitionStage') || '' };
+    return patient.name || patient.stage ? patient : null;
+  }
+
+  function buildNextUrl(path) {
+    const patient = getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    const url = new URL(path, window.location.href);
+    if (patient.name) url.searchParams.set('patientName', patient.name);
+    if (patient.stage || patient.dentitionStage) url.searchParams.set('dentitionStage', patient.stage || patient.dentitionStage);
+    return url.pathname.split('/').pop() + url.search;
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('이미지 로드 실패'));
+      image.src = src;
+    });
+  }
+
+  function fitRect(image, width, height) {
+    const scale = Math.min(width / image.width, height / image.height);
+    const w = image.width * scale;
+    const h = image.height * scale;
+    return { x: (width - w) / 2, y: (height - h) / 2, w, h, scale };
+  }
+
+  function drawEdgeOverlay(rect) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(34,211,238,.78)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10, 8]);
+    ctx.beginPath();
+    ctx.ellipse(rect.x + rect.w * 0.76, rect.y + rect.h * 0.49, rect.w * 0.13, rect.h * 0.34, -0.08, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(rect.x + rect.w * 0.83, rect.y + rect.h * 0.16);
+    ctx.bezierCurveTo(rect.x + rect.w * 0.88, rect.y + rect.h * 0.34, rect.x + rect.w * 0.89, rect.y + rect.h * 0.49, rect.x + rect.w * 0.83, rect.y + rect.h * 0.62);
+    ctx.bezierCurveTo(rect.x + rect.w * 0.77, rect.y + rect.h * 0.73, rect.x + rect.w * 0.79, rect.y + rect.h * 0.84, rect.x + rect.w * 0.72, rect.y + rect.h * 0.88);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!state.face && !state.ceph) {
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '28px Noto Sans KR, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('1단계에서 안면 측면 사진과 세팔로 측면 사진을 업로드하세요.', canvas.width / 2, canvas.height / 2);
+      return;
+    }
+
+    const faceRect = state.face ? fitRect(state.face, canvas.width, canvas.height) : null;
+    if (state.face && faceRect) {
+      ctx.save();
+      ctx.globalAlpha = state.transform.faceOpacity;
+      ctx.drawImage(state.face, faceRect.x, faceRect.y, faceRect.w, faceRect.h);
+      ctx.restore();
+      if (state.transform.edge) drawEdgeOverlay(faceRect);
+    }
+
+    if (state.ceph) {
+      const base = fitRect(state.ceph, canvas.width, canvas.height);
+      const w = base.w * state.transform.scale;
+      const h = base.h * state.transform.scale;
+      const cx = canvas.width / 2 + state.transform.x;
+      const cy = canvas.height / 2 + state.transform.y;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(state.transform.rotation * Math.PI / 180);
+      ctx.scale(state.transform.flip ? -1 : 1, 1);
+      ctx.globalAlpha = state.transform.opacity;
+      ctx.globalCompositeOperation = state.transform.multiply ? 'multiply' : 'source-over';
+      ctx.drawImage(state.ceph, -w / 2, -h / 2, w, h);
+      ctx.restore();
+    }
+  }
+
+  function updateControls() {
+    const t = state.transform;
+    document.getElementById('opacityRange').value = Math.round(t.opacity * 100);
+    document.getElementById('scaleRange').value = Math.round(t.scale * 100);
+    document.getElementById('rotateRange').value = t.rotation;
+    document.getElementById('xRange').value = t.x;
+    document.getElementById('yRange').value = t.y;
+    document.getElementById('faceOpacityRange').value = Math.round(t.faceOpacity * 100);
+    document.getElementById('multiplyToggle').checked = t.multiply;
+    document.getElementById('edgeToggle').checked = t.edge;
+    document.getElementById('flipToggle').checked = t.flip;
+    document.getElementById('opacityVal').textContent = Math.round(t.opacity * 100) + '%';
+    document.getElementById('scaleVal').textContent = Math.round(t.scale * 100) + '%';
+    document.getElementById('rotateVal').textContent = Number(t.rotation).toFixed(1) + '°';
+    document.getElementById('xVal').textContent = Math.round(t.x) + 'px';
+    document.getElementById('yVal').textContent = Math.round(t.y) + 'px';
+    document.getElementById('faceOpacityVal').textContent = Math.round(t.faceOpacity * 100) + '%';
+  }
+
+  function autoFit() {
+    if (!state.face || !state.ceph) return;
+    const faceRect = fitRect(state.face, canvas.width, canvas.height);
+    const cephRect = fitRect(state.ceph, canvas.width, canvas.height);
+    state.transform.scale = Math.max(0.5, Math.min(1.8, faceRect.h / cephRect.h));
+    state.transform.x = 0;
+    state.transform.y = 0;
+    state.transform.rotation = 0;
+    state.transform.opacity = 0.58;
+    updateControls();
+    draw();
+  }
+
+  function saveAlignment() {
+    localStorage.setItem(ALIGNMENT_KEY, JSON.stringify({ ...state.transform, savedAt: new Date().toISOString() }));
+    window.toast?.('세팔로 중첩 정렬값을 저장했습니다.', 'success');
+  }
+
+  function restoreAlignment() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(ALIGNMENT_KEY) || 'null');
+      if (!saved) return false;
+      Object.assign(state.transform, saved);
+      return true;
+    } catch { return false; }
+  }
+
+  function exportPng() {
+    draw();
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'ceph-face-overlay.png';
+    link.click();
+  }
+
+  function bindControls() {
+    const setNumber = (id, key, scale = 1) => {
+      document.getElementById(id).addEventListener('input', event => {
+        state.transform[key] = Number(event.target.value) / scale;
+        updateControls();
+        draw();
+      });
+    };
+    setNumber('opacityRange', 'opacity', 100);
+    setNumber('scaleRange', 'scale', 100);
+    setNumber('rotateRange', 'rotation', 1);
+    setNumber('xRange', 'x', 1);
+    setNumber('yRange', 'y', 1);
+    setNumber('faceOpacityRange', 'faceOpacity', 100);
+    ['multiplyToggle', 'edgeToggle', 'flipToggle'].forEach(id => {
+      document.getElementById(id).addEventListener('change', event => {
+        const map = { multiplyToggle: 'multiply', edgeToggle: 'edge', flipToggle: 'flip' };
+        state.transform[map[id]] = event.target.checked;
+        updateControls();
+        draw();
+      });
+    });
+    document.getElementById('autoFitBtn').onclick = autoFit;
+    document.getElementById('saveBtn').onclick = saveAlignment;
+    document.getElementById('exportBtn').onclick = exportPng;
+    document.getElementById('resetBtn').onclick = () => { state.transform = { opacity: 0.58, scale: 1, rotation: 0, x: 0, y: 0, faceOpacity: 1, multiply: true, edge: true, flip: false }; updateControls(); autoFit(); };
+    document.getElementById('nextBtn').addEventListener('click', event => { event.preventDefault(); window.location.href = buildNextUrl('classification.html'); });
+  }
+
+  function bindCanvasDrag() {
+    let dragging = false;
+    let last = null;
+    canvas.addEventListener('pointerdown', event => { dragging = true; last = { x: event.clientX, y: event.clientY }; canvas.classList.add('dragging'); canvas.setPointerCapture(event.pointerId); });
+    canvas.addEventListener('pointermove', event => {
+      if (!dragging || !last) return;
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / rect.width;
+      const sy = canvas.height / rect.height;
+      state.transform.x += (event.clientX - last.x) * sx;
+      state.transform.y += (event.clientY - last.y) * sy;
+      last = { x: event.clientX, y: event.clientY };
+      updateControls();
+      draw();
+    });
+    canvas.addEventListener('pointerup', event => { dragging = false; last = null; canvas.classList.remove('dragging'); try { canvas.releasePointerCapture(event.pointerId); } catch {} });
+    canvas.addEventListener('wheel', event => {
+      event.preventDefault();
+      const delta = event.deltaY < 0 ? 0.025 : -0.025;
+      state.transform.scale = Math.max(0.5, Math.min(1.8, state.transform.scale + delta));
+      updateControls();
+      draw();
+    }, { passive: false });
+  }
+
+  async function loadCase() {
+    const data = await PhotoStore.loadCase();
+    const patient = data?.patient || getPatientFromUrl() || JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null') || window.PatientStore?.get?.() || {};
+    let profile9Type = null;
+    try { profile9Type = JSON.parse(localStorage.getItem('oa_profile_9type_result') || 'null'); } catch (_) {}
+    document.getElementById('patientName').textContent = patient.name || '-';
+    document.getElementById('dentitionStage').textContent = STAGE_LABELS[patient.stage || patient.dentitionStage] || patient.stage || patient.dentitionStage || '-';
+    document.getElementById('profileType').textContent = profile9Type?.type || '-';
+
+    state.faceEntry = data?.photos?.faceLateral || null;
+    state.cephEntry = data?.photos?.ceph || null;
+    if (state.faceEntry?.base64) {
+      document.getElementById('faceThumb').style.backgroundImage = `url(${state.faceEntry.base64})`;
+      document.getElementById('faceThumb').textContent = '';
+      state.face = await loadImage(state.faceEntry.base64);
+    }
+    if (state.cephEntry?.base64) {
+      document.getElementById('cephThumb').style.backgroundImage = `url(${state.cephEntry.base64})`;
+      document.getElementById('cephThumb').textContent = '';
+      state.ceph = await loadImage(state.cephEntry.base64);
+    }
+    const status = state.face && state.ceph ? '중첩 가능' : state.face ? '세팔로 필요' : state.ceph ? '안면 측면 필요' : '사진 필요';
+    document.getElementById('photoStatus').textContent = status;
+    document.getElementById('canvasStatus').textContent = state.face && state.ceph ? '안면 측면과 세팔로 측면 사진을 중첩했습니다.' : '안면 측면 사진과 세팔로 측면 사진이 모두 필요합니다.';
+    if (!restoreAlignment()) autoFit();
+    updateControls();
+    draw();
+  }
+
+  bindControls();
+  bindCanvasDrag();
+  updateControls();
+  loadCase().catch(error => {
+    document.getElementById('canvasStatus').textContent = error.message || '사진을 불러오지 못했습니다.';
+    draw();
+  });
+})();
+</script>
+</body>
+</html>
