@@ -35,10 +35,15 @@
   .source-card { border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; background:#f8fafc; }
   .source-card .thumb { height:110px; background:#e2e8f0 center/cover no-repeat; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; text-align:center; padding:10px; }
   .source-card .label { padding:8px 10px; font-size:12px; font-weight:700; color:var(--text-secondary); }
+  .comparison-panel { margin-bottom:16px; }
+  .comparison-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; }
+  .comparison-card { border:1px solid var(--border-subtle); border-radius:14px; overflow:hidden; background:#f8fafc; }
+  .comparison-card .preview { min-height:280px; aspect-ratio:4 / 3; background:#e2e8f0 center/contain no-repeat; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:14px; font-weight:700; text-align:center; padding:18px; }
+  .comparison-card .caption { padding:10px 12px; border-top:1px solid var(--border-subtle); font-size:13px; font-weight:800; color:var(--text-primary); background:#fff; }
   .hint { margin-top:10px; padding:10px 12px; border-left:3px solid #0891b2; border-radius:0 8px 8px 0; background:rgba(8,145,178,.07); color:var(--text-secondary); font-size:12px; line-height:1.5; }
   .actions-row { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
   @media (max-width:1100px) { .layout { grid-template-columns:1fr; } #overlayCanvas { min-height:320px; } }
-  @media (max-width:700px) { .patient-grid, .source-grid { grid-template-columns:1fr; } .hero-compact { padding:20px 16px 16px; } }
+  @media (max-width:700px) { .patient-grid, .source-grid, .comparison-grid { grid-template-columns:1fr; } .hero-compact { padding:20px 16px 16px; } }
 </style>
 </head>
 <body>
@@ -81,6 +86,19 @@
             <button class="btn btn-primary" type="button" id="exportBtn">PNG 저장</button>
           </div>
         </div>
+        <section class="comparison-panel">
+          <h3 style="margin:0;">원본 사진 비교</h3>
+          <div class="comparison-grid">
+            <div class="comparison-card">
+              <div class="preview" id="facePreview">안면 측면 사진 없음</div>
+              <div class="caption">안면 측면 사진</div>
+            </div>
+            <div class="comparison-card">
+              <div class="preview" id="cephPreview">세팔로 측면 사진 없음</div>
+              <div class="caption">세팔로 측면 사진</div>
+            </div>
+          </div>
+        </section>
         <div class="canvas-wrap">
           <canvas id="overlayCanvas" width="1600" height="900"></canvas>
           <div class="status-line">
@@ -343,11 +361,15 @@
     if (state.faceEntry?.base64) {
       document.getElementById('faceThumb').style.backgroundImage = `url(${state.faceEntry.base64})`;
       document.getElementById('faceThumb').textContent = '';
+      document.getElementById('facePreview').style.backgroundImage = `url(${state.faceEntry.base64})`;
+      document.getElementById('facePreview').textContent = '';
       state.face = await loadImage(state.faceEntry.base64);
     }
     if (state.cephEntry?.base64) {
       document.getElementById('cephThumb').style.backgroundImage = `url(${state.cephEntry.base64})`;
       document.getElementById('cephThumb').textContent = '';
+      document.getElementById('cephPreview').style.backgroundImage = `url(${state.cephEntry.base64})`;
+      document.getElementById('cephPreview').textContent = '';
       state.ceph = await loadImage(state.cephEntry.base64);
     }
     const status = state.face && state.ceph ? '중첩 가능' : state.face ? '세팔로 필요' : state.ceph ? '안면 측면 필요' : '사진 필요';
