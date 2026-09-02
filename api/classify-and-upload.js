@@ -200,12 +200,16 @@ export default async function handler(req, res) {
       meta.stage = stage;
       meta.dentitionStage = stage;
       meta.classification = classificationValue;
-      meta.photos = results.map(r => r.filename).filter(Boolean);
+      const existingPhotos = Array.isArray(meta.photos) ? meta.photos : [];
+      meta.photos = [...new Set([...existingPhotos, ...results.map(r => r.filename).filter(Boolean)])];
       meta.uploadedAt = new Date().toISOString();
-      meta[phaseKey] = { ...(meta[phaseKey] || {}), ...photoUrls };
-      if (!meta[countKey]) meta[countKey] = {};
+      meta[phaseKey] = { ...(meta[phaseKey] || {}) };
       for (const [cat, slots] of Object.entries(photoUrls)) {
-        meta[countKey][cat] = Object.keys(slots).length;
+        meta[phaseKey][cat] = { ...(meta[phaseKey][cat] || {}), ...slots };
+      }
+      if (!meta[countKey]) meta[countKey] = {};
+      for (const [cat, slots] of Object.entries(meta[phaseKey] || {})) {
+        meta[countKey][cat] = Object.keys(slots || {}).length;
       }
       return meta;
     }

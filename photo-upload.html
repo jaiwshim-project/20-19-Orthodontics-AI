@@ -1020,7 +1020,7 @@
       const imagePayloads = [];
       for (const [key, file] of Object.entries(photos)) {
         if (key === 'modelUpper' || key === 'modelLower') continue; // 3D 모델은 별도 처리
-        const base64 = await fileToBase64Raw(file);
+        const base64 = await fileToUploadBase64Raw(file);
         if (!base64) continue;
         const mapped = SLOT_MAP[key];
         imagePayloads.push({
@@ -1034,29 +1034,40 @@
       let uploadResults = null;
       if (imagePayloads.length > 0) {
         if (!silent && btn) btn.textContent = `AI 분류 중... (${imagePayloads.length}장)`;
-        try {
-          const uploadRes = await apiFetch('/api/classify-and-upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              patientName,
-              phase: 'initial',
-              patient: {
-                stage: document.getElementById('dentitionStage').value,
-                dentitionStage: document.getElementById('dentitionStage').value,
-                classification: document.getElementById('classification').value || null
-              },
-              images: imagePayloads
-            })
-          });
-          if (uploadRes.ok) {
-            uploadResults = await uploadRes.json();
-          } else {
-            console.warn('[upload] API 실패 (' + uploadRes.status + '), 로컬 저장으로 진행');
+        uploadResults = { success: true, results: [], photoUrls: {}, patientId: null };
+        for (let i = 0; i < imagePayloads.length; i++) {
+          const payload = imagePayloads[i];
+          if (!silent && btn) btn.textContent = `Supabase 저장 중... (${i + 1}/${imagePayloads.length})`;
+          try {
+            const uploadRes = await apiFetch('/api/classify-and-upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                patientName,
+                phase: 'initial',
+                patient: {
+                  stage: document.getElementById('dentitionStage').value,
+                  dentitionStage: document.getElementById('dentitionStage').value,
+                  classification: document.getElementById('classification').value || null
+                },
+                images: [payload]
+              })
+            });
+            if (uploadRes.ok) {
+              const batch = await uploadRes.json();
+              uploadResults.patientId = uploadResults.patientId || batch.patientId || null;
+              uploadResults.results.push(...(batch.results || []));
+              for (const [cat, slots] of Object.entries(batch.photoUrls || {})) {
+                uploadResults.photoUrls[cat] = { ...(uploadResults.photoUrls[cat] || {}), ...slots };
+              }
+            } else {
+              console.warn('[upload] API 실패 (' + uploadRes.status + '):', payload.filename);
+            }
+          } catch (uploadErr) {
+            console.warn('[upload] API 호출 불가:', payload.filename, uploadErr.message);
           }
-        } catch (uploadErr) {
-          console.warn('[upload] API 호출 불가, 로컬 저장으로 진행:', uploadErr.message);
         }
+        if (!uploadResults.results.length) uploadResults = null;
       }
 
       if (!silent && btn) btn.textContent = 'DB 등록 중...';
@@ -1170,6 +1181,31 @@
         scheduleSupabaseSave(500);
       }
     }
+  }
+
+  function fileToUploadBase64Raw(file) {
+    if (!file || !file.type?.startsWith('image/')) return fileToBase64Raw(file);
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const maxSide = 1400;
+          const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+          resolve(dataUrl.split(',')[1] || '');
+        };
+        img.onerror = () => fileToBase64Raw(file).then(resolve);
+        img.src = reader.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
   }
 
   // File → base64 (data URL prefix 제거)
