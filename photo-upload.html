@@ -789,6 +789,10 @@
   // 페이지 로드 시 이전 데이터 복원
   async function restore() {
     const data = await PhotoStore.loadCase();
+    const selected = window.PatientStore?.get?.() || {};
+    const params = new URLSearchParams(window.location.search);
+    const requestedId = params.get('id') || params.get('patientId') || selected.supabaseId || selected.id || '';
+    const requestedName = params.get('patientName') || params.get('name') || selected.name || '';
     if (!data) {
       const cloudData = await restoreFromSupabaseIfAvailable();
       if (cloudData) return;
@@ -798,6 +802,15 @@
       if (patient?.classification) document.getElementById('classification').value = patient.classification;
       updateStatus();
       return;
+    }
+
+    const localPatient = data.patient || {};
+    const localPhotoCount = Object.values(data.photos || {}).filter(entry => entry?.base64).length;
+    const requestedDiffers = (requestedId && requestedId !== (localPatient.supabaseId || localPatient.id || ''))
+      || (requestedName && requestedName !== (localPatient.name || ''));
+    if ((requestedId || requestedName) && (localPhotoCount === 0 || requestedDiffers)) {
+      const cloudData = await restoreFromSupabaseIfAvailable();
+      if (cloudData) return;
     }
 
     if (data.patient) {
