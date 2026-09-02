@@ -10,6 +10,18 @@ const PHASE_KEY = {
   final: 'final_urls'
 };
 
+const PHASE_DIR_CANDIDATES = {
+  initial: ['초진', '珥덉쭊', 'initial'],
+  final: ['최종', '理쒖쥌', 'final']
+};
+
+const CATEGORY_SLOTS = {
+  intraoral: ['01_front', '02_left', '03_lower', '04_right', '05_upper'],
+  face: ['01_45degree', '02_front', '03_lateral', '04_smile'],
+  xray: ['01_ceph', '02_pano'],
+  model: ['01_lower', '02_upper']
+};
+
 const SLOT_TO_CLIENT_KEY = {
   'intraoral/01_front': 'frontal',
   'intraoral/02_left': 'leftLateral',
@@ -54,6 +66,43 @@ function storagePathFromPublicUrl(url) {
   } catch {
     return null;
   }
+}
+
+async function storagePathToEntry(sb, storagePath, fallbackName) {
+  const { data: blob, error } = await sb.storage.from('patient-photos').download(storagePath);
+  if (error) throw error;
+  const contentType = blob.type || mimeFromExtension(extensionFromUrl(storagePath));
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  return {
+    base64: `data:${contentType};base64,${buffer.toString('base64')}`,
+    name: fallbackName,
+    type: contentType,
+    source: 'supabase-storage-list',
+    path: storagePath
+  };
+}
+
+async function discoverStorageEntries(sb, patientName, phase) {
+  const entries = [];
+  const phaseDirs = PHASE_DIR_CANDIDATES[phase] || PHASE_DIR_CANDIDATES.initial;
+
+  for (const phaseDir of phaseDirs) {
+    for (const [category, slots] of Object.entries(CATEGORY_SLOTS)) {
+      const prefix = `${patientName}/${phaseDir}/${category}`;
+      const { data: files, error } = await sb.storage.from('patient-photos').list(prefix, { limit: 100 });
+      if (error || !files?.length) continue;
+
+      for (const file of files) {
+        if (!file?.name || file.name === '.emptyFolderPlaceholder') continue;
+        const slot = file.name.replace(/\.[^.]+$/, '');
+        if (!slots.includes(slot)) continue;
+        entries.push({ category, slot, path: `${prefix}/${file.name}` });
+      }
+    }
+    if (entries.length) break;
+  }
+
+  return entries;
 }
 
 async function urlToEntry(sb, url, fallbackName) {
@@ -118,7 +167,7 @@ export default async function handler(req, res) {
     const photos = {};
     const errors = [];
 
-    for (const [category, slots] of Object.entries(urls)) {
+    for (const [category, slots] of Object.entries(urls || {})) {
       for (const [slot, publicUrl] of Object.entries(slots || {})) {
         const clientKey = SLOT_TO_CLIENT_KEY[`${category}/${slot}`];
         if (!clientKey || !publicUrl) continue;
@@ -127,6 +176,20 @@ export default async function handler(req, res) {
           photos[clientKey] = await urlToEntry(sb, publicUrl, `${clientKey}.${ext}`);
         } catch (e) {
           errors.push({ category, slot, key: clientKey, error: safeErrorMessage(e) });
+        }
+      }
+    }
+
+    if (Object.keys(photos).length === 0) {
+      const discovered = await discoverStorageEntries(sb, patient.name, phase);
+      for (const entry of discovered) {
+        const clientKey = SLOT_TO_CLIENT_KEY[`${entry.category}/${entry.slot}`];
+        if (!clientKey) continue;
+        try {
+          const ext = extensionFromUrl(entry.path);
+          photos[clientKey] = await storagePathToEntry(sb, entry.path, `${clientKey}.${ext}`);
+        } catch (e) {
+          errors.push({ category: entry.category, slot: entry.slot, key: clientKey, error: safeErrorMessage(e) });
         }
       }
     }
