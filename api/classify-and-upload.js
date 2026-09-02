@@ -111,7 +111,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-    const { patientName, phase, images } = req.body || {};
+    const { patientName, phase, images, patient: patientInfo = {} } = req.body || {};
     if (!patientName || !phase || !images || !Array.isArray(images)) {
       return res.status(400).json({ error: 'patientName, phase, images[] 필수' });
     }
@@ -190,23 +190,47 @@ export default async function handler(req, res) {
       .eq('name', patientName)
       .limit(1);
 
-    if (existingPatients?.length > 0) {
-      const patient = existingPatients[0];
-      const meta = patient.metadata || {};
-      const phaseKey = phase === 'initial' ? 'initial_urls' : 'final_urls';
-      meta[phaseKey] = { ...(meta[phaseKey] || {}), ...photoUrls };
+    const phaseKey = phase === 'initial' ? 'initial_urls' : 'final_urls';
+    const countKey = phase === 'initial' ? 'initial' : 'final';
+    const stage = patientInfo.stage || patientInfo.dentitionStage || 'permanent_dentition';
+    const classificationValue = patientInfo.classification || null;
 
-      // 사진 수 업데이트
-      const countKey = phase === 'initial' ? 'initial' : 'final';
+    function buildMetadata(base = {}) {
+      const meta = { ...base };
+      meta.stage = stage;
+      meta.dentitionStage = stage;
+      meta.classification = classificationValue;
+      meta.photos = results.map(r => r.filename).filter(Boolean);
+      meta.uploadedAt = new Date().toISOString();
+      meta[phaseKey] = { ...(meta[phaseKey] || {}), ...photoUrls };
       if (!meta[countKey]) meta[countKey] = {};
       for (const [cat, slots] of Object.entries(photoUrls)) {
         meta[countKey][cat] = Object.keys(slots).length;
       }
-
-      await sb.from('patients').update({ metadata: meta }).eq('id', patient.id);
+      return meta;
     }
 
-    return res.status(200).json({ success: true, results, photoUrls });
+    let patientId = null;
+    if (existingPatients?.length > 0) {
+      const patient = existingPatients[0];
+      patientId = patient.id;
+      await sb.from('patients').update({ metadata: buildMetadata(patient.metadata || {}) }).eq('id', patient.id);
+    } else {
+      const { data: inserted, error: insertError } = await sb
+        .from('patients')
+        .insert({
+          name: patientName,
+          gender: null,
+          age_group: stage === 'adult' ? 'adult' : 'child',
+          metadata: buildMetadata({})
+        })
+        .select('id')
+        .single();
+      if (insertError) throw insertError;
+      patientId = inserted?.id || null;
+    }
+
+    return res.status(200).json({ success: true, patientId, results, photoUrls });
   } catch (e) {
     console.error('[classify-and-upload]', e);
     return res.status(500).json({ error: safeErrorMessage(e) });

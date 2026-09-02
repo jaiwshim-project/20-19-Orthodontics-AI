@@ -741,6 +741,10 @@
 
   // PhotoStore에 저장
   let _timer = null;
+  let _cloudTimer = null;
+  let _cloudSaving = false;
+  let _cloudSaveQueued = false;
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
   function getStep1PatientInfo() {
     return {
       name: document.getElementById('patientName').value.trim(),
@@ -767,7 +771,21 @@
 
   function scheduleSave() {
     clearTimeout(_timer);
+    clearTimeout(_cloudTimer);
     _timer = setTimeout(doSave, 600);
+    scheduleSupabaseSave();
+  }
+
+  function hasSyncablePhotos() {
+    return Object.entries(photos).some(([key, file]) => file && key !== 'modelUpper' && key !== 'modelLower');
+  }
+
+  function scheduleSupabaseSave(delay = 2500) {
+    clearTimeout(_cloudTimer);
+    _cloudTimer = setTimeout(() => {
+      const patientName = document.getElementById('patientName').value.trim();
+      if (patientName && hasSyncablePhotos()) saveToSupabase({ silent: true });
+    }, delay);
   }
 
   async function doSave() {
@@ -897,7 +915,7 @@
   if (nextStepBtn) {
     nextStepBtn.addEventListener('click', async (event) => {
       event.preventDefault();
-      await doSave();
+      await saveToSupabase({ silent: true, force: true });
       window.location.href = buildPatientQuery(nextStepBtn.getAttribute('href') || 'profile-classification.html');
     });
   }
@@ -907,7 +925,7 @@
     const link = event.target.closest?.('a[href="profile-classification.html"], a[href="classification.html"], a[href="step3-new.html"]');
     if (!link) return;
     event.preventDefault();
-    await doSave();
+    await saveToSupabase({ silent: true, force: true });
     window.location.href = buildPatientQuery(link.getAttribute('href') || 'profile-classification.html');
   });
 
@@ -944,18 +962,37 @@
   // Supabase 저장
   document.getElementById('saveToDbBtn').addEventListener('click', saveToSupabase);
 
-  async function saveToSupabase() {
+  async function saveToSupabase(options = {}) {
+    const silent = !!options.silent;
     const btn = document.getElementById('saveToDbBtn');
     const patientName = document.getElementById('patientName').value.trim();
+    if (_cloudSaving) {
+      _cloudSaveQueued = true;
+      if (options.force) {
+        while (_cloudSaving) await wait(100);
+        return saveToSupabase(options);
+      }
+      return false;
+    }
     if (!patientName) {
-      if (window.toast) window.toast('환자명을 입력하세요.', 'warning');
-      else alert('환자명을 입력하세요.');
-      document.getElementById('patientName').focus();
-      return;
+      await doSave();
+      if (!silent) {
+        if (window.toast) window.toast('환자명을 입력하세요.', 'warning');
+        else alert('환자명을 입력하세요.');
+        document.getElementById('patientName').focus();
+      }
+      return false;
+    }
+    if (!Object.keys(photos).length) {
+      await doSave();
+      return false;
     }
 
-    btn.disabled = true;
-    btn.textContent = '분류 & 저장 중...';
+    _cloudSaving = true;
+    if (!silent && btn) {
+      btn.disabled = true;
+      btn.textContent = '분류 & 저장 중...';
+    }
 
     try {
       const SUPABASE_URL = 'https://htqdfuuzgrjrwvdgwhlc.supabase.co';
@@ -996,7 +1033,7 @@
 
       let uploadResults = null;
       if (imagePayloads.length > 0) {
-        btn.textContent = `AI 분류 중... (${imagePayloads.length}장)`;
+        if (!silent && btn) btn.textContent = `AI 분류 중... (${imagePayloads.length}장)`;
         try {
           const uploadRes = await apiFetch('/api/classify-and-upload', {
             method: 'POST',
@@ -1004,6 +1041,11 @@
             body: JSON.stringify({
               patientName,
               phase: 'initial',
+              patient: {
+                stage: document.getElementById('dentitionStage').value,
+                dentitionStage: document.getElementById('dentitionStage').value,
+                classification: document.getElementById('classification').value || null
+              },
               images: imagePayloads
             })
           });
@@ -1017,10 +1059,10 @@
         }
       }
 
-      btn.textContent = 'DB 등록 중...';
+      if (!silent && btn) btn.textContent = 'DB 등록 중...';
 
-      let dbSaved = false;
-      let patientId = null;
+      let dbSaved = !!uploadResults?.patientId;
+      let patientId = uploadResults?.patientId || null;
       try {
         // 1. 기존 환자 검색 (같은 이름)
         const searchRes = await fetch(SUPABASE_URL + '/rest/v1/patients?name=eq.' + encodeURIComponent(patientName) + '&select=id&limit=1', {
@@ -1107,19 +1149,26 @@
 
       const uploadCount = uploadResults?.results?.length || 0;
       if (dbSaved) {
-        if (window.toast) window.toast(`"${patientName}" 저장 완료 — ${uploadCount}장 업로드`, 'success');
+        if (!silent && window.toast) window.toast(`"${patientName}" 저장 완료 — ${uploadCount}장 업로드`, 'success');
       } else {
-        if (window.toast) window.toast(`"${patientName}" 브라우저에 저장 완료 (서버 연결 불가)`, 'warning');
+        if (!silent && window.toast) window.toast(`"${patientName}" 브라우저에 저장 완료 (서버 연결 불가)`, 'warning');
       }
 
     } catch (e) {
       console.error('[saveToDb]', e);
       // 최소한 로컬 저장은 보장
       try { await doSave(); } catch {}
-      if (window.toast) window.toast('서버 저장 실패, 브라우저에 저장했습니다.', 'warning');
+      if (!silent && window.toast) window.toast('서버 저장 실패, 브라우저에 저장했습니다.', 'warning');
     } finally {
-      btn.disabled = false;
-      btn.textContent = '💾 저장';
+      if (!silent && btn) {
+        btn.disabled = false;
+        btn.textContent = '💾 저장';
+      }
+      _cloudSaving = false;
+      if (_cloudSaveQueued) {
+        _cloudSaveQueued = false;
+        scheduleSupabaseSave(500);
+      }
     }
   }
 
