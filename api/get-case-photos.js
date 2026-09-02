@@ -44,7 +44,35 @@ function mimeFromExtension(ext) {
   return 'image/jpeg';
 }
 
-async function urlToEntry(url, fallbackName) {
+function storagePathFromPublicUrl(url) {
+  try {
+    const pathname = new URL(url).pathname;
+    const marker = '/storage/v1/object/public/patient-photos/';
+    const index = pathname.indexOf(marker);
+    if (index === -1) return null;
+    return decodeURIComponent(pathname.slice(index + marker.length));
+  } catch {
+    return null;
+  }
+}
+
+async function urlToEntry(sb, url, fallbackName) {
+  const storagePath = storagePathFromPublicUrl(url);
+  if (storagePath) {
+    const { data: blob, error } = await sb.storage.from('patient-photos').download(storagePath);
+    if (error) throw error;
+    const contentType = blob.type || mimeFromExtension(extensionFromUrl(url));
+    const buffer = Buffer.from(await blob.arrayBuffer());
+    return {
+      base64: `data:${contentType};base64,${buffer.toString('base64')}`,
+      name: fallbackName,
+      type: contentType,
+      source: 'supabase-storage',
+      path: storagePath,
+      url
+    };
+  }
+
   const response = await fetch(url);
   if (!response.ok) throw new Error(`download failed: ${response.status}`);
   const contentType = response.headers.get('content-type') || mimeFromExtension(extensionFromUrl(url));
@@ -53,7 +81,7 @@ async function urlToEntry(url, fallbackName) {
     base64: `data:${contentType};base64,${buffer.toString('base64')}`,
     name: fallbackName,
     type: contentType,
-    source: 'supabase',
+    source: 'supabase-public-url',
     url
   };
 }
@@ -96,7 +124,7 @@ export default async function handler(req, res) {
         if (!clientKey || !publicUrl) continue;
         try {
           const ext = extensionFromUrl(publicUrl);
-          photos[clientKey] = await urlToEntry(publicUrl, `${clientKey}.${ext}`);
+          photos[clientKey] = await urlToEntry(sb, publicUrl, `${clientKey}.${ext}`);
         } catch (e) {
           errors.push({ category, slot, key: clientKey, error: safeErrorMessage(e) });
         }
