@@ -41,6 +41,7 @@ export default async function handler(req, res) {
         dob: p.dob,
         age_group: p.age_group,
         gender: p.gender,
+        metadata: p.metadata || {},
         age: p.metadata?.age || null,
         created_at: p.created_at,
         diagnosis_count: diagnoses.length,

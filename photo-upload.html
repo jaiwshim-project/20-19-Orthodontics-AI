@@ -790,6 +790,8 @@
   async function restore() {
     const data = await PhotoStore.loadCase();
     if (!data) {
+      const cloudData = await restoreFromSupabaseIfAvailable();
+      if (cloudData) return;
       const patient = JSON.parse(localStorage.getItem('oa_step1_patient_info') || 'null');
       if (patient?.name) document.getElementById('patientName').value = patient.name;
       if (patient?.stage || patient?.dentitionStage) document.getElementById('dentitionStage').value = patient.stage || patient.dentitionStage;
@@ -823,6 +825,52 @@
   }
 
   // 초기화
+  async function restoreFromSupabaseIfAvailable() {
+    const params = new URLSearchParams(window.location.search);
+    const selected = window.PatientStore?.get?.() || {};
+    const patientId = params.get('id') || params.get('patientId') || selected.supabaseId || selected.id || '';
+    const patientName = params.get('patientName') || params.get('name') || selected.name || '';
+    if (!patientId && !patientName) return null;
+
+    try {
+      const query = patientId
+        ? '?id=' + encodeURIComponent(patientId) + '&phase=initial'
+        : '?name=' + encodeURIComponent(patientName) + '&phase=initial';
+      const res = await apiFetch('/api/get-case-photos' + query);
+      if (!res.ok) return null;
+      const cloudData = await res.json();
+      if (!cloudData?.success || !cloudData.photos || Object.keys(cloudData.photos).length === 0) return null;
+
+      const patient = cloudData.patient || {};
+      if (patient.name) document.getElementById('patientName').value = patient.name;
+      if (patient.stage || patient.dentitionStage) document.getElementById('dentitionStage').value = patient.stage || patient.dentitionStage;
+      if (patient.classification) document.getElementById('classification').value = patient.classification;
+
+      for (const [key, entry] of Object.entries(cloudData.photos)) {
+        if (!entry || !entry.base64) continue;
+        const blob = PhotoStore.base64ToBlob(entry.base64);
+        if (!blob) continue;
+        const file = new File([blob], entry.name || `${key}.jpg`, { type: blob.type || entry.type || 'image/jpeg' });
+        photos[key] = file;
+        if (key === 'modelUpper' || key === 'modelLower') render3DPreview(key, file);
+        else showThumb(key, file);
+      }
+
+      await PhotoStore.saveCase({
+        source: 'supabase-sync',
+        patient,
+        photos: cloudData.photos
+      });
+      if (window.PatientStore) window.PatientStore.set({ ...selected, ...patient, id: patient.id || selected.id, supabaseId: patient.supabaseId || patient.id || selected.supabaseId });
+      updateStatus();
+      if (window.toast) window.toast('Supabase photos loaded for this patient.', 'success');
+      return cloudData;
+    } catch (e) {
+      console.warn('[restoreFromSupabaseIfAvailable]', e.message);
+      return null;
+    }
+  }
+
   function buildPatientQuery(targetPath) {
     const patient = persistStep1PatientInfo();
     const url = new URL(targetPath, window.location.href);
